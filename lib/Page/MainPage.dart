@@ -10,7 +10,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
-    Size a =MediaQuery.of(context).size;
+    Size a = MediaQuery.of(context).size;
     return Material(
       color: Colors.black,
       child: InkWell(
@@ -18,14 +18,17 @@ class _MainPageState extends State<MainPage> {
           child: Center(
             child: Text(
               "SCRAP.",
-              style: TextStyle(color: Colors.white,fontSize: a.width/6,fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: a.width / 6,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ),
-        onTap: (){Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomePage()));},
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
+        },
       ),
     );
   }
