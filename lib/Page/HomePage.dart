@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Profile.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -35,15 +37,21 @@ class _HomePageState extends State<HomePage> {
                 Container(
                     height: a.width / 5,
                     alignment: Alignment.center,
-                    child: Container(
-                      width: a.width / 10,
-                      height: a.width / 10,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(a.width),
-                        color: Colors.white,
+                    child: InkWell(
+                      child: Container(
+                        width: a.width / 10,
+                        height: a.width / 10,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(a.width),
+                          color: Colors.white,
+                        ),
+                        child: Icon(Icons.person,
+                            color: Colors.black, size: a.width / 15),
                       ),
-                      child: Icon(Icons.person,
-                          color: Colors.black, size: a.width / 15),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Profile()));
+                      },
                     ))
               ],
             ),
@@ -81,38 +89,41 @@ class _HomePageState extends State<HomePage> {
                       size: a.width / 15,
                     ),
                   ),
-                  Container(
-                    width: a.width / 3,
-                    height: a.width / 7,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white,
-                            blurRadius: 10.0,
-                            spreadRadius: 0.0,
-                            offset: Offset(
-                              0.0,
-                              3.0,
-                            ),
+                  InkWell(
+                    child: Container(
+                      width: a.width / 3,
+                      height: a.width / 7,
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white,
+                              blurRadius: 10.0,
+                              spreadRadius: 0.0,
+                              offset: Offset(
+                                0.0,
+                                3.0,
+                              ),
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(a.width),
+                          color: Colors.white),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.create,
+                            size: a.width / 15,
+                            color: Colors.black,
+                          ),
+                          Text(
+                            " เขียน",
+                            style: TextStyle(
+                                color: Colors.black, fontSize: a.width / 16),
                           )
                         ],
-                        borderRadius: BorderRadius.circular(a.width),
-                        color: Colors.white),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.create,
-                          size: a.width / 15,
-                          color: Colors.black,
-                        ),
-                        Text(
-                          " เขียน",
-                          style: TextStyle(
-                              color: Colors.black, fontSize: a.width / 16),
-                        )
-                      ],
+                      ),
                     ),
+                    onTap: (){},
                   ),
                   Container(
                     width: a.width / 7,
