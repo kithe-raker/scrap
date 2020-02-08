@@ -123,7 +123,9 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    onTap: (){},
+                    onTap: () {
+                      dialog();
+                    },
                   ),
                   Container(
                     width: a.width / 7,
@@ -155,5 +157,20 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  dialog() {
+    return showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(content:
+              StatefulBuilder(builder: (context, StateSetter setState) {
+            return Container(
+              width: MediaQuery.of(context).size.width/1.2,
+              height: MediaQuery.of(context).size.width,
+              color: Colors.green
+              );
+          }));
+        });
   }
 }
