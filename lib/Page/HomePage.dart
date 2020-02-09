@@ -12,6 +12,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
+
     return Material(
       child: Column(
         children: <Widget>[
@@ -57,98 +58,101 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.only(bottom: a.width / 10),
-            alignment: Alignment.bottomCenter,
-            width: a.width,
-            height: a.height / 1.119,
-            color: Colors.black87,
-            child: Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Container(
-                    width: a.width / 7,
-                    height: a.width / 7,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white,
-                            blurRadius: 10.0,
-                            spreadRadius: 0.0,
-                            offset: Offset(
-                              0.0,
-                              3.0,
-                            ),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(a.width),
-                        color: Colors.white),
-                    child: Icon(
-                      Icons.person_add,
-                      color: Colors.black,
-                      size: a.width / 15,
-                    ),
-                  ),
-                  InkWell(
-                    child: Container(
-                      width: a.width / 5,
-                      height: a.width / 5,
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white,
-                              blurRadius: 10.0,
-                              spreadRadius: 0.0,
-                              offset: Offset(
-                                0.0,
-                                3.0,
-                              ),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Colors.white),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.create,
-                            size: a.width / 10,
-                            color: Colors.black,
-                          ),
-                        ],
+          Stack(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(bottom: a.width / 10),
+                alignment: Alignment.bottomCenter,
+                width: a.width,
+                height: a.height / 1.119,
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Container(
+                        width: a.width / 7,
+                        height: a.width / 7,
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white,
+                                blurRadius: 10.0,
+                                spreadRadius: 0.0,
+                                offset: Offset(
+                                  0.0,
+                                  3.0,
+                                ),
+                              )
+                            ],
+                            borderRadius: BorderRadius.circular(a.width),
+                            color: Colors.white),
+                        child: Icon(
+                          Icons.person_add,
+                          color: Colors.black,
+                          size: a.width / 15,
+                        ),
                       ),
-                    ),
-                    onTap: () {
-                      dialog();
-                    },
+                      InkWell(
+                        child: Container(
+                          width: a.width / 5,
+                          height: a.width / 5,
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white,
+                                  blurRadius: 10.0,
+                                  spreadRadius: 0.0,
+                                  offset: Offset(
+                                    0.0,
+                                    3.0,
+                                  ),
+                                )
+                              ],
+                              borderRadius: BorderRadius.circular(a.width),
+                              color: Colors.white),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.create,
+                                size: a.width / 10,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          dialog();
+                        },
+                      ),
+                      Container(
+                        width: a.width / 7,
+                        height: a.width / 7,
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white,
+                                blurRadius: 10.0,
+                                spreadRadius: 0.0,
+                                offset: Offset(
+                                  0.0,
+                                  3.0,
+                                ),
+                              )
+                            ],
+                            borderRadius: BorderRadius.circular(a.width),
+                            color: Colors.blueAccent),
+                        child: Icon(
+                          Icons.refresh,
+                          color: Colors.black,
+                          size: a.width / 15,
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    width: a.width / 7,
-                    height: a.width / 7,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white,
-                            blurRadius: 10.0,
-                            spreadRadius: 0.0,
-                            offset: Offset(
-                              0.0,
-                              3.0,
-                            ),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(a.width),
-                        color: Colors.blueAccent),
-                    child: Icon(
-                      Icons.refresh,
-                      color: Colors.black,
-                      size: a.width / 15,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           )
         ],
       ),
@@ -279,8 +283,9 @@ class _HomePageState extends State<HomePage> {
                         margin: EdgeInsets.only(top: a.width / 20),
                         width: a.width / 1.2,
                         height: a.width / 1,
-                        decoration: BoxDecoration(color: Colors.green,borderRadius: BorderRadius.circular(a.width/10)),
-                        
+                        decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(a.width / 10)),
                       ),
                       Container(
                           margin: EdgeInsets.only(top: a.width / 10),
