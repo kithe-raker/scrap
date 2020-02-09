@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/widget/CreatePaper.dart';
 
 import 'Profile.dart';
 
@@ -91,8 +92,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   InkWell(
                     child: Container(
-                      width: a.width / 3,
-                      height: a.width / 7,
+                      width: a.width / 5,
+                      height: a.width / 5,
                       decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
@@ -112,14 +113,9 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
                           Icon(
                             Icons.create,
-                            size: a.width / 15,
+                            size: a.width / 10,
                             color: Colors.black,
                           ),
-                          Text(
-                            " เขียน",
-                            style: TextStyle(
-                                color: Colors.black, fontSize: a.width / 16),
-                          )
                         ],
                       ),
                     ),
@@ -143,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                           )
                         ],
                         borderRadius: BorderRadius.circular(a.width),
-                        color: Colors.white),
+                        color: Colors.blueAccent),
                     child: Icon(
                       Icons.refresh,
                       color: Colors.black,
@@ -165,11 +161,146 @@ class _HomePageState extends State<HomePage> {
         builder: (builder) {
           return AlertDialog(content:
               StatefulBuilder(builder: (context, StateSetter setState) {
+            Size a = MediaQuery.of(context).size;
             return Container(
-              width: MediaQuery.of(context).size.width/1.2,
-              height: MediaQuery.of(context).size.width,
-              color: Colors.green
-              );
+              width: a.width / 1.2,
+              height: a.height / 1.5,
+              child: ListView(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        width: a.width,
+                        alignment: Alignment.topRight,
+                        child: InkWell(
+                          child: Icon(
+                            Icons.clear,
+                            size: a.width / 10,
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: a.width / 20),
+                        width: a.width / 1.2,
+                        height: a.width / 1.2,
+                        child: CreatePaper(),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: a.width / 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Container(
+                                width: a.width / 3.5,
+                                height: a.width / 6.5,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "ทิ้งไว้",
+                                  style: TextStyle(fontSize: a.width / 15),
+                                )),
+                            InkWell(
+                              child: Container(
+                                width: a.width / 3.5,
+                                height: a.width / 6.5,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                                alignment: Alignment.center,
+                                child: Text("ปาใส่",
+                                    style: TextStyle(fontSize: a.width / 15)),
+                              ),
+                              onTap: () {
+                                dialog2();
+                              },
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }));
+        });
+  }
+
+  dialog2() {
+    return showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(content:
+              StatefulBuilder(builder: (context, StateSetter setState) {
+            Size a = MediaQuery.of(context).size;
+            return Container(
+              width: a.width / 1.2,
+              height: a.height / 1.2,
+              child: ListView(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            InkWell(
+                              child: Icon(
+                                Icons.arrow_back,
+                                size: a.width / 10,
+                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            InkWell(
+                              child: Icon(
+                                Icons.clear,
+                                size: a.width / 10,
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomePage()));
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: a.width / 20),
+                        width: a.width / 1.2,
+                        height: a.width / 1,
+                        decoration: BoxDecoration(color: Colors.green,borderRadius: BorderRadius.circular(a.width/10)),
+                        
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: a.width / 10),
+                          child: InkWell(
+                            child: Container(
+                              width: a.width / 3.5,
+                              height: a.width / 6.5,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(a.width)),
+                              alignment: Alignment.center,
+                              child: Text("ปาใส่",
+                                  style: TextStyle(fontSize: a.width / 15)),
+                            ),
+                          ))
+                    ],
+                  )
+                ],
+              ),
+            );
           }));
         });
   }
