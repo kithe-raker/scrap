@@ -61,6 +61,11 @@ flutter:
       fonts:
         - asset: fonts/pecita.otf
           style: italic
+
+    - family: THSarabunNew
+      fonts:
+         - asset: fonts/ThaiSansNeue-Black.ttf
+         
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
