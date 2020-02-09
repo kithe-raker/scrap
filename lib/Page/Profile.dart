@@ -17,7 +17,10 @@ class _ProfileState extends State<Profile> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(
-                top: a.width / 20, right: a.width / 25, left: a.width / 25,bottom: a.width/2.8),
+                top: a.width / 20,
+                right: a.width / 25,
+                left: a.width / 25,
+                bottom: a.width / 2.8),
             child: Column(
               children: <Widget>[
                 Container(
@@ -34,7 +37,9 @@ class _ProfileState extends State<Profile> {
                           child: Icon(Icons.arrow_back,
                               color: Colors.black, size: a.width / 15),
                         ),
-                        onTap: (){Navigator.pop(context);},
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
                       ),
                       Container(
                         child: Icon(Icons.more_horiz,
@@ -144,12 +149,12 @@ class _ProfileState extends State<Profile> {
                           style: TextStyle(
                               color: Colors.white, fontSize: a.width / 18),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
                 Container(
-                margin: EdgeInsets.only(top: a.width/20),
+                  margin: EdgeInsets.only(top: a.width / 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -169,14 +174,14 @@ class _ProfileState extends State<Profile> {
                       )
                     ],
                   ),
-                ),Container(
+                ),
+                Container(
                   width: a.width,
-                  height: a.width/1,
+                  height: a.width / 1,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
-                    children: <Widget>[
-                    LongPaper(),LongPaper()
-                  ],),
+                    children: <Widget>[LongPaper(), LongPaper()],
+                  ),
                 )
               ],
             ),
