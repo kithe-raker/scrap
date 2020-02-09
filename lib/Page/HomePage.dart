@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> {
                 alignment: Alignment.bottomCenter,
                 width: a.width,
                 height: a.height / 1.119,
+                color: Colors.black,
                 child: Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,

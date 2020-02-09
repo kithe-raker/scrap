@@ -3,6 +3,7 @@ import 'package:scrap/Page/CreateID.dart';
 import 'package:scrap/Page/HomePage.dart';
 
 class LoginPage extends StatefulWidget {
+  LoginPage({Key key}) : super(key: key);
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -54,10 +55,9 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(a.width)),
                   child: TextFormField(
                     decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'ID name',
-                      labelStyle: TextStyle(color: Colors.white)
-                    ),
+                        border: InputBorder.none,
+                        hintText: 'ID name',
+                        labelStyle: TextStyle(color: Colors.white)),
                   ),
                 ),
                 Container(
@@ -80,10 +80,9 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(a.width)),
                   child: TextField(
                     decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'password',
-                      labelStyle: TextStyle(color: Colors.white)
-                    ),
+                        border: InputBorder.none,
+                        hintText: 'password',
+                        labelStyle: TextStyle(color: Colors.white)),
                   ),
                 ),
                 InkWell(
