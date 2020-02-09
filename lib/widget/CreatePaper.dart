@@ -21,22 +21,26 @@ class _CreatePaperState extends State<CreatePaper> {
                   padding: EdgeInsets.all(a.width / 40),
                   width: a.width,
                   height: a.width / 5,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                
+                  child: Stack(
                     children: <Widget>[
-                      Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text("เขียนโดย : " + "ใครสักคน"),
-                          Text("เวลา : " + "11.11"),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text("เขียนโดย : " + "ใครสักคน"),
+                              Text("เวลา : " + "11.11"),
+                            ],
+                          ),
                         ],
                       ),
-                     
+
                     ],
                   ),
                 ),
-                
               ],
             ),
           ],
