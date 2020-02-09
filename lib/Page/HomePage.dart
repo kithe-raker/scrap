@@ -15,9 +15,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          Center(
-            child: Text("data"),
-          ),
           Positioned(
             bottom: 0,
             child: Container(
@@ -112,6 +109,12 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
+            ),
+          ),
+          Center(
+            child: Text(
+              "data",
+              style: TextStyle(color: Colors.white),
             ),
           ),
           Positioned(
