@@ -68,6 +68,7 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.black,
                 child: Container(
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Container(
@@ -95,31 +96,32 @@ class _HomePageState extends State<HomePage> {
                       ),
                       InkWell(
                         child: Container(
-                          width: a.width / 5,
-                          height: a.width / 5,
+                          width: a.width / 4,
+                          height: a.width / 4,
                           decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.white,
-                                  blurRadius: 10.0,
-                                  spreadRadius: 0.0,
-                                  offset: Offset(
-                                    0.0,
-                                    3.0,
-                                  ),
-                                )
-                              ],
                               borderRadius: BorderRadius.circular(a.width),
-                              color: Colors.white),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
+                              border: Border.all(color: Colors.white,width: a.width/1000)),
+                          child: Container(
+                            margin: EdgeInsets.all(a.width / 35),
+                            width: a.width / 5,
+                            height: a.width / 5,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(a.width),
+                                border: Border.all(color: Colors.white)),
+                            child: Container(
+                              margin: EdgeInsets.all(a.width / 35),
+                              width: a.width / 5,
+                              height: a.width / 5,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(a.width),
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.white)),
+                              child: Icon(
                                 Icons.create,
-                                size: a.width / 10,
+                                size: a.width / 20,
                                 color: Colors.black,
                               ),
-                            ],
+                            ),
                           ),
                         ),
                         onTap: () {
