@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/pattern.dart';
 import 'package:scrap/widget/CreatePaper.dart';
 
 import 'Profile.dart';
@@ -111,12 +112,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          Center(
-            child: Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
           Positioned(
             top: 0,
             left: 0,
@@ -165,6 +160,13 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+          ),
+          Center(
+            child: Container(
+                height: a.height / 1.4,
+                width: a.width,
+                child: PatternScrap(
+                    data: ['1', '2', '3', '4', '5', '6', '7', '8'])),
           ),
         ],
       ),

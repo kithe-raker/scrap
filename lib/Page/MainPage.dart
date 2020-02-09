@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'HomePage.dart';
+import 'HomePage.dart';
 import 'LoginPage.dart';
 
 class MainPage extends StatefulWidget {
@@ -29,7 +30,7 @@ class _MainPageState extends State<MainPage> {
         ),
         onTap: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => LoginPage()));
+              context, MaterialPageRoute(builder: (context) => HomePage()));
         },
       ),
     );
