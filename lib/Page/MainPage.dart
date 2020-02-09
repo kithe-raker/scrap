@@ -29,7 +29,7 @@ class _MainPageState extends State<MainPage> {
         ),
         onTap: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => LoginPage()));
+              context, MaterialPageRoute(builder: (context) => HomePage()));
         },
       ),
     );

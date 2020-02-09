@@ -82,7 +82,8 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'password',
-                        labelStyle: TextStyle(color: Colors.white)),
+                        
+                        ),
                   ),
                 ),
                 InkWell(
