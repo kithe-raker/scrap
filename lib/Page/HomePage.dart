@@ -32,7 +32,6 @@ class _HomePageState extends State<HomePage> {
                     alignment: Alignment.center,
                     child: Text("SCRAP.",
                         style: TextStyle(
-                          fontFamily: 'Pecita',
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: a.width / 15,
@@ -101,8 +100,7 @@ class _HomePageState extends State<HomePage> {
                           height: a.width / 4,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(a.width),
-                              border: Border.all(
-                                  color: Colors.white, width: a.width / 1000)),
+                              border: Border.all(color: Colors.white,width: a.width/500)),
                           child: Container(
                             margin: EdgeInsets.all(a.width / 35),
                             width: a.width / 5,
