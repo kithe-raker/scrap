@@ -100,7 +100,8 @@ class _HomePageState extends State<HomePage> {
                           height: a.width / 4,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(a.width),
-                              border: Border.all(color: Colors.white,width: a.width/1000)),
+                              border: Border.all(
+                                  color: Colors.white, width: a.width / 1000)),
                           child: Container(
                             margin: EdgeInsets.all(a.width / 35),
                             width: a.width / 5,
