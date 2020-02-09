@@ -3,6 +3,7 @@ import 'package:scrap/Page/CreateID.dart';
 import 'package:scrap/Page/HomePage.dart';
 
 class LoginPage extends StatefulWidget {
+  LoginPage({Key key}) : super(key: key);
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -27,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           Container(
             margin: EdgeInsets.only(top: a.width / 10),
-            width: a.width / 1.3,
+            width: a.width / 1.15,
             height: a.width / 1,
             decoration: BoxDecoration(
                 color: Colors.grey,
@@ -43,16 +44,21 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       "ID name",
                       style: TextStyle(
-                          color: Colors.white, fontSize: a.width / 20),
+                          color: Colors.white, fontSize: a.width / 25),
                     )),
                 Container(
-                  width: a.width / 1.5,
+                  width: a.width / 1.3,
                   height: a.width / 6,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(a.width)),
-                  child: TextFormField(),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'ID name',
+                        labelStyle: TextStyle(color: Colors.white)),
+                  ),
                 ),
                 Container(
                     width: a.width,
@@ -63,20 +69,25 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       "password",
                       style: TextStyle(
-                          color: Colors.white, fontSize: a.width / 20),
+                          color: Colors.white, fontSize: a.width / 25),
                     )),
                 Container(
-                  width: a.width / 1.5,
+                  width: a.width / 1.3,
                   height: a.width / 6,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(a.width)),
-                  child: TextFormField(),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'password',
+                        labelStyle: TextStyle(color: Colors.white)),
+                  ),
                 ),
                 InkWell(
                     child: Container(
-                        width: a.width / 1.5,
+                        width: a.width / 1.3,
                         height: a.width / 6,
                         alignment: Alignment.center,
                         margin: EdgeInsets.only(top: a.width / 10),
@@ -85,16 +96,17 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(a.width / 40)),
                         child: Text(
                           "เข้าสู่ระบบ",
-                          style: TextStyle(fontSize: a.width / 15),
+                          style: TextStyle(fontSize: a.width / 20),
                         )),
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => HomePage()));
                     }),
                 Container(
-                  margin: EdgeInsets.only(top: a.width / 30),
+                  margin: EdgeInsets.only(top: a.width / 20),
                   child: Text("ลืมรหัสผ่าน",
-                      style: TextStyle(fontSize: a.width / 25)),
+                      style: TextStyle(
+                          fontSize: a.width / 25, color: Colors.white)),
                 )
               ],
             ),
@@ -104,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
             child: InkWell(
               child: Text(
                 "สร้างบัญชี SCRAP.",
-                style: TextStyle(color: Colors.white, fontSize: a.width / 15),
+                style: TextStyle(color: Colors.white, fontSize: a.width / 20),
               ),
               onTap: () {
                 Navigator.push(context,
