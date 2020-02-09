@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "273076153449",
+    "firebase_url": "https://scrap-applications.firebaseio.com",
+    "project_id": "scrap-applications",
+    "storage_bucket": "scrap-applications.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273076153449:android:a07ee01f6c5c6466fc46f8",
+        "android_client_info": {
+          "package_name": "com.bualoitech.scrap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "273076153449-da9pbakkbhc9rmn44pkruvqqr0fn6b2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bualoitech.scrap",
+            "certificate_hash": "9195ac195101f945dadc61783fdf5ae28437156b"
+          }
+        },
+        {
+          "client_id": "273076153449-dt1lg1c19u3lobh4a718d65t0a9b3itr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyzjKtkgLjX8WDEBcVgp22FAwY99ql8Lo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "273076153449-dt1lg1c19u3lobh4a718d65t0a9b3itr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "273076153449-05fbevf8cmcld0v6ebt5q7fhic0mmoo1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bualoitech.scrap"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
