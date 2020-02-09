@@ -20,6 +20,7 @@ class _MainPageState extends State<MainPage> {
             child: Text(
               "SCRAP.",
               style: TextStyle(
+                  fontFamily: 'Pecita',
                   color: Colors.white,
                   fontSize: a.width / 6,
                   fontWeight: FontWeight.bold),

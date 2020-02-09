@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
                     alignment: Alignment.center,
                     child: Text("SCRAP.",
                         style: TextStyle(
+                          fontFamily: 'Pecita',
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: a.width / 15,
