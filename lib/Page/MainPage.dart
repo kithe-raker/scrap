@@ -15,9 +15,8 @@ class _MainPageState extends State<MainPage> {
       color: Colors.black,
       child: InkWell(
         child: Container(
-
           child: Center(
-            child: Image.asset('assets/SCRAP.png',width: a.width/2,)
+            child: Image.asset('./assets/SCRAP.png',width: a.width/2,)
           ),
         ),
         onTap: () {

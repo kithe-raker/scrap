@@ -14,7 +14,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String type = 'Analysts';
   String select;
-
+  String text;
+  var _key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -314,7 +315,6 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             type = select;
           });
-          print(type);
           Navigator.pop(context);
         });
   }
@@ -333,86 +333,94 @@ class _HomePageState extends State<HomePage> {
                   height: a.height / 1.3,
                   child: ListView(
                     children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Container(
-                            width: a.width,
-                            alignment: Alignment.topRight,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        width: a.width / 15,
-                                        height: a.width / 15,
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.white)),
-                                      ),
-                                      Container(
-                                        child: Text(
-                                          "   เปิดเผยตัวตน",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: a.width / 20),
+                      Form(
+                        key: _key,
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              width: a.width,
+                              alignment: Alignment.topRight,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(
+                                          width: a.width / 15,
+                                          height: a.width / 15,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.white)),
                                         ),
-                                      )
-                                    ],
+                                        Container(
+                                          child: Text(
+                                            "   เปิดเผยตัวตน",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: a.width / 20),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                InkWell(
-                                  child: Icon(
-                                    Icons.clear,
-                                    size: a.width / 10,
-                                    color: Colors.white,
+                                  InkWell(
+                                    child: Icon(
+                                      Icons.clear,
+                                      size: a.width / 10,
+                                      color: Colors.white,
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
                                   ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: a.width / 50),
-                            width: a.width / 1,
-                            height: a.height / 2,
-                            child: Stack(
-                              children: <Widget>[
-                                Container(
-                                  child: Image.asset(
-                                    'assets/paper-readed.png',
-                                    width: a.width / 1,
-                                    height: a.height / 2,
-                                    fit: BoxFit.cover,
+                            Container(
+                              margin: EdgeInsets.only(top: a.width / 50),
+                              width: a.width / 1,
+                              height: a.height / 2,
+                              child: Stack(
+                                children: <Widget>[
+                                  Container(
+                                    child: Image.asset(
+                                      'assets/paper-readed.png',
+                                      width: a.width / 1,
+                                      height: a.height / 2,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      left: a.width / 20, top: a.width / 20),
-                                  width: a.width,
-                                  alignment: Alignment.topLeft,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        "เขียนโดย" + " : " + "ใครสักคน",
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                      Text("เวลา" + " : " + "09.37",
-                                          style: TextStyle(color: Colors.grey))
-                                    ],
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: a.width / 20, top: a.width / 20),
+                                    width: a.width,
+                                    alignment: Alignment.topLeft,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          "เขียนโดย" + " : " + "ใครสักคน",
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                        Text("เวลา" + " : " + "09.37",
+                                            style:
+                                                TextStyle(color: Colors.grey))
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                  width: a.width,
-                                  height: a.height,
-                                  alignment: Alignment.center,
-                                  child: TextField(
-                                      textAlign: TextAlign.center,style: TextStyle(fontSize: a.width/15),
+                                  // Form(
+                                  //     key: _key,
+                                  //     child:
+                                  Container(
+                                    width: a.width,
+                                    height: a.height,
+                                    alignment: Alignment.center,
+                                    child: TextFormField(
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: a.width / 15),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: 'เขียนข้อความบางอย่าง',
@@ -420,49 +428,80 @@ class _HomePageState extends State<HomePage> {
                                           fontSize: a.width / 15,
                                           color: Colors.grey,
                                         ),
-                                      )),
-                                )
-                              ],
+                                      ),
+                                      validator: (val) {
+                                        return val.trim() == null ||
+                                                val.trim() == ""
+                                            ? 'กรอกค่ะ'
+                                            : null;
+                                      },
+                                      onChanged: (val) {
+                                        text = val;
+                                      },
+                                    ),
+                                  )
+                                  //)
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: a.width / 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Container(
-                                    width: a.width / 4,
-                                    height: a.width / 7,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius:
-                                            BorderRadius.circular(a.width)),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "ทิ้งไว้",
-                                      style: TextStyle(fontSize: a.width / 15),
-                                    )),
-                                InkWell(
-                                  child: Container(
-                                    width: a.width / 4,
-                                    height: a.width / 7,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius:
-                                            BorderRadius.circular(a.width)),
-                                    alignment: Alignment.center,
-                                    child: Text("ปาใส่",
-                                        style:
-                                            TextStyle(fontSize: a.width / 15)),
+                            Container(
+                              margin: EdgeInsets.only(top: a.width / 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  InkWell(
+                                    child: Container(
+                                        width: a.width / 4,
+                                        height: a.width / 7,
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey,
+                                            borderRadius:
+                                                BorderRadius.circular(a.width)),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "ทิ้งไว้",
+                                          style:
+                                              TextStyle(fontSize: a.width / 15),
+                                        )),
+                                    onTap: () async {
+                                      if (_key.currentState.validate()) {
+                                        _key.currentState.save();
+                                        Navigator.pop(context);
+                                        await Firestore.instance
+                                            .collection('Contents')
+                                            .document('UserWords')
+                                            .updateData({
+                                          'Contents':
+                                              FieldValue.arrayUnion([text])
+                                        });
+                                      } else {
+                                        print('nope');
+                                      }
+                                    },
                                   ),
-                                  onTap: () {
-                                    dialog2();
-                                  },
-                                )
-                              ],
-                            ),
-                          )
-                        ],
+                                  InkWell(
+                                    child: Container(
+                                      width: a.width / 4,
+                                      height: a.width / 7,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(a.width)),
+                                      alignment: Alignment.center,
+                                      child: Text("ปาใส่",
+                                          style: TextStyle(
+                                              fontSize: a.width / 15)),
+                                    ),
+                                    onTap: () {
+                                      dialog2();
+                                    },
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ],
                   ),
