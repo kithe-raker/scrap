@@ -155,7 +155,6 @@ class _PatternScrapState extends State<PatternScrap> {
                           top: a.height / 12,
                           child: Container(
                             alignment: Alignment.center,
-                     
                             height: a.height / 3.2,
                             width: a.width / 1.48,
                             child: Text(

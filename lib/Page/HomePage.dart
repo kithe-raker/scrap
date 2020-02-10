@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.white,
                         iconSize: a.width / 15,
                         onPressed: () {
-                          selectDialog(setState);
+                          selectDialog(context);
                         },
                       ),
                     ),
@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          changeScrap(type, a),
+          scrapPatt(a, type, context),
           Positioned(
             top: 0,
             left: 0,
@@ -176,30 +176,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget changeScrap(String scraps, Size a) {
-    switch (scraps) {
-      case 'Analysts':
-        return scrapPatt(a, 'Analysts');
-        break;
-      case 'Diplomats':
-        return scrapPatt(a, 'Diplomats');
-        break;
-      case 'Explorers':
-        return scrapPatt(a, 'Explorers');
-        break;
-      case 'Girl':
-        return scrapPatt(a, 'Girl');
-        break;
-      case 'Sentinels':
-        return scrapPatt(a, 'Sentinels');
-        break;
-      default:
-        return scrapPatt(a, 'Analysts');
-        break;
-    }
-  }
+  // Widget changeScrap(String scraps, Size a) {
+  //   switch (scraps) {
+  //     case 'Analysts':
+  //       return scrapPatt(a, 'Analysts');
+  //       break;
+  //     case 'Diplomats':
+  //       return scrapPatt(a, 'Diplomats');
+  //       break;
+  //     case 'Explorers':
+  //       return scrapPatt(a, 'Explorers');
+  //       break;
+  //     case 'Girl':
+  //       return scrapPatt(a, 'Girl');
+  //       break;
+  //     case 'Sentinels':
+  //       return scrapPatt(a, 'Sentinels');
+  //       break;
+  //     default:
+  //       return scrapPatt(a, 'Analysts');
+  //       break;
+  //   }
+  // }
 
-  scrapPatt(Size a, String scrap) {
+  scrapPatt(Size a, String scrap, BuildContext context) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Contents')
@@ -241,7 +241,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  selectDialog(StateSetter setState) {
+  selectDialog(BuildContext context) {
     return showDialog(
         context: context,
         builder: (builder) {
@@ -252,19 +252,92 @@ class _HomePageState extends State<HomePage> {
                 width: MediaQuery.of(context).size.width / 1.1,
                 child: Column(
                   children: <Widget>[
-                    choice('Analysts', 'Analysts', setState),
-                    choice('Diplomats', 'Diplomats', setState),
-                    choice('Explorers', 'Explorers', setState),
-                    choice('Girl', 'Girl', setState),
-                    choice('Sentinels', 'Sentinels', setState),
-                    RaisedButton(
-                        child: Text('ok'),
-                        onPressed: () {
-                          type = select;
-                          setState(() {});
-                          print(type);
-                          Navigator.pop(context);
-                        })
+                    Row(
+                      children: <Widget>[
+                        Radio(
+                          activeColor: Color(0xffEF7D36),
+                          value: 'Analysts',
+                          groupValue: select,
+                          onChanged: (val) {
+                            setState(() {
+                              select = val;
+                            });
+                          },
+                        ),
+                        Text(
+                          'Analysts',
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Radio(
+                          activeColor: Color(0xffEF7D36),
+                          value: 'Diplomats',
+                          groupValue: select,
+                          onChanged: (val) {
+                            setState(() {
+                              select = val;
+                            });
+                          },
+                        ),
+                        Text(
+                          'Diplomats',
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Radio(
+                          activeColor: Color(0xffEF7D36),
+                          value: 'Explorers',
+                          groupValue: select,
+                          onChanged: (val) {
+                            setState(() {
+                              select = val;
+                            });
+                          },
+                        ),
+                        Text(
+                          'Explorers',
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Radio(
+                          activeColor: Color(0xffEF7D36),
+                          value: 'Girl',
+                          groupValue: select,
+                          onChanged: (val) {
+                            setState(() {
+                              select = val;
+                            });
+                          },
+                        ),
+                        Text(
+                          'Girl',
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Radio(
+                          activeColor: Color(0xffEF7D36),
+                          value: 'Sentinels',
+                          groupValue: select,
+                          onChanged: (val) {
+                            setState(() {
+                              select = val;
+                            });
+                          },
+                        ),
+                        Text(
+                          'Sentinels',
+                        ),
+                      ],
+                    ),
+                    butt()
                   ],
                 ),
               );
@@ -273,22 +346,16 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  Widget choice(String title, String value, StateSetter setState) {
-    return Row(
-      children: <Widget>[
-        Radio(
-          activeColor: Color(0xffEF7D36),
-          value: value,
-          groupValue: select,
-          onChanged: (val) {
-            setState(() {
-              select = val;
-            });
-          },
-        ),
-        Text(title)
-      ],
-    );
+  Widget butt() {
+    return RaisedButton(
+        child: Text('ok'),
+        onPressed: () {
+          setState(() {
+            type = select;
+          });
+          print(type);
+          Navigator.pop(context);
+        });
   }
 
   dialog() {
