@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LongPaper extends StatefulWidget {
+  final String text;
+  LongPaper({@required this.text});
   @override
   _LongPaperState createState() => _LongPaperState();
 }
@@ -38,12 +40,16 @@ class _LongPaperState extends State<LongPaper> {
                   )
                 ],
               ),
-            ),Container(
-              
+            ),
+            Container(
               width: a.width,
               height: a.width,
               alignment: Alignment.center,
-              child: Text("กินเหล้ามันขม",style: TextStyle(fontSize: a.width/15),),)
+              child: Text(
+                widget.text,
+                style: TextStyle(fontSize: a.width / 15),
+              ),
+            )
           ],
         ));
   }

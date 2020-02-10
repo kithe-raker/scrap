@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/widget/LongPaper.dart';
@@ -150,6 +151,49 @@ class _ProfileState extends State<Profile> {
                               color: Colors.white, fontSize: a.width / 18),
                         ),
                       ),
+                      Container(
+                        width: a.width,
+                        height: a.height / 4.2,
+                        child: StreamBuilder(
+                            stream: Firestore.instance
+                                .collection('User')
+                                .document('scraps')
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData &&
+                                  snapshot.connectionState ==
+                                      ConnectionState.active) {
+                                return GridView.builder(
+                                    itemCount: snapshot.data['scraps'].length,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4,
+                                      // childAspectRatio: 0.565,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      String data =
+                                          snapshot.data['scraps'][index];
+                                      return Container(
+                                        child: InkWell(
+                                          child: Image.asset(
+                                            './assets/paper.png',
+                                            width: a.width / 4.1,
+                                            height: a.width / 4.1,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          onTap: () {
+                                            dialog(data);
+                                          },
+                                        ),
+                                      );
+                                    });
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            }),
+                      )
                     ],
                   ),
                 ),
@@ -178,10 +222,32 @@ class _ProfileState extends State<Profile> {
                 Container(
                   width: a.width,
                   height: a.width / 1,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: <Widget>[LongPaper(), LongPaper()],
-                  ),
+                  child: StreamBuilder(
+                      stream: Firestore.instance
+                          .collection('User')
+                          .document('scraps')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData &&
+                            snapshot.connectionState ==
+                                ConnectionState.active) {
+                          return ListView.builder(
+                            itemCount: snapshot.data['collects'].length,
+                            scrollDirection: Axis.horizontal,
+                            //  children: <Widget>[LongPaper(), LongPaper()],
+                            itemBuilder: (context, index) {
+                              String text = snapshot.data['collects'][index];
+                              return LongPaper(
+                                text: text,
+                              );
+                            },
+                          );
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      }),
                 )
               ],
             ),
@@ -189,5 +255,120 @@ class _ProfileState extends State<Profile> {
         ],
       ),
     );
+  }
+
+  dialog(String text) {
+    return showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+              contentPadding: EdgeInsets.all(0),
+              backgroundColor: Colors.transparent,
+              content:
+                  StatefulBuilder(builder: (context, StateSetter setState) {
+                Size a = MediaQuery.of(context).size;
+                return Container(
+                  width: a.width,
+                  height: a.height / 1.76,
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        width: a.width,
+                        child: Image.asset(
+                          'assets/paper-readed.png',
+                          width: a.width,
+                          height: a.height / 2.1,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                          top: 12,
+                          left: 12,
+                          child: Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text('เขียนโดย : ใครสักคน'),
+                                Text('เวลา : 9:00')
+                              ],
+                            ),
+                          )),
+                      Positioned(
+                        bottom: 0,
+                        child: Container(
+                          width: a.width / 1.2,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              InkWell(
+                                child: Container(
+                                  width: a.width / 3.5,
+                                  height: a.width / 6.5,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                  alignment: Alignment.center,
+                                  child: Text("เก็บไว้",
+                                      style: TextStyle(
+                                          fontSize: a.width / 15,
+                                          color: Color(0xff26A4FF))),
+                                ),
+                                onTap: () async {
+                                  await Firestore.instance
+                                      .collection('User')
+                                      .document('scraps')
+                                      .updateData({
+                                    'collects': FieldValue.arrayUnion([text]),
+                                    'scraps': FieldValue.arrayRemove([text]),
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              InkWell(
+                                child: Container(
+                                  width: a.width / 3.5,
+                                  height: a.width / 6.5,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "ทิ้งไว้",
+                                    style: TextStyle(fontSize: a.width / 15),
+                                  ),
+                                ),
+                                onTap: () async {
+                                  await Firestore.instance
+                                      .collection('User')
+                                      .document('scraps')
+                                      .updateData({
+                                    'scraps': FieldValue.arrayRemove([text])
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                          left: a.width / 16,
+                          top: a.height / 12,
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: a.height / 3.2,
+                            width: a.width / 1.48,
+                            child: Text(
+                              text,
+                              style: TextStyle(fontSize: a.width / 14),
+                            ),
+                          ))
+                    ],
+                  ),
+                );
+              }));
+        });
   }
 }

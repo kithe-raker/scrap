@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String type;
+  String type = 'Analysts';
   String select;
 
   @override
@@ -39,57 +39,25 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.white,
-                              blurRadius: 10.0,
-                              spreadRadius: 0.0,
+                              color: Color(0xff1a1a1a),
+                              blurRadius: 3.0,
+                              spreadRadius: 2.0,
                               offset: Offset(
                                 0.0,
-                                3.0,
+                                3.2,
                               ),
                             )
                           ],
                           borderRadius: BorderRadius.circular(a.width),
                           color: Colors.white),
                       child: Icon(
-                        Icons.person_add,
-                        color: Colors.black,
-                        size: a.width / 15,
+                        Icons.location_on,
+                        color: Color(0xff26A4FF),
+                        size: a.width / 12,
                       ),
                     ),
-                    InkWell(
-                      child: Container(
-                        width: a.width / 4,
-                        height: a.width / 4,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(a.width),
-                            border: Border.all(
-                                color: Colors.white, width: a.width / 500)),
-                        child: Container(
-                          margin: EdgeInsets.all(a.width / 35),
-                          width: a.width / 5,
-                          height: a.width / 5,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(a.width),
-                              border: Border.all(color: Colors.white)),
-                          child: Container(
-                            margin: EdgeInsets.all(a.width / 35),
-                            width: a.width / 5,
-                            height: a.width / 5,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(a.width),
-                                color: Colors.white,
-                                border: Border.all(color: Colors.white)),
-                            child: Icon(
-                              Icons.create,
-                              size: a.width / 20,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                      onTap: () {
-                        dialog();
-                      },
+                    SizedBox(
+                      width: a.width / 21,
                     ),
                     Container(
                       width: a.width / 7,
@@ -97,7 +65,7 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.white,
+                              color: Color(0xff1a1a1a),
                               blurRadius: 10.0,
                               spreadRadius: 0.0,
                               offset: Offset(
@@ -123,6 +91,45 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           scrapPatt(a, type, context),
+          Positioned(
+            bottom: a.height / 42,
+            left: a.width / 2.8,
+            child: InkWell(
+              child: Container(
+                width: a.width / 3.6,
+                height: a.width / 3.6,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(a.width),
+                    border: Border.all(
+                        color: Colors.white38, width: a.width / 500)),
+                child: Container(
+                  margin: EdgeInsets.all(a.width / 35),
+                  width: a.width / 5,
+                  height: a.width / 5,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(a.width),
+                      border: Border.all(color: Colors.white)),
+                  child: Container(
+                    margin: EdgeInsets.all(a.width / 35),
+                    width: a.width / 5,
+                    height: a.width / 5,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(a.width),
+                        color: Colors.white,
+                        border: Border.all(color: Colors.white)),
+                    child: Icon(
+                      Icons.create,
+                      size: a.width / 12,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+              onTap: () {
+                dialog();
+              },
+            ),
+          ),
           Positioned(
             top: 0,
             left: 0,
@@ -207,12 +214,7 @@ class _HomePageState extends State<HomePage> {
             .document(scrap)
             .snapshots(),
         builder: (context, snap) {
-          if (!snap.hasData ||
-              snap.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
+          if (snap.hasData && snap.connectionState == ConnectionState.active) {
             Set mData = {};
             Random rand = Random();
             while (mData.length < 8 &&
@@ -220,7 +222,6 @@ class _HomePageState extends State<HomePage> {
               mData.add(snap.data['Contents']
                   [rand.nextInt(snap.data['Contents'].length)]);
             }
-            print(mData);
             return Center(
               child: Container(
                   height: a.height / 1.4,
@@ -238,6 +239,10 @@ class _HomePageState extends State<HomePage> {
                     ],
                   )),
             );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
         });
   }
@@ -246,105 +251,61 @@ class _HomePageState extends State<HomePage> {
     return showDialog(
         context: context,
         builder: (builder) {
-          return AlertDialog(content: StatefulBuilder(
-            builder: (context, setState) {
-              return Container(
-                height: MediaQuery.of(context).size.height / 2,
-                width: MediaQuery.of(context).size.width / 1.1,
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Radio(
-                          activeColor: Color(0xffEF7D36),
-                          value: 'Analysts',
-                          groupValue: select,
-                          onChanged: (val) {
-                            setState(() {
-                              select = val;
-                            });
-                          },
-                        ),
-                        Text(
-                          'Analysts',
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Radio(
-                          activeColor: Color(0xffEF7D36),
-                          value: 'Diplomats',
-                          groupValue: select,
-                          onChanged: (val) {
-                            setState(() {
-                              select = val;
-                            });
-                          },
-                        ),
-                        Text(
-                          'Diplomats',
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Radio(
-                          activeColor: Color(0xffEF7D36),
-                          value: 'Explorers',
-                          groupValue: select,
-                          onChanged: (val) {
-                            setState(() {
-                              select = val;
-                            });
-                          },
-                        ),
-                        Text(
-                          'Explorers',
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Radio(
-                          activeColor: Color(0xffEF7D36),
-                          value: 'Girl',
-                          groupValue: select,
-                          onChanged: (val) {
-                            setState(() {
-                              select = val;
-                            });
-                          },
-                        ),
-                        Text(
-                          'Girl',
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Radio(
-                          activeColor: Color(0xffEF7D36),
-                          value: 'Sentinels',
-                          groupValue: select,
-                          onChanged: (val) {
-                            setState(() {
-                              select = val;
-                            });
-                          },
-                        ),
-                        Text(
-                          'Sentinels',
-                        ),
-                      ],
-                    ),
-                    butt()
-                  ],
-                ),
-              );
-            },
-          ));
+          return AlertDialog(
+              content: StreamBuilder(
+                  stream: Firestore.instance.collection('Contents').snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData &&
+                        snapshot.connectionState == ConnectionState.active) {
+                      Set head = {};
+                      QuerySnapshot title = snapshot.data;
+                      for (var item in title.documents) {
+                        head.add(item.documentID);
+                      }
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height / 2,
+                            width: MediaQuery.of(context).size.width / 1.1,
+                            child: Column(
+                              children: <Widget>[
+                                Column(
+                                    children: head
+                                        .map((e) => choice(e, setState))
+                                        .toList()),
+                                butt()
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }));
         });
+  }
+
+  Widget choice(String value, StateSetter setState) {
+    return Row(
+      children: <Widget>[
+        Radio(
+          activeColor: Color(0xffEF7D36),
+          value: value,
+          groupValue: select,
+          onChanged: (val) {
+            setState(() {
+              select = val;
+            });
+          },
+        ),
+        Text(
+          value,
+        )
+      ],
+    );
   }
 
   Widget butt() {
