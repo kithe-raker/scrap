@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(bottom: a.width / 10),
               alignment: Alignment.bottomCenter,
               width: a.width,
-              height: a.height / 1.119,
+              height: a.height / 1.1,
               color: Colors.black87,
               child: Container(
                 child: Row(
@@ -39,19 +39,19 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.white,
-                              blurRadius: 10.0,
-                              spreadRadius: 0.0,
+                              color: Color(0xffBFBFBF),
+                              blurRadius: 4.0,
+                              spreadRadius: 1.0,
                               offset: Offset(
                                 0.0,
-                                3.0,
+                                2.0,
                               ),
                             )
                           ],
                           borderRadius: BorderRadius.circular(a.width),
                           color: Colors.white),
                       child: Icon(
-                        Icons.person_add,
+                        Icons.location_on,
                         color: Colors.black,
                         size: a.width / 15,
                       ),
@@ -97,12 +97,12 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.white,
-                              blurRadius: 10.0,
+                              color: Color(0xffBFBFBF),
+                              blurRadius: 4.0,
                               spreadRadius: 0.0,
                               offset: Offset(
                                 0.0,
-                                3.0,
+                                2.0,
                               ),
                             )
                           ],
@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               color: Colors.black,
               width: a.width,
-              height: a.width / 4,
+              height: a.width / 5,
               padding: EdgeInsets.only(
                 top: a.height / 36,
                 right: a.width / 20,
@@ -137,16 +137,15 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                      height: a.width / 5,
+                      height: a.width / 6,
                       alignment: Alignment.center,
-                      child: Text("SCRAP.",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: a.width / 15,
-                          ))),
+                      child: Image.asset(
+                        'assets/SCRAP.png',
+                        width: a.width / 4,
+                      )),
                   Container(
                       height: a.width / 5,
                       alignment: Alignment.center,
@@ -274,7 +273,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  Widget choice(String title,String value, StateSetter setState) {
+  Widget choice(String title, String value, StateSetter setState) {
     return Row(
       children: <Widget>[
         Radio(
@@ -302,8 +301,8 @@ class _HomePageState extends State<HomePage> {
                   StatefulBuilder(builder: (context, StateSetter setState) {
                 Size a = MediaQuery.of(context).size;
                 return Container(
-                  width: a.width / 1.2,
-                  height: a.height / 1.5,
+                  width: a.width,
+                  height: a.height / 1.3,
                   child: ListView(
                     children: <Widget>[
                       Column(
@@ -318,8 +317,8 @@ class _HomePageState extends State<HomePage> {
                                   child: Row(
                                     children: <Widget>[
                                       Container(
-                                        width: a.width / 10,
-                                        height: a.width / 10,
+                                        width: a.width / 15,
+                                        height: a.width / 15,
                                         decoration: BoxDecoration(
                                             border: Border.all(
                                                 color: Colors.white)),
@@ -349,13 +348,51 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(top: a.width / 20),
-                            width: a.width / 1.2,
-                            height: a.width / 1.2,
+                            margin: EdgeInsets.only(top: a.width / 50),
+                            width: a.width / 1,
+                            height: a.height / 2,
                             child: Stack(
                               children: <Widget>[
                                 Container(
-                                  child: Image.asset('assets/paper-readed.png'),
+                                  child: Image.asset(
+                                    'assets/paper-readed.png',
+                                    width: a.width / 1,
+                                    height: a.height / 2,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      left: a.width / 20, top: a.width / 20),
+                                  width: a.width,
+                                  alignment: Alignment.topLeft,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        "เขียนโดย" + " : " + "ใครสักคน",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      Text("เวลา" + " : " + "09.37",
+                                          style: TextStyle(color: Colors.grey))
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  width: a.width,
+                                  height: a.height,
+                                  alignment: Alignment.center,
+                                  child: TextField(
+                                      textAlign: TextAlign.center,style: TextStyle(fontSize: a.width/15),
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: 'เขียนข้อความบางอย่าง',
+                                        hintStyle: TextStyle(
+                                          fontSize: a.width / 15,
+                                          color: Colors.grey,
+                                        ),
+                                      )),
                                 )
                               ],
                             ),
@@ -366,8 +403,8 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
                                 Container(
-                                    width: a.width / 3.5,
-                                    height: a.width / 6.5,
+                                    width: a.width / 4,
+                                    height: a.width / 7,
                                     decoration: BoxDecoration(
                                         color: Colors.grey,
                                         borderRadius:
@@ -379,8 +416,8 @@ class _HomePageState extends State<HomePage> {
                                     )),
                                 InkWell(
                                   child: Container(
-                                    width: a.width / 3.5,
-                                    height: a.width / 6.5,
+                                    width: a.width / 4,
+                                    height: a.width / 7,
                                     decoration: BoxDecoration(
                                         color: Colors.grey,
                                         borderRadius:
@@ -463,7 +500,7 @@ class _HomePageState extends State<HomePage> {
                                         BorderRadius.circular(a.width / 10),
                                     color: Colors.black,
                                   ),
-                                  width: a.width / 2,
+                                  width: a.width / 1.7,
                                   height: a.width / 7,
                                 ),
                               ],
