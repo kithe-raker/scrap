@@ -51,30 +51,37 @@ class _ProfileState extends State<Profile> {
                 ),
                 Container(
                   margin: EdgeInsets.only(top: a.width / 10),
-                  child: CircleAvatar(
-                    maxRadius: a.width / 5,
-                  ),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(a.width),
+                      border: Border.all(
+                          color: Colors.white, width: a.width / 150)),
+                  width: a.width / 3,
+                  height: a.width / 3,
+                  child: Image.asset("assets/userprofile.png"),
                 ),
                 Container(
                     margin: EdgeInsets.only(top: a.width / 15),
                     child: Text(
                       "@vinatsataporn",
                       style: TextStyle(
-                          color: Colors.white, fontSize: a.width / 20),
+                          color: Colors.white, fontSize: a.width / 12),
                     )),
                 Container(
-                    margin: EdgeInsets.only(top: a.width / 25),
+                    margin: EdgeInsets.only(top: a.width / 1000),
                     child: Text(
                       "+66-633038380",
                       style: TextStyle(
-                          color: Colors.white, fontSize: a.width / 25),
+                          color: Colors.white, fontSize: a.width / 15),
                     )),
                 Container(
                   margin: EdgeInsets.only(top: a.width / 30),
                   padding: EdgeInsets.only(top: a.width / 10),
                   height: a.width / 2.5,
                   decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.white))),
+                      border: Border(
+                          bottom: BorderSide(
+                              width: a.width / 1000, color: Colors.white))),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
@@ -85,7 +92,7 @@ class _ProfileState extends State<Profile> {
                               "12",
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: a.width / 12,
+                                  fontSize: a.width / 10,
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
@@ -103,7 +110,7 @@ class _ProfileState extends State<Profile> {
                               "41",
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: a.width / 12,
+                                  fontSize: a.width / 10,
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
@@ -121,7 +128,7 @@ class _ProfileState extends State<Profile> {
                               "9",
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: a.width / 12,
+                                  fontSize: a.width / 10,
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
@@ -136,24 +143,31 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
                 Container(
-                  height: a.width / 1.5,
+                  height: a.width / 1.8,
                   width: a.width,
                   decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.white))),
+                      border: Border(
+                          bottom: BorderSide(
+                    color: Colors.white,
+                    width: a.width / 1000,
+                  ))),
                   alignment: Alignment.topLeft,
                   child: Column(
                     children: <Widget>[
                       Container(
+                        width: a.width,
                         padding: EdgeInsets.only(top: a.width / 20),
                         child: Text(
                           "โดนปาใส่ล่าสุด",
                           style: TextStyle(
-                              color: Colors.white, fontSize: a.width / 18),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: a.width / 18),
                         ),
                       ),
                       Container(
                         width: a.width,
-                        height: a.height / 4.2,
+                        height: a.height / 5,
                         child: StreamBuilder(
                             stream: Firestore.instance
                                 .collection('User')
@@ -206,14 +220,18 @@ class _ProfileState extends State<Profile> {
                         child: Text(
                           "กระดาษที่เก็บไว้",
                           style: TextStyle(
-                              color: Colors.white, fontSize: a.width / 18),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: a.width / 18),
                         ),
                       ),
                       Container(
                         child: Text(
                           "15" + " แผ่น",
                           style: TextStyle(
-                              color: Colors.white, fontSize: a.width / 18),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: a.width / 18),
                         ),
                       )
                     ],
