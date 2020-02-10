@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/pattern.dart';
 
@@ -162,13 +165,39 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+          StreamBuilder(
+              stream: Firestore.instance
+                  .collection('Contents')
+                  .document('FunnyQuote')
+                  .snapshots(),
+              builder: (context, snap) {
+                if (!snap.hasData ||
+                    snap.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  Set mData = {};
+                  Random rand = Random();
+                  while (mData.length < 8) {
+                    mData.add(snap.data['Content']
+                        [rand.nextInt(snap.data['Content'].length)]);
+                  }
+                  return Center(
+                    child: Container(
+                        height: a.height / 1.4,
+                        width: a.width,
+                        child: PatternScrap(data: mData.toList())),
+                  );
+                }
+              }),
           Center(
-            child: Container(
-                height: a.height / 1.4,
-                width: a.width,
-                child: PatternScrap(
-                    data: ['1', '2', '3', '4', '5', '6', '7', '8'])),
-          ),
+            child: Image.asset(
+              './assets/yourlocation-icon-xl.png',
+              height: a.height / 9,
+              fit: BoxFit.cover,
+            ),
+          )
         ],
       ),
     );
@@ -230,19 +259,18 @@ class _HomePageState extends State<HomePage> {
                               ],
                             ),
                           ),
-                          // Container(
-                          //   margin: EdgeInsets.only(top: a.width / 20),
-                          //   width: a.width / 1.2,
-                          //   height: a.width / 1.2,
-                          //   child: Stack(
-                          //     children: <Widget>[
-                          //       Container(
-                          //         child: Image.asset(
-                          //             'assets/images/paper-readed.png'),
-                          //       )
-                          //     ],
-                          //   ),
-                          // ),
+                          Container(
+                            margin: EdgeInsets.only(top: a.width / 20),
+                            width: a.width / 1.2,
+                            height: a.width / 1.2,
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  child: Image.asset('assets/paper-readed.png'),
+                                )
+                              ],
+                            ),
+                          ),
                           Container(
                             margin: EdgeInsets.only(top: a.width / 10),
                             child: Row(
