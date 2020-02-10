@@ -15,7 +15,10 @@ class _LongPaperState extends State<LongPaper> {
         margin: EdgeInsets.only(right: a.width / 15, top: a.width / 20),
         width: a.width / 1.5,
         height: a.width / 4,
-        color: Colors.white,
+        decoration: BoxDecoration(image: DecorationImage(
+      image: AssetImage('assets/paper-readed.png'),
+      fit: BoxFit.cover,
+    ),),
         child: Stack(
           children: <Widget>[
             Container(
