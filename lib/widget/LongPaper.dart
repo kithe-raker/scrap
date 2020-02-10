@@ -16,6 +16,7 @@ class _LongPaperState extends State<LongPaper> {
         color: Colors.white,
         child: Stack(
           children: <Widget>[
+            
             Container(
               padding: EdgeInsets.all(a.width / 40),
               width: a.width,
@@ -38,12 +39,16 @@ class _LongPaperState extends State<LongPaper> {
                   )
                 ],
               ),
-            ),Container(
-              
+            ),
+            Container(
               width: a.width,
               height: a.width,
               alignment: Alignment.center,
-              child: Text("กินเหล้ามันขม",style: TextStyle(fontSize: a.width/15),),)
+              child: Text(
+                "กินเหล้ามันขม",
+                style: TextStyle(fontSize: a.width / 15),
+              ),
+            )
           ],
         ));
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/widget/CreatePaper.dart';
 
 import 'Profile.dart';
 
@@ -228,19 +229,12 @@ class _HomePageState extends State<HomePage> {
                               ],
                             ),
                           ),
-                          // Container(
-                          //   margin: EdgeInsets.only(top: a.width / 20),
-                          //   width: a.width / 1.2,
-                          //   height: a.width / 1.2,
-                          //   child: Stack(
-                          //     children: <Widget>[
-                          //       Container(
-                          //         child: Image.asset(
-                          //             'assets/images/paper-readed.png'),
-                          //       )
-                          //     ],
-                          //   ),
-                          // ),
+                          Container(
+                            margin: EdgeInsets.only(top: a.width / 20),
+                            width: a.width / 1.2,
+                            height: a.width / 1.2,
+                            child: CreatePaper()
+                          ),
                           Container(
                             margin: EdgeInsets.only(top: a.width / 10),
                             child: Row(
