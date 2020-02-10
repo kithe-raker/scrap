@@ -12,6 +12,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String type;
+  String select;
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -105,10 +108,13 @@ class _HomePageState extends State<HomePage> {
                           ],
                           borderRadius: BorderRadius.circular(a.width),
                           color: Color(0xff26A4FF)),
-                      child: Icon(
-                        Icons.refresh,
+                      child: IconButton(
+                        icon: Icon(Icons.refresh),
                         color: Colors.white,
-                        size: a.width / 15,
+                        iconSize: a.width / 15,
+                        onPressed: () {
+                          selectDialog(setState);
+                        },
                       ),
                     ),
                   ],
@@ -116,6 +122,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+          changeScrap(type, a),
           Positioned(
             top: 0,
             left: 0,
@@ -165,41 +172,123 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          StreamBuilder(
-              stream: Firestore.instance
-                  .collection('Contents')
-                  .document('FunnyQuote')
-                  .snapshots(),
-              builder: (context, snap) {
-                if (!snap.hasData ||
-                    snap.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else {
-                  Set mData = {};
-                  Random rand = Random();
-                  while (mData.length < 8) {
-                    mData.add(snap.data['Content']
-                        [rand.nextInt(snap.data['Content'].length)]);
-                  }
-                  return Center(
-                    child: Container(
-                        height: a.height / 1.4,
-                        width: a.width,
-                        child: PatternScrap(data: mData.toList())),
-                  );
-                }
-              }),
-          Center(
-            child: Image.asset(
-              './assets/yourlocation-icon-xl.png',
-              height: a.height / 9,
-              fit: BoxFit.cover,
-            ),
-          )
         ],
       ),
+    );
+  }
+
+  Widget changeScrap(String scraps, Size a) {
+    switch (scraps) {
+      case 'Analysts':
+        return scrapPatt(a, 'Analysts');
+        break;
+      case 'Diplomats':
+        return scrapPatt(a, 'Diplomats');
+        break;
+      case 'Explorers':
+        return scrapPatt(a, 'Explorers');
+        break;
+      case 'Girl':
+        return scrapPatt(a, 'Girl');
+        break;
+      case 'Sentinels':
+        return scrapPatt(a, 'Sentinels');
+        break;
+      default:
+        return scrapPatt(a, 'Analysts');
+        break;
+    }
+  }
+
+  scrapPatt(Size a, String scrap) {
+    return StreamBuilder(
+        stream: Firestore.instance
+            .collection('Contents')
+            .document(scrap)
+            .snapshots(),
+        builder: (context, snap) {
+          if (!snap.hasData ||
+              snap.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            Set mData = {};
+            Random rand = Random();
+            while (mData.length < 8 &&
+                mData.length != snap.data['Contents'].length) {
+              mData.add(snap.data['Contents']
+                  [rand.nextInt(snap.data['Contents'].length)]);
+            }
+            print(mData);
+            return Center(
+              child: Container(
+                  height: a.height / 1.4,
+                  width: a.width,
+                  child: Stack(
+                    children: <Widget>[
+                      PatternScrap(data: mData.toList()),
+                      Center(
+                        child: Image.asset(
+                          './assets/yourlocation-icon-xl.png',
+                          height: a.height / 9,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    ],
+                  )),
+            );
+          }
+        });
+  }
+
+  selectDialog(StateSetter setState) {
+    return showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(content: StatefulBuilder(
+            builder: (context, setState) {
+              return Container(
+                height: MediaQuery.of(context).size.height / 2,
+                width: MediaQuery.of(context).size.width / 1.1,
+                child: Column(
+                  children: <Widget>[
+                    choice('Analysts', 'Analysts', setState),
+                    choice('Diplomats', 'Diplomats', setState),
+                    choice('Explorers', 'Explorers', setState),
+                    choice('Girl', 'Girl', setState),
+                    choice('Sentinels', 'Sentinels', setState),
+                    RaisedButton(
+                        child: Text('ok'),
+                        onPressed: () {
+                          type = select;
+                          setState(() {});
+                          print(type);
+                          Navigator.pop(context);
+                        })
+                  ],
+                ),
+              );
+            },
+          ));
+        });
+  }
+
+  Widget choice(String title,String value, StateSetter setState) {
+    return Row(
+      children: <Widget>[
+        Radio(
+          activeColor: Color(0xffEF7D36),
+          value: value,
+          groupValue: select,
+          onChanged: (val) {
+            setState(() {
+              select = val;
+            });
+          },
+        ),
+        Text(title)
+      ],
     );
   }
 
