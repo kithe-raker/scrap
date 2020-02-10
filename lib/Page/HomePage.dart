@@ -329,7 +329,7 @@ class _HomePageState extends State<HomePage> {
                   StatefulBuilder(builder: (context, StateSetter setState) {
                 Size a = MediaQuery.of(context).size;
                 return Container(
-                  width: a.width,
+                  width: a.height,
                   height: a.height / 1.3,
                   child: ListView(
                     children: <Widget>[
@@ -338,7 +338,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           children: <Widget>[
                             Container(
-                              width: a.width,
+                              width: a.height,
                               alignment: Alignment.topRight,
                               child: Row(
                                 mainAxisAlignment:
@@ -494,6 +494,7 @@ class _HomePageState extends State<HomePage> {
                                               fontSize: a.width / 15)),
                                     ),
                                     onTap: () {
+                                      Navigator.pop(context);
                                       dialog2();
                                     },
                                   )
@@ -532,19 +533,17 @@ class _HomePageState extends State<HomePage> {
                               children: <Widget>[
                                 InkWell(
                                   child: Icon(Icons.arrow_back,
-                                      size: a.width / 10, color: Colors.white),
+                                      size: a.width / 15, color: Colors.white),
                                   onTap: () {
                                     Navigator.pop(context);
+                                    dialog();
                                   },
                                 ),
                                 InkWell(
                                   child: Icon(Icons.clear,
-                                      size: a.width / 10, color: Colors.white),
+                                      size: a.width / 15, color: Colors.white),
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => HomePage()));
+                                    Navigator.pop(context);
                                   },
                                 )
                               ],
@@ -553,7 +552,7 @@ class _HomePageState extends State<HomePage> {
                           Container(
                             margin: EdgeInsets.only(top: a.width / 20),
                             width: a.width / 1.1,
-                            height: a.width,
+                            height: a.height/1.7,
                             decoration: BoxDecoration(
                                 color: Colors.grey,
                                 borderRadius:
@@ -569,6 +568,18 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   width: a.width / 1.7,
                                   height: a.width / 7,
+                                  child: Container(margin: EdgeInsets.only(left: a.width/20),
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: '@someone',
+                                        hintStyle: TextStyle(
+                                          fontSize: a.width / 15,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
