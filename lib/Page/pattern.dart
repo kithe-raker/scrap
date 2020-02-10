@@ -10,7 +10,7 @@ class PatternScrap extends StatefulWidget {
 }
 
 class _PatternScrapState extends State<PatternScrap> {
-  int b = 1;
+  int b = 0;
   List mData = [];
   Random rnd = Random();
   Map<int, List<double>> patternTop = {
@@ -57,13 +57,117 @@ class _PatternScrapState extends State<PatternScrap> {
         ],
       ),
       onTap: () {
-        print('object');
+        dialog(e);
         setState(() {
-          //patternTop[0].re
+          patternTop[0].removeAt(mData.indexOf(e));
+          patternLeft[0].removeAt(mData.indexOf(e));
           mData.remove(e);
         });
       },
     ));
+  }
+
+  dialog(String text) {
+    return showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+              contentPadding: EdgeInsets.all(0),
+              backgroundColor: Colors.transparent,
+              content:
+                  StatefulBuilder(builder: (context, StateSetter setState) {
+                Size a = MediaQuery.of(context).size;
+                return Container(
+                  width: a.width,
+                  height: a.height / 1.76,
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        width: a.width,
+                        child: Image.asset(
+                          'assets/paper-readed.png',
+                          width: a.width,
+                          height: a.height / 2.1,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                          top: 12,
+                          left: 12,
+                          child: Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text('เขียนโดย : ใครสักคน'),
+                                Text('เวลา : 9:00')
+                              ],
+                            ),
+                          )),
+                      Positioned(
+                        bottom: 0,
+                        child: Container(
+                          width: a.width / 1.2,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              InkWell(
+                                child: Container(
+                                  width: a.width / 3.5,
+                                  height: a.width / 6.5,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                  alignment: Alignment.center,
+                                  child: Text("เก็บไว้",
+                                      style: TextStyle(
+                                          fontSize: a.width / 15,
+                                          color: Color(0xff26A4FF))),
+                                ),
+                                onTap: () {
+                                  // dialog2();
+                                },
+                              ),
+                              InkWell(
+                                child: Container(
+                                  width: a.width / 3.5,
+                                  height: a.width / 6.5,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "ทิ้งไว้",
+                                    style: TextStyle(fontSize: a.width / 15),
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                          left: a.width / 16,
+                          top: a.height / 12,
+                          child: Container(
+                            alignment: Alignment.center,
+                     
+                            height: a.height / 3.2,
+                            width: a.width / 1.48,
+                            child: Text(
+                              text,
+                              style: TextStyle(fontSize: a.width / 14),
+                            ),
+                          ))
+                    ],
+                  ),
+                );
+              }));
+        });
   }
 }
 
