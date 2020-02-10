@@ -1,5 +1,8 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/widget/CreatePaper.dart';
+import 'package:scrap/Page/pattern.dart';
 
 import 'Profile.dart';
 
@@ -113,12 +116,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          Center(
-            child: Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
           Positioned(
             top: 0,
             left: 0,
@@ -168,6 +165,39 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+          StreamBuilder(
+              stream: Firestore.instance
+                  .collection('Contents')
+                  .document('FunnyQuote')
+                  .snapshots(),
+              builder: (context, snap) {
+                if (!snap.hasData ||
+                    snap.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  Set mData = {};
+                  Random rand = Random();
+                  while (mData.length < 8) {
+                    mData.add(snap.data['Content']
+                        [rand.nextInt(snap.data['Content'].length)]);
+                  }
+                  return Center(
+                    child: Container(
+                        height: a.height / 1.4,
+                        width: a.width,
+                        child: PatternScrap(data: mData.toList())),
+                  );
+                }
+              }),
+          Center(
+            child: Image.asset(
+              './assets/yourlocation-icon-xl.png',
+              height: a.height / 9,
+              fit: BoxFit.cover,
+            ),
+          )
         ],
       ),
     );
@@ -233,7 +263,13 @@ class _HomePageState extends State<HomePage> {
                             margin: EdgeInsets.only(top: a.width / 20),
                             width: a.width / 1.2,
                             height: a.width / 1.2,
-                            child: CreatePaper()
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  child: Image.asset('assets/paper-readed.png'),
+                                )
+                              ],
+                            ),
                           ),
                           Container(
                             margin: EdgeInsets.only(top: a.width / 10),
