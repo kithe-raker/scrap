@@ -135,6 +135,7 @@ class _HomePageState extends State<HomePage> {
             top: 0,
             left: 0,
             child: Container(
+              // ส่วนของ แทบสีดำด้านบน
               color: Colors.black,
               width: a.width,
               height: a.width / 5,
@@ -147,6 +148,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  //Logo
                   Container(
                       height: a.width / 6,
                       alignment: Alignment.center,
@@ -154,6 +156,7 @@ class _HomePageState extends State<HomePage> {
                         'assets/SCRAP.png',
                         width: a.width / 4,
                       )),
+                  //ส่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
                   Container(
                       height: a.width / 5,
                       alignment: Alignment.center,
@@ -172,7 +175,8 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Profile()));
+                                  builder: (context) =>
+                                      Profile())); //ไปยังหน้า Profile
                         },
                       ))
                 ],
@@ -269,10 +273,15 @@ class _HomePageState extends State<HomePage> {
                             width: MediaQuery.of(context).size.width / 1.1,
                             child: Column(
                               children: <Widget>[
-                                Column(
-                                    children: head
-                                        .map((e) => choice(e, setState))
-                                        .toList()),
+                                Container(
+                            
+                                  width: MediaQuery.of(context).size.height / 1.5,
+                                  height: MediaQuery.of(context).size.width / 1.5,
+                                  child: ListView(
+                                      children: head
+                                          .map((e) => choice(e, setState))
+                                          .toList()),
+                                ),
                                 butt()
                               ],
                             ),
@@ -319,6 +328,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
+//ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี้ขึ้นมาไว้สร้าง Contents
   dialog() {
     return showDialog(
         context: context,
@@ -329,7 +339,6 @@ class _HomePageState extends State<HomePage> {
                   StatefulBuilder(builder: (context, StateSetter setState) {
                 Size a = MediaQuery.of(context).size;
                 return Container(
-                 
                   width: a.height,
                   height: a.height / 1.3,
                   child: ListView(
@@ -345,6 +354,7 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
+                                  //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
                                   Container(
                                     child: Row(
                                       children: <Widget>[
@@ -352,13 +362,15 @@ class _HomePageState extends State<HomePage> {
                                           width: a.width / 15,
                                           height: a.width / 15,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(a.width/50),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      a.width / 50),
                                               border: Border.all(
                                                   color: Colors.white)),
                                         ),
                                         Container(
                                           child: Text(
-                                            "   เปิดเผยตัวตน",
+                                            "\t"+"เปิดเผยตัวตน",
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: a.width / 20),
@@ -367,6 +379,7 @@ class _HomePageState extends State<HomePage> {
                                       ],
                                     ),
                                   ),
+                                  //ออกจากหน้านี้
                                   InkWell(
                                     child: Icon(
                                       Icons.clear,
@@ -380,13 +393,16 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
+                            //ส่วนของกระดาษที่เขียน
                             Container(
                               margin: EdgeInsets.only(top: a.width / 50),
                               width: a.width / 1,
                               height: a.height / 2,
+                              //ทำเป็นชั้นๆ 
                               child: Stack(
                                 children: <Widget>[
-                                  Container( 
+                              //ชั้นที่ 1 ส่วนของกระดาษ
+                                  Container(
                                     child: Image.asset(
                                       'assets/paper-readed.png',
                                       width: a.width / 1,
@@ -394,6 +410,7 @@ class _HomePageState extends State<HomePage> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
+                                  //ชั้นที่ 2 
                                   Container(
                                     margin: EdgeInsets.only(
                                         left: a.width / 20, top: a.width / 20),
@@ -413,35 +430,34 @@ class _HomePageState extends State<HomePage> {
                                       ],
                                     ),
                                   ),
-                                  // Form(
-                                  //     key: _key,
-                                  //     child:
+                                  //ชั้นที่ 3 เอาไว้สำหรับเขียนข้อความ
                                   Container(
                                     width: a.width,
                                     height: a.height,
                                     alignment: Alignment.center,
                                     child: SizedBox(
-                                      width: a.width/3,
+                                      width: a.width / 3,
                                       child: TextFormField(
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: a.width / 15),
+                                        textAlign: TextAlign.center, //เพื่อให้ข้อความอยู่ตรงกลาง
+                                        style:
+                                            TextStyle(fontSize: a.width / 15),
                                         maxLines: null,
                                         decoration: InputDecoration(
-                                          border: InputBorder.none,
+                                          border: InputBorder.none, //สำหรับใหเส้นใต้หาย
                                           hintText: 'เขียนข้อความบางอย่าง',
-                                          
                                           hintStyle: TextStyle(
-
                                             fontSize: a.width / 25,
                                             color: Colors.grey,
                                           ),
                                         ),
+                                        //หากไม่ได้กรอกจะขึ้น
                                         validator: (val) {
                                           return val.trim() == null ||
                                                   val.trim() == ""
                                               ? 'กรอกค่ะ'
                                               : null;
                                         },
+                                        //เนื้อหาที่กรอกเข้าไปใน text
                                         onChanged: (val) {
                                           text = val;
                                         },
@@ -488,6 +504,7 @@ class _HomePageState extends State<HomePage> {
                                       }
                                     },
                                   ),
+                                  //ปุ่มปาใส่
                                   InkWell(
                                     child: Container(
                                       width: a.width / 4.5,
@@ -501,8 +518,9 @@ class _HomePageState extends State<HomePage> {
                                           style: TextStyle(
                                               fontSize: a.width / 15)),
                                     ),
+                                    //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
                                     onTap: () {
-                                      Navigator.pop(context);
+                                      Navigator.pop(context); 
                                       dialog2();
                                     },
                                   )
