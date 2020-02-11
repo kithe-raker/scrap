@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class PatternScrap extends StatefulWidget {
@@ -124,8 +125,14 @@ class _PatternScrapState extends State<PatternScrap> {
                                           fontSize: a.width / 15,
                                           color: Color(0xff26A4FF))),
                                 ),
-                                onTap: () {
-                                  // dialog2();
+                                onTap: () async {
+                                  Navigator.pop(context);
+                                  await Firestore.instance
+                                      .collection('User')
+                                      .document('scraps')
+                                      .updateData({
+                                    'collects': FieldValue.arrayUnion([text])
+                                  });
                                 },
                               ),
                               InkWell(

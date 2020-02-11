@@ -168,7 +168,7 @@ class _ProfileState extends State<Profile> {
                       ),
                       Container(
                         width: a.width,
-                        height: a.height / 5,
+                        height: a.height / 5.2,
                         child: StreamBuilder(
                             stream: Firestore.instance
                                 .collection('User')
