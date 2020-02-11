@@ -269,10 +269,15 @@ class _HomePageState extends State<HomePage> {
                             width: MediaQuery.of(context).size.width / 1.1,
                             child: Column(
                               children: <Widget>[
-                                Column(
-                                    children: head
-                                        .map((e) => choice(e, setState))
-                                        .toList()),
+                                Container(
+                            
+                                  width: MediaQuery.of(context).size.height / 1.5,
+                                  height: MediaQuery.of(context).size.width / 1.5,
+                                  child: ListView(
+                                      children: head
+                                          .map((e) => choice(e, setState))
+                                          .toList()),
+                                ),
                                 butt()
                               ],
                             ),
