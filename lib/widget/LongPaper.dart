@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class LongPaper extends StatefulWidget {
@@ -15,10 +16,12 @@ class _LongPaperState extends State<LongPaper> {
         margin: EdgeInsets.only(right: a.width / 15, top: a.width / 20),
         width: a.width / 1.5,
         height: a.width / 4,
-        decoration: BoxDecoration(image: DecorationImage(
-      image: AssetImage('assets/paper-readed.png'),
-      fit: BoxFit.cover,
-    ),),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/paper-readed.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Stack(
           children: <Widget>[
             Container(
@@ -36,10 +39,18 @@ class _LongPaperState extends State<LongPaper> {
                       Text("เวลา : " + "11.11"),
                     ],
                   ),
-                  Icon(
-                    Icons.delete,
+                  IconButton(
+                    icon: Icon(Icons.delete),
                     color: Colors.black,
-                    size: a.width / 12,
+                    iconSize: a.width / 12,
+                    onPressed: () async {
+                      await Firestore.instance
+                          .collection('User')
+                          .document('scraps')
+                          .updateData({
+                        'collects': FieldValue.arrayRemove([widget.text])
+                      });
+                    },
                   )
                 ],
               ),
