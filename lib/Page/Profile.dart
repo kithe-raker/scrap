@@ -10,6 +10,7 @@ class Profile extends StatefulWidget {
 
 //หน้า Account 
 class _ProfileState extends State<Profile> {
+  int page;
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -219,62 +220,66 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: a.width / 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          "กระดาษที่เก็บไว้",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: a.width / 18),
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          "15" + " แผ่น",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: a.width / 18),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  width: a.width,
-                  height: a.width / 1,
-                  child: StreamBuilder(
-                      stream: Firestore.instance
-                          .collection('User')
-                          .document('scraps')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData &&
-                            snapshot.connectionState ==
-                                ConnectionState.active) {
-                          return ListView.builder(
-                            itemCount: snapshot.data['collects'].length,
-                            scrollDirection: Axis.horizontal,
-                            //  children: <Widget>[LongPaper(), LongPaper()],
-                            itemBuilder: (context, index) {
-                              String text = snapshot.data['collects'][index];
-                              return LongPaper(
-                                text: text,
-                              );
-                            },
-                          );
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }),
-                )
+                StreamBuilder(
+                    stream: Firestore.instance
+                        .collection('User')
+                        .document('scraps')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData &&
+                          snapshot.connectionState == ConnectionState.active) {
+                        return Column(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(top: a.width / 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    child: Text(
+                                      "กระดาษที่เก็บไว้",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: a.width / 18),
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Text(
+                                      snapshot.data['collects'].length
+                                              .toString() ??
+                                          '0' + " แผ่น",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: a.width / 18),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                                width: a.width,
+                                height: a.width / 1,
+                                child: ListView.builder(
+                                  itemCount: snapshot.data['collects'].length,
+                                  scrollDirection: Axis.horizontal,
+                                  //  children: <Widget>[LongPaper(), LongPaper()],
+                                  itemBuilder: (context, index) {
+                                    String text =
+                                        snapshot.data['collects'][index];
+                                    return LongPaper(
+                                      text: text,
+                                    );
+                                  },
+                                ))
+                          ],
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    })
               ],
             ),
           ),
@@ -362,7 +367,7 @@ class _ProfileState extends State<Profile> {
                                           BorderRadius.circular(a.width)),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "ทิ้งไว้",
+                                    "ทิ้ง",
                                     style: TextStyle(fontSize: a.width / 15),
                                   ),
                                 ),

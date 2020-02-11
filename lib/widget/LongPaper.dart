@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class LongPaper extends StatefulWidget {
@@ -39,10 +40,18 @@ class _LongPaperState extends State<LongPaper> {
                       Text("เวลา : " + "11.11"),
                     ],
                   ),
-                  Icon(
-                    Icons.delete,
+                  IconButton(
+                    icon: Icon(Icons.delete),
                     color: Colors.black,
-                    size: a.width / 12,
+                    iconSize: a.width / 12,
+                    onPressed: () async {
+                      await Firestore.instance
+                          .collection('User')
+                          .document('scraps')
+                          .updateData({
+                        'collects': FieldValue.arrayRemove([widget.text])
+                      });
+                    },
                   )
                 ],
               ),
