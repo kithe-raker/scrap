@@ -8,6 +8,7 @@ class Profile extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
 }
 
+//หน้า Account 
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,10 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ),
+                // ||
+                // ||   เป็นส่วนของรูปภาพ Profile
+                //\  /
+                // \/
                 Container(
                   margin: EdgeInsets.only(top: a.width / 10),
                   decoration: BoxDecoration(
@@ -58,8 +63,9 @@ class _ProfileState extends State<Profile> {
                           color: Colors.white, width: a.width / 150)),
                   width: a.width / 3,
                   height: a.width / 3,
-                  child: Image.asset("assets/userprofile.png"),
+                  child: Image.asset("assets/userprofile.png"), 
                 ),
+                // ชื่อของ account
                 Container(
                     margin: EdgeInsets.only(top: a.width / 15),
                     child: Text(
@@ -67,6 +73,7 @@ class _ProfileState extends State<Profile> {
                       style: TextStyle(
                           color: Colors.white, fontSize: a.width / 12),
                     )),
+                // เบอร์โทรของ Account
                 Container(
                     margin: EdgeInsets.only(top: a.width / 1000),
                     child: Text(
@@ -74,6 +81,7 @@ class _ProfileState extends State<Profile> {
                       style: TextStyle(
                           color: Colors.white, fontSize: a.width / 15),
                     )),
+                // ใส่ Container เพื่อสร้างกรอบ
                 Container(
                   margin: EdgeInsets.only(top: a.width / 30),
                   padding: EdgeInsets.only(top: a.width / 10),
@@ -81,12 +89,12 @@ class _ProfileState extends State<Profile> {
                   decoration: BoxDecoration(
                       border: Border(
                           bottom: BorderSide(
-                              width: a.width / 1000, color: Colors.white))),
-                  child: Row(
+                              width: a.width / 1000, color: Colors.white))), //ใส่เส้นด้านใต้สุด
+                  child: Row( // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Container(
-                        child: Column(
+                        child: Column(  //เพื่อใช้สำหรับให้ จำนวน และ เขียน 
                           children: <Widget>[
                             Text(
                               "12",
@@ -106,7 +114,7 @@ class _ProfileState extends State<Profile> {
                       Container(
                         child: Column(
                           children: <Widget>[
-                            Text(
+                            Text(//เพื่อใช้สำหรับให้ จำนวน และ ผู้หยิบอ่าน 
                               "41",
                               style: TextStyle(
                                   color: Colors.white,
@@ -122,7 +130,7 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       Container(
-                        child: Column(
+                        child: Column(//เพื่อใช้สำหรับให้ จำนวน และ โดนปาใส่
                           children: <Widget>[
                             Text(
                               "9",
@@ -168,15 +176,15 @@ class _ProfileState extends State<Profile> {
                       Container(
                         width: a.width,
                         height: a.height / 5,
-                        child: StreamBuilder(
-                            stream: Firestore.instance
+                        child: StreamBuilder( 
+                            stream: Firestore.instance //เข้าไปค้นหาข้อมูลใน (Collection => User )==>(document => scraps) 
                                 .collection('User')
                                 .document('scraps')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&
-                                  snapshot.connectionState ==
-                                      ConnectionState.active) {
+                                  snapshot.connectionState == 
+                                      ConnectionState.active) { 
                                 return GridView.builder(
                                     itemCount: snapshot.data['scraps'].length,
                                     gridDelegate:
@@ -275,6 +283,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+//ส่วนของ กระดาษที่ถูกปาใส่ เมื่อกด 
   dialog(String text) {
     return showDialog(
         context: context,
