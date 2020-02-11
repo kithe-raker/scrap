@@ -329,7 +329,8 @@ class _HomePageState extends State<HomePage> {
                   StatefulBuilder(builder: (context, StateSetter setState) {
                 Size a = MediaQuery.of(context).size;
                 return Container(
-                  width: a.width,
+                 
+                  width: a.height,
                   height: a.height / 1.3,
                   child: ListView(
                     children: <Widget>[
@@ -338,7 +339,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           children: <Widget>[
                             Container(
-                              width: a.width,
+                              width: a.height,
                               alignment: Alignment.topRight,
                               child: Row(
                                 mainAxisAlignment:
@@ -351,6 +352,7 @@ class _HomePageState extends State<HomePage> {
                                           width: a.width / 15,
                                           height: a.width / 15,
                                           decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(a.width/50),
                                               border: Border.all(
                                                   color: Colors.white)),
                                         ),
@@ -384,7 +386,7 @@ class _HomePageState extends State<HomePage> {
                               height: a.height / 2,
                               child: Stack(
                                 children: <Widget>[
-                                  Container(
+                                  Container( 
                                     child: Image.asset(
                                       'assets/paper-readed.png',
                                       width: a.width / 1,
@@ -418,26 +420,32 @@ class _HomePageState extends State<HomePage> {
                                     width: a.width,
                                     height: a.height,
                                     alignment: Alignment.center,
-                                    child: TextFormField(
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: a.width / 15),
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'เขียนข้อความบางอย่าง',
-                                        hintStyle: TextStyle(
-                                          fontSize: a.width / 15,
-                                          color: Colors.grey,
+                                    child: SizedBox(
+                                      width: a.width/3,
+                                      child: TextFormField(
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: a.width / 15),
+                                        maxLines: null,
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: 'เขียนข้อความบางอย่าง',
+                                          
+                                          hintStyle: TextStyle(
+
+                                            fontSize: a.width / 25,
+                                            color: Colors.grey,
+                                          ),
                                         ),
+                                        validator: (val) {
+                                          return val.trim() == null ||
+                                                  val.trim() == ""
+                                              ? 'กรอกค่ะ'
+                                              : null;
+                                        },
+                                        onChanged: (val) {
+                                          text = val;
+                                        },
                                       ),
-                                      validator: (val) {
-                                        return val.trim() == null ||
-                                                val.trim() == ""
-                                            ? 'กรอกค่ะ'
-                                            : null;
-                                      },
-                                      onChanged: (val) {
-                                        text = val;
-                                      },
                                     ),
                                   )
                                   //)
@@ -452,10 +460,10 @@ class _HomePageState extends State<HomePage> {
                                 children: <Widget>[
                                   InkWell(
                                     child: Container(
-                                        width: a.width / 4,
-                                        height: a.width / 7,
+                                        width: a.width / 4.5,
+                                        height: a.width / 8,
                                         decoration: BoxDecoration(
-                                            color: Colors.grey,
+                                            color: Colors.white,
                                             borderRadius:
                                                 BorderRadius.circular(a.width)),
                                         alignment: Alignment.center,
@@ -482,10 +490,10 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   InkWell(
                                     child: Container(
-                                      width: a.width / 4,
-                                      height: a.width / 7,
+                                      width: a.width / 4.5,
+                                      height: a.width / 8,
                                       decoration: BoxDecoration(
-                                          color: Colors.grey,
+                                          color: Colors.white,
                                           borderRadius:
                                               BorderRadius.circular(a.width)),
                                       alignment: Alignment.center,
@@ -494,6 +502,7 @@ class _HomePageState extends State<HomePage> {
                                               fontSize: a.width / 15)),
                                     ),
                                     onTap: () {
+                                      Navigator.pop(context);
                                       dialog2();
                                     },
                                   )
@@ -532,19 +541,17 @@ class _HomePageState extends State<HomePage> {
                               children: <Widget>[
                                 InkWell(
                                   child: Icon(Icons.arrow_back,
-                                      size: a.width / 10, color: Colors.white),
+                                      size: a.width / 15, color: Colors.white),
                                   onTap: () {
                                     Navigator.pop(context);
+                                    dialog();
                                   },
                                 ),
                                 InkWell(
                                   child: Icon(Icons.clear,
-                                      size: a.width / 10, color: Colors.white),
+                                      size: a.width / 15, color: Colors.white),
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => HomePage()));
+                                    Navigator.pop(context);
                                   },
                                 )
                               ],
@@ -553,7 +560,7 @@ class _HomePageState extends State<HomePage> {
                           Container(
                             margin: EdgeInsets.only(top: a.width / 20),
                             width: a.width / 1.1,
-                            height: a.width,
+                            height: a.height / 1.7,
                             decoration: BoxDecoration(
                                 color: Colors.grey,
                                 borderRadius:
@@ -569,6 +576,19 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   width: a.width / 1.7,
                                   height: a.width / 7,
+                                  child: Container(
+                                    margin: EdgeInsets.only(left: a.width / 20),
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: '@someone',
+                                        hintStyle: TextStyle(
+                                          fontSize: a.width / 15,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -577,10 +597,10 @@ class _HomePageState extends State<HomePage> {
                               margin: EdgeInsets.only(top: a.width / 10),
                               child: InkWell(
                                 child: Container(
-                                  width: a.width / 3.5,
-                                  height: a.width / 6.5,
+                                  width: a.width / 4.5,
+                                  height: a.width / 8,
                                   decoration: BoxDecoration(
-                                      color: Colors.grey,
+                                      color: Colors.white,
                                       borderRadius:
                                           BorderRadius.circular(a.width)),
                                   alignment: Alignment.center,

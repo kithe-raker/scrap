@@ -17,11 +17,12 @@ class _LongPaperState extends State<LongPaper> {
         width: a.width / 1.5,
         height: a.width / 4,
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(a.width/30),
           image: DecorationImage(
-            image: AssetImage('assets/paper-readed.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
+
+      image: AssetImage('assets/paper-readed.png'),
+      fit: BoxFit.cover,
+    ),),
         child: Stack(
           children: <Widget>[
             Container(
