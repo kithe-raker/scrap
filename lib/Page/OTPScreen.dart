@@ -142,6 +142,13 @@ class _OTPScreenState extends State<OTPScreen> {
                                   )
                                 ],
                               )),
+                          TextFormField(
+                            decoration: InputDecoration(hintText: 'OTP'),
+                            validator: (val) {
+                              return val.trim() == "" ? 'put pls' : null;
+                            },
+                            onSaved: (val) => veriCode = val,
+                          ),
                           InkWell(
                             child: Container(
                               margin: EdgeInsets.only(top: a.width / 10),

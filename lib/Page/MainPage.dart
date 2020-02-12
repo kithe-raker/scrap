@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/LoginPage.dart';
 import 'package:scrap/Page/creatProfile.dart';
-import 'package:scrap/Page/testMap.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
-
-import 'HomePage.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -59,6 +58,18 @@ class MainStream extends StatefulWidget {
 }
 
 class _MainStreamState extends State<MainStream> {
+  Position currentLocation;
+
+  @override
+  void initState() {
+    Geolocator().getCurrentPosition().then((curlo) {
+      setState(() {
+        currentLocation = curlo;
+      });
+    });
+    super.initState();
+  }
+
   Stream<DocumentSnapshot> userStream(BuildContext context) async* {
     try {
       final uid = await Provider.of(context).auth.currentUser();
@@ -74,13 +85,15 @@ class _MainStreamState extends State<MainStream> {
       body: StreamBuilder(
         stream: userStream(context),
         builder: (context, snap) {
-          if (snap.hasData && snap.connectionState == ConnectionState.active) {
+          if (snap.hasData &&
+              snap.connectionState == ConnectionState.active &&
+              currentLocation != null) {
             return snap.data['id'] == null
                 ? CreateProfile(uid: snap.data['uid'])
-                : TestMap();
-            // HomePage(
-            //     doc: snap.data,
-            //   );
+                : HomePage(
+                    doc: snap.data,
+                    currentLocation: currentLocation,
+                  );
           } else {
             return Center(
               child: CircularProgressIndicator(),

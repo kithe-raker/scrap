@@ -2,19 +2,21 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/pattern.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:scrap/Page/MapScraps.dart';
 
 import 'Profile.dart';
 
 class HomePage extends StatefulWidget {
+  final Position currentLocation;
   final DocumentSnapshot doc;
-  HomePage({@required this.doc});
+  HomePage({@required this.doc, @required this.currentLocation});
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String type,select,text;
+  String type, select, text;
   var _key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
+          scrapPatt(a, type ?? 'Analysts', context),
           Positioned(
             bottom: 0,
             child: Container(
@@ -29,7 +32,6 @@ class _HomePageState extends State<HomePage> {
               alignment: Alignment.bottomCenter,
               width: a.width,
               height: a.height / 1.1,
-              color: Colors.black87,
               child: Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -82,7 +84,8 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.white,
                         iconSize: a.width / 15,
                         onPressed: () {
-                          selectDialog(context);
+                          setState(() {});
+                          // selectDialog(context);
                         },
                       ),
                     ),
@@ -91,7 +94,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          scrapPatt(a, type ?? 'Analysts', context),
           Positioned(
             bottom: a.height / 42,
             left: a.width / 2.8,
@@ -212,37 +214,34 @@ class _HomePageState extends State<HomePage> {
   //   }
   // }
 
+/*
+       Set id = {};
+            List scraps = [];
+            for (var usersID in snap.data['id']) {
+              id.add(usersID);
+              for (var scrap in snap.data['scraps'][usersID]) {
+                scraps.add(scrap);
+              }
+            } */
   scrapPatt(Size a, String scrap, BuildContext context) {
     return StreamBuilder(
         stream: Firestore.instance
-            .collection('Contents')
-            .document(scrap)
+            .collection('Scraps')
+            .document('hatyai')
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
-            Set mData = {};
-            Random rand = Random();
-            while (mData.length < 8 &&
-                mData.length != snap.data['Contents'].length) {
-              mData.add(snap.data['Contents']
-                  [rand.nextInt(snap.data['Contents'].length)]);
+            Set id = {};
+            Map scraps = {};
+            for (var usersID in snap.data['id']) {
+              id.add(usersID);
+              scraps[usersID] = snap.data['scraps'][usersID];
             }
-            return Center(
-              child: Container(
-                  height: a.height / 1.4,
-                  width: a.width,
-                  child: Stack(
-                    children: <Widget>[
-                      PatternScrap(data: mData.toList()),
-                      Center(
-                        child: Image.asset(
-                          './assets/yourlocation-icon-xl.png',
-                          height: a.height / 9,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    ],
-                  )),
+            return MapScraps(
+              currentLocation: widget.currentLocation,
+              users: id.toList(),
+              scraps: scraps,
+              uid: widget.doc['uid'],
             );
           } else {
             return Center(
@@ -331,6 +330,21 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
+  binScrap() async {
+    await Firestore.instance.collection('Scraps').document('hatyai').setData({
+      'id': FieldValue.arrayUnion([widget.doc['uid']]),
+      'scraps': {
+        widget.doc['uid']: FieldValue.arrayUnion([
+          {
+            'lat': widget.currentLocation.latitude,
+            'lng': widget.currentLocation.longitude,
+            'text': text
+          }
+        ])
+      }
+    }, merge: true);
+  }
+
 //ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี้ขึ้นมาไว้สร้าง Contents
   dialog() {
     return showDialog(
@@ -404,7 +418,7 @@ class _HomePageState extends State<HomePage> {
                               //ทำเป็นชั้นๆ
                               child: Stack(
                                 children: <Widget>[
-                                  //ชั้นที่ 1 ส่วนของกระดาษ
+                                  //ชั้นที่ 1 ส่วนของก���ะดาษ
                                   Container(
                                     child: Image.asset(
                                       'assets/paper-readed.png',
@@ -497,13 +511,7 @@ class _HomePageState extends State<HomePage> {
                                       if (_key.currentState.validate()) {
                                         _key.currentState.save();
                                         Navigator.pop(context);
-                                        await Firestore.instance
-                                            .collection('Contents')
-                                            .document('UserWords')
-                                            .updateData({
-                                          'Contents':
-                                              FieldValue.arrayUnion([text])
-                                        });
+                                        await binScrap();
                                       } else {
                                         print('nope');
                                       }
