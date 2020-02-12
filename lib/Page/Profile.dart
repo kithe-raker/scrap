@@ -8,7 +8,7 @@ class Profile extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
 }
 
-//หน้า Account 
+//หน้า Account
 class _ProfileState extends State<Profile> {
   int page;
   @override
@@ -64,7 +64,7 @@ class _ProfileState extends State<Profile> {
                           color: Colors.white, width: a.width / 150)),
                   width: a.width / 3,
                   height: a.width / 3,
-                  child: Image.asset("assets/userprofile.png"), 
+                  child: Image.asset("assets/userprofile.png"),
                 ),
                 // ชื่อของ account
                 Container(
@@ -90,12 +90,15 @@ class _ProfileState extends State<Profile> {
                   decoration: BoxDecoration(
                       border: Border(
                           bottom: BorderSide(
-                              width: a.width / 1000, color: Colors.white))), //ใส่เส้นด้านใต้สุด
-                  child: Row( // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
+                              width: a.width / 1000,
+                              color: Colors.white))), //ใส่เส้นด้านใต้สุด
+                  child: Row(
+                    // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Container(
-                        child: Column(  //เพื่อใช้สำหรับให้ จำนวน และ เขียน 
+                        child: Column(
+                          //เพื่อใช้สำหรับให้ จำนวน และ เขียน
                           children: <Widget>[
                             Text(
                               "12",
@@ -115,7 +118,8 @@ class _ProfileState extends State<Profile> {
                       Container(
                         child: Column(
                           children: <Widget>[
-                            Text(//เพื่อใช้สำหรับให้ จำนวน และ ผู้หยิบอ่าน 
+                            Text(
+                              //เพื่อใช้สำหรับให้ จำนวน และ ผู้หยิบอ่าน
                               "41",
                               style: TextStyle(
                                   color: Colors.white,
@@ -131,7 +135,8 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       Container(
-                        child: Column(//เพื่อใช้สำหรับให้ จำนวน และ โดนปาใส่
+                        child: Column(
+                          //เพื่อใช้สำหรับให้ จำนวน และ โดนปาใส่
                           children: <Widget>[
                             Text(
                               "9",
@@ -152,7 +157,6 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
                 Container(
-                  height: a.height / 3.5,
                   width: a.width,
                   decoration: BoxDecoration(
                       border: Border(
@@ -176,7 +180,6 @@ class _ProfileState extends State<Profile> {
                       ),
                       Container(
                         width: a.width,
-                        height: a.height / 4.4,
                         child: StreamBuilder(
                             stream: Firestore.instance
                                 .collection('User')
@@ -184,33 +187,14 @@ class _ProfileState extends State<Profile> {
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&
-                                  snapshot.connectionState == 
-                                      ConnectionState.active) { 
-                                return GridView.builder(
-                                    itemCount: snapshot.data['scraps'].length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 4,
-                                     //childAspectRatio: 2,
-                                    ),
-                                    itemBuilder: (context, index) {
-                                      String data =
-                                          snapshot.data['scraps'][index];
-                                      return Container(
-                                        padding: EdgeInsets.all(a.width/32),
-                                        child: InkWell(
-                                          child: Image.asset(
-                                            './assets/paper.png',
-                                            width: a.width / 4.1,
-                                            height: a.width / 4.1,
-                                            fit: BoxFit.cover,
-                                          ),
-                                          onTap: () {
-                                            dialog(data);
-                                          },
-                                        ),
-                                      );
-                                    });
+                                  snapshot.connectionState ==
+                                      ConnectionState.active) {
+                                List data = snapshot.data['scraps'];
+                                return Wrap(
+                                    children: data
+                                        .map((text) =>
+                                            scrap(a, data[data.indexOf(text)]))
+                                        .toList());
                               } else {
                                 return Center(
                                   child: CircularProgressIndicator(),
@@ -266,8 +250,9 @@ class _ProfileState extends State<Profile> {
                                   scrollDirection: Axis.horizontal,
                                   //  children: <Widget>[LongPaper(), LongPaper()],
                                   itemBuilder: (context, index) {
-                                    String text =
-                                        snapshot.data['collects'][index];
+                                    String text = snapshot.data['collects'][
+                                        snapshot.data['collects'].length -
+                                            (++index)];
                                     return LongPaper(
                                       text: text,
                                     );
@@ -289,7 +274,24 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-//ส่วนของ กระดาษที่ถูกปาใส่ เมื่อกด 
+  Widget scrap(Size a, String data) {
+    return Container(
+      padding: EdgeInsets.all(a.width / 32),
+      child: InkWell(
+        child: Image.asset(
+          './assets/paper.png',
+          width: a.width / 6.4,
+          height: a.width / 6.4,
+          fit: BoxFit.cover,
+        ),
+        onTap: () {
+          dialog(data);
+        },
+      ),
+    );
+  }
+
+//ส่วนของ กระดาษที่ถูกปาใส่ เมื่อกด
   dialog(String text) {
     return showDialog(
         context: context,
