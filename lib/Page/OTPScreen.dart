@@ -20,7 +20,7 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   var _key = GlobalKey<FormState>();
-  String veriCode;
+  String veriCode ;
 
   register() async {
     var authCredential = PhoneAuthProvider.getCredential(
