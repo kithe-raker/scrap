@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/LoginPage.dart';
 import 'package:scrap/Page/creatProfile.dart';
+import 'package:scrap/Page/testMap.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 
@@ -76,9 +77,10 @@ class _MainStreamState extends State<MainStream> {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return snap.data['id'] == null
                 ? CreateProfile(uid: snap.data['uid'])
-                : HomePage(
-                    doc: snap.data,
-                  );
+                : TestMap();
+            // HomePage(
+            //     doc: snap.data,
+            //   );
           } else {
             return Center(
               child: CircularProgressIndicator(),

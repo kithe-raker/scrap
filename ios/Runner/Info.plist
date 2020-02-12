@@ -36,11 +36,11 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Required for Capture a new image/video to upload your image/video , So many people can see your image/video</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Explaination While User App: "This app needs access to location when open and in the background, So you can see available vendors around you."</string>
+	<string>Explaination While User App: "This app needs access to location when open and in the background, So you can see scraps around you."</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Explaination While User App: "This app needs access to location when in the background, So you can see available vendors around you."</string>
+	<string>Explaination While User App: "This app needs access to location when in the background, So you can see scraps around you."</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Explaination While User App: "This app needs access to location when open, So you can see available vendors around you."</string>
+	<string>Explaination While User App: "This app needs access to location when open, So you can see scraps around you."</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Required for audio recording while capturing a video</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -62,5 +62,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>

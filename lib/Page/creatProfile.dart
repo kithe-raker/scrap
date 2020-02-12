@@ -114,264 +114,268 @@ class _CreateProfileState extends State<CreateProfile> {
   Widget build(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Container(
-                color: Colors.white,
-                height: scr.height,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          scr.width / 13.5, 0, scr.width / 13.5, 0),
-                      child: Container(
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              // Text('กรอกข้อมูล'),
-                              // Padding(
-                              //   padding: const EdgeInsets.only(bottom: 15),
-                              //   child: Row(
-                              //     mainAxisAlignment: MainAxisAlignment.start,
-                              //     children: <Widget>[
-                              //       Text(
-                              //         'สร้างบัญชี',
-                              //         style: TextStyle(
-                              //           color: Colors.grey[800],
-                              //           fontSize: 25,
-                              //           fontWeight: FontWeight.bold,
-                              //         ),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
-                              InkWell(
-                                child: Container(
-                                  width: scr.width / 3,
-                                  height: scr.width / 3,
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey[200],
-                                      borderRadius: BorderRadius.circular(
-                                        scr.width / 3,
-                                      )),
-                                  child: ClipRRect(
-                                      child: image == null
-                                          ? SizedBox(
-                                              child: Icon(
-                                                Icons.edit,
+      body: Stack(
+        children: <Widget>[
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  color: Colors.white,
+                  height: scr.height,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            scr.width / 13.5, 0, scr.width / 13.5, 0),
+                        child: Container(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                // Text('กรอกข้อมูล'),
+                                // Padding(
+                                //   padding: const EdgeInsets.only(bottom: 15),
+                                //   child: Row(
+                                //     mainAxisAlignment: MainAxisAlignment.start,
+                                //     children: <Widget>[
+                                //       Text(
+                                //         'สร้างบัญชี',
+                                //         style: TextStyle(
+                                //           color: Colors.grey[800],
+                                //           fontSize: 25,
+                                //           fontWeight: FontWeight.bold,
+                                //         ),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
+                                InkWell(
+                                  child: Container(
+                                    width: scr.width / 3,
+                                    height: scr.width / 3,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[200],
+                                        borderRadius: BorderRadius.circular(
+                                          scr.width / 3,
+                                        )),
+                                    child: ClipRRect(
+                                        child: image == null
+                                            ? SizedBox(
+                                                child: Icon(
+                                                  Icons.edit,
+                                                ),
+                                              )
+                                            : Image.file(
+                                                image,
+                                                width: scr.width / 3,
+                                                height: scr.width / 3,
+                                                fit: BoxFit.cover,
                                               ),
-                                            )
-                                          : Image.file(
-                                              image,
-                                              width: scr.width / 3,
-                                              height: scr.width / 3,
-                                              fit: BoxFit.cover,
-                                            ),
-                                      borderRadius: BorderRadius.circular(
-                                        scr.width / 3,
-                                      )),
+                                        borderRadius: BorderRadius.circular(
+                                          scr.width / 3,
+                                        )),
+                                  ),
+                                  onTap: () {
+                                    selectImg(context);
+                                  },
                                 ),
-                                onTap: () {
-                                  selectImg(context);
-                                },
-                              ),
 
-                              Container(
-                                // padding: EdgeInsets.all(16),
-                                // color: Colors.grey[300],
-                                child: Form(
-                                  key: _formKey,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: <Widget>[
-                                      Column(
-                                        // crossAxisAlignment:
-                                        //     CrossAxisAlignment.stretch,
-                                        // mainAxisAlignment:
-                                        //     MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Container(
-                                            width: scr.width,
-                                            height: scr.height / 12,
-                                            child: TextFormField(
-                                              validator: ((val) {
-                                                return val.trim() == null ||
-                                                        val.trim() == ''
-                                                    ? 'กรุณากรอก@ของคุณ'
-                                                    : null;
-                                              }),
-                                              onSaved: (lnam) =>
-                                                  id = lnam.trim(),
-                                              textInputAction:
-                                                  TextInputAction.next,
-                                              decoration: InputDecoration(
-                                                  prefixText: '@',
-                                                  helperText:
-                                                      'ทุกคนสามารถเห็น"ชื่อ"ของคุณและปากระดาษหาคุณได้',
-                                                  hintText: ' ใส่ชื่อของคุณ'),
+                                Container(
+                                  // padding: EdgeInsets.all(16),
+                                  // color: Colors.grey[300],
+                                  child: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        Column(
+                                          // crossAxisAlignment:
+                                          //     CrossAxisAlignment.stretch,
+                                          // mainAxisAlignment:
+                                          //     MainAxisAlignment.spaceEvenly,
+                                          children: <Widget>[
+                                            Container(
+                                              width: scr.width,
+                                              height: scr.height / 12,
+                                              child: TextFormField(
+                                                validator: ((val) {
+                                                  return val.trim() == null ||
+                                                          val.trim() == ''
+                                                      ? 'กรุณากรอก@ของคุณ'
+                                                      : null;
+                                                }),
+                                                onSaved: (lnam) =>
+                                                    id = lnam.trim(),
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                decoration: InputDecoration(
+                                                    prefixText: '@',
+                                                    helperText:
+                                                        'ทุกคนสามารถเห็น"ชื่อ"ของคุณและปากระดาษหาคุณได้',
+                                                    hintText: ' ใส่ชื่อของคุณ'),
+                                              ),
                                             ),
-                                          ),
-                                          Container(
-                                            width: scr.width,
-                                            height: scr.height / 12,
-                                            child: TextFormField(
-                                              validator: ((val) {
-                                                return val.trim() == null ||
-                                                        val.trim() == ''
-                                                    ? 'กรุณากรอกชื่อของท่าน'
-                                                    : null;
-                                              }),
-                                              onSaved: (nam) =>
-                                                  name = nam.trim(),
-                                              textInputAction:
-                                                  TextInputAction.next,
-                                              decoration: InputDecoration(
-                                                  hintText: 'ชื่อจริง'),
+                                            Container(
+                                              width: scr.width,
+                                              height: scr.height / 12,
+                                              child: TextFormField(
+                                                validator: ((val) {
+                                                  return val.trim() == null ||
+                                                          val.trim() == ''
+                                                      ? 'กรุณากรอกชื่อของท่าน'
+                                                      : null;
+                                                }),
+                                                onSaved: (nam) =>
+                                                    name = nam.trim(),
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                decoration: InputDecoration(
+                                                    hintText: 'ชื่อจริง'),
+                                              ),
                                             ),
-                                          ),
-                                          Container(
-                                            width: scr.width,
-                                            height: scr.height / 12,
-                                            child: TextFormField(
-                                              validator: ((val) {
-                                                return val.trim() == null ||
-                                                        val.trim() == ''
-                                                    ? 'กรุณากรอกนามสกุลของท่าน'
-                                                    : null;
-                                              }),
-                                              onSaved: (lnam) =>
-                                                  lname = lnam.trim(),
-                                              textInputAction:
-                                                  TextInputAction.next,
-                                              decoration: InputDecoration(
-                                                  hintText: 'นามสกุล'),
+                                            Container(
+                                              width: scr.width,
+                                              height: scr.height / 12,
+                                              child: TextFormField(
+                                                validator: ((val) {
+                                                  return val.trim() == null ||
+                                                          val.trim() == ''
+                                                      ? 'กรุณากรอกนามสกุลของท่าน'
+                                                      : null;
+                                                }),
+                                                onSaved: (lnam) =>
+                                                    lname = lnam.trim(),
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                decoration: InputDecoration(
+                                                    hintText: 'นามสกุล'),
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text('วันเกิด'),
-                                          IconButton(
-                                            icon: Icon(Icons.date_range),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text('วันเกิด'),
+                                            IconButton(
+                                              icon: Icon(Icons.date_range),
+                                              color: Color(0xffEF7D36),
+                                              onPressed: () =>
+                                                  _selectDate(context),
+                                            ),
+                                            Text(date)
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text('เพศของคุณ'),
+                                            Radio(
+                                              onChanged: (String ty) {
+                                                setState(() => genders = ty);
+                                              },
+                                              value: 'ชาย',
+                                              groupValue: genders,
+                                              activeColor: Color(0xffEF7D36),
+                                            ),
+                                            Text('ชาย'),
+                                            Radio(
+                                              onChanged: (String ty) {
+                                                setState(() => genders = ty);
+                                              },
+                                              value: 'หญิง',
+                                              groupValue: genders,
+                                              activeColor: Color(0xffEF7D36),
+                                            ),
+                                            Text('หญิง'),
+                                            Radio(
+                                              onChanged: (String ty) {
+                                                setState(() => genders = ty);
+                                              },
+                                              value: '',
+                                              groupValue: genders,
+                                              activeColor: Color(0xffEF7D36),
+                                            ),
+                                            Text('อื่นๆ'),
+                                            genders == ''
+                                                ? Expanded(
+                                                    child: TextFormField(
+                                                      validator: ((val) {
+                                                        return val.trim() == ''
+                                                            ? 'กรุณาระบุเพศ'
+                                                            : null;
+                                                      }),
+                                                      onSaved: (gen) =>
+                                                          genders = gen.trim(),
+                                                      textInputAction:
+                                                          TextInputAction.next,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              hintText:
+                                                                  '   ระบุ'),
+                                                    ),
+                                                  )
+                                                : SizedBox()
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: scr.height / 10),
+                                          child: MaterialButton(
+                                            child: Text(
+                                              'สร้างบัญชี',
+                                              style: TextStyle(fontSize: 17),
+                                            ),
+                                            onPressed: () async {
+                                              _formKey.currentState.save();
+                                              if (_formKey.currentState
+                                                      .validate() &&
+                                                  genders != null &&
+                                                  date != created) {
+                                                setState(() {
+                                                  loading = true;
+                                                });
+                                                await creatProfile();
+                                              } else {
+                                                date == created
+                                                    ? warnDate()
+                                                    : print('nope');
+                                              }
+                                            },
                                             color: Color(0xffEF7D36),
-                                            onPressed: () =>
-                                                _selectDate(context),
-                                          ),
-                                          Text(date)
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text('เพศของคุณ'),
-                                          Radio(
-                                            onChanged: (String ty) {
-                                              setState(() => genders = ty);
-                                            },
-                                            value: 'ชาย',
-                                            groupValue: genders,
-                                            activeColor: Color(0xffEF7D36),
-                                          ),
-                                          Text('ชาย'),
-                                          Radio(
-                                            onChanged: (String ty) {
-                                              setState(() => genders = ty);
-                                            },
-                                            value: 'หญิง',
-                                            groupValue: genders,
-                                            activeColor: Color(0xffEF7D36),
-                                          ),
-                                          Text('หญิง'),
-                                          Radio(
-                                            onChanged: (String ty) {
-                                              setState(() => genders = ty);
-                                            },
-                                            value: '',
-                                            groupValue: genders,
-                                            activeColor: Color(0xffEF7D36),
-                                          ),
-                                          Text('อื่นๆ'),
-                                          genders == ''
-                                              ? Expanded(
-                                                  child: TextFormField(
-                                                    validator: ((val) {
-                                                      return val.trim() == ''
-                                                          ? 'กรุณาระบุเพศ'
-                                                          : null;
-                                                    }),
-                                                    onSaved: (gen) =>
-                                                        genders = gen.trim(),
-                                                    textInputAction:
-                                                        TextInputAction.next,
-                                                    decoration: InputDecoration(
-                                                        hintText: '   ระบุ'),
-                                                  ),
-                                                )
-                                              : SizedBox()
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: scr.height / 10),
-                                        child: MaterialButton(
-                                          child: Text(
-                                            'สร้างบัญชี',
-                                            style: TextStyle(fontSize: 17),
-                                          ),
-                                          onPressed: () async {
-                                            _formKey.currentState.save();
-                                            if (_formKey.currentState
-                                                    .validate() &&
-                                                genders != null &&
-                                                date != created) {
-                                              setState(() {
-                                                loading = true;
-                                              });
-                                              await creatProfile();
-                                            } else {
-                                              date == created
-                                                  ? warnDate()
-                                                  : print('nope');
-                                            }
-                                          },
-                                          color: Color(0xffEF7D36),
-                                          elevation: 0,
-                                          minWidth: 350,
-                                          height: 60,
-                                          textColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50),
+                                            elevation: 0,
+                                            minWidth: 350,
+                                            height: 60,
+                                            textColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          )),
-                    ),
-                    loading
-                        ? Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : SizedBox()
-                  ],
+                              ],
+                            )),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          loading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SizedBox()
+        ],
       ),
     );
   }

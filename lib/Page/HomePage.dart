@@ -14,9 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String type = 'Analysts';
-  String select;
-  String text;
+  String type,select,text;
   var _key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
