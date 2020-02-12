@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:scrap/widget/LongPaper.dart';
 
 class Profile extends StatefulWidget {
+  final DocumentSnapshot doc;
+  Profile({@required this.doc});
   @override
   _ProfileState createState() => _ProfileState();
 }
 
-//หน้า Account 
+//หน้า Account
 class _ProfileState extends State<Profile> {
   int page;
   @override
@@ -56,21 +58,23 @@ class _ProfileState extends State<Profile> {
                 //\  /
                 // \/
                 Container(
-                  margin: EdgeInsets.only(top: a.width / 10),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(a.width),
-                      border: Border.all(
-                          color: Colors.white, width: a.width / 150)),
-                  width: a.width / 3,
-                  height: a.width / 3,
-                  child: Image.asset("assets/userprofile.png"), 
-                ),
+                    margin: EdgeInsets.only(top: a.width / 10),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(a.width),
+                        border: Border.all(
+                            color: Colors.white, width: a.width / 150)),
+                    width: a.width / 3,
+                    height: a.width / 3,
+                    child: //widget.doc['img'] == null
+                        Image.asset("assets/userprofile.png")
+                    //: Image.network(widget.doc['img']),
+                    ),
                 // ชื่อของ account
                 Container(
                     margin: EdgeInsets.only(top: a.width / 15),
                     child: Text(
-                      "@vinatsataporn",
+                      "@", //+ widget.doc['name'],
                       style: TextStyle(
                           color: Colors.white, fontSize: a.width / 12),
                     )),
@@ -78,7 +82,7 @@ class _ProfileState extends State<Profile> {
                 Container(
                     margin: EdgeInsets.only(top: a.width / 1000),
                     child: Text(
-                      "+66-633038380",
+                      "+66-" + widget.doc['phone'],
                       style: TextStyle(
                           color: Colors.white, fontSize: a.width / 15),
                     )),
@@ -90,12 +94,15 @@ class _ProfileState extends State<Profile> {
                   decoration: BoxDecoration(
                       border: Border(
                           bottom: BorderSide(
-                              width: a.width / 1000, color: Colors.white))), //ใส่เส้นด้านใต้สุด
-                  child: Row( // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
+                              width: a.width / 1000,
+                              color: Colors.white))), //ใส่เส้นด้านใต้สุด
+                  child: Row(
+                    // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Container(
-                        child: Column(  //เพื่อใช้สำหรับให้ จำนวน และ เขียน 
+                        child: Column(
+                          //เพื่อใช้สำหรับให้ จำนวน และ เขียน
                           children: <Widget>[
                             Text(
                               "12",
@@ -115,7 +122,8 @@ class _ProfileState extends State<Profile> {
                       Container(
                         child: Column(
                           children: <Widget>[
-                            Text(//เพื่อใช้สำหรับให้ จำนวน และ ผู้หยิบอ่าน 
+                            Text(
+                              //เพื่อใช้สำหรับให้ จำนวน และ ผู้หยิบอ่าน
                               "41",
                               style: TextStyle(
                                   color: Colors.white,
@@ -131,7 +139,8 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       Container(
-                        child: Column(//เพื่อใช้สำหรับให้ จำนวน และ โดนปาใส่
+                        child: Column(
+                          //เพื่อใช้สำหรับให้ จำนวน และ โดนปาใส่
                           children: <Widget>[
                             Text(
                               "9",
@@ -152,7 +161,6 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
                 Container(
-                  height: a.height / 3.5,
                   width: a.width,
                   decoration: BoxDecoration(
                       border: Border(
@@ -176,7 +184,6 @@ class _ProfileState extends State<Profile> {
                       ),
                       Container(
                         width: a.width,
-                        height: a.height / 4.4,
                         child: StreamBuilder(
                             stream: Firestore.instance
                                 .collection('User')
@@ -184,33 +191,26 @@ class _ProfileState extends State<Profile> {
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&
-                                  snapshot.connectionState == 
-                                      ConnectionState.active) { 
-                                return GridView.builder(
-                                    itemCount: snapshot.data['scraps'].length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 4,
-                                     //childAspectRatio: 2,
-                                    ),
-                                    itemBuilder: (context, index) {
-                                      String data =
-                                          snapshot.data['scraps'][index];
-                                      return Container(
-                                        padding: EdgeInsets.all(a.width/32),
-                                        child: InkWell(
-                                          child: Image.asset(
-                                            './assets/paper.png',
-                                            width: a.width / 4.1,
-                                            height: a.width / 4.1,
-                                            fit: BoxFit.cover,
+                                  snapshot.connectionState ==
+                                      ConnectionState.active) {
+                                List data = snapshot.data['scraps'];
+                                return data.length == 0
+                                    ? Container(
+                                        height: a.height / 12,
+                                        child: Center(
+                                          child: Text(
+                                            'ไม่มี',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: a.width / 18),
                                           ),
-                                          onTap: () {
-                                            dialog(data);
-                                          },
-                                        ),
-                                      );
-                                    });
+                                        ))
+                                    : Wrap(
+                                        children: data
+                                            .map((text) => scrap(
+                                                a, data[data.indexOf(text)]))
+                                            .toList());
                               } else {
                                 return Center(
                                   child: CircularProgressIndicator(),
@@ -266,8 +266,9 @@ class _ProfileState extends State<Profile> {
                                   scrollDirection: Axis.horizontal,
                                   //  children: <Widget>[LongPaper(), LongPaper()],
                                   itemBuilder: (context, index) {
-                                    String text =
-                                        snapshot.data['collects'][index];
+                                    String text = snapshot.data['collects'][
+                                        snapshot.data['collects'].length -
+                                            (++index)];
                                     return LongPaper(
                                       text: text,
                                     );
@@ -289,7 +290,24 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-//ส่วนของ กระดาษที่ถูกปาใส่ เมื่อกด 
+  Widget scrap(Size a, String data) {
+    return Container(
+      padding: EdgeInsets.all(a.width / 32),
+      child: InkWell(
+        child: Image.asset(
+          './assets/paper.png',
+          width: a.width / 6.4,
+          height: a.width / 6.4,
+          fit: BoxFit.cover,
+        ),
+        onTap: () {
+          dialog(data);
+        },
+      ),
+    );
+  }
+
+//ส่วนของ กระดาษที่ถูกปาใส่ เมื่อกด
   dialog(String text) {
     return showDialog(
         context: context,

@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/CreateID.dart';
-import 'package:scrap/Page/HomePage.dart';
+import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/Page/OTPScreen.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -9,12 +12,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  String _email, _password;
+  var _key = GlobalKey<FormState>();
+
+  login() async {
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: _email, password: _password);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Authen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
-    return Material(
-      color: Colors.black,
-      child: Column(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
@@ -26,90 +38,115 @@ class _LoginPageState extends State<LoginPage> {
                   fontWeight: FontWeight.bold),
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: a.width / 10),
-            width: a.width / 1.15,
-            height: a.width / 1,
-            decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(a.width / 20)),
-            child: Column(
-              children: <Widget>[
-                Container(
-                    width: a.width,
-                    padding: EdgeInsets.only(
-                        top: a.width / 20,
-                        left: a.width / 20,
-                        bottom: a.width / 80),
-                    child: Text(
-                      "ID name",
-                      style: TextStyle(
-                          color: Colors.white, fontSize: a.width / 25),
-                    )),
-                Container(
-                  width: a.width / 1.3,
-                  height: a.width / 6,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(a.width)),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'ID name',
-                        labelStyle: TextStyle(color: Colors.white)),
+          Form(
+            key: _key,
+            child: Container(
+              margin: EdgeInsets.only(top: a.width / 10),
+              width: a.width / 1.15,
+              height: a.height / 2.2,
+              decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(a.width / 20)),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                      width: a.width,
+                      padding: EdgeInsets.only(
+                          top: a.width / 20,
+                          left: a.width / 20,
+                          bottom: a.width / 80),
+                      child: Text(
+                        "Email",
+                        style: TextStyle(
+                            color: Colors.white, fontSize: a.width / 25),
+                      )),
+                  Container(
+                    width: a.width / 1.3,
+                    height: a.width / 6,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(a.width)),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'email',
+                          labelStyle: TextStyle(color: Colors.white)),
+                      validator: (val) {
+                        return val.trim() == "" ? 'put isas' : null;
+                      },
+                      onSaved: (val) {
+                        _email = val.trim();
+                      },
+                    ),
                   ),
-                ),
-                Container(
-                    width: a.width,
-                    padding: EdgeInsets.only(
-                        top: a.width / 20,
-                        left: a.width / 20,
-                        bottom: a.width / 80),
-                    child: Text(
-                      "password",
-                      style: TextStyle(
-                          color: Colors.white, fontSize: a.width / 25),
-                    )),
-                Container(
-                  width: a.width / 1.3,
-                  height: a.width / 6,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(a.width)),
-                  child: TextField(
-                    decoration: InputDecoration(
+                  Container(
+                      width: a.width,
+                      padding: EdgeInsets.only(
+                          top: a.width / 20,
+                          left: a.width / 20,
+                          bottom: a.width / 80),
+                      child: Text(
+                        "password",
+                        style: TextStyle(
+                            color: Colors.white, fontSize: a.width / 25),
+                      )),
+                  Container(
+                    width: a.width / 1.3,
+                    height: a.width / 6,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(a.width)),
+                    child: TextFormField(
+                      decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'password',
-                        
-                        ),
+                      ),
+                      validator: (val) {
+                        return val.trim() == "" ? 'put isas' : null;
+                      },
+                      onSaved: (val) {
+                        _password = val.trim();
+                      },
+                    ),
                   ),
-                ),
-                InkWell(
-                    child: Container(
-                        width: a.width / 1.3,
-                        height: a.width / 6,
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(top: a.width / 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(a.width / 40)),
-                        child: Text(
-                          "เข้าสู่ระบบ",
-                          style: TextStyle(fontSize: a.width / 20),
-                        )),
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => HomePage()));
-                    }),
-                Container(
-                  margin: EdgeInsets.only(top: a.width / 20),
-                  child: Text("ลืมรหัสผ่าน",
-                      style: TextStyle(
-                          fontSize: a.width / 25, color: Colors.white)),
-                )
-              ],
+                  InkWell(
+                      child: Container(
+                          width: a.width / 1.3,
+                          height: a.width / 6,
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(top: a.width / 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.circular(a.width / 40)),
+                          child: Text(
+                            "เข้าสู่ระบบ",
+                            style: TextStyle(fontSize: a.width / 20),
+                          )),
+                      onTap: () async {
+                        if (_key.currentState.validate()) {
+                          _key.currentState.save();
+                          await login();
+                        } else {
+                          print('nope');
+                        }
+                      }),
+                  InkWell(
+                      child: FlatButton(
+                          child: Text(
+                            "เข้าสู่ระบบด้วยเบอร์โทร",
+                            style: TextStyle(fontSize: a.width / 20),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPhone()));
+                          })),
+                ],
+              ),
             ),
           ),
           Container(
@@ -126,6 +163,189 @@ class _LoginPageState extends State<LoginPage> {
             ),
           )
         ],
+      ),
+    );
+  }
+}
+
+class LoginPhone extends StatefulWidget {
+  @override
+  _LoginPhoneState createState() => _LoginPhoneState();
+}
+
+class _LoginPhoneState extends State<LoginPhone> {
+  String phone;
+  var _key = GlobalKey<FormState>();
+
+  Future<void> phoneVerified() async {
+    final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
+      print(id);
+    };
+    final PhoneCodeSent smsCode = (String id, [int resendCode]) {
+      print(id.toString() + " sent and " + resendCode.toString());
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OTPScreen(verifiedID: id, phone: phone)));
+    };
+    final PhoneVerificationCompleted success = (AuthCredential credent) async {
+      print('yes sure');
+      // FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      // user.linkWithCredential(credent);
+    };
+    PhoneVerificationFailed failed = (AuthException error) {
+      print(error);
+    };
+    await FirebaseAuth.instance
+        .verifyPhoneNumber(
+            phoneNumber: '+66' + phone,
+            timeout: Duration(minutes: 10),
+            verificationCompleted: success,
+            verificationFailed: failed,
+            codeSent: smsCode,
+            codeAutoRetrievalTimeout: autoRetrieval)
+        .catchError((e) {
+      print(e.toString());
+    });
+  }
+
+  Future<bool> hasAccount(String phone) async {
+    final QuerySnapshot phones = await Firestore.instance
+        .collection('Users')
+        .where('phone', isEqualTo: phone)
+        .limit(1)
+        .getDocuments();
+    final List<DocumentSnapshot> doc = phones.documents;
+    return doc.length < 1;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Size a = MediaQuery.of(context).size;
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Padding(
+        padding: EdgeInsets.all(a.width / 20),
+        child: Container(
+          width: a.width,
+          alignment: Alignment.topLeft,
+          child: Form(
+            key: _key,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  width: a.width / 7,
+                  height: a.width / 10,
+                  child: InkWell(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(a.width),
+                          color: Colors.white),
+                      child: Icon(Icons.arrow_back,
+                          color: Colors.black, size: a.width / 15),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Container(
+                  width: a.width,
+                  height: a.height / 1.12,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "เบอร์โทรศัพท์",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: a.width / 15),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            top: a.width / 20, bottom: a.width / 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.circular(a.width / 40)),
+                              width: a.width / 5,
+                              height: a.width / 8,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.circular(a.width / 40)),
+                              width: a.width / 2,
+                              height: a.width / 8,
+                              child: TextFormField(
+                                keyboardType: TextInputType.phone,
+                                decoration: InputDecoration(
+                                  hintText: 'phone numbers',
+                                ),
+                                validator: (val) {
+                                  return val.trim() == ""
+                                      ? 'put isas'
+                                      : val.trim().length != 10
+                                          ? 'check pls'
+                                          : null;
+                                },
+                                onSaved: (val) {
+                                  phone = val.trim();
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Text(
+                        "เราจะส่งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: a.width / 30),
+                      ),
+                      InkWell(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.circular(a.width / 10)),
+                          width: a.width / 3,
+                          height: a.width / 6,
+                          margin: EdgeInsets.only(top: a.width / 5),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "ต่อไป",
+                            style: TextStyle(
+                                fontSize: a.width / 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        onTap: () async {
+                          if (_key.currentState.validate()) {
+                            _key.currentState.save();
+                            await hasAccount(phone)
+                                ? print('ไม่เจอ')
+                                : await phoneVerified();
+                          } else {
+                            print('nope');
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

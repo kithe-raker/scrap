@@ -7,6 +7,8 @@ import 'package:scrap/Page/pattern.dart';
 import 'Profile.dart';
 
 class HomePage extends StatefulWidget {
+  final DocumentSnapshot doc;
+  HomePage({@required this.doc});
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -91,7 +93,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          scrapPatt(a, type, context),
+          scrapPatt(a, type ?? 'Analysts', context),
           Positioned(
             bottom: a.height / 42,
             left: a.width / 2.8,
@@ -175,8 +177,9 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      Profile())); //ไปยังหน้า Profile
+                                  builder: (context) => Profile(
+                                        doc: widget.doc,
+                                      ))); //ไปยังหน้า Profile
                         },
                       ))
                 ],
@@ -256,6 +259,7 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (builder) {
           return AlertDialog(
+              contentPadding: EdgeInsets.all(0),
               content: StreamBuilder(
                   stream: Firestore.instance.collection('Contents').snapshots(),
                   builder: (context, snapshot) {
@@ -273,9 +277,11 @@ class _HomePageState extends State<HomePage> {
                             width: MediaQuery.of(context).size.width / 1.1,
                             child: Column(
                               children: <Widget>[
-                                Container(                   
-                                  width: MediaQuery.of(context).size.height / 1.5,
-                                  height: MediaQuery.of(context).size.width / 1.5,
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.height / 1.5,
+                                  height:
+                                      MediaQuery.of(context).size.width / 1.5,
                                   child: ListView(
                                       children: head
                                           .map((e) => choice(e, setState))
@@ -369,7 +375,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         Container(
                                           child: Text(
-                                            "\t"+"เปิดเผยตัวตน",
+                                            "\t" + "เปิดเผยตัวตน",
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: a.width / 20),
@@ -397,10 +403,10 @@ class _HomePageState extends State<HomePage> {
                               margin: EdgeInsets.only(top: a.width / 50),
                               width: a.width / 1,
                               height: a.height / 2,
-                              //ทำเป็นชั้นๆ 
+                              //ทำเป็นชั้นๆ
                               child: Stack(
                                 children: <Widget>[
-                              //ชั้นที่ 1 ส่วนของกระดาษ
+                                  //ชั้นที่ 1 ส่วนของกระดาษ
                                   Container(
                                     child: Image.asset(
                                       'assets/paper-readed.png',
@@ -409,7 +415,7 @@ class _HomePageState extends State<HomePage> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                  //ชั้นที่ 2 
+                                  //ชั้นที่ 2
                                   Container(
                                     margin: EdgeInsets.only(
                                         left: a.width / 20, top: a.width / 20),
@@ -437,12 +443,14 @@ class _HomePageState extends State<HomePage> {
                                     child: SizedBox(
                                       width: a.width / 3,
                                       child: TextFormField(
-                                        textAlign: TextAlign.center, //เพื่อให้ข้อความอยู่ตรงกลาง
+                                        textAlign: TextAlign
+                                            .center, //เพื่อให้ข้อความอยู่ตรงกลาง
                                         style:
                                             TextStyle(fontSize: a.width / 15),
                                         maxLines: null,
                                         decoration: InputDecoration(
-                                          border: InputBorder.none, //สำหรับใหเส้นใต้หาย
+                                          border: InputBorder
+                                              .none, //สำหรับใหเส้นใต้หาย
                                           hintText: 'เขียนข้อความบางอย่าง',
                                           hintStyle: TextStyle(
                                             fontSize: a.width / 25,
@@ -468,7 +476,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(top: a.width / 10),
+                              margin: EdgeInsets.only(top: a.width / 24),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
@@ -504,25 +512,25 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   ),
                                   //ปุ่มปาใส่
-                                  InkWell(
-                                    child: Container(
-                                      width: a.width / 4.5,
-                                      height: a.width / 8,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(a.width)),
-                                      alignment: Alignment.center,
-                                      child: Text("ปาใส่",
-                                          style: TextStyle(
-                                              fontSize: a.width / 15)),
-                                    ),
-                                    //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                    onTap: () {
-                                      Navigator.pop(context); 
-                                      dialog2();
-                                    },
-                                  )
+                                  // InkWell(
+                                  //   child: Container(
+                                  //     width: a.width / 4.5,
+                                  //     height: a.width / 8,
+                                  //     decoration: BoxDecoration(
+                                  //         color: Colors.white,
+                                  //         borderRadius:
+                                  //             BorderRadius.circular(a.width)),
+                                  //     alignment: Alignment.center,
+                                  //     child: Text("ปาใส่",
+                                  //         style: TextStyle(
+                                  //             fontSize: a.width / 15)),
+                                  //   ),
+                                  //   //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
+                                  //   onTap: () {
+                                  //     Navigator.pop(context);
+                                  //     dialog2();
+                                  //   },
+                                  // )
                                 ],
                               ),
                             )
