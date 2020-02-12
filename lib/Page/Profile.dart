@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:scrap/widget/LongPaper.dart';
 
 class Profile extends StatefulWidget {
+  final DocumentSnapshot doc;
+  Profile({@required this.doc});
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -56,21 +58,23 @@ class _ProfileState extends State<Profile> {
                 //\  /
                 // \/
                 Container(
-                  margin: EdgeInsets.only(top: a.width / 10),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(a.width),
-                      border: Border.all(
-                          color: Colors.white, width: a.width / 150)),
-                  width: a.width / 3,
-                  height: a.width / 3,
-                  child: Image.asset("assets/userprofile.png"),
-                ),
+                    margin: EdgeInsets.only(top: a.width / 10),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(a.width),
+                        border: Border.all(
+                            color: Colors.white, width: a.width / 150)),
+                    width: a.width / 3,
+                    height: a.width / 3,
+                    child: //widget.doc['img'] == null
+                        Image.asset("assets/userprofile.png")
+                    //: Image.network(widget.doc['img']),
+                    ),
                 // ชื่อของ account
                 Container(
                     margin: EdgeInsets.only(top: a.width / 15),
                     child: Text(
-                      "@vinatsataporn",
+                      "@", //+ widget.doc['name'],
                       style: TextStyle(
                           color: Colors.white, fontSize: a.width / 12),
                     )),
@@ -78,7 +82,7 @@ class _ProfileState extends State<Profile> {
                 Container(
                     margin: EdgeInsets.only(top: a.width / 1000),
                     child: Text(
-                      "+66-633038380",
+                      "+66-" + widget.doc['phone'],
                       style: TextStyle(
                           color: Colors.white, fontSize: a.width / 15),
                     )),
@@ -190,11 +194,23 @@ class _ProfileState extends State<Profile> {
                                   snapshot.connectionState ==
                                       ConnectionState.active) {
                                 List data = snapshot.data['scraps'];
-                                return Wrap(
-                                    children: data
-                                        .map((text) =>
-                                            scrap(a, data[data.indexOf(text)]))
-                                        .toList());
+                                return data.length == 0
+                                    ? Container(
+                                        height: a.height / 12,
+                                        child: Center(
+                                          child: Text(
+                                            'ไม่มี',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: a.width / 18),
+                                          ),
+                                        ))
+                                    : Wrap(
+                                        children: data
+                                            .map((text) => scrap(
+                                                a, data[data.indexOf(text)]))
+                                            .toList());
                               } else {
                                 return Center(
                                   child: CircularProgressIndicator(),

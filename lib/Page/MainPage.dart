@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/LoginPage.dart';
+import 'package:scrap/Page/creatProfile.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 
@@ -60,7 +61,7 @@ class _MainStreamState extends State<MainStream> {
   Stream<DocumentSnapshot> userStream(BuildContext context) async* {
     try {
       final uid = await Provider.of(context).auth.currentUser();
-      yield* Firestore.instance.collection('users').document(uid).snapshots();
+      yield* Firestore.instance.collection('Users').document(uid).snapshots();
     } catch (e) {
       print(e.toString());
     }
@@ -73,9 +74,11 @@ class _MainStreamState extends State<MainStream> {
         stream: userStream(context),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
-            return HomePage(
-              doc: snap.data,
-            );
+            return snap.data['id'] == null
+                ? CreateProfile(uid: snap.data['uid'])
+                : HomePage(
+                    doc: snap.data,
+                  );
           } else {
             return Center(
               child: CircularProgressIndicator(),

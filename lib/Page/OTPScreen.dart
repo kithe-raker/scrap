@@ -56,7 +56,7 @@ class _OTPScreenState extends State<OTPScreen> {
       'email': widget.email,
       'password': widget.password,
       'phone': widget.phone,
-      'uid': uid
+      'uid': uid,
     });
   }
 
