@@ -273,8 +273,7 @@ class _HomePageState extends State<HomePage> {
                             width: MediaQuery.of(context).size.width / 1.1,
                             child: Column(
                               children: <Widget>[
-                                Container(
-                            
+                                Container(                   
                                   width: MediaQuery.of(context).size.height / 1.5,
                                   height: MediaQuery.of(context).size.width / 1.5,
                                   child: ListView(
@@ -454,7 +453,7 @@ class _HomePageState extends State<HomePage> {
                                         validator: (val) {
                                           return val.trim() == null ||
                                                   val.trim() == ""
-                                              ? 'กรอกค่ะ'
+                                              ? 'เขียนบางอย่างสิ'
                                               : null;
                                         },
                                         //เนื้อหาที่กรอกเข้าไปใน text
