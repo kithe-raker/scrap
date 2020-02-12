@@ -7,6 +7,8 @@ import 'package:scrap/Page/pattern.dart';
 import 'Profile.dart';
 
 class HomePage extends StatefulWidget {
+  final DocumentSnapshot doc;
+  HomePage({@required this.doc});
   @override
   _HomePageState createState() => _HomePageState();
 }
