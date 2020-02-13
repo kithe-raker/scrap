@@ -348,15 +348,13 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleDataTransportCCTSupport
+    - GoogleMaps
     - GoogleUtilities
     - "gRPC-C++"
     - gRPC-Core
     - GTMSessionFetcher
     - leveldb-library
     - nanopb
-  trunk:
-    - FirebaseStorage
-    - GoogleMaps
 
 EXTERNAL SOURCES:
   cloud_firestore:

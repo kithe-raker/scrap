@@ -26,143 +26,145 @@ class _LoginPageState extends State<LoginPage> {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            child: Text(
-              "SIGN IN",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: a.width / 8,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          Form(
-            key: _key,
-            child: Container(
-              margin: EdgeInsets.only(top: a.width / 10),
-              width: a.width / 1.15,
-              height: a.height / 2.2,
-              decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(a.width / 20)),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                      width: a.width,
-                      padding: EdgeInsets.only(
-                          top: a.width / 20,
-                          left: a.width / 20,
-                          bottom: a.width / 80),
-                      child: Text(
-                        "Email",
-                        style: TextStyle(
-                            color: Colors.white, fontSize: a.width / 25),
-                      )),
-                  Container(
-                    width: a.width / 1.3,
-                    height: a.width / 6,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(a.width)),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'email',
-                          labelStyle: TextStyle(color: Colors.white)),
-                      validator: (val) {
-                        return val.trim() == "" ? 'put isas' : null;
-                      },
-                      onSaved: (val) {
-                        _email = val.trim();
-                      },
-                    ),
-                  ),
-                  Container(
-                      width: a.width,
-                      padding: EdgeInsets.only(
-                          top: a.width / 20,
-                          left: a.width / 20,
-                          bottom: a.width / 80),
-                      child: Text(
-                        "password",
-                        style: TextStyle(
-                            color: Colors.white, fontSize: a.width / 25),
-                      )),
-                  Container(
-                    width: a.width / 1.3,
-                    height: a.width / 6,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(a.width)),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'password',
-                      ),
-                      validator: (val) {
-                        return val.trim() == "" ? 'put isas' : null;
-                      },
-                      onSaved: (val) {
-                        _password = val.trim();
-                      },
-                    ),
-                  ),
-                  InkWell(
-                      child: Container(
-                          width: a.width / 1.3,
-                          height: a.width / 6,
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.only(top: a.width / 10),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.circular(a.width / 40)),
-                          child: Text(
-                            "เข้าสู่ระบบ",
-                            style: TextStyle(fontSize: a.width / 20),
-                          )),
-                      onTap: () async {
-                        if (_key.currentState.validate()) {
-                          _key.currentState.save();
-                          await login();
-                        } else {
-                          print('nope');
-                        }
-                      }),
-                  InkWell(
-                      child: FlatButton(
-                          child: Text(
-                            "เข้าสู่ระบบด้วยเบอร์โทร",
-                            style: TextStyle(fontSize: a.width / 20),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginPhone()));
-                          })),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: a.width / 8),
-            child: InkWell(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
               child: Text(
-                "สร้างบัญชี SCRAP.",
-                style: TextStyle(color: Colors.white, fontSize: a.width / 20),
+                "SIGN IN",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: a.width / 8,
+                    fontWeight: FontWeight.bold),
               ),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => CreateID()));
-              },
             ),
-          )
-        ],
+            Form(
+              key: _key,
+              child: Container(
+                margin: EdgeInsets.only(top: a.width / 10),
+                width: a.width / 1.15,
+                height: a.height / 1.5,
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(a.width / 20)),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                        width: a.width,
+                        padding: EdgeInsets.only(
+                            top: a.width / 20,
+                            left: a.width / 20,
+                            bottom: a.width / 80),
+                        child: Text(
+                          "Email",
+                          style: TextStyle(
+                              color: Colors.white, fontSize: a.width / 25),
+                        )),
+                    Container(
+                      width: a.width / 1.3,
+                      height: a.width / 6,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(a.width)),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'email',
+                            labelStyle: TextStyle(color: Colors.white)),
+                        validator: (val) {
+                          return val.trim() == "" ? 'put isas' : null;
+                        },
+                        onSaved: (val) {
+                          _email = val.trim();
+                        },
+                      ),
+                    ),
+                    Container(
+                        width: a.width,
+                        padding: EdgeInsets.only(
+                            top: a.width / 20,
+                            left: a.width / 20,
+                            bottom: a.width / 80),
+                        child: Text(
+                          "password",
+                          style: TextStyle(
+                              color: Colors.white, fontSize: a.width / 25),
+                        )),
+                    Container(
+                      width: a.width / 1.3,
+                      height: a.width / 6,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(a.width)),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'password',
+                        ),
+                        validator: (val) {
+                          return val.trim() == "" ? 'put isas' : null;
+                        },
+                        onSaved: (val) {
+                          _password = val.trim();
+                        },
+                      ),
+                    ),
+                    InkWell(
+                        child: Container(
+                            width: a.width / 1.3,
+                            height: a.width / 6,
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: a.width / 10),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.circular(a.width / 40)),
+                            child: Text(
+                              "เข้าสู่ระบบ",
+                              style: TextStyle(fontSize: a.width / 20),
+                            )),
+                        onTap: () async {
+                          if (_key.currentState.validate()) {
+                            _key.currentState.save();
+                            await login();
+                          } else {
+                            print('nope');
+                          }
+                        }),
+                    InkWell(
+                        child: FlatButton(
+                            child: Text(
+                              "เข้าสู่ระบบด้วยเบอร์โทร",
+                              style: TextStyle(fontSize: a.width / 20),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPhone()));
+                            })),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: a.width / 10),
+              child: InkWell(
+                child: Text(
+                  "สร้างบัญชี SCRAP.",
+                  style: TextStyle(color: Colors.white, fontSize: a.width / 20),
+                ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => CreateID()));
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -430,7 +430,7 @@ class _HomePageState extends State<HomePage> {
                                   //ชั้นที่ 2
                                   Container(
                                     margin: EdgeInsets.only(
-                                        left: a.width / 20, top: a.width / 20),
+                                        left: a.width / 10, top: a.width / 20),
                                     width: a.width,
                                     alignment: Alignment.topLeft,
                                     child: Column(
