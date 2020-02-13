@@ -188,24 +188,100 @@ class _MapScrapsState extends State<MapScraps> {
     _createMarkerImageFromAsset(context);
     _createScrapImageFromAsset(context);
     return Scaffold(
-        body: Container(
-      width: a.width,
-      height: a.height,
-      child: loadMap
-          ? GoogleMap(
-              myLocationButtonEnabled: false,
-              myLocationEnabled: false,
-              onMapCreated: onMapCreated,
-              initialCameraPosition: CameraPosition(
-                  target: LatLng(currentLocation?.latitude ?? 0,
-                      currentLocation?.longitude ?? 0),
-                  zoom: 18),
-              markers: Set<Marker>.of(markers.values),
-              circles: Set<Circle>.of(circles.values),
-            )
-          : Center(
-              child: CircularProgressIndicator(),
+        body: Stack(
+      children: <Widget>[
+        Container(
+          width: a.width,
+          height: a.height,
+          child: loadMap
+              ? GoogleMap(
+                  myLocationButtonEnabled: false,
+                  myLocationEnabled: false,
+                  onMapCreated: onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                      target: LatLng(currentLocation?.latitude ?? 0,
+                          currentLocation?.longitude ?? 0),
+                      zoom: 18),
+                  markers: Set<Marker>.of(markers.values),
+                  circles: Set<Circle>.of(circles.values),
+                )
+              : Center(
+                  child: CircularProgressIndicator(),
+                ),
+        ),
+        Positioned(
+          bottom: 0,
+          child: Container(
+            padding: EdgeInsets.only(bottom: a.width / 10),
+            alignment: Alignment.bottomCenter,
+            width: a.width,
+            height: a.height / 1.1,
+            child: Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Container(
+                    width: a.width / 7,
+                    height: a.width / 7,
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xff1a1a1a),
+                            blurRadius: 3.0,
+                            spreadRadius: 2.0,
+                            offset: Offset(
+                              0.0,
+                              3.2,
+                            ),
+                          )
+                        ],
+                        borderRadius: BorderRadius.circular(a.width),
+                        color: Colors.white),
+                    child: IconButton(
+                      icon: Icon(Icons.location_on),
+                      color: Color(0xff26A4FF),
+                      iconSize: a.width / 12,
+                      onPressed: () {
+                        _animateToUser();
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: a.width / 21,
+                  ),
+                  Container(
+                    width: a.width / 7,
+                    height: a.width / 7,
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xff1a1a1a),
+                            blurRadius: 10.0,
+                            spreadRadius: 0.0,
+                            offset: Offset(
+                              0.0,
+                              2.0,
+                            ),
+                          )
+                        ],
+                        borderRadius: BorderRadius.circular(a.width),
+                        color: Color(0xff26A4FF)),
+                    child: IconButton(
+                      icon: Icon(Icons.refresh),
+                      color: Colors.white,
+                      iconSize: a.width / 15,
+                      onPressed: () {
+                        setState(() {});
+                        // selectDialog(context);
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
+          ),
+        ),
+      ],
     ));
   }
   /*
@@ -242,6 +318,7 @@ class _MapScrapsState extends State<MapScraps> {
       userMarker(location.latitude, location.longitude);
       _addCircle(100, location.latitude, location.longitude);
       _startQuery(location);
+      _animateToUser(position: location);
     });
   }
 
@@ -255,6 +332,19 @@ class _MapScrapsState extends State<MapScraps> {
               loca.latitude, loca.longitude)
           : null;
     });
+  }
+
+  _animateToUser({Position position}) async {
+    var pos = await Geolocator().getCurrentPosition();
+    this
+        .mapController
+        .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target: LatLng(
+            position == null ? pos.latitude : position.latitude,
+            position == null ? pos.longitude : position.longitude,
+          ),
+          zoom: 18.0,
+        )));
   }
 
   _startQuery(Position position) async {

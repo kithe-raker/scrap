@@ -26,75 +26,7 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: <Widget>[
           scrapPatt(a, context),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              padding: EdgeInsets.only(bottom: a.width / 10),
-              alignment: Alignment.bottomCenter,
-              width: a.width,
-              height: a.height / 1.1,
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Container(
-                      width: a.width / 7,
-                      height: a.width / 7,
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xff1a1a1a),
-                              blurRadius: 3.0,
-                              spreadRadius: 2.0,
-                              offset: Offset(
-                                0.0,
-                                3.2,
-                              ),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Colors.white),
-                      child: Icon(
-                        Icons.location_on,
-                        color: Color(0xff26A4FF),
-                        size: a.width / 12,
-                      ),
-                    ),
-                    SizedBox(
-                      width: a.width / 21,
-                    ),
-                    Container(
-                      width: a.width / 7,
-                      height: a.width / 7,
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xff1a1a1a),
-                              blurRadius: 10.0,
-                              spreadRadius: 0.0,
-                              offset: Offset(
-                                0.0,
-                                2.0,
-                              ),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Color(0xff26A4FF)),
-                      child: IconButton(
-                        icon: Icon(Icons.refresh),
-                        color: Colors.white,
-                        iconSize: a.width / 15,
-                        onPressed: () {
-                          setState(() {});
-                          // selectDialog(context);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+         
           Positioned(
             bottom: a.height / 42,
             left: a.width / 2.8,
