@@ -82,6 +82,10 @@ class _CreateProfileState extends State<CreateProfile> {
   }
 
   addData(String uid) async {
+    List index = [];
+    for (int i = 0; i <= id.length; i++) {
+      index.add(i == 0 ? id[0] : id.substring(0, i));
+    }
     await Firestore.instance
         .collection('Users')
         .document(uid)
@@ -96,7 +100,7 @@ class _CreateProfileState extends State<CreateProfile> {
     await Firestore.instance
         .collection('Users')
         .document(uid)
-        .updateData({'id': id});
+        .updateData({'id': id, 'searchIndex': index});
   }
 
   creatProfile() async {
@@ -385,9 +389,9 @@ class _CreateProfileState extends State<CreateProfile> {
         context: context,
         builder: (builder) {
           return AlertDialog(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
             content: Container(
-              child: Text('กรุณาเลือกวัดเกิดของท่าน'),
+              child: Text('กรุณาเลือกวันเกิดของท่าน'),
             ),
             actions: <Widget>[
               FlatButton(

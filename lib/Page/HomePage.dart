@@ -518,25 +518,30 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   ),
                                   //ปุ่มปาใส่
-                                  // InkWell(
-                                  //   child: Container(
-                                  //     width: a.width / 4.5,
-                                  //     height: a.width / 8,
-                                  //     decoration: BoxDecoration(
-                                  //         color: Colors.white,
-                                  //         borderRadius:
-                                  //             BorderRadius.circular(a.width)),
-                                  //     alignment: Alignment.center,
-                                  //     child: Text("ปาใส่",
-                                  //         style: TextStyle(
-                                  //             fontSize: a.width / 15)),
-                                  //   ),
-                                  //   //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                  //   onTap: () {
-                                  //     Navigator.pop(context);
-                                  //     dialog2();
-                                  //   },
-                                  // )
+                                  InkWell(
+                                    child: Container(
+                                      width: a.width / 4.5,
+                                      height: a.width / 8,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(a.width)),
+                                      alignment: Alignment.center,
+                                      child: Text("ปาใส่",
+                                          style: TextStyle(
+                                              fontSize: a.width / 15)),
+                                    ),
+                                    //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
+                                    onTap: () {
+                                      if (_key.currentState.validate()) {
+                                        _key.currentState.save();
+                                        Navigator.pop(context);
+                                        chooseUser();
+                                      } else {
+                                        print('nope');
+                                      }
+                                    },
+                                  )
                                 ],
                               ),
                             )
@@ -550,7 +555,9 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  dialog2() {
+  chooseUser() {
+    String id;
+    Map selectedID = {};
     return showDialog(
         context: context,
         builder: (builder) {
@@ -568,16 +575,16 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
                           Container(
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                InkWell(
-                                  child: Icon(Icons.arrow_back,
-                                      size: a.width / 15, color: Colors.white),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    dialog();
-                                  },
-                                ),
+                                // InkWell(
+                                //   child: Icon(Icons.arrow_back,
+                                //       size: a.width / 15, color: Colors.white),
+                                //   onTap: () {
+                                //     Navigator.pop(context);
+                                //     dialog();
+                                //   },
+                                // ),
                                 InkWell(
                                   child: Icon(Icons.clear,
                                       size: a.width / 15, color: Colors.white),
@@ -588,57 +595,215 @@ class _HomePageState extends State<HomePage> {
                               ],
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(top: a.width / 20),
-                            width: a.width / 1.1,
-                            height: a.height / 1.7,
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.circular(a.width / 10)),
-                            child: Column(
-                              children: <Widget>[
-                                Container(
+                          selectedID == null || selectedID['id'] == null
+                              ? Container(
                                   margin: EdgeInsets.only(top: a.width / 20),
+                                  width: a.width / 1.1,
+                                  height: a.height / 1.5,
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width / 10),
-                                    color: Colors.black,
-                                  ),
-                                  width: a.width / 1.7,
-                                  height: a.width / 7,
-                                  child: Container(
-                                    margin: EdgeInsets.only(left: a.width / 20),
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: '@someone',
-                                        hintStyle: TextStyle(
-                                          fontSize: a.width / 15,
-                                          color: Colors.grey,
+                                      color: Colors.grey,
+                                      borderRadius:
+                                          BorderRadius.circular(a.width / 10)),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        margin:
+                                            EdgeInsets.only(top: a.width / 20),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              a.width / 10),
+                                          color: Colors.black,
+                                        ),
+                                        width: a.width / 1.7,
+                                        height: a.width / 7,
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              left: a.width / 20),
+                                          child: TextFormField(
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: '@someone',
+                                              hintStyle: TextStyle(
+                                                fontSize: a.width / 15,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            onChanged: (val) {
+                                              setState(() {
+                                                id = val;
+                                              });
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      id == null || id == ''
+                                          ? Center(
+                                              child:
+                                                  Text('ค้นหาคนที่คุณจะปาใส่'),
+                                            )
+                                          : id[0] != '@'
+                                              ? Center(
+                                                  child: Text(
+                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ ข้างหน้า'),
+                                                )
+                                              : StreamBuilder(
+                                                  stream: Firestore.instance
+                                                      .collection('Users')
+                                                      .where('searchIndex',
+                                                          arrayContains:
+                                                              id.substring(1))
+                                                      .snapshots(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.hasData &&
+                                                        snapshot.connectionState ==
+                                                            ConnectionState
+                                                                .active) {
+                                                      return snapshot.data
+                                                                      ?.documents ==
+                                                                  null ||
+                                                              snapshot
+                                                                      .data
+                                                                      .documents
+                                                                      .length ==
+                                                                  0
+                                                          ? Center(
+                                                              child: Text(
+                                                                  'ไม่พบคนดังกล่าว'),
+                                                            )
+                                                          : Container(
+                                                              width:
+                                                                  a.width / 1.1,
+                                                              height:
+                                                                  a.height / 2,
+                                                              child: ListView
+                                                                  .builder(
+                                                                      itemCount: snapshot
+                                                                          .data
+                                                                          .documents
+                                                                          .length,
+                                                                      itemBuilder:
+                                                                          (context,
+                                                                              index) {
+                                                                        DocumentSnapshot
+                                                                            doc =
+                                                                            snapshot.data.documents[index];
+                                                                        return InkWell(
+                                                                          child:
+                                                                              Container(
+                                                                            padding:
+                                                                                EdgeInsets.all(a.width / 21),
+                                                                            width:
+                                                                                a.width / 1.1,
+                                                                            height:
+                                                                                a.height / 12,
+                                                                            child:
+                                                                                Text(
+                                                                              '@' + doc['id'],
+                                                                              style: TextStyle(fontSize: a.width / 12),
+                                                                            ),
+                                                                          ),
+                                                                          onTap:
+                                                                              () {
+                                                                            selectedID['id'] =
+                                                                                doc['id'];
+                                                                            selectedID['uid'] =
+                                                                                doc['uid'];
+                                                                            setState(() {});
+                                                                          },
+                                                                        );
+                                                                      }),
+                                                            );
+                                                    } else {
+                                                      return Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      );
+                                                    }
+                                                  })
+                                    ],
+                                  ),
+                                )
+                              : Container(
+                                  color: Colors.grey,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                          child: Text(
+                                        'ปาใส่' + selectedID['id'],
+                                        style:
+                                            TextStyle(fontSize: a.width / 12),
+                                      )),
+                                      Image.asset(
+                                        './assets/paper.png',
+                                        width: a.width / 6.4,
+                                        height: a.width / 6.4,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Container(
+                                          margin: EdgeInsets.only(
+                                              top: a.width / 10),
+                                          child: Row(
+                                            children: <Widget>[
+                                              InkWell(
+                                                child: Container(
+                                                  width: a.width / 4.5,
+                                                  height: a.width / 8,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width)),
+                                                  alignment: Alignment.center,
+                                                  child: Text("เปลี่ยนคน",
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                              a.width / 15)),
+                                                ),
+                                                onTap: () {
+                                                  id = '';
+                                                  selectedID.clear();
+                                                  setState(() {});
+                                                },
+                                              ),
+                                              InkWell(
+                                                child: Container(
+                                                  width: a.width / 4.5,
+                                                  height: a.width / 8,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width)),
+                                                  alignment: Alignment.center,
+                                                  child: Text("ปาเลย",
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                              a.width / 15)),
+                                                ),
+                                                onTap: () async {
+                                                  Navigator.pop(context);
+                                                  await Firestore.instance
+                                                      .collection('Users')
+                                                      .document(
+                                                          selectedID['uid'])
+                                                      .collection('scraps')
+                                                      .document('recently')
+                                                      .updateData(
+                                                    {
+                                                      'scraps':
+                                                          FieldValue.arrayUnion(
+                                                              [text])
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ))
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                              margin: EdgeInsets.only(top: a.width / 10),
-                              child: InkWell(
-                                child: Container(
-                                  width: a.width / 4.5,
-                                  height: a.width / 8,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(a.width)),
-                                  alignment: Alignment.center,
-                                  child: Text("ปาใส่",
-                                      style: TextStyle(fontSize: a.width / 15)),
-                                ),
-                              ))
                         ],
                       )
                     ],

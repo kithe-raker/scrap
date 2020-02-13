@@ -20,7 +20,7 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   var _key = GlobalKey<FormState>();
-  String veriCode ;
+  String veriCode;
 
   register() async {
     var authCredential = PhoneAuthProvider.getCredential(
@@ -58,6 +58,18 @@ class _OTPScreenState extends State<OTPScreen> {
       'phone': widget.phone,
       'uid': uid,
     });
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('scraps')
+        .document('recently')
+        .setData({});
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('scraps')
+        .document('collection')
+        .setData({});
   }
 
   @override

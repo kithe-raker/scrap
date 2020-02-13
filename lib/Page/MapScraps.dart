@@ -129,10 +129,12 @@ class _MapScrapsState extends State<MapScraps> {
                                 onTap: () async {
                                   Navigator.pop(context);
                                   await Firestore.instance
-                                      .collection('User')
-                                      .document('scraps')
+                                      .collection('Users')
+                                      .document(widget.uid)
+                                      .collection('scraps')
+                                      .document('collection')
                                       .updateData({
-                                    'collects': FieldValue.arrayUnion([text])
+                                    'scraps': FieldValue.arrayUnion([text])
                                   });
                                 },
                               ),

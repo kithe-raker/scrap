@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class LongPaper extends StatefulWidget {
   final String text;
-  LongPaper({@required this.text});
+  final String uid;
+  LongPaper({@required this.text, @required this.uid});
   @override
   _LongPaperState createState() => _LongPaperState();
 }
@@ -17,12 +18,12 @@ class _LongPaperState extends State<LongPaper> {
         width: a.width / 1.5,
         height: a.width / 4,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(a.width/30),
+          borderRadius: BorderRadius.circular(a.width / 30),
           image: DecorationImage(
-
-      image: AssetImage('assets/paper-readed.png'),
-      fit: BoxFit.cover,
-    ),),
+            image: AssetImage('assets/paper-readed.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Stack(
           children: <Widget>[
             Container(
@@ -45,12 +46,7 @@ class _LongPaperState extends State<LongPaper> {
                     color: Colors.black,
                     iconSize: a.width / 12,
                     onPressed: () async {
-                      await Firestore.instance
-                          .collection('User')
-                          .document('scraps')
-                          .updateData({
-                        'collects': FieldValue.arrayRemove([widget.text])
-                      });
+                      warning();
                     },
                   )
                 ],
@@ -67,5 +63,33 @@ class _LongPaperState extends State<LongPaper> {
             )
           ],
         ));
+  }
+
+  warning() {
+    return showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text('คุณต้องการลบจริงๆใช่มั้ย'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await Firestore.instance
+                        .collection('Users')
+                        .document(widget.uid)
+                        .collection('scraps')
+                        .document('collection')
+                        .updateData({
+                      'scraps': FieldValue.arrayRemove([widget.text])
+                    });
+                  },
+                  child: Text('ok'))
+            ],
+          );
+        });
   }
 }
