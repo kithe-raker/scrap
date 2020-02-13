@@ -117,7 +117,9 @@ class _ProfileState extends State<Profile> {
                                   //เพื่อใช้สำหรับให้ จำนวน และ เขียน
                                   children: <Widget>[
                                     Text(
-                                      "12",
+                                      snapshot.data['written'] == null
+                                          ? '0'
+                                          : snapshot.data['written'].toString(),
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: a.width / 10,
@@ -137,7 +139,9 @@ class _ProfileState extends State<Profile> {
                                   children: <Widget>[
                                     Text(
                                       //เพื่อใช้สำหรับให้ จำนวน และ ผู้หยิบอ่าน
-                                      "41",
+                                      snapshot.data['read'] == null
+                                          ? '0'
+                                          : snapshot.data['read'].toString(),
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: a.width / 10,
@@ -154,10 +158,12 @@ class _ProfileState extends State<Profile> {
                               ),
                               Container(
                                 child: Column(
-                                  //เพื่อใช้สำหรับให้ จำนวน และ โ��นปาใส��
+                                  //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
                                   children: <Widget>[
                                     Text(
-                                      "9",
+                                      snapshot.data['threw'] == null
+                                          ? '0'
+                                          : snapshot.data['threw'].toString(),
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: a.width / 10,
@@ -201,15 +207,19 @@ class _ProfileState extends State<Profile> {
                                 width: a.width,
                                 child: StreamBuilder(
                                     stream: Firestore.instance
-                                        .collection('User')
-                                        .document('scraps')
+                                        .collection('Users')
+                                        .document(widget.doc['uid'])
+                                        .collection('scraps')
+                                        .document('recently')
                                         .snapshots(),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData &&
                                           snapshot.connectionState ==
                                               ConnectionState.active) {
-                                        List data = snapshot.data['scraps'];
-                                        return data.length == 0
+                                        List data = snapshot?.data['scraps'];
+                                        return snapshot?.data['scraps'] ==
+                                                    null ||
+                                                data.length == 0
                                             ? Container(
                                                 height: a.height / 12,
                                                 child: Center(
@@ -226,8 +236,10 @@ class _ProfileState extends State<Profile> {
                                                 children: data
                                                     .map((text) => scrap(
                                                         a,
-                                                        data[data
-                                                            .indexOf(text)]))
+                                                        data[data.length -
+                                                            1 -
+                                                            data.indexOf(
+                                                                text)]))
                                                     .toList());
                                       } else {
                                         return Center(
@@ -241,8 +253,10 @@ class _ProfileState extends State<Profile> {
                         ),
                         StreamBuilder(
                             stream: Firestore.instance
-                                .collection('User')
-                                .document('scraps')
+                                .collection('Users')
+                                .document(widget.doc['uid'])
+                                .collection('scraps')
+                                .document('collection')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&
@@ -267,9 +281,16 @@ class _ProfileState extends State<Profile> {
                                           ),
                                           Container(
                                             child: Text(
-                                              snapshot.data['collects'].length
-                                                      .toString() ??
-                                                  '0' + " แผ่น",
+                                              snapshot?.data['scraps'] ==
+                                                          null ||
+                                                      snapshot.data['scraps']
+                                                              .length ==
+                                                          0
+                                                  ? '0' + " แผ่น"
+                                                  : snapshot
+                                                          .data['scraps'].length
+                                                          .toString() +
+                                                      ' แผ่น',
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: a.width / 18),
@@ -278,24 +299,36 @@ class _ProfileState extends State<Profile> {
                                         ],
                                       ),
                                     ),
-                                    Container(
-                                        width: a.width,
-                                        height: a.width / 1,
-                                        child: ListView.builder(
-                                          itemCount:
-                                              snapshot.data['collects'].length,
-                                          scrollDirection: Axis.horizontal,
-                                          //  children: <Widget>[LongPaper(), LongPaper()],
-                                          itemBuilder: (context, index) {
-                                            String text = snapshot
-                                                .data['collects'][snapshot
-                                                    .data['collects'].length -
-                                                (++index)];
-                                            return LongPaper(
-                                              text: text,
-                                            );
-                                          },
-                                        ))
+                                    snapshot?.data['scraps'] == null ||
+                                            snapshot.data['scraps'].length == 0
+                                        ? Center(
+                                            child: Text(
+                                              'ไม่มี',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  fontSize: a.width / 18),
+                                            ),
+                                          )
+                                        : Container(
+                                            width: a.width,
+                                            height: a.width / 1,
+                                            child: ListView.builder(
+                                              itemCount: snapshot
+                                                  .data['scraps'].length,
+                                              scrollDirection: Axis.horizontal,
+                                              //  children: <Widget>[LongPaper(), LongPaper()],
+                                              itemBuilder: (context, index) {
+                                                String text = snapshot
+                                                    .data['scraps'][snapshot
+                                                        .data['scraps'].length -
+                                                    (++index)];
+                                                return LongPaper(
+                                                  text: text,
+                                                  uid: widget.doc['uid'],
+                                                );
+                                              },
+                                            ))
                                   ],
                                 );
                               } else {
@@ -368,7 +401,7 @@ class _ProfileState extends State<Profile> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text('เขียนโดย : ใครสักคน'),
-                                Text('เวลา : 9:00')
+                                //  Text('เวลา : 9:00')
                               ],
                             ),
                           )),
@@ -394,14 +427,23 @@ class _ProfileState extends State<Profile> {
                                           color: Color(0xff26A4FF))),
                                 ),
                                 onTap: () async {
+                                  Navigator.pop(context);
                                   await Firestore.instance
-                                      .collection('User')
-                                      .document('scraps')
+                                      .collection('Users')
+                                      .document(widget.doc['uid'])
+                                      .collection('scraps')
+                                      .document('recently')
                                       .updateData({
-                                    'collects': FieldValue.arrayUnion([text]),
                                     'scraps': FieldValue.arrayRemove([text]),
                                   });
-                                  Navigator.pop(context);
+                                  await Firestore.instance
+                                      .collection('Users')
+                                      .document(widget.doc['uid'])
+                                      .collection('scraps')
+                                      .document('collection')
+                                      .updateData({
+                                    'scraps': FieldValue.arrayUnion([text])
+                                  });
                                 },
                               ),
                               InkWell(
@@ -419,13 +461,15 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 onTap: () async {
+                                  Navigator.pop(context);
                                   await Firestore.instance
-                                      .collection('User')
-                                      .document('scraps')
+                                      .collection('Users')
+                                      .document(widget.doc['uid'])
+                                      .collection('scraps')
+                                      .document('recently')
                                       .updateData({
                                     'scraps': FieldValue.arrayRemove([text])
                                   });
-                                  Navigator.pop(context);
                                 },
                               ),
                             ],

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:scrap/Page/MapScraps.dart';
 
@@ -24,76 +25,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          scrapPatt(a, type ?? 'Analysts', context),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              padding: EdgeInsets.only(bottom: a.width / 10),
-              alignment: Alignment.bottomCenter,
-              width: a.width,
-              height: a.height / 1.1,
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Container(
-                      width: a.width / 7,
-                      height: a.width / 7,
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xff1a1a1a),
-                              blurRadius: 3.0,
-                              spreadRadius: 2.0,
-                              offset: Offset(
-                                0.0,
-                                3.2,
-                              ),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Colors.white),
-                      child: Icon(
-                        Icons.location_on,
-                        color: Color(0xff26A4FF),
-                        size: a.width / 12,
-                      ),
-                    ),
-                    SizedBox(
-                      width: a.width / 21,
-                    ),
-                    Container(
-                      width: a.width / 7,
-                      height: a.width / 7,
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xff1a1a1a),
-                              blurRadius: 10.0,
-                              spreadRadius: 0.0,
-                              offset: Offset(
-                                0.0,
-                                2.0,
-                              ),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Color(0xff26A4FF)),
-                      child: IconButton(
-                        icon: Icon(Icons.refresh),
-                        color: Colors.white,
-                        iconSize: a.width / 15,
-                        onPressed: () {
-                          setState(() {});
-                          // selectDialog(context);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          scrapPatt(a, context),
+         
           Positioned(
             bottom: a.height / 42,
             left: a.width / 2.8,
@@ -223,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                 scraps.add(scrap);
               }
             } */
-  scrapPatt(Size a, String scrap, BuildContext context) {
+  scrapPatt(Size a, BuildContext context) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Scraps')
@@ -231,16 +164,8 @@ class _HomePageState extends State<HomePage> {
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
-            Set id = {};
-            Map scraps = {};
-            for (var usersID in snap.data['id']) {
-              id.add(usersID);
-              scraps[usersID] = snap.data['scraps'][usersID];
-            }
             return MapScraps(
               currentLocation: widget.currentLocation,
-              users: id.toList(),
-              scraps: scraps,
               uid: widget.doc['uid'],
             );
           } else {
@@ -331,18 +256,43 @@ class _HomePageState extends State<HomePage> {
   }
 
   binScrap() async {
-    await Firestore.instance.collection('Scraps').document('hatyai').setData({
-      'id': FieldValue.arrayUnion([widget.doc['uid']]),
-      'scraps': {
-        widget.doc['uid']: FieldValue.arrayUnion([
-          {
-            'lat': widget.currentLocation.latitude,
-            'lng': widget.currentLocation.longitude,
-            'text': text
-          }
-        ])
-      }
-    }, merge: true);
+    GeoFirePoint point;
+    await Geolocator().getCurrentPosition().then((value) => point =
+        Geoflutterfire()
+            .point(latitude: value.latitude, longitude: value.longitude));
+    await Firestore.instance
+        .collection('Scraps')
+        .document('hatyai')
+        .collection('scrapsPosition')
+        .add({
+      'uid': widget.doc['uid'],
+      'text': text,
+      'position': point.data
+    }).then((value) {
+      Firestore.instance
+          .collection('Scraps')
+          .document('hatyai')
+          .collection('scrapsPosition')
+          .document(value.documentID)
+          .updateData({'id': value.documentID});
+    });
+    await increaseTransaction(widget.doc['uid'], 'written');
+  }
+
+  increaseTransaction(String uid, String key) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document(uid)
+        .get()
+        .then((value) => Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('info')
+            .document(uid)
+            .updateData(
+                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 
 //ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี้ขึ้นมาไว้สร้าง Contents
@@ -372,30 +322,30 @@ class _HomePageState extends State<HomePage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Container(
-                                          width: a.width / 15,
-                                          height: a.width / 15,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      a.width / 50),
-                                              border: Border.all(
-                                                  color: Colors.white)),
-                                        ),
-                                        Container(
-                                          child: Text(
-                                            "\t" + "เปิดเผยตัวตน",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: a.width / 20),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
+                                  // Container(
+                                  //   child: Row(
+                                  //     children: <Widget>[
+                                  //       Container(
+                                  //         width: a.width / 15,
+                                  //         height: a.width / 15,
+                                  //         decoration: BoxDecoration(
+                                  //             borderRadius:
+                                  //                 BorderRadius.circular(
+                                  //                     a.width / 50),
+                                  //             border: Border.all(
+                                  //                 color: Colors.white)),
+                                  //       ),
+                                  //       Container(
+                                  //         child: Text(
+                                  //           "\t" + "เปิดเผยตัวตน",
+                                  //           style: TextStyle(
+                                  //               color: Colors.white,
+                                  //               fontSize: a.width / 20),
+                                  //         ),
+                                  //       )
+                                  //     ],
+                                  //   ),
+                                  // ),
                                   //ออกจากหน้านี้
                                   InkWell(
                                     child: Icon(
@@ -410,7 +360,7 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
-                            //ส่วนของกระดาษที่เขียน
+                            //ส่ว��ของกระดาษที่เขีย���
                             Container(
                               margin: EdgeInsets.only(top: a.width / 50),
                               width: a.width / 1,
@@ -441,9 +391,9 @@ class _HomePageState extends State<HomePage> {
                                           "เขียนโดย" + " : " + "ใครสักคน",
                                           style: TextStyle(color: Colors.grey),
                                         ),
-                                        Text("เวลา" + " : " + "09.37",
-                                            style:
-                                                TextStyle(color: Colors.grey))
+                                        // Text("เวลา" + " : " + "09.37",
+                                        //     style:
+                                        //         TextStyle(color: Colors.grey))
                                       ],
                                     ),
                                   ),
@@ -518,25 +468,30 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   ),
                                   //ปุ่มปาใส่
-                                  // InkWell(
-                                  //   child: Container(
-                                  //     width: a.width / 4.5,
-                                  //     height: a.width / 8,
-                                  //     decoration: BoxDecoration(
-                                  //         color: Colors.white,
-                                  //         borderRadius:
-                                  //             BorderRadius.circular(a.width)),
-                                  //     alignment: Alignment.center,
-                                  //     child: Text("ปาใส่",
-                                  //         style: TextStyle(
-                                  //             fontSize: a.width / 15)),
-                                  //   ),
-                                  //   //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                  //   onTap: () {
-                                  //     Navigator.pop(context);
-                                  //     dialog2();
-                                  //   },
-                                  // )
+                                  InkWell(
+                                    child: Container(
+                                      width: a.width / 4.5,
+                                      height: a.width / 8,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(a.width)),
+                                      alignment: Alignment.center,
+                                      child: Text("ปาใส่",
+                                          style: TextStyle(
+                                              fontSize: a.width / 15)),
+                                    ),
+                                    //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
+                                    onTap: () {
+                                      if (_key.currentState.validate()) {
+                                        _key.currentState.save();
+                                        Navigator.pop(context);
+                                        chooseUser();
+                                      } else {
+                                        print('nope');
+                                      }
+                                    },
+                                  )
                                 ],
                               ),
                             )
@@ -550,7 +505,24 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  dialog2() {
+  throwTo(Map selectedID) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(selectedID['uid'])
+        .collection('scraps')
+        .document('recently')
+        .updateData(
+      {
+        'scraps': FieldValue.arrayUnion([text])
+      },
+    );
+    await increaseTransaction(widget.doc['uid'], 'written');
+    await increaseTransaction(selectedID['uid'], 'threw');
+  }
+
+  chooseUser() {
+    String id;
+    Map selectedID = {};
     return showDialog(
         context: context,
         builder: (builder) {
@@ -568,16 +540,16 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
                           Container(
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                InkWell(
-                                  child: Icon(Icons.arrow_back,
-                                      size: a.width / 15, color: Colors.white),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    dialog();
-                                  },
-                                ),
+                                // InkWell(
+                                //   child: Icon(Icons.arrow_back,
+                                //       size: a.width / 15, color: Colors.white),
+                                //   onTap: () {
+                                //     Navigator.pop(context);
+                                //     dialog();
+                                //   },
+                                // ),
                                 InkWell(
                                   child: Icon(Icons.clear,
                                       size: a.width / 15, color: Colors.white),
@@ -588,57 +560,203 @@ class _HomePageState extends State<HomePage> {
                               ],
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(top: a.width / 20),
-                            width: a.width / 1.1,
-                            height: a.height / 1.7,
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.circular(a.width / 10)),
-                            child: Column(
-                              children: <Widget>[
-                                Container(
+                          selectedID == null || selectedID['id'] == null
+                              ? Container(
                                   margin: EdgeInsets.only(top: a.width / 20),
+                                  width: a.width / 1.1,
+                                  height: a.height / 1.5,
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width / 10),
-                                    color: Colors.black,
-                                  ),
-                                  width: a.width / 1.7,
-                                  height: a.width / 7,
-                                  child: Container(
-                                    margin: EdgeInsets.only(left: a.width / 20),
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: '@someone',
-                                        hintStyle: TextStyle(
-                                          fontSize: a.width / 15,
-                                          color: Colors.grey,
+                                      color: Colors.grey,
+                                      borderRadius:
+                                          BorderRadius.circular(a.width / 10)),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        margin:
+                                            EdgeInsets.only(top: a.width / 20),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              a.width / 10),
+                                          color: Colors.black,
+                                        ),
+                                        width: a.width / 1.7,
+                                        height: a.width / 7,
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              left: a.width / 20),
+                                          child: TextFormField(
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: '@someone',
+                                              hintStyle: TextStyle(
+                                                fontSize: a.width / 15,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            onChanged: (val) {
+                                              setState(() {
+                                                id = val;
+                                              });
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      id == null || id == ''
+                                          ? Center(
+                                              child:
+                                                  Text('ค้นหาคนที่คุณจะปาใส่'),
+                                            )
+                                          : id[0] != '@'
+                                              ? Center(
+                                                  child: Text(
+                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ ข้างหน้า'),
+                                                )
+                                              : StreamBuilder(
+                                                  stream: Firestore.instance
+                                                      .collection('Users')
+                                                      .where('searchIndex',
+                                                          arrayContains:
+                                                              id.substring(1))
+                                                      .snapshots(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.hasData &&
+                                                        snapshot.connectionState ==
+                                                            ConnectionState
+                                                                .active) {
+                                                      return snapshot.data
+                                                                      ?.documents ==
+                                                                  null ||
+                                                              snapshot
+                                                                      .data
+                                                                      .documents
+                                                                      .length ==
+                                                                  0
+                                                          ? Center(
+                                                              child: Text(
+                                                                  'ไม่พบคนดังกล่าว'),
+                                                            )
+                                                          : Container(
+                                                              width:
+                                                                  a.width / 1.1,
+                                                              height:
+                                                                  a.height / 2,
+                                                              child: ListView
+                                                                  .builder(
+                                                                      itemCount: snapshot
+                                                                          .data
+                                                                          .documents
+                                                                          .length,
+                                                                      itemBuilder:
+                                                                          (context,
+                                                                              index) {
+                                                                        DocumentSnapshot
+                                                                            doc =
+                                                                            snapshot.data.documents[index];
+                                                                        return InkWell(
+                                                                          child:
+                                                                              Container(
+                                                                            padding:
+                                                                                EdgeInsets.all(a.width / 21),
+                                                                            width:
+                                                                                a.width / 1.1,
+                                                                            height:
+                                                                                a.height / 12,
+                                                                            child:
+                                                                                Text(
+                                                                              '@' + doc['id'],
+                                                                              style: TextStyle(fontSize: a.width / 12),
+                                                                            ),
+                                                                          ),
+                                                                          onTap:
+                                                                              () {
+                                                                            selectedID['id'] =
+                                                                                doc['id'];
+                                                                            selectedID['uid'] =
+                                                                                doc['uid'];
+                                                                            setState(() {});
+                                                                          },
+                                                                        );
+                                                                      }),
+                                                            );
+                                                    } else {
+                                                      return Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      );
+                                                    }
+                                                  })
+                                    ],
+                                  ),
+                                )
+                              : Container(
+                                  color: Colors.grey,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                          child: Text(
+                                        'ปาใส่' + selectedID['id'],
+                                        style:
+                                            TextStyle(fontSize: a.width / 12),
+                                      )),
+                                      Image.asset(
+                                        './assets/paper.png',
+                                        width: a.width / 6.4,
+                                        height: a.width / 6.4,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Container(
+                                          margin: EdgeInsets.only(
+                                              top: a.width / 10),
+                                          child: Row(
+                                            children: <Widget>[
+                                              InkWell(
+                                                child: Container(
+                                                  width: a.width / 4.5,
+                                                  height: a.width / 8,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width)),
+                                                  alignment: Alignment.center,
+                                                  child: Text("เปลี่ยนคน",
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                              a.width / 15)),
+                                                ),
+                                                onTap: () {
+                                                  id = '';
+                                                  selectedID.clear();
+                                                  setState(() {});
+                                                },
+                                              ),
+                                              InkWell(
+                                                child: Container(
+                                                  width: a.width / 4.5,
+                                                  height: a.width / 8,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width)),
+                                                  alignment: Alignment.center,
+                                                  child: Text("ปาเลย",
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                              a.width / 15)),
+                                                ),
+                                                onTap: () async {
+                                                  Navigator.pop(context);
+                                                  await throwTo(selectedID);
+                                                },
+                                              ),
+                                            ],
+                                          ))
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                              margin: EdgeInsets.only(top: a.width / 10),
-                              child: InkWell(
-                                child: Container(
-                                  width: a.width / 4.5,
-                                  height: a.width / 8,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(a.width)),
-                                  alignment: Alignment.center,
-                                  child: Text("ปาใส่",
-                                      style: TextStyle(fontSize: a.width / 15)),
-                                ),
-                              ))
                         ],
                       )
                     ],
