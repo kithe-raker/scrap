@@ -343,6 +343,23 @@ class _HomePageState extends State<HomePage> {
         ])
       }
     }, merge: true);
+    await increaseTransaction(widget.doc['uid'], 'written');
+  }
+
+  increaseTransaction(String uid, String key) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document(uid)
+        .get()
+        .then((value) => Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('info')
+            .document(uid)
+            .updateData(
+                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 
 //ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี้ขึ้นมาไว้สร้าง Contents
@@ -372,30 +389,30 @@ class _HomePageState extends State<HomePage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Container(
-                                          width: a.width / 15,
-                                          height: a.width / 15,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      a.width / 50),
-                                              border: Border.all(
-                                                  color: Colors.white)),
-                                        ),
-                                        Container(
-                                          child: Text(
-                                            "\t" + "เปิดเผยตัวตน",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: a.width / 20),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
+                                  // Container(
+                                  //   child: Row(
+                                  //     children: <Widget>[
+                                  //       Container(
+                                  //         width: a.width / 15,
+                                  //         height: a.width / 15,
+                                  //         decoration: BoxDecoration(
+                                  //             borderRadius:
+                                  //                 BorderRadius.circular(
+                                  //                     a.width / 50),
+                                  //             border: Border.all(
+                                  //                 color: Colors.white)),
+                                  //       ),
+                                  //       Container(
+                                  //         child: Text(
+                                  //           "\t" + "เปิดเผยตัวตน",
+                                  //           style: TextStyle(
+                                  //               color: Colors.white,
+                                  //               fontSize: a.width / 20),
+                                  //         ),
+                                  //       )
+                                  //     ],
+                                  //   ),
+                                  // ),
                                   //ออกจากหน้านี้
                                   InkWell(
                                     child: Icon(
@@ -441,9 +458,9 @@ class _HomePageState extends State<HomePage> {
                                           "เขียนโดย" + " : " + "ใครสักคน",
                                           style: TextStyle(color: Colors.grey),
                                         ),
-                                        Text("เวลา" + " : " + "09.37",
-                                            style:
-                                                TextStyle(color: Colors.grey))
+                                        // Text("เวลา" + " : " + "09.37",
+                                        //     style:
+                                        //         TextStyle(color: Colors.grey))
                                       ],
                                     ),
                                   ),
@@ -553,6 +570,21 @@ class _HomePageState extends State<HomePage> {
                 );
               }));
         });
+  }
+
+  throwTo(Map selectedID) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(selectedID['uid'])
+        .collection('scraps')
+        .document('recently')
+        .updateData(
+      {
+        'scraps': FieldValue.arrayUnion([text])
+      },
+    );
+    await increaseTransaction(widget.doc['uid'], 'written');
+    await increaseTransaction(selectedID['uid'], 'threw');
   }
 
   chooseUser() {
@@ -784,19 +816,7 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                                 onTap: () async {
                                                   Navigator.pop(context);
-                                                  await Firestore.instance
-                                                      .collection('Users')
-                                                      .document(
-                                                          selectedID['uid'])
-                                                      .collection('scraps')
-                                                      .document('recently')
-                                                      .updateData(
-                                                    {
-                                                      'scraps':
-                                                          FieldValue.arrayUnion(
-                                                              [text])
-                                                    },
-                                                  );
+                                                  await throwTo(selectedID);
                                                 },
                                               ),
                                             ],

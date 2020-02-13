@@ -101,7 +101,7 @@ class _MapScrapsState extends State<MapScraps> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text('เขียนโดย : ใครสักคน'),
-                                Text('เวลา : 9:00')
+                                //   Text('เวลา : 9:00')
                               ],
                             ),
                           )),
@@ -241,6 +241,7 @@ class _MapScrapsState extends State<MapScraps> {
           markers.remove(markerId);
           setState(() {});
           dialog(text);
+          increaseTransaction(id, 'read');
         } catch (e) {
           print(e.toString());
           error(context,
@@ -330,5 +331,21 @@ class _MapScrapsState extends State<MapScraps> {
         c((lat2 - lat1) * p) / 2 +
         c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
+  }
+
+  increaseTransaction(String uid, String key) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document(uid)
+        .get()
+        .then((value) => Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('info')
+            .document(uid)
+            .updateData(
+                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 }

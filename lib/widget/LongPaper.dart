@@ -38,7 +38,7 @@ class _LongPaperState extends State<LongPaper> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text("เขียนโดย : " + "ใครสักคน"),
-                      Text("เวลา : " + "11.11"),
+                    //  Text("เวลา : " + "11.11"),
                     ],
                   ),
                   IconButton(

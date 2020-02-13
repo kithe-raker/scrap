@@ -117,7 +117,9 @@ class _ProfileState extends State<Profile> {
                                   //เพื่อใช้สำหรับให้ จำนวน และ เขียน
                                   children: <Widget>[
                                     Text(
-                                      "12",
+                                      snapshot.data['written'] == null
+                                          ? '0'
+                                          : snapshot.data['written'].toString(),
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: a.width / 10,
@@ -137,7 +139,9 @@ class _ProfileState extends State<Profile> {
                                   children: <Widget>[
                                     Text(
                                       //เพื่อใช้สำหรับให้ จำนวน และ ผู้หยิบอ่าน
-                                      "41",
+                                      snapshot.data['read'] == null
+                                          ? '0'
+                                          : snapshot.data['read'].toString(),
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: a.width / 10,
@@ -154,10 +158,12 @@ class _ProfileState extends State<Profile> {
                               ),
                               Container(
                                 child: Column(
-                                  //เพื่อใช้สำหรับให้ จำนวน และ โ��นปาใส��
+                                  //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
                                   children: <Widget>[
                                     Text(
-                                      "9",
+                                      snapshot.data['threw'] == null
+                                          ? '0'
+                                          : snapshot.data['threw'].toString(),
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: a.width / 10,
@@ -395,7 +401,7 @@ class _ProfileState extends State<Profile> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text('เขียนโดย : ใครสักคน'),
-                                Text('เวลา : 9:00')
+                                //  Text('เวลา : 9:00')
                               ],
                             ),
                           )),
