@@ -1,43 +1,46 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:rxdart/rxdart.dart';
 
 class MapScraps extends StatefulWidget {
   final Position currentLocation;
-  final List users;
-  final Map scraps;
   final String uid;
-  MapScraps(
-      {@required this.currentLocation,
-      @required this.users,
-      @required this.scraps,
-      @required this.uid});
+  MapScraps({@required this.currentLocation, @required this.uid});
   @override
   _MapScrapsState createState() => _MapScrapsState();
 }
 
 class _MapScrapsState extends State<MapScraps> {
   Position currentLocation;
-  List users = [];
-  Map scraps = {};
+  bool loadMap = false;
   BitmapDescriptor _curcon, scrapIcon;
   bool checkPlatform = Platform.isIOS;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   GoogleMapController mapController;
+  var radius = BehaviorSubject<double>.seeded(0.1);
+  Stream<dynamic> query;
+  StreamSubscription subscription;
 
   @override
   void initState() {
     currentLocation = widget.currentLocation;
-    for (var user in widget.users) {
-      users.add(user);
-      scraps[user] = widget.scraps[user];
-    }
+    loadMap = true;
     super.initState();
+  }
+
+  @override
+  dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   error(BuildContext context, String sub) {
@@ -188,17 +191,21 @@ class _MapScrapsState extends State<MapScraps> {
         body: Container(
       width: a.width,
       height: a.height,
-      child: GoogleMap(
-        myLocationButtonEnabled: false,
-        myLocationEnabled: false,
-        onMapCreated: onMapCreated,
-        initialCameraPosition: CameraPosition(
-            target: LatLng(currentLocation?.latitude ?? 0,
-                currentLocation?.longitude ?? 0),
-            zoom: 16),
-        markers: Set<Marker>.of(markers.values),
-        circles: Set<Circle>.of(circles.values),
-      ),
+      child: loadMap
+          ? GoogleMap(
+              myLocationButtonEnabled: false,
+              myLocationEnabled: false,
+              onMapCreated: onMapCreated,
+              initialCameraPosition: CameraPosition(
+                  target: LatLng(currentLocation?.latitude ?? 0,
+                      currentLocation?.longitude ?? 0),
+                  zoom: 18),
+              markers: Set<Marker>.of(markers.values),
+              circles: Set<Circle>.of(circles.values),
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     ));
   }
   /*
@@ -211,27 +218,70 @@ class _MapScrapsState extends State<MapScraps> {
               }
             } */
 
-  void onMapCreated(GoogleMapController controller) {
-    this.mapController = controller;
-    userMarker();
-    _addCircle(800);
-    for (var usersID in users) {
-      for (var scrap in scraps[usersID]) {
-        if (calculateDistance(currentLocation.latitude,
-                    currentLocation.longitude, scrap['lat'], scrap['lng']) <=
-                800 &&
-            usersID != widget.uid) {
-          _addMarker(usersID, scrap['text'], scrap['lat'], scrap['lng'],
-              scraps[usersID].indexOf(scrap));
-        } else {
-          print('nope');
-        }
-      }
-    }
+  changeMapMode() {
+    getJsonFile("assets/mapStyle.json").then(setMapStyle);
   }
 
-  void _addMarker(String id, String text, double lat, double lng, int index) {
-    final MarkerId markerId = MarkerId(id + index.toString());
+  Future<String> getJsonFile(String path) async {
+    return await rootBundle.loadString(path);
+  }
+
+  void setMapStyle(String mapStyle) {
+    this.mapController.setMapStyle(mapStyle);
+  }
+
+  void onMapCreated(GoogleMapController controller) {
+    this.mapController = controller;
+    changeMapMode();
+    userMarker(
+      currentLocation != null ? currentLocation.latitude : 0.0,
+      currentLocation != null ? currentLocation.longitude : 0.0,
+    );
+    _addCircle(100, currentLocation.latitude, currentLocation.longitude);
+    Geolocator().getPositionStream().listen((location) {
+      userMarker(location.latitude, location.longitude);
+      _addCircle(100, location.latitude, location.longitude);
+      _startQuery(location);
+    });
+  }
+
+  void _updateMarkers(List<DocumentSnapshot> documentList, Position position) {
+    markers.clear();
+    userMarker(position.latitude, position.longitude);
+    documentList.forEach((DocumentSnapshot document) {
+      GeoPoint loca = document.data['position']['geopoint'];
+      document['uid'] != widget.uid
+          ? _addMarker(document['id'], document['uid'], document['text'],
+              loca.latitude, loca.longitude)
+          : null;
+    });
+  }
+
+  _startQuery(Position position) async {
+    // Make a referece to firestore
+    var ref = Firestore.instance
+        .collection('Scraps')
+        .document('hatyai')
+        .collection('scrapsPosition');
+    GeoFirePoint center = Geoflutterfire()
+        .point(latitude: position.latitude, longitude: position.longitude);
+
+    // subscribe to query
+    subscription = radius.switchMap((rad) {
+      return Geoflutterfire().collection(collectionRef: ref).within(
+          center: center, radius: rad, field: 'position', strictMode: true);
+    }).listen((list) {
+      _updateMarkers(list, position);
+    });
+  }
+
+  cameraAnime(GoogleMapController controller, double lat, double lng) {
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(lat, lng), zoom: 12, bearing: 90, tilt: 45)));
+  }
+
+  void _addMarker(String id, String user, String text, double lat, double lng) {
+    final MarkerId markerId = MarkerId(id);
     final Marker marker = Marker(
       markerId: markerId,
       position: LatLng(lat, lng),
@@ -241,7 +291,7 @@ class _MapScrapsState extends State<MapScraps> {
           markers.remove(markerId);
           setState(() {});
           dialog(text);
-          increaseTransaction(id, 'read');
+          increaseTransaction(user, 'read');
         } catch (e) {
           print(e.toString());
           error(context,
@@ -254,11 +304,9 @@ class _MapScrapsState extends State<MapScraps> {
     });
   }
 
-  userMarker() {
+  userMarker(double lat, double lng) {
     MarkerId markerId = MarkerId('user');
-    LatLng position = LatLng(
-        currentLocation != null ? currentLocation.latitude : 0.0,
-        currentLocation != null ? currentLocation.longitude : 0.0);
+    LatLng position = LatLng(lat, lng);
     Marker marker = Marker(
       markerId: markerId,
       position: position,
@@ -270,7 +318,7 @@ class _MapScrapsState extends State<MapScraps> {
     });
   }
 
-  void _addCircle(double radius) {
+  void _addCircle(double radius, double lat, double lng) {
     final CircleId circleId = CircleId('circle_id');
     final Circle circle = Circle(
       circleId: circleId,
@@ -278,7 +326,7 @@ class _MapScrapsState extends State<MapScraps> {
       strokeColor: Color.fromRGBO(23, 23, 23, 0.4),
       fillColor: Color.fromRGBO(67, 78, 80, 0.1),
       strokeWidth: 4,
-      center: LatLng(currentLocation.latitude, currentLocation.longitude),
+      center: LatLng(lat, lng),
       radius: radius,
     );
     setState(() {
@@ -322,15 +370,6 @@ class _MapScrapsState extends State<MapScraps> {
     setState(() {
       scrapIcon = bitmap;
     });
-  }
-
-  double calculateDistance(lat1, lon1, lat2, lon2) {
-    var p = 0.017453292519943295;
-    var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
-    return 12742 * asin(sqrt(a));
   }
 
   increaseTransaction(String uid, String key) async {

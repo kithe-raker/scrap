@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:scrap/Page/MapScraps.dart';
 
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          scrapPatt(a, type ?? 'Analysts', context),
+          scrapPatt(a, context),
           Positioned(
             bottom: 0,
             child: Container(
@@ -223,7 +224,7 @@ class _HomePageState extends State<HomePage> {
                 scraps.add(scrap);
               }
             } */
-  scrapPatt(Size a, String scrap, BuildContext context) {
+  scrapPatt(Size a, BuildContext context) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Scraps')
@@ -231,16 +232,8 @@ class _HomePageState extends State<HomePage> {
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
-            Set id = {};
-            Map scraps = {};
-            for (var usersID in snap.data['id']) {
-              id.add(usersID);
-              scraps[usersID] = snap.data['scraps'][usersID];
-            }
             return MapScraps(
               currentLocation: widget.currentLocation,
-              users: id.toList(),
-              scraps: scraps,
               uid: widget.doc['uid'],
             );
           } else {
@@ -331,18 +324,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   binScrap() async {
-    await Firestore.instance.collection('Scraps').document('hatyai').setData({
-      'id': FieldValue.arrayUnion([widget.doc['uid']]),
-      'scraps': {
-        widget.doc['uid']: FieldValue.arrayUnion([
-          {
-            'lat': widget.currentLocation.latitude,
-            'lng': widget.currentLocation.longitude,
-            'text': text
-          }
-        ])
-      }
-    }, merge: true);
+    GeoFirePoint point;
+    await Geolocator().getCurrentPosition().then((value) => point =
+        Geoflutterfire()
+            .point(latitude: value.latitude, longitude: value.longitude));
+    await Firestore.instance
+        .collection('Scraps')
+        .document('hatyai')
+        .collection('scrapsPosition')
+        .add({
+      'uid': widget.doc['uid'],
+      'text': text,
+      'position': point.data
+    }).then((value) {
+      Firestore.instance
+          .collection('Scraps')
+          .document('hatyai')
+          .collection('scrapsPosition')
+          .document(value.documentID)
+          .updateData({'id': value.documentID});
+    });
     await increaseTransaction(widget.doc['uid'], 'written');
   }
 
@@ -427,7 +428,7 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
-                            //ส่วนของกระดาษที่เขียน
+                            //ส่ว��ของกระดาษที่เขีย���
                             Container(
                               margin: EdgeInsets.only(top: a.width / 50),
                               width: a.width / 1,

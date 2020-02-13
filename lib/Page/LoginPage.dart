@@ -26,8 +26,8 @@ class _LoginPageState extends State<LoginPage> {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: ListView(
+        // mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
             child: Text(
@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Container(
               margin: EdgeInsets.only(top: a.width / 10),
               width: a.width / 1.15,
-              height: a.height / 2.2,
+              height: a.height / 2.1,
               decoration: BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.circular(a.width / 20)),
@@ -199,7 +199,7 @@ class _LoginPhoneState extends State<LoginPhone> {
     await FirebaseAuth.instance
         .verifyPhoneNumber(
             phoneNumber: '+66' + phone,
-            timeout: Duration(minutes: 10),
+            timeout: Duration(seconds: 120),
             verificationCompleted: success,
             verificationFailed: failed,
             codeSent: smsCode,
