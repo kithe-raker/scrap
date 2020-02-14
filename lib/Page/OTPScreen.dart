@@ -116,50 +116,37 @@ class _OTPScreenState extends State<OTPScreen> {
                                 fontSize: a.width / 15),
                           ),
                           Container(
-                              margin: EdgeInsets.only(
-                                  top: a.width / 10, bottom: a.width / 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Container(
-                                    width: a.width / 8,
-                                    height: a.width / 8,
-                                    color: Colors.white,
-                                  ),
-                                  Container(
-                                    width: a.width / 8,
-                                    height: a.width / 8,
-                                    color: Colors.white,
-                                  ),
-                                  Container(
-                                    width: a.width / 8,
-                                    height: a.width / 8,
-                                    color: Colors.white,
-                                  ),
-                                  Container(
-                                    width: a.width / 8,
-                                    height: a.width / 8,
-                                    color: Colors.white,
-                                  ),
-                                  Container(
-                                    width: a.width / 8,
-                                    height: a.width / 8,
-                                    color: Colors.white,
-                                  ),
-                                  Container(
-                                    width: a.width / 8,
-                                    height: a.width / 8,
-                                    color: Colors.white,
-                                  )
-                                ],
-                              )),
-                          TextFormField(
-                            decoration: InputDecoration(hintText: 'OTP'),
-                            validator: (val) {
-                              return val.trim() == "" ? 'put pls' : null;
-                            },
-                            onSaved: (val) => veriCode = val,
+                            width: a.width / 2,
+                            margin: EdgeInsets.only(
+                                top: a.width / 10, bottom: a.width / 10),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              border: Border(
+                                bottom:
+                                    BorderSide(width: 1.0, color: Colors.white),
+                              ),
+                            ),
+                            child: TextFormField(
+                               maxLength: 6,
+                               
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: a.width / 10,
+                                color: Colors.white,
+                                letterSpacing: 10,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'OTP',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                border: InputBorder.none,
+                              ),
+                              validator: (val) {
+                                return val.trim() == ""
+                                    ? 'กรุณากรอกเลข 6 หลัก'
+                                    : null;
+                              },
+                              onSaved: (val) => veriCode = val,
+                            ),
                           ),
                           InkWell(
                             child: Container(
