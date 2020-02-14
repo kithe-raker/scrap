@@ -48,7 +48,7 @@ class _MapScrapsState extends State<MapScraps> {
       builder: (context) => AlertDialog(
         content: ListTile(
           title: Text(
-            "ขออภัยค่ะ",
+            "ขออภัย",
             style: TextStyle(fontSize: 20),
           ),
           subtitle: Text(
