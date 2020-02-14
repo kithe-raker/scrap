@@ -16,9 +16,31 @@ class _LoginPageState extends State<LoginPage> {
   var _key = GlobalKey<FormState>();
 
   login() async {
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: _email, password: _password);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Authen()));
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _email, password: _password);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Authen()));
+    } catch (e) {
+      switch (e.toString()) {
+        case 'PlatformException(ERROR_INVALID_EMAIL, The email address is badly formatted., null)':
+          warning(context, 'กรุณาตรวจสอบ"อีเมล"ของท่าน');
+          break;
+        case 'PlatformException(ERROR_USER_NOT_FOUND, There is no user record corresponding to this identifier. The user may have been deleted., null)':
+          warning(context, 'ไม่พบบัญชีผู้ใช้กรุณาตรวจสอบใหม่');
+          break;
+        case 'PlatformException(ERROR_WRONG_PASSWORD, The password is invalid or the user does not have a password., null)':
+          warning(context, 'กรุณาตรวจสอบรหัสผ่านของท่าน');
+          break;
+        case "'package:firebase_auth/src/firebase_auth.dart': Failed assertion: line 224 pos 12: 'email != null': is not true.":
+          warning(context, 'กรุณากรอกอีเมลและรหัสผ่าน');
+          break;
+        default:
+          warning(context,
+              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อต่ออินเทอร์เน็ต');
+      }
+      print(e.toString());
+    }
   }
 
   @override
@@ -165,6 +187,35 @@ class _LoginPageState extends State<LoginPage> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  warning(BuildContext context, String sub) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: ListTile(
+          title: Text(
+            "ขออภัยค่ะ",
+            style: TextStyle(fontSize: 20),
+          ),
+          subtitle: Text(
+            sub,
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              'ตกลง',
+              style: TextStyle(fontSize: 16),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ),
     );
   }

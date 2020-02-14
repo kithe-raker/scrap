@@ -13,7 +13,11 @@ import 'package:rxdart/rxdart.dart';
 class MapScraps extends StatefulWidget {
   final Position currentLocation;
   final String uid;
-  MapScraps({@required this.currentLocation, @required this.uid});
+  final List collection;
+  MapScraps(
+      {@required this.currentLocation,
+      @required this.uid,
+      @required this.collection});
   @override
   _MapScrapsState createState() => _MapScrapsState();
 }
@@ -29,18 +33,13 @@ class _MapScrapsState extends State<MapScraps> {
   var radius = BehaviorSubject<double>.seeded(0.1);
   Stream<dynamic> query;
   StreamSubscription subscription;
+  Set picked = {};
 
   @override
   void initState() {
     currentLocation = widget.currentLocation;
     loadMap = true;
     super.initState();
-  }
-
-  @override
-  dispose() {
-    subscription.cancel();
-    super.dispose();
   }
 
   error(BuildContext context, String sub) {
@@ -72,7 +71,7 @@ class _MapScrapsState extends State<MapScraps> {
     );
   }
 
-  dialog(String text) {
+  dialog(String text, String writer, String time) {
     return showDialog(
         context: context,
         builder: (builder) {
@@ -103,8 +102,8 @@ class _MapScrapsState extends State<MapScraps> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text('เขียนโดย : ใครสักคน'),
-                                //   Text('เวลา : 9:00')
+                                Text('เขียนโดย : @$writer'),
+                                Text('เวลา : $time')
                               ],
                             ),
                           )),
@@ -249,33 +248,9 @@ class _MapScrapsState extends State<MapScraps> {
                   SizedBox(
                     width: a.width / 21,
                   ),
-                  Container(
+                  SizedBox(
                     width: a.width / 7,
-                    height: a.width / 7,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xff1a1a1a),
-                            blurRadius: 10.0,
-                            spreadRadius: 0.0,
-                            offset: Offset(
-                              0.0,
-                              2.0,
-                            ),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(a.width),
-                        color: Color(0xff26A4FF)),
-                    child: IconButton(
-                      icon: Icon(Icons.refresh),
-                      color: Colors.white,
-                      iconSize: a.width / 15,
-                      onPressed: () {
-                        setState(() {});
-                        // selectDialog(context);
-                      },
-                    ),
-                  ),
+                  )
                 ],
               ),
             ),
@@ -314,10 +289,11 @@ class _MapScrapsState extends State<MapScraps> {
       currentLocation != null ? currentLocation.longitude : 0.0,
     );
     _addCircle(100, currentLocation.latitude, currentLocation.longitude);
+    _startQuery();
     Geolocator().getPositionStream().listen((location) {
       userMarker(location.latitude, location.longitude);
       _addCircle(100, location.latitude, location.longitude);
-      _startQuery(location);
+      _startQuery(position: location);
       _animateToUser(position: location);
     });
   }
@@ -326,11 +302,20 @@ class _MapScrapsState extends State<MapScraps> {
     markers.clear();
     userMarker(position.latitude, position.longitude);
     documentList.forEach((DocumentSnapshot document) {
-      GeoPoint loca = document.data['position']['geopoint'];
-      document['uid'] != widget.uid
-          ? _addMarker(document['id'], document['uid'], document['text'],
-              loca.latitude, loca.longitude)
-          : null;
+      var data = document.data;
+      GeoPoint loca = data['position']['geopoint'];
+      widget.collection.contains(data['text']) ||
+              data['uid'] == widget.uid ||
+              picked.contains(data['id'])
+          ? null
+          : _addMarker(
+              data['id'],
+              data['uid'],
+              data['scrap']['user'],
+              data['scrap']['text'],
+              data['scrap']['time'],
+              loca.latitude,
+              loca.longitude);
     });
   }
 
@@ -347,21 +332,23 @@ class _MapScrapsState extends State<MapScraps> {
         )));
   }
 
-  _startQuery(Position position) async {
+  _startQuery({Position position}) async {
+    var pos = await Geolocator().getCurrentPosition();
     // Make a referece to firestore
     var ref = Firestore.instance
         .collection('Scraps')
         .document('hatyai')
         .collection('scrapsPosition');
-    GeoFirePoint center = Geoflutterfire()
-        .point(latitude: position.latitude, longitude: position.longitude);
+    GeoFirePoint center = Geoflutterfire().point(
+        latitude: position?.latitude ?? pos.latitude,
+        longitude: position?.longitude ?? pos.longitude);
 
     // subscribe to query
     subscription = radius.switchMap((rad) {
       return Geoflutterfire().collection(collectionRef: ref).within(
           center: center, radius: rad, field: 'position', strictMode: true);
     }).listen((list) {
-      _updateMarkers(list, position);
+      _updateMarkers(list, position ?? pos);
     });
   }
 
@@ -370,7 +357,8 @@ class _MapScrapsState extends State<MapScraps> {
         target: LatLng(lat, lng), zoom: 12, bearing: 90, tilt: 45)));
   }
 
-  void _addMarker(String id, String user, String text, double lat, double lng) {
+  void _addMarker(String id, String user, String writer, String text,
+      String time, double lat, double lng) {
     final MarkerId markerId = MarkerId(id);
     final Marker marker = Marker(
       markerId: markerId,
@@ -379,8 +367,9 @@ class _MapScrapsState extends State<MapScraps> {
       onTap: () async {
         try {
           markers.remove(markerId);
+          picked.add(id);
           setState(() {});
-          dialog(text);
+          dialog(text, writer, time);
           increaseTransaction(user, 'read');
         } catch (e) {
           print(e.toString());
@@ -476,5 +465,11 @@ class _MapScrapsState extends State<MapScraps> {
             .document(uid)
             .updateData(
                 {key: value?.data[key] == null ? 1 : ++value.data[key]}));
+  }
+
+  @override
+  dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 }

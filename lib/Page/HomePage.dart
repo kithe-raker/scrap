@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/Page/MapScraps.dart';
 
 import 'Profile.dart';
@@ -18,6 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String type, select, text;
+  bool public;
   var _key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,56 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: <Widget>[
           scrapPatt(a, context),
+
+          Positioned(
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.only(bottom: a.width / 10),
+              alignment: Alignment.bottomCenter,
+              width: a.width,
+              height: a.height / 1.1,
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    SizedBox(
+                      width: a.width / 7,
+                    ),
+                    SizedBox(
+                      width: a.width / 21,
+                    ),
+                    Container(
+                      width: a.width / 7,
+                      height: a.width / 7,
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0xff1a1a1a),
+                              blurRadius: 10.0,
+                              spreadRadius: 0.0,
+                              offset: Offset(
+                                0.0,
+                                2.0,
+                              ),
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(a.width),
+                          color: Color(0xff26A4FF)),
+                      child: IconButton(
+                        icon: Icon(Icons.refresh),
+                        color: Colors.white,
+                        iconSize: a.width / 15,
+                        onPressed: () {
+                          setState(() {});
+                          // selectDialog(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           Positioned(
             bottom: a.height / 42,
             left: a.width / 2.8,
@@ -153,17 +205,20 @@ class _HomePageState extends State<HomePage> {
               id.add(usersID);
               for (var scrap in snap.data['scraps'][usersID]) {
                 scraps.add(scrap);
-              }
+              } /Users/gPSC1TxFcXVVZ1nQOrPR2kX9SBU2/scraps/collection
             } */
   scrapPatt(Size a, BuildContext context) {
     return StreamBuilder(
         stream: Firestore.instance
-            .collection('Scraps')
-            .document('hatyai')
+            .collection('Users')
+            .document(widget.doc['uid'])
+            .collection('scraps')
+            .document('collection')
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return MapScraps(
+              collection: snap.data['scraps'],
               currentLocation: widget.currentLocation,
               uid: widget.doc['uid'],
             );
@@ -254,7 +309,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  binScrap() async {
+  binScrap(String time) async {
     GeoFirePoint point;
     await Geolocator().getCurrentPosition().then((value) => point =
         Geoflutterfire()
@@ -265,7 +320,11 @@ class _HomePageState extends State<HomePage> {
         .collection('scrapsPosition')
         .add({
       'uid': widget.doc['uid'],
-      'text': text,
+      'scrap': {
+        'text': text,
+        'user': public ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+        'time': time
+      },
       'position': point.data
     }).then((value) {
       Firestore.instance
@@ -296,6 +355,8 @@ class _HomePageState extends State<HomePage> {
 
 //ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี้ขึ้นมาไว้สร้าง Contents
   dialog() {
+    DateTime now = DateTime.now();
+    String time = DateFormat('Hm').format(now);
     return showDialog(
         context: context,
         builder: (builder) {
@@ -321,30 +382,38 @@ class _HomePageState extends State<HomePage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
-                                  // Container(
-                                  //   child: Row(
-                                  //     children: <Widget>[
-                                  //       Container(
-                                  //         width: a.width / 15,
-                                  //         height: a.width / 15,
-                                  //         decoration: BoxDecoration(
-                                  //             borderRadius:
-                                  //                 BorderRadius.circular(
-                                  //                     a.width / 50),
-                                  //             border: Border.all(
-                                  //                 color: Colors.white)),
-                                  //       ),
-                                  //       Container(
-                                  //         child: Text(
-                                  //           "\t" + "เปิดเผยตัวตน",
-                                  //           style: TextStyle(
-                                  //               color: Colors.white,
-                                  //               fontSize: a.width / 20),
-                                  //         ),
-                                  //       )
-                                  //     ],
-                                  //   ),
-                                  // ),
+                                  Container(
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(
+                                          width: a.width / 15,
+                                          height: a.width / 15,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      a.width / 50),
+                                              border: Border.all(
+                                                  color: Colors.white)),
+                                          child: Checkbox(
+                                            value: public ?? false,
+                                            onChanged: (bool value) {
+                                              setState(() {
+                                                public = value;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          child: Text(
+                                            "\t" + "เปิดเผยตัวตน",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: a.width / 20),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                   //ออกจากหน้านี้
                                   InkWell(
                                     child: Icon(
@@ -367,7 +436,7 @@ class _HomePageState extends State<HomePage> {
                               //ทำเป็นชั้นๆ
                               child: Stack(
                                 children: <Widget>[
-                                  //ชั้นที่ 1 ส่วนของก���ะดาษ
+                                  //ช���้นที่ 1 ส่วนของก���ะดาษ
                                   Container(
                                     child: Image.asset(
                                       'assets/paper-readed.png',
@@ -387,10 +456,12 @@ class _HomePageState extends State<HomePage> {
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          "เขียนโดย" + " : " + "ใครสักคน",
+                                          public ?? false
+                                              ? 'เขียนโดย : @${widget.doc['id']}'
+                                              : 'เขียนโดย : ไม่ระบุตัวตน',
                                           style: TextStyle(color: Colors.grey),
                                         ),
-                                        // Text("เวลา" + " : " + "09.37",
+                                        // Text("เวลา" + " : " + time,
                                         //     style:
                                         //         TextStyle(color: Colors.grey))
                                       ],
@@ -460,7 +531,7 @@ class _HomePageState extends State<HomePage> {
                                       if (_key.currentState.validate()) {
                                         _key.currentState.save();
                                         Navigator.pop(context);
-                                        await binScrap();
+                                        await binScrap(time);
                                       } else {
                                         print('nope');
                                       }

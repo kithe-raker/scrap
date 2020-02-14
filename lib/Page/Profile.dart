@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/FeedbackPage.dart';
+import 'package:scrap/services/auth.dart';
+import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/LongPaper.dart';
 
 class Profile extends StatefulWidget {
@@ -551,7 +553,7 @@ class _ProfileState extends State<Profile> {
         });
   }
 
-  void choiceAction(String choice) {
+  void choiceAction(String choice) async {
     print("It's work!");
 
     if (choice == Constans.Account) {
@@ -567,7 +569,10 @@ class _ProfileState extends State<Profile> {
       print('About');
     }
     if (choice == Constans.SignOut) {
-      print('SignOut');
+      Auth auth = Provider.of(context).auth;
+      await auth.signOut().then((value) {
+        Navigator.pop(context);
+      });
     }
   }
 }
