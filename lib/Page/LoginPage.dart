@@ -137,7 +137,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         validator: (val) {
-                          return val.trim() == "" ? 'put isas' : null;
+                          return val.trim() == ""
+                              ? 'กรุณากรอกข้อมูลให้ครบ'
+                              : null;
                         },
                         onSaved: (val) {
                           _email = val.trim();
@@ -186,6 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
+                          letterSpacing: 10,
                           fontWeight: FontWeight.w900,
                           fontSize: a.width / 15,
                         ),
@@ -195,12 +198,13 @@ class _LoginPageState extends State<LoginPage> {
                           hintStyle: TextStyle(
                             color: Colors.grey[500],
                             fontWeight: FontWeight.w900,
-                            letterSpacing: 10,
                             fontSize: a.width / 15,
                           ),
                         ),
                         validator: (val) {
-                          return val.trim() == "" ? 'put isas' : null;
+                          return val.trim() == ""
+                              ? 'กรุณากรอกข้อมูลให้ครบ'
+                              : null;
                         },
                         onSaved: (val) {
                           _password = val.trim();
@@ -478,7 +482,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                               Container(
                                 width: a.width / 1.7,
                                 height: a.width / 6.3,
-                                padding: EdgeInsets.only(left:15),
+                                padding: EdgeInsets.only(left: 15),
                                 decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.only(
@@ -497,8 +501,9 @@ class _LoginPhoneState extends State<LoginPhone> {
                                 ),
                                 child: TextFormField(
                                   style: TextStyle(
-                                    color:Colors.white,
-                                    fontSize:a.width/14,fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    fontSize: a.width / 14,
+                                    fontWeight: FontWeight.w900,
                                   ),
                                   keyboardType: TextInputType.phone,
                                   decoration: InputDecoration(
@@ -529,14 +534,17 @@ class _LoginPhoneState extends State<LoginPhone> {
                               fontWeight: FontWeight.bold,
                               fontSize: a.width / 18),
                         ),
+                        SizedBox(
+                          height: a.width / 7,
+                        ),
                         InkWell(
                           child: Container(
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.circular(a.width / 10)),
-                            width: a.width / 3,                          
-                            margin: EdgeInsets.only(top: a.width / 5),
+                            width: a.width / 2.5,
+                            padding: EdgeInsets.all(10.0),
                             alignment: Alignment.center,
                             child: Text(
                               "ต่อไป",
