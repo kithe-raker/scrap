@@ -51,13 +51,27 @@ class _ProfileState extends State<Profile> {
                                           BorderRadius.circular(a.width),
                                       color: Colors.white),
                                   child: Icon(Icons.arrow_back,
-                                      color: Colors.black, size: a.width / 15),
+                                      color: Colors.black, size: a.width / 15 ),
+
                                 ),
                                 onTap: () {
                                   Navigator.pop(context);
                                 },
                               ),
-                              Container(
+                              PopupMenuButton<String>(
+                                //setting menu
+                                onSelected: choiceAction,
+                                itemBuilder: (BuildContext context) {
+                                  return Constans.choices.map((String choice) {
+                                    return PopupMenuItem(
+                                        value: choice,
+                                        child: Text(
+                                          choice,
+                                          style:
+                                              TextStyle(fontSize: a.width / 15),
+                                        ));
+                                  }).toList();
+                                },
                                 child: Icon(Icons.more_horiz,
                                     color: Colors.white, size: a.width / 9),
                               )
@@ -129,7 +143,7 @@ class _ProfileState extends State<Profile> {
                                       "เขียน",
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: a.width / 25),
+                                          fontSize: a.width / 18),
                                     ),
                                   ],
                                 ),
@@ -138,7 +152,7 @@ class _ProfileState extends State<Profile> {
                                 child: Column(
                                   children: <Widget>[
                                     Text(
-                                      //เพื่อใช้สำหรับให้ จำนวน และ ผู้หยิบอ่าน
+                                      //เพื่อใช้สำหรับให้ จำนวน และ ผ�����้หยิบอ่าน
                                       snapshot.data['read'] == null
                                           ? '0'
                                           : snapshot.data['read'].toString(),
@@ -151,7 +165,7 @@ class _ProfileState extends State<Profile> {
                                       "ผู้คนหยิบอ่าน",
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: a.width / 25),
+                                          fontSize: a.width / 18),
                                     ),
                                   ],
                                 ),
@@ -173,7 +187,7 @@ class _ProfileState extends State<Profile> {
                                       "โดนปาใส่",
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: a.width / 25),
+                                          fontSize: a.width / 18),
                                     ),
                                   ],
                                 ),
@@ -204,6 +218,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               Container(
+                                margin: EdgeInsets.only(bottom: 25.0),
                                 width: a.width,
                                 child: StreamBuilder(
                                     stream: Firestore.instance
@@ -494,4 +509,35 @@ class _ProfileState extends State<Profile> {
               }));
         });
   }
+
+  void choiceAction(String choice) {
+    print("It's work!");
+
+    if (choice == Constans.Account) {
+      print('Account');
+    }
+    if (choice == Constans.Complain) {
+      print('Complain');
+    }
+    if (choice == Constans.About) {
+      print('About');
+    }
+    if (choice == Constans.SignOut) {
+      print('SignOut');
+    }
+  }
+}
+
+class Constans {
+  static const String Account = 'แก้ไขบัญชี';
+  static const String Complain = 'ร้องเรียน';
+  static const String About = 'เกี่ยวกับแอป';
+  static const String SignOut = 'ออกจากระบบ';
+
+  static const List<String> choices = <String>[
+    Account,
+    Complain,
+    About,
+    SignOut,
+  ];
 }

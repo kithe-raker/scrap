@@ -589,7 +589,7 @@ class _HomePageState extends State<HomePage> {
                                                 TextStyle(color: Colors.white),
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
-                                              hintText: '@someone',
+                                              hintText: '@someoneuserid',
                                               hintStyle: TextStyle(
                                                 fontSize: a.width / 15,
                                                 color: Colors.grey,
@@ -606,12 +606,12 @@ class _HomePageState extends State<HomePage> {
                                       id == null || id == ''
                                           ? Center(
                                               child:
-                                                  Text('ค้นหาคนที่คุณจะปาใส่'),
+                                                  Text('ค้นหาคนที่คุณต้องการปาใส่'),
                                             )
                                           : id[0] != '@'
                                               ? Center(
                                                   child: Text(
-                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ ข้างหน้า'),
+                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ตามด้วยชื่อid'),
                                                 )
                                               : StreamBuilder(
                                                   stream: Firestore.instance
@@ -635,7 +635,7 @@ class _HomePageState extends State<HomePage> {
                                                                   0
                                                           ? Center(
                                                               child: Text(
-                                                                  'ไม่พบคนดังกล่าว'),
+                                                                  'ไม่พบ id ดังกล่าว'),
                                                             )
                                                           : Container(
                                                               width:
