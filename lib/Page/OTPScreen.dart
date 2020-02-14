@@ -127,8 +127,7 @@ class _OTPScreenState extends State<OTPScreen> {
                               ),
                             ),
                             child: TextFormField(
-                               maxLength: 6,
-                               
+                              maxLength: 6,                              
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: a.width / 10,

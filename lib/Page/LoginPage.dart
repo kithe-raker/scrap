@@ -195,6 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                           hintStyle: TextStyle(
                             color: Colors.grey[500],
                             fontWeight: FontWeight.w900,
+                            letterSpacing: 10,
                             fontSize: a.width / 15,
                           ),
                         ),
@@ -534,8 +535,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.circular(a.width / 10)),
-                            width: a.width / 3,
-                            height: a.width / 7,
+                            width: a.width / 3,                          
                             margin: EdgeInsets.only(top: a.width / 5),
                             alignment: Alignment.center,
                             child: Text(
