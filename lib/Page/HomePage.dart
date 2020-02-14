@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: <Widget>[
           scrapPatt(a, context),
-         
           Positioned(
             bottom: a.height / 42,
             left: a.width / 2.8,
@@ -605,8 +604,8 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       id == null || id == ''
                                           ? Center(
-                                              child:
-                                                  Text('ค้นหาคนที่คุณต้องการปาใส่'),
+                                              child: Text(
+                                                  'ค้นหาคนที่คุณต้องการปาใส่'),
                                             )
                                           : id[0] != '@'
                                               ? Center(

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/FeedbackPage.dart';
 import 'package:scrap/widget/LongPaper.dart';
 
 class Profile extends StatefulWidget {
@@ -35,7 +36,7 @@ class _ProfileState extends State<Profile> {
                         top: a.width / 20,
                         right: a.width / 25,
                         left: a.width / 25,
-                        bottom: a.width / 2.8),
+                        bottom: a.width / 8.0),
                     child: Column(
                       children: <Widget>[
                         Container(
@@ -51,11 +52,12 @@ class _ProfileState extends State<Profile> {
                                           BorderRadius.circular(a.width),
                                       color: Colors.white),
                                   child: Icon(Icons.arrow_back,
-                                      color: Colors.black, size: a.width / 15 ),
-
+                                      color: Colors.black, size: a.width / 15),
                                 ),
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(
+                                    context,
+                                  );
                                 },
                               ),
                               PopupMenuButton<String>(
@@ -119,7 +121,7 @@ class _ProfileState extends State<Profile> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(
-                                      width: a.width / 1000,
+                                      width: a.width / 1500,
                                       color:
                                           Colors.white))), //ใส่เส้นด้านใต้สุด
                           child: Row(
@@ -152,7 +154,7 @@ class _ProfileState extends State<Profile> {
                                 child: Column(
                                   children: <Widget>[
                                     Text(
-                                      //เพื่อใช้สำหรับให้ จำนวน และ ผ�����้หยิบอ่าน
+                                      //เพื่อใช้สำหรับ��ห้ จำนวน และ ผ�����้หยิบอ่าน
                                       snapshot.data['read'] == null
                                           ? '0'
                                           : snapshot.data['read'].toString(),
@@ -201,7 +203,7 @@ class _ProfileState extends State<Profile> {
                               border: Border(
                                   bottom: BorderSide(
                             color: Colors.white,
-                            width: a.width / 1000,
+                            width: a.width / 1500,
                           ))),
                           alignment: Alignment.topLeft,
                           child: Column(
@@ -351,7 +353,46 @@ class _ProfileState extends State<Profile> {
                                   child: CircularProgressIndicator(),
                                 );
                               }
-                            })
+                            }),
+
+                        Container(
+                          margin: EdgeInsets.only(top: 100),
+                          child: InkWell(
+                            child: Container(
+                                width: a.width / 2,
+                                height: a.width / 6,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: a.width / 400,
+                                    )),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.feedback,
+                                        color: Colors.white,
+                                        size: a.width / 15),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      'Feedback',
+                                      style: TextStyle(
+                                        fontSize: a.width / 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          FeedbackPage())); //ไปยังหน้า Profile
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -516,8 +557,11 @@ class _ProfileState extends State<Profile> {
     if (choice == Constans.Account) {
       print('Account');
     }
-    if (choice == Constans.Complain) {
-      print('Complain');
+    if (choice == Constans.UserReport) {
+      print('UserReport');
+    }
+    if (choice == Constans.Feedback) {
+      print('Feedback');
     }
     if (choice == Constans.About) {
       print('About');
@@ -530,13 +574,15 @@ class _ProfileState extends State<Profile> {
 
 class Constans {
   static const String Account = 'แก้ไขบัญชี';
-  static const String Complain = 'ร้องเรียน';
+  static const String UserReport = 'ร้องเรียนผู้ใช้';
+  static const String Feedback = 'ให้คำแนะนำ';
   static const String About = 'เกี่ยวกับแอป';
   static const String SignOut = 'ออกจากระบบ';
 
   static const List<String> choices = <String>[
     Account,
-    Complain,
+    UserReport,
+    Feedback,
     About,
     SignOut,
   ];
