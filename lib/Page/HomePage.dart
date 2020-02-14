@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -27,6 +25,7 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: <Widget>[
           scrapPatt(a, context),
+
           Positioned(
             bottom: 0,
             child: Container(

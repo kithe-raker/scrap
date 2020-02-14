@@ -54,21 +54,39 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Container(
               child: Text(
-                "SIGN IN",
+                "ยินดีต้อนรับ",
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: a.width / 8,
+                    fontSize: a.width / 9,
+                    fontFamily: 'ThaiSans',
                     fontWeight: FontWeight.bold),
+              ),
+            ),
+            Container(
+              child: Text(
+                "\"สู่โลกที่เต็มไปด้วยเศษกระดาษ\"",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: a.width / 18,
+                  fontFamily: 'ThaiSans',
+                ),
               ),
             ),
             Form(
               key: _key,
               child: Container(
-                margin: EdgeInsets.only(top: a.width / 10),
+                margin: EdgeInsets.only(top: a.width / 15),
                 width: a.width / 1.15,
-                height: a.height / 1.5,
+                padding: EdgeInsets.only(bottom: a.width / 20),
                 decoration: BoxDecoration(
-                    color: Colors.grey,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xff595959),
+                        Color(0xff292929),
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(a.width / 20)),
                 child: Column(
                   children: <Widget>[
@@ -78,23 +96,46 @@ class _LoginPageState extends State<LoginPage> {
                             top: a.width / 20,
                             left: a.width / 20,
                             bottom: a.width / 80),
-                        child: Text(
-                          "Email",
-                          style: TextStyle(
-                              color: Colors.white, fontSize: a.width / 25),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.person,
+                              color: Colors.white,
+                              size: a.width / 22,
+                            ),
+                            SizedBox(width: 5.0),
+                            Text(
+                              'อีเมล',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: a.width / 20,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
                         )),
                     Container(
                       width: a.width / 1.3,
-                      height: a.width / 6,
+                      height: a.width / 6.5,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(a.width)),
                       child: TextFormField(
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: a.width / 15,
+                        ),
                         decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'email',
-                            labelStyle: TextStyle(color: Colors.white)),
+                          border: InputBorder.none,
+                          hintText: 'example@mail.com',
+                          hintStyle: TextStyle(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.w900,
+                            fontSize: a.width / 15,
+                          ),
+                        ),
                         validator: (val) {
                           return val.trim() == "" ? 'put isas' : null;
                         },
@@ -104,27 +145,59 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     Container(
-                        width: a.width,
-                        padding: EdgeInsets.only(
-                            top: a.width / 20,
-                            left: a.width / 20,
-                            bottom: a.width / 80),
-                        child: Text(
-                          "password",
+                      width: a.width,
+                      padding: EdgeInsets.only(
+                          top: a.width / 20,
+                          left: a.width / 20,
+                          bottom: a.width / 80),
+                      child:
+                          /*Text(
+                          "Password",
                           style: TextStyle(
-                              color: Colors.white, fontSize: a.width / 25),
-                        )),
+                              color: Colors.white, fontSize: a.width / 20 , fontWeight: FontWeight.w600),
+                        )*/
+                          Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.lock,
+                            color: Colors.white,
+                            size: a.width / 22,
+                          ),
+                          SizedBox(width: 5.0),
+                          Text(
+                            'รหัสผ่าน',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: a.width / 20,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
                     Container(
                       width: a.width / 1.3,
-                      height: a.width / 6,
+                      height: a.width / 6.5,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(a.width)),
                       child: TextFormField(
+                        obscureText: true,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: a.width / 15,
+                        ),
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'password',
+                          hintText: '••••••••',
+                          hintStyle: TextStyle(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 10,
+                            fontSize: a.width / 15,
+                          ),
                         ),
                         validator: (val) {
                           return val.trim() == "" ? 'put isas' : null;
@@ -137,17 +210,19 @@ class _LoginPageState extends State<LoginPage> {
                     InkWell(
                         child: Container(
                             width: a.width / 1.3,
-                            height: a.width / 6,
+                            height: a.width / 6.5,
                             alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: a.width / 10),
+                            margin: EdgeInsets.only(
+                                top: a.width / 15, bottom: a.width / 35),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.circular(a.width / 40)),
-                            child: Text(
-                              "เข้าสู่ระบบ",
-                              style: TextStyle(fontSize: a.width / 20),
-                            )),
+                            child: Text("เข้าสู่ระบบ",
+                                style: TextStyle(
+                                  fontSize: a.width / 16,
+                                  fontWeight: FontWeight.bold,
+                                ))),
                         onTap: () async {
                           if (_key.currentState.validate()) {
                             _key.currentState.save();
@@ -158,9 +233,24 @@ class _LoginPageState extends State<LoginPage> {
                         }),
                     InkWell(
                         child: FlatButton(
-                            child: Text(
-                              "เข้าสู่ระบบด้วยเบอร์โทร",
-                              style: TextStyle(fontSize: a.width / 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.phone,
+                                  color: Colors.white,
+                                  size: a.width / 20,
+                                ),
+                                SizedBox(width: 5.0),
+                                Text(
+                                  'เข้าสู่ระบบด้วยเบอร์โทร',
+                                  style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      color: Colors.white,
+                                      fontSize: a.width / 17,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ],
                             ),
                             onPressed: () {
                               Navigator.push(
@@ -173,12 +263,34 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: a.width / 10),
+              margin: EdgeInsets.only(top: a.width / 30),
               child: InkWell(
-                child: Text(
-                  "สร้างบัญชี SCRAP.",
-                  style: TextStyle(color: Colors.white, fontSize: a.width / 20),
-                ),
+                child: Container(
+                    width: a.width / 1.3,
+                    height: a.width / 6.5,
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(
+                        top: a.width / 22, bottom: a.width / 35),
+                    decoration: BoxDecoration(
+                        color: Color(0xff26A4FF),
+                        borderRadius: BorderRadius.circular(a.width / 2)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.account_circle,
+                          color: Colors.white,
+                          size: a.width / 20,
+                        ),
+                        SizedBox(width: 5.0),
+                        Text("สร้างบัญชี SCRAP",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: a.width / 18,
+                              fontWeight: FontWeight.bold,
+                            )),
+                      ],
+                    )),
                 onTap: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => CreateID()));
@@ -197,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
       builder: (context) => AlertDialog(
         content: ListTile(
           title: Text(
-            "ขออภัยค่ะ",
+            "ขออภัยการเข้าสู่ระบบผิดพลาด",
             style: TextStyle(fontSize: 20),
           ),
           subtitle: Text(
@@ -283,121 +395,185 @@ class _LoginPhoneState extends State<LoginPhone> {
           width: a.width,
           alignment: Alignment.topLeft,
           child: Form(
-            key: _key,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: a.width / 7,
-                  height: a.width / 10,
-                  child: InkWell(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Colors.white),
-                      child: Icon(Icons.arrow_back,
-                          color: Colors.black, size: a.width / 15),
+              key: _key,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    width: a.width / 7,
+                    height: a.width / 10,
+                    child: InkWell(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(a.width),
+                            color: Colors.white),
+                        child: Icon(Icons.arrow_back,
+                            color: Colors.black, size: a.width / 15),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
                   ),
-                ),
-                Container(
-                  width: a.width,
-                  height: a.height / 1.12,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        "เบอร์โทรศัพท์",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: a.width / 15),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                            top: a.width / 20, bottom: a.width / 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.circular(a.width / 40)),
-                              width: a.width / 5,
-                              height: a.width / 8,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.circular(a.width / 40)),
-                              width: a.width / 2,
-                              height: a.width / 8,
-                              child: TextFormField(
-                                keyboardType: TextInputType.phone,
-                                decoration: InputDecoration(
-                                  hintText: 'phone numbers',
-                                ),
-                                validator: (val) {
-                                  return val.trim() == ""
-                                      ? 'put isas'
-                                      : val.trim().length != 10
-                                          ? 'check pls'
-                                          : null;
-                                },
-                                onSaved: (val) {
-                                  phone = val.trim();
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Text(
-                        "เราจะส่งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: a.width / 30),
-                      ),
-                      InkWell(
-                        child: Container(
-                          decoration: BoxDecoration(
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "ยืนยันตัวตน",
+                          style: TextStyle(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.circular(a.width / 10)),
-                          width: a.width / 3,
-                          height: a.width / 6,
-                          margin: EdgeInsets.only(top: a.width / 5),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "ต่อไป",
-                            style: TextStyle(
-                                fontSize: a.width / 20,
-                                fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,
+                              fontSize: a.width / 8),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                              top: a.width / 20, bottom: a.width / 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: const Radius.circular(40.0),
+                                      bottomLeft: const Radius.circular(40.0)),
+                                  border: Border(
+                                    top: BorderSide(
+                                        width: 1.0, color: Colors.white),
+                                    left: BorderSide(
+                                        width: 1.0, color: Colors.white),
+                                    right: BorderSide(
+                                        width: 1.0, color: Colors.white),
+                                    bottom: BorderSide(
+                                        width: 1.0, color: Colors.white),
+                                  ),
+                                ),
+                                width: a.width / 4,
+                                height: a.width / 6.3,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      '+66',
+                                      style: TextStyle(
+                                        fontSize: a.width / 13,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(width: 6),
+                                    Container(
+                                      child: Image.asset(
+                                        'assets/thai-flag-round.png',
+                                        width: a.width / 18,
+                                        height: a.width / 18,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 5),
+                              Container(
+                                width: a.width / 1.7,
+                                height: a.width / 6.3,
+                                padding: EdgeInsets.only(left:15),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.only(
+                                      topRight: const Radius.circular(40.0),
+                                      bottomRight: const Radius.circular(40.0)),
+                                  border: Border(
+                                    top: BorderSide(
+                                        width: 1.0, color: Colors.white),
+                                    left: BorderSide(
+                                        width: 1.0, color: Colors.white),
+                                    right: BorderSide(
+                                        width: 1.0, color: Colors.white),
+                                    bottom: BorderSide(
+                                        width: 1.0, color: Colors.white),
+                                  ),
+                                ),
+                                child: TextFormField(
+                                  style: TextStyle(
+                                    color:Colors.white,
+                                    fontSize:a.width/14,fontWeight: FontWeight.w900,
+                                  ),
+                                  keyboardType: TextInputType.phone,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: 'เบอร์โทรศัพท์',
+                                    hintStyle:
+                                        TextStyle(color: Colors.grey[500]),
+                                  ),
+                                  validator: (val) {
+                                    return val.trim() == ""
+                                        ? 'put isas'
+                                        : val.trim().length != 10
+                                            ? 'check pls'
+                                            : null;
+                                  },
+                                  onSaved: (val) {
+                                    phone = val.trim();
+                                  },
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                        onTap: () async {
-                          if (_key.currentState.validate()) {
-                            _key.currentState.save();
-                            await hasAccount(phone)
-                                ? print('ไม่เจอ')
-                                : await phoneVerified();
-                          } else {
-                            print('nope');
-                          }
-                        },
-                      )
-                    ],
+                        Text(
+                          "เราจะส่งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: a.width / 18),
+                        ),
+                        InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.circular(a.width / 10)),
+                            width: a.width / 3,                          
+                            margin: EdgeInsets.only(top: a.width / 5),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "ต่อไป",
+                              style: TextStyle(
+                                  fontSize: a.width / 14,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          onTap: () async {
+                            if (_key.currentState.validate()) {
+                              _key.currentState.save();
+                              await hasAccount(phone)
+                                  ? print('ไม่เจอ')
+                                  : await phoneVerified();
+                            } else {
+                              print('nope');
+                            }
+                          },
+                        )
+                      ],
+                    ),
                   ),
-                )
-              ],
-            ),
-          ),
+                  Container(
+                    width: a.width,
+                    height: a.width / 10,
+                    alignment: Alignment.center,
+                    color: Colors.black,
+                    child: Text(
+                      'สร้างบัญชีใหม่',
+                      style: TextStyle(
+                          fontSize: a.width / 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[500]),
+                    ),
+                  ),
+                ],
+              )),
         ),
       ),
     );
