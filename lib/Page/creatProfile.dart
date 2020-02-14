@@ -105,9 +105,7 @@ class _CreateProfileState extends State<CreateProfile> {
 
   creatProfile() async {
     try {
-      image == null
-          ? print('nope')
-          : await cimg(image, widget.uid, widget.uid + '_pro');
+      await cimg(image, widget.uid, widget.uid + '_pro');
       await addData(widget.uid);
     } catch (e) {
       print(e.toString());
@@ -339,15 +337,20 @@ class _CreateProfileState extends State<CreateProfile> {
                                               if (_formKey.currentState
                                                       .validate() &&
                                                   genders != null &&
-                                                  date != created) {
+                                                  date != created &&
+                                                  image != null) {
                                                 setState(() {
                                                   loading = true;
                                                 });
                                                 await creatProfile();
                                               } else {
                                                 date == created
-                                                    ? warnDate()
-                                                    : print('nope');
+                                                    ? warnDate(
+                                                        'กรุณาเลือกวันเกิดของท่าน')
+                                                    : image == null
+                                                        ? warnDate(
+                                                            'กรุณาเลือกรูปโปรไฟล์ของท่าน')
+                                                        : null;
                                               }
                                             },
                                             color: Color(0xffEF7D36),
@@ -384,14 +387,14 @@ class _CreateProfileState extends State<CreateProfile> {
     );
   }
 
-  warnDate() {
+  warnDate(String warn) {
     return showDialog(
         context: context,
         builder: (builder) {
           return AlertDialog(
             backgroundColor: Colors.white,
             content: Container(
-              child: Text('กรุณาเลือกวันเกิดของท่าน'),
+              child: Text(warn),
             ),
             actions: <Widget>[
               FlatButton(

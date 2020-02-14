@@ -16,9 +16,14 @@ class _LoginPageState extends State<LoginPage> {
   var _key = GlobalKey<FormState>();
 
   login() async {
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: _email, password: _password);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Authen()));
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _email, password: _password);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Authen()));
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -68,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.black,
                         borderRadius: BorderRadius.circular(a.width)),
                     child: TextFormField(
+                      style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'email',
@@ -99,6 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.black,
                         borderRadius: BorderRadius.circular(a.width)),
                     child: TextFormField(
+                         style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'password',
