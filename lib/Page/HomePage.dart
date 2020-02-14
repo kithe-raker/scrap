@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -218,7 +216,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return MapScraps(
-              collection: snap.data['scraps'],
+              collection: snap.data['scraps'] ?? [],
               currentLocation: widget.currentLocation,
               uid: widget.doc['uid'],
             );
