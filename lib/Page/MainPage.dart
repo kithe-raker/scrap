@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/LoginPage.dart';
-import 'package:scrap/Page/creatProfile.dart';
+import 'package:scrap/Page/profile/creatProfile.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 

@@ -97,6 +97,7 @@ class _CreateProfileState extends State<CreateProfile> {
       'genders': genders,
       'createdDay': created
     });
+    await cimg(image, widget.uid, widget.uid + '_pro');
     await Firestore.instance
         .collection('Users')
         .document(uid)
@@ -105,9 +106,11 @@ class _CreateProfileState extends State<CreateProfile> {
 
   creatProfile() async {
     try {
-      await cimg(image, widget.uid, widget.uid + '_pro');
       await addData(widget.uid);
     } catch (e) {
+      setState(() {
+        loading = false;
+      });
       print(e.toString());
     }
   }
@@ -208,12 +211,11 @@ class _CreateProfileState extends State<CreateProfile> {
                                                       ? 'กรุณากรอก@ของคุณ'
                                                       : null;
                                                 }),
-                                                onSaved: (lnam) =>
-                                                    id = lnam.trim(),
+                                                onSaved: (gId) =>
+                                                    id = gId.trim(),
                                                 textInputAction:
                                                     TextInputAction.next,
                                                 decoration: InputDecoration(
-                                                    prefixText: '@',
                                                     helperText:
                                                         'ทุกคนสามารถเห็น"ชื่อ"ของคุณและปากระดาษหาคุณได้',
                                                     hintText: ' ใส่ชื่อของคุณ'),

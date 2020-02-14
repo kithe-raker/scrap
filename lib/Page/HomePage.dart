@@ -6,8 +6,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/MapScraps.dart';
-
-import 'Profile.dart';
+import 'package:scrap/Page/profile/Profile.dart';
 
 class HomePage extends StatefulWidget {
   final Position currentLocation;
@@ -212,12 +211,12 @@ class _HomePageState extends State<HomePage> {
             .collection('Users')
             .document(widget.doc['uid'])
             .collection('scraps')
-            .document('collection')
+            .document('picked')
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return MapScraps(
-              collection: snap.data['scraps'],
+              collection: snap?.data['scraps'] ?? [],
               currentLocation: widget.currentLocation,
               uid: widget.doc['uid'],
             );
@@ -575,19 +574,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   throwTo(Map selectedID) async {
+    DateTime now = DateTime.now();
+    String time = DateFormat('Hm').format(now);
     await Firestore.instance
         .collection('Users')
         .document(selectedID['uid'])
         .collection('scraps')
         .document('recently')
-        .updateData(
-      {
-        'scraps': FieldValue.arrayUnion([text])
-      },
-    );
+        .setData({
+      'id': FieldValue.arrayUnion([widget.doc['uid']]),
+      'scraps': {
+        widget.doc['uid']: FieldValue.arrayUnion([
+          {
+            'text': text,
+            'writer': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+            'time': time
+          }
+        ])
+      }
+    }, merge: true);
     await increaseTransaction(widget.doc['uid'], 'written');
     await increaseTransaction(selectedID['uid'], 'threw');
   }
+
+  // throwTo(Map selectedID) async {
+  //   await Firestore.instance
+  //       .collection('Users')
+  //       .document(selectedID['uid'])
+  //       .collection('scraps')
+  //       .document('recently')
+  //       .updateData(
+  //     {
+  //       'scraps': FieldValue.arrayUnion([text])
+  //     },
+  //   );
+  // }
 
   chooseUser() {
     String id;
@@ -674,8 +695,8 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       id == null || id == ''
                                           ? Center(
-                                              child:
-                                                  Text('ค้นหาคนที่คุณต้องการปาใส่'),
+                                              child: Text(
+                                                  'ค้นหาคนที่คุณต้องการปาใส่'),
                                             )
                                           : id[0] != '@'
                                               ? Center(
@@ -723,21 +744,19 @@ class _HomePageState extends State<HomePage> {
                                                                         DocumentSnapshot
                                                                             doc =
                                                                             snapshot.data.documents[index];
-                                                                        return InkWell(
-                                                                          child:
-                                                                              Container(
-                                                                            padding:
-                                                                                EdgeInsets.all(a.width / 21),
-                                                                            width:
-                                                                                a.width / 1.1,
-                                                                            height:
-                                                                                a.height / 12,
-                                                                            child:
-                                                                                Text(
-                                                                              '@' + doc['id'],
-                                                                              style: TextStyle(fontSize: a.width / 12),
-                                                                            ),
-                                                                          ),
+                                                                        return
+                                                                            // doc['id'] !=
+                                                                            //         widget.doc['id']
+                                                                            //     ?
+                                                                            InkWell(
+                                                                          child: Container(
+                                                                              padding: EdgeInsets.all(a.width / 21),
+                                                                              width: a.width / 1.1,
+                                                                              height: a.height / 12,
+                                                                              child: Text(
+                                                                                '@' + doc['id'],
+                                                                                style: TextStyle(fontSize: a.width / 12),
+                                                                              )),
                                                                           onTap:
                                                                               () {
                                                                             selectedID['id'] =
@@ -747,6 +766,7 @@ class _HomePageState extends State<HomePage> {
                                                                             setState(() {});
                                                                           },
                                                                         );
+                                                                        //: SizedBox();
                                                                       }),
                                                             );
                                                     } else {

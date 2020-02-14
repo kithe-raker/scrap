@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class LongPaper extends StatefulWidget {
-  final String text;
+  final Map scrap;
+  final String writerID;
   final String uid;
-  LongPaper({@required this.text, @required this.uid});
+  LongPaper(
+      {@required this.scrap, @required this.uid, @required this.writerID});
   @override
   _LongPaperState createState() => _LongPaperState();
 }
@@ -37,8 +39,8 @@ class _LongPaperState extends State<LongPaper> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("เขียนโดย : " + "ใครสักคน"),
-                    //  Text("เวลา : " + "11.11"),
+                      Text("เขียนโดย : ${widget.scrap['writer']}"),
+                      Text("เวลา : ${widget.scrap['time']}"),
                     ],
                   ),
                   IconButton(
@@ -57,7 +59,7 @@ class _LongPaperState extends State<LongPaper> {
               height: a.width,
               alignment: Alignment.center,
               child: Text(
-                widget.text,
+                widget.scrap['text'],
                 style: TextStyle(fontSize: a.width / 15),
               ),
             )
@@ -84,7 +86,9 @@ class _LongPaperState extends State<LongPaper> {
                         .collection('scraps')
                         .document('collection')
                         .updateData({
-                      'scraps': FieldValue.arrayRemove([widget.text])
+                      'scraps': {
+                        widget.writerID: FieldValue.arrayRemove([widget.scrap])
+                      }
                     });
                   },
                   child: Text('ok'))

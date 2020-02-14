@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/LongPaper.dart';
@@ -153,7 +154,7 @@ class _ProfileState extends State<Profile> {
                                 child: Column(
                                   children: <Widget>[
                                     Text(
-                                      //เพื่อใช้สำหรับให้ จำนวน และ ผ�����้หยิบอ่าน
+                                      //เพื่อใช้สำหรับให้ จำนวน และ ผ��������������������������������หย�����บอ่าน
                                       snapshot.data['read'] == null
                                           ? '0'
                                           : snapshot.data['read'].toString(),
@@ -232,10 +233,10 @@ class _ProfileState extends State<Profile> {
                                       if (snapshot.hasData &&
                                           snapshot.connectionState ==
                                               ConnectionState.active) {
-                                        List data = snapshot?.data['scraps'];
-                                        return snapshot?.data['scraps'] ==
-                                                    null ||
-                                                data.length == 0
+                                        List users = snapshot?.data['id'];
+                                        Map data = snapshot?.data['scraps'];
+                                        return snapshot?.data['id'] == null ||
+                                                users.length == 0
                                             ? Container(
                                                 height: a.height / 12,
                                                 child: Center(
@@ -249,13 +250,9 @@ class _ProfileState extends State<Profile> {
                                                   ),
                                                 ))
                                             : Wrap(
-                                                children: data
-                                                    .map((text) => scrap(
-                                                        a,
-                                                        data[data.length -
-                                                            1 -
-                                                            data.indexOf(
-                                                                text)]))
+                                                children: users
+                                                    .map((userID) =>
+                                                        mScrap(a, userID, data))
                                                     .toList());
                                       } else {
                                         return Center(
@@ -278,6 +275,8 @@ class _ProfileState extends State<Profile> {
                               if (snapshot.hasData &&
                                   snapshot.connectionState ==
                                       ConnectionState.active) {
+                                List users = snapshot?.data['id'];
+                                Map data = snapshot?.data['scraps'];
                                 return Column(
                                   children: <Widget>[
                                     Container(
@@ -315,8 +314,8 @@ class _ProfileState extends State<Profile> {
                                         ],
                                       ),
                                     ),
-                                    snapshot?.data['scraps'] == null ||
-                                            snapshot.data['scraps'].length == 0
+                                    snapshot?.data['id'] == null ||
+                                            snapshot.data['id'].length == 0
                                         ? Center(
                                             child: Text(
                                               'ไม่มี',
@@ -329,21 +328,12 @@ class _ProfileState extends State<Profile> {
                                         : Container(
                                             width: a.width,
                                             height: a.width / 1,
-                                            child: ListView.builder(
-                                              itemCount: snapshot
-                                                  .data['scraps'].length,
+                                            child: ListView(
                                               scrollDirection: Axis.horizontal,
-                                              //  children: <Widget>[LongPaper(), LongPaper()],
-                                              itemBuilder: (context, index) {
-                                                String text = snapshot
-                                                    .data['scraps'][snapshot
-                                                        .data['scraps'].length -
-                                                    (++index)];
-                                                return LongPaper(
-                                                  text: text,
-                                                  uid: widget.doc['uid'],
-                                                );
-                                              },
+                                              children: users
+                                                  .map((id) =>
+                                                      listScrap(a, id, data))
+                                                  .toList(),
                                             ))
                                   ],
                                 );
@@ -367,7 +357,52 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Widget scrap(Size a, String data) {
+  Widget listScrap(Size a, String id, Map mMap) {
+    List scraps = mMap[id];
+    return Container(
+      color: Colors.white,
+      width: a.width,
+      height: a.width / 1,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: scraps
+            .map((scrap) => LongPaper(
+                  scrap: scrap,
+                  uid: widget.doc['uid'],
+                  writerID: id,
+                ))
+            .toList(),
+      ),
+    );
+  }
+
+// data[data.length - 1 -data.indexOf(userID)]
+  Widget mScrap(Size a, String id, Map data) {
+    List scraps = data[id];
+    return scraps == null
+        ? delete(id)
+        : Wrap(
+            children: scraps
+                .map((scrapData) => scrap(a, scrapData['text'],
+                    scrapData['writer'], scrapData['time'], scrapData, id))
+                .toList(),
+          );
+  }
+
+  Widget delete(String id) {
+    Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('scraps')
+        .document('recently')
+        .updateData({
+      'id': FieldValue.arrayRemove([id])
+    });
+    return SizedBox();
+  }
+
+  Widget scrap(
+      Size a, String text, String writer, String time, Map scrap, String uid) {
     return Container(
       padding: EdgeInsets.all(a.width / 32),
       child: InkWell(
@@ -378,14 +413,14 @@ class _ProfileState extends State<Profile> {
           fit: BoxFit.cover,
         ),
         onTap: () {
-          dialog(data);
+          dialog(text, writer, time, scrap, uid);
         },
       ),
     );
   }
 
 //ส่วนของ กระดาษที่ถูกปาใส่ เม���่อกด
-  dialog(String text) {
+  dialog(String text, String writer, String time, Map scrap, String writerID) {
     return showDialog(
         context: context,
         builder: (builder) {
@@ -416,8 +451,8 @@ class _ProfileState extends State<Profile> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text('เขียนโดย : ใครสักคน'),
-                                //  Text('เวลา : 9:00')
+                                Text('เขียนโดย : $writer'),
+                                Text('เวลา : $time')
                               ],
                             ),
                           )),
@@ -448,18 +483,14 @@ class _ProfileState extends State<Profile> {
                                       .collection('Users')
                                       .document(widget.doc['uid'])
                                       .collection('scraps')
-                                      .document('recently')
-                                      .updateData({
-                                    'scraps': FieldValue.arrayRemove([text]),
-                                  });
-                                  await Firestore.instance
-                                      .collection('Users')
-                                      .document(widget.doc['uid'])
-                                      .collection('scraps')
                                       .document('collection')
-                                      .updateData({
-                                    'scraps': FieldValue.arrayUnion([text])
-                                  });
+                                      .setData({
+                                    'id': FieldValue.arrayUnion([writerID]),
+                                    'scraps': {
+                                      writerID: FieldValue.arrayUnion([scrap])
+                                    }
+                                  }, merge: true);
+                                  await ignore(writerID);
                                 },
                               ),
                               InkWell(
@@ -477,15 +508,7 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 onTap: () async {
-                                  Navigator.pop(context);
-                                  await Firestore.instance
-                                      .collection('Users')
-                                      .document(widget.doc['uid'])
-                                      .collection('scraps')
-                                      .document('recently')
-                                      .updateData({
-                                    'scraps': FieldValue.arrayRemove([text])
-                                  });
+                                  await ignore(writerID);
                                 },
                               ),
                             ],
@@ -511,23 +534,72 @@ class _ProfileState extends State<Profile> {
         });
   }
 
-  void choiceAction(String choice) async {
-    print("It's work!");
+  ignore(String writerID) async {
+    Navigator.pop(context);
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('scraps')
+        .document('recently')
+        .get()
+        .then((value) async {
+      if (value.data['scraps'][writerID].length == 1) {
+        await Firestore.instance
+            .collection('Users')
+            .document(widget.doc['uid'])
+            .collection('scraps')
+            .document('recently')
+            .setData({
+          'scraps': {writerID: FieldValue.delete()}
+        }, merge: true);
+        await Firestore.instance
+            .collection('Users')
+            .document(widget.doc['uid'])
+            .collection('scraps')
+            .document('recently')
+            .updateData({
+          'id': FieldValue.arrayRemove([writerID])
+        });
+      } else {
+        Firestore.instance
+            .collection('Users')
+            .document(widget.doc['uid'])
+            .collection('scraps')
+            .document('recently')
+            .setData({
+          'scraps': {
+            writerID: FieldValue.arrayRemove([scrap])
+          }
+        }, merge: true);
+      }
+    });
+  }
 
-    if (choice == Constans.Account) {
-      print('Account');
-    }
-    if (choice == Constans.Complain) {
-      print('Complain');
-    }
-    if (choice == Constans.About) {
-      print('About');
-    }
-    if (choice == Constans.SignOut) {
-      Auth auth = Provider.of(context).auth;
-      await auth.signOut().then((value) {
-        Navigator.pop(context);
-      });
+  void choiceAction(String choice) async {
+    switch (choice) {
+      case Constans.Account:
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EditProfile(
+                      doc: widget.doc,
+                    )));
+        break;
+      case Constans.Complain:
+        print('Complain');
+        break;
+      case Constans.About:
+        print('About');
+        break;
+      case Constans.SignOut:
+        Auth auth = Provider.of(context).auth;
+        await auth.signOut().then((value) {
+          Navigator.pop(context);
+        });
+        break;
+      default:
+        print('About');
+        break;
     }
   }
 }
