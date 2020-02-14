@@ -70,7 +70,7 @@ class _MapScrapsState extends State<MapScraps> {
     );
   }
 
-  dialog(String text, String writer, String time) {
+  dialog(String text, String writer, String time, String id) {
     return showDialog(
         context: context,
         builder: (builder) {
@@ -101,7 +101,9 @@ class _MapScrapsState extends State<MapScraps> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text('เขียนโดย : @$writer'),
+                                Text(writer == 'ไม่ระบุ'
+                                    ? 'เขียนโดย : ไม่ระบุตัวตน'
+                                    : 'เขียนโดย : @$writer'),
                                 Text('เวลา : $time')
                               ],
                             ),
@@ -129,14 +131,7 @@ class _MapScrapsState extends State<MapScraps> {
                                 ),
                                 onTap: () async {
                                   Navigator.pop(context);
-                                  await Firestore.instance
-                                      .collection('Users')
-                                      .document(widget.uid)
-                                      .collection('scraps')
-                                      .document('collection')
-                                      .updateData({
-                                    'scraps': FieldValue.arrayUnion([text])
-                                  });
+                                  await pickScrap(id, text, time, writer);
                                 },
                               ),
                               InkWell(
@@ -178,6 +173,22 @@ class _MapScrapsState extends State<MapScraps> {
                 );
               }));
         });
+  }
+
+  pickScrap(String id, String text, String time, String writer) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.uid)
+        .collection('scraps')
+        .document('collection')
+        .setData({
+      'id': FieldValue.arrayUnion([id]),
+      'scraps': {
+        id: FieldValue.arrayUnion([
+          {'text': text, 'time': time, 'writer': writer}
+        ])
+      }
+    }, merge: true);
   }
 
   @override
@@ -368,7 +379,7 @@ class _MapScrapsState extends State<MapScraps> {
           markers.remove(markerId);
           picked.add(id);
           setState(() {});
-          dialog(text, writer, time);
+          dialog(text, writer, time, id);
           increaseTransaction(user, 'read');
         } catch (e) {
           print(e.toString());

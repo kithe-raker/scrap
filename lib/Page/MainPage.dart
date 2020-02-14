@@ -13,6 +13,18 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  Position currentLocation;
+
+  @override
+  void initState() {
+    Geolocator().getCurrentPosition().then((curlo) {
+      setState(() {
+        currentLocation = curlo;
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;

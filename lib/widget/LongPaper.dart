@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 
 class LongPaper extends StatefulWidget {
   final Map scrap;
-  final String writerID;
   final String uid;
-  LongPaper(
-      {@required this.scrap, @required this.uid, @required this.writerID});
+  LongPaper({@required this.scrap, @required this.uid});
   @override
   _LongPaperState createState() => _LongPaperState();
 }
@@ -39,8 +37,8 @@ class _LongPaperState extends State<LongPaper> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("เขียนโดย : ${widget.scrap['writer']}"),
-                      Text("เวลา : ${widget.scrap['time']}"),
+                      Text("เขียนโดย : ${widget.scrap['scap']['writer']}"),
+                      Text("เวลา : ${widget.scrap['scap']['time']}"),
                     ],
                   ),
                   IconButton(
@@ -59,7 +57,7 @@ class _LongPaperState extends State<LongPaper> {
               height: a.width,
               alignment: Alignment.center,
               child: Text(
-                widget.scrap['text'],
+                widget.scrap['scap']['text'],
                 style: TextStyle(fontSize: a.width / 15),
               ),
             )
@@ -78,22 +76,27 @@ class _LongPaperState extends State<LongPaper> {
             ),
             actions: <Widget>[
               FlatButton(
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    await Firestore.instance
-                        .collection('Users')
-                        .document(widget.uid)
-                        .collection('scraps')
-                        .document('collection')
-                        .updateData({
-                      'scraps': {
-                        widget.writerID: FieldValue.arrayRemove([widget.scrap])
-                      }
-                    });
-                  },
-                  child: Text('ok'))
+                child: Text('ok'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await remove();
+                },
+              )
             ],
           );
         });
+  }
+
+  remove() async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.uid)
+        .collection('scraps')
+        .document('collection')
+        .setData({
+      'scraps': {
+        widget.scrap['id']: FieldValue.arrayRemove([this.widget.scrap['scap']])
+      }
+    }, merge: true);
   }
 }

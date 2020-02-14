@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: <Widget>[
           scrapPatt(a, context),
-
           Positioned(
             bottom: 0,
             child: Container(
@@ -210,12 +209,12 @@ class _HomePageState extends State<HomePage> {
             .collection('Users')
             .document(widget.doc['uid'])
             .collection('scraps')
-            .document('picked')
+            .document('collection')
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return MapScraps(
-              collection: snap?.data['scraps'] ?? [],
+              collection: snap?.data['id'] ?? [],
               currentLocation: widget.currentLocation,
               uid: widget.doc['uid'],
             );
