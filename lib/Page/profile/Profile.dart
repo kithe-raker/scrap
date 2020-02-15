@@ -281,8 +281,8 @@ class _ProfileState extends State<Profile> {
                                   snapshot.connectionState ==
                                       ConnectionState.active) {
                                 Set mSet = {};
-                                modiList(snapshot.data['id'],
-                                    snapshot.data['scraps'], mSet);
+                                modiList(snapshot?.data['id'],
+                                    snapshot?.data['scraps'], mSet);
                                 return Column(
                                   children: <Widget>[
                                     Container(
@@ -391,12 +391,14 @@ class _ProfileState extends State<Profile> {
   }
 
   modiList(List users, Map data, Set mSet) {
-    for (var id in users) {
-      if (data[id] == null || data[id].length == 0) {
-        clearScrap(data[id] == null, id);
-      } else {
-        for (var scraps in data[id]) {
-          mSet.add({'scap': scraps, 'id': id});
+    if (users != null || data != null) {
+      for (var id in users) {
+        if (data[id] == null || data[id].length == 0) {
+          clearScrap(data[id] == null, id);
+        } else {
+          for (var scraps in data[id]) {
+            mSet.add({'scap': scraps, 'id': id});
+          }
         }
       }
     }

@@ -48,7 +48,7 @@ class _CreateIDState extends State<CreateID> {
     await FirebaseAuth.instance
         .verifyPhoneNumber(
             phoneNumber: '+66' + phone,
-            timeout: Duration(minutes: 10),
+            timeout: Duration(seconds: 120),
             verificationCompleted: success,
             verificationFailed: failed,
             codeSent: smsCode,

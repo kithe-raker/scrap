@@ -41,7 +41,7 @@ class _CreateProfileState extends State<CreateProfile> {
   }
 
   sendCam() async {
-    File img = await ImagePicker.pickImage(source: ImageSource.camera);
+    File img = await ImagePicker.pickImage(source: ImageSource.camera,imageQuality: 25);
     if (img != null) {
       image = img;
       setState(() {});
@@ -49,7 +49,7 @@ class _CreateProfileState extends State<CreateProfile> {
   }
 
   sendPic() async {
-    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
+    File img = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 25);
     if (img != null) {
       image = img;
       setState(() {});
