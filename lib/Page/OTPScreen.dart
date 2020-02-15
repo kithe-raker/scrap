@@ -104,27 +104,21 @@ class _OTPScreenState extends State<OTPScreen> {
                   ),
                   Container(
                       width: a.width,
-                      height: a.height / 1.12,
+                      margin: EdgeInsets.only(top: a.width / 4),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "ใส่เลข 6 หลักจาก SMS",
+                            "ยืนยันตัวตน",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: a.width / 15),
+                                fontSize: a.width / 8),
                           ),
                           Container(
                             width: a.width / 2,
-                            margin: EdgeInsets.only(
-                                top: a.width / 10, bottom: a.width / 10),
                             decoration: BoxDecoration(
                               color: Colors.black,
-                              border: Border(
-                                bottom:
-                                    BorderSide(width: 1.0, color: Colors.white),
-                              ),
                             ),
                             child: TextFormField(
                               maxLength: 6,                              
@@ -135,7 +129,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                 letterSpacing: 10,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'OTP',
+                                hintText: '******',
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none,
                               ),
@@ -147,10 +141,35 @@ class _OTPScreenState extends State<OTPScreen> {
                               onSaved: (val) => veriCode = val,
                             ),
                           ),
+
+                          Column(
+                            children: <Widget>[
+                              Text(
+                                'โปรดใส่รหัสยืนยันที่ได้รับจากทาง SMS\nหากไม่ได้รับ SMS ขอให้ดำเนินการตามวิธิต่อไปนี้',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: a.width / 19,
+                                ),
+                                textAlign: TextAlign.center,
+                                ),
+                                              Text(
+                                'ส่งรหัสยืนยันอีกครั้ง',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: a.width / 19,
+                                  fontWeight: FontWeight.w700,
+                                  decoration: TextDecoration.underline
+                                ),
+                                
+                                textAlign: TextAlign.center,
+                                ),
+                            ],
+                          ),
+
                           InkWell(
                             child: Container(
                               margin: EdgeInsets.only(top: a.width / 10),
-                              width: a.width / 3,
+                              width: a.width /1.5,
                               height: a.width / 6,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
@@ -158,7 +177,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                   borderRadius: BorderRadius.circular(a.width)),
                               child: Text(
                                 "ยืนยัน",
-                                style: TextStyle(fontSize: a.width / 15),
+                                style: TextStyle(fontSize: a.width / 14 , fontWeight: FontWeight.w900),
                               ),
                             ),
                             onTap: () async {

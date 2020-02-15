@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:scrap/Page/CreateID.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/OTPScreen.dart';
+import 'package:scrap/Page/signup/SignUpMail.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -297,7 +298,7 @@ class _LoginPageState extends State<LoginPage> {
                     )),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => CreateID()));
+                      MaterialPageRoute(builder: (context) => SignUpMail()));
                 },
               ),
             )

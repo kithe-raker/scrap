@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scrap/Page/profile/createProfile2.dart';
+import 'package:scrap/Page/signup/SignUpMail.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
-
-import 'Page/MainPage.dart';
+import 'package:scrap/Page/MainPage.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Scrap.',
-          theme: ThemeData(fontFamily: 'ThaiSans'),
+          theme: ThemeData(fontFamily: 'ThaiSans' ,  unselectedWidgetColor:Colors.white),
           home: MainPage()),
     );
   }

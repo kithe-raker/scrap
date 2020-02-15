@@ -335,7 +335,7 @@ DEPENDENCIES:
   - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - abseil
     - BoringSSL-GRPC
     - Firebase
@@ -429,4 +429,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 083258d7f5e80b42ea9bfee905fe93049bc04c64
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.7.1
