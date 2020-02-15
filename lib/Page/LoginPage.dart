@@ -478,7 +478,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                               Container(
                                 width: a.width / 1.7,
                                 height: a.width / 6.3,
-                                padding: EdgeInsets.only(left:15),
+                                padding: EdgeInsets.only(left: 15),
                                 decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.only(
@@ -497,8 +497,9 @@ class _LoginPhoneState extends State<LoginPhone> {
                                 ),
                                 child: TextFormField(
                                   style: TextStyle(
-                                    color:Colors.white,
-                                    fontSize:a.width/14,fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    fontSize: a.width / 14,
+                                    fontWeight: FontWeight.w900,
                                   ),
                                   keyboardType: TextInputType.phone,
                                   decoration: InputDecoration(
@@ -510,8 +511,8 @@ class _LoginPhoneState extends State<LoginPhone> {
                                   validator: (val) {
                                     return val.trim() == ""
                                         ? 'put isas'
-                                        : val.trim().length != 10
-                                            ? 'check pls'
+                                        : val.trim().length > 10
+                                            ? 'check 10 หลัก'
                                             : null;
                                   },
                                   onSaved: (val) {
@@ -535,7 +536,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.circular(a.width / 10)),
-                            width: a.width / 3,                          
+                            width: a.width / 3,
                             margin: EdgeInsets.only(top: a.width / 5),
                             alignment: Alignment.center,
                             child: Text(

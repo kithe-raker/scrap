@@ -193,7 +193,11 @@ class _CreateIDState extends State<CreateID> {
                                   hintText: 'phone numbers',
                                 ),
                                 validator: (val) {
-                                  return val.trim() == "" ? 'put isas' : null;
+                                  return val.trim() == ""
+                                      ? 'put isas'
+                                      : val.trim().length > 10
+                                          ? 'put 10 หลัก'
+                                          : null;
                                 },
                                 onSaved: (val) {
                                   phone = val.trim();
