@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/FeedbackPage.dart';
+import 'package:scrap/Page/setting/FeedbackPage.dart';
 import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
+import 'package:scrap/Page/setting/UserReport.dart';
+import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/LongPaper.dart';
@@ -651,10 +653,18 @@ class _ProfileState extends State<Profile> {
                     )));
         break;
       case Constans.UserReport:
-        print('Complain');
+        print('UserReport');
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => UserReport()));
+        break;
+      case Constans.Feedback:
+        print('Feedback');
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => FeedbackPage()));
         break;
       case Constans.About:
-        print('About');
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => About()));
         break;
       case Constans.SignOut:
         Auth auth = Provider.of(context).auth;

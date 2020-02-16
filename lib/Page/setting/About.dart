@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class FeedbackPage extends StatefulWidget {
+class About extends StatefulWidget {
   @override
-  _FeedbackPageState createState() => _FeedbackPageState();
+  _AboutState createState() => _AboutState();
 }
 
-class _FeedbackPageState extends State<FeedbackPage> {
+class _AboutState extends State<About> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -33,7 +33,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
             ),
             Container(
               child: Text(
-                "SIGN IN",
+                "About",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: a.width / 8,
