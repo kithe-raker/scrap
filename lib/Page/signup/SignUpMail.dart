@@ -111,7 +111,7 @@ class _SignUpMailState extends State<SignUpMail> {
                             child: Row(
                               children: <Widget>[
                                 Icon(
-                                  Icons.person,
+                                  Icons.mail,
                                   color: Colors.white,
                                   size: a.width / 22,
                                 ),

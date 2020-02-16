@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scrap/Page/profile/createProfile2.dart';
+import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/Page/signup/SignUpMail.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/Page/HomePage.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

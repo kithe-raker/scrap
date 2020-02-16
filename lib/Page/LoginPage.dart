@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Row(
                           children: <Widget>[
                             Icon(
-                              Icons.person,
+                              Icons.mail,
                               color: Colors.white,
                               size: a.width / 22,
                             ),
