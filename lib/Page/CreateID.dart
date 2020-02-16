@@ -48,7 +48,7 @@ class _CreateIDState extends State<CreateID> {
     await FirebaseAuth.instance
         .verifyPhoneNumber(
             phoneNumber: '+66' + phone,
-            timeout: Duration(minutes: 10),
+            timeout: Duration(seconds: 120),
             verificationCompleted: success,
             verificationFailed: failed,
             codeSent: smsCode,
@@ -193,7 +193,11 @@ class _CreateIDState extends State<CreateID> {
                                   hintText: 'phone numbers',
                                 ),
                                 validator: (val) {
-                                  return val.trim() == "" ? 'put isas' : null;
+                                  return val.trim() == ""
+                                      ? 'put isas'
+                                      : val.trim().length > 10
+                                          ? 'put 10 หลัก'
+                                          : null;
                                 },
                                 onSaved: (val) {
                                   phone = val.trim();

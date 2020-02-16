@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/OTPScreen.dart';
 
 class SignUpTel extends StatefulWidget {
+  final String email;
+  final String password;
+  SignUpTel({@required this.email, @required this.password});
   @override
   _SignUpTelState createState() => _SignUpTelState();
 }
@@ -10,7 +15,17 @@ class _SignUpTelState extends State<SignUpTel> {
   String phone;
   var _key = GlobalKey<FormState>();
 
-  /*Future<void> phoneVerified() async {
+  Future<bool> hasAccount(String phone) async {
+    final QuerySnapshot phones = await Firestore.instance
+        .collection('Users')
+        .where('phone', isEqualTo: phone)
+        .limit(1)
+        .getDocuments();
+    final List<DocumentSnapshot> doc = phones.documents;
+    return doc.length == 1;
+  }
+
+  Future<void> phoneVerified() async {
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
       print(id);
     };
@@ -19,7 +34,12 @@ class _SignUpTelState extends State<SignUpTel> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => OTPScreen(verifiedID: id, phone: phone)));
+              builder: (context) => OTPScreen(
+                    verifiedID: id,
+                    phone: phone,
+                    email: widget.email,
+                    password: widget.password,
+                  )));
     };
     final PhoneVerificationCompleted success = (AuthCredential credent) async {
       print('yes sure');
@@ -41,16 +61,6 @@ class _SignUpTelState extends State<SignUpTel> {
       print(e.toString());
     });
   }
-
-  Future<bool> hasAccount(String phone) async {
-    final QuerySnapshot phones = await Firestore.instance
-        .collection('Users')
-        .where('phone', isEqualTo: phone)
-        .limit(1)
-        .getDocuments();
-    final List<DocumentSnapshot> doc = phones.documents;
-    return doc.length < 1;
-  } */
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +190,7 @@ class _SignUpTelState extends State<SignUpTel> {
                                     return val.trim() == ""
                                         ? 'กรุณากรอกข้อมูล'
                                         : val.trim().length != 10
-                                            ? 'check pls'
+                                            ? 'กรุณากรอกเบอร์โทรให้ครบ 10 หลัก'
                                             : null;
                                   },
                                   onSaved: (val) {
@@ -217,21 +227,17 @@ class _SignUpTelState extends State<SignUpTel> {
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OTPScreen()));
-                          }, /*() async {
+                          onTap: () async {
                             if (_key.currentState.validate()) {
                               _key.currentState.save();
                               await hasAccount(phone)
-                                  ? print('ไม่เจอ')
+                                  ? warning(context,
+                                      'ขออภัยค่ะเบอร์โทรนี้ได้มีการลงทะเบียนไว้แล้ว')
                                   : await phoneVerified();
                             } else {
                               print('nope');
                             }
-                          }, */
+                          },
                         )
                       ],
                     ),
@@ -252,6 +258,35 @@ class _SignUpTelState extends State<SignUpTel> {
                 ],
               )),
         ),
+      ),
+    );
+  }
+
+  warning(BuildContext context, String sub) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: ListTile(
+          title: Text(
+            "เกิดข้อผิดพลาด",
+            style: TextStyle(fontSize: 20),
+          ),
+          subtitle: Text(
+            sub,
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              'ตกลง',
+              style: TextStyle(fontSize: 16),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ),
     );
   }

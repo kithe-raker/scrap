@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/signup/SignUpTel.dart';
 
@@ -10,6 +11,26 @@ class SignUpMail extends StatefulWidget {
 class _SignUpMailState extends State<SignUpMail> {
   String _email, _password;
   var _key = GlobalKey<FormState>();
+
+  Future<bool> uniqueEmail(String email) async {
+    final QuerySnapshot emails = await Firestore.instance
+        .collection('Users')
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .getDocuments();
+    final List<DocumentSnapshot> doc = emails.documents;
+    return doc.length < 1;
+  }
+
+  continueSignUp() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SignUpTel(
+                  email: _email,
+                  password: _password,
+                )));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,8 +150,11 @@ class _SignUpMailState extends State<SignUpMail> {
                             ),
                             validator: (val) {
                               return val.trim() == ""
-                                  ? 'กรุณากรอกข้อมูลให้ครบ'
-                                  : null;
+                                  ? 'put isas'
+                                  : val.contains('@') &&
+                                          val.contains('.com', val.length - 4)
+                                      ? null
+                                      : 'format pls';
                             },
                             onSaved: (val) {
                               _email = val.trim();
@@ -195,7 +219,9 @@ class _SignUpMailState extends State<SignUpMail> {
                             validator: (val) {
                               return val.trim() == ""
                                   ? 'กรุณากรอกข้อมูลให้ครบ'
-                                  : null;
+                                  : val.trim().length < 6
+                                      ? 'รหัสต้องมีอย่างน้อย 6 ตัว'
+                                      : null;
                             },
                             onSaved: (val) {
                               _password = val.trim();
@@ -218,20 +244,17 @@ class _SignUpMailState extends State<SignUpMail> {
                                       fontSize: a.width / 16,
                                       fontWeight: FontWeight.bold,
                                     ))),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SignUpTel()));
-                            } /*() async {
+                            onTap: () async {
                               if (_key.currentState.validate()) {
                                 _key.currentState.save();
-                                await login();
+                                await uniqueEmail(_email)
+                                    ? continueSignUp()
+                                    : warning(context,
+                                        'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว');
                               } else {
                                 print('nope');
                               }
-                            }*/
-                            ),
+                            }),
                       ],
                     ),
                   ),
@@ -250,7 +273,7 @@ class _SignUpMailState extends State<SignUpMail> {
       builder: (context) => AlertDialog(
         content: ListTile(
           title: Text(
-            "ขออภัยการเข้าสู่ระบบผิดพลาด",
+            "เกิดข้อผิดพลาด",
             style: TextStyle(fontSize: 20),
           ),
           subtitle: Text(

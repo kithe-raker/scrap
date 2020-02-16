@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/CreateID.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/OTPScreen.dart';
 import 'package:scrap/Page/signup/SignUpMail.dart';
@@ -516,8 +515,8 @@ class _LoginPhoneState extends State<LoginPhone> {
                                   validator: (val) {
                                     return val.trim() == ""
                                         ? 'put isas'
-                                        : val.trim().length != 10
-                                            ? 'check pls'
+                                        : val.trim().length > 10
+                                            ? 'check 10 หลัก'
                                             : null;
                                   },
                                   onSaved: (val) {
