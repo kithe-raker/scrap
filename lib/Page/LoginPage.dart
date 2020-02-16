@@ -38,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
         default:
           warning(context,
               'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อต่ออินเทอร์เน็ต');
+          break;
       }
       print(e.toString());
     }
@@ -385,7 +386,7 @@ class _LoginPhoneState extends State<LoginPhone> {
         .limit(1)
         .getDocuments();
     final List<DocumentSnapshot> doc = phones.documents;
-    return doc.length < 1;
+    return doc.length == 1;
   }
 
   @override
@@ -557,10 +558,9 @@ class _LoginPhoneState extends State<LoginPhone> {
                             if (_key.currentState.validate()) {
                               _key.currentState.save();
                               await hasAccount(phone)
-                                  ? print('ไม่เจอ')
-                                  : await phoneVerified();
-                            } else {
-                              print('nope');
+                                  ? await phoneVerified()
+                                  : warning(
+                                      context, 'ไม่พบัญชีที่ใช้เบอร์โทรนี้');
                             }
                           },
                         )
@@ -583,6 +583,35 @@ class _LoginPhoneState extends State<LoginPhone> {
                 ],
               )),
         ),
+      ),
+    );
+  }
+
+  warning(BuildContext context, String sub) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: ListTile(
+          title: Text(
+            "เกิดผิดพลาด",
+            style: TextStyle(fontSize: 20),
+          ),
+          subtitle: Text(
+            sub,
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              'ตกลง',
+              style: TextStyle(fontSize: 16),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ),
     );
   }

@@ -68,7 +68,9 @@ class _ProfileState extends State<Profile> {
                               ),
                               PopupMenuButton<String>(
                                 //setting menu
-                                onSelected: choiceAction,
+                                onSelected: (val) {
+                                  choiceAction(val, info: snapshot.data);
+                                },
                                 itemBuilder: (BuildContext context) {
                                   return Constans.choices.map((String choice) {
                                     return PopupMenuItem(
@@ -644,7 +646,7 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  void choiceAction(String choice) async {
+  void choiceAction(String choice, {DocumentSnapshot info}) async {
     switch (choice) {
       case Constans.Account:
         Navigator.push(
@@ -652,6 +654,7 @@ class _ProfileState extends State<Profile> {
             MaterialPageRoute(
                 builder: (context) => EditProfile(
                       doc: widget.doc,
+                      info: info,
                     )));
         break;
       case Constans.UserReport:

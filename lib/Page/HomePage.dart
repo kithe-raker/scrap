@@ -318,7 +318,7 @@ class _HomePageState extends State<HomePage> {
       'uid': widget.doc['uid'],
       'scrap': {
         'text': text,
-        'user': public ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+        'user': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
         'time': time
       },
       'position': point.data
