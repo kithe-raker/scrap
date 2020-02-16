@@ -247,7 +247,7 @@ class _MapScrapsState extends State<MapScraps> {
                         borderRadius: BorderRadius.circular(a.width),
                         color: Colors.white),
                     child: IconButton(
-                      icon: Icon(Icons.location_on),
+                      icon: Icon(Icons.people),
                       color: Color(0xff26A4FF),
                       iconSize: a.width / 12,
                       onPressed: () {
@@ -338,7 +338,8 @@ class _MapScrapsState extends State<MapScraps> {
             position == null ? pos.latitude : position.latitude,
             position == null ? pos.longitude : position.longitude,
           ),
-          zoom: 18.0,
+          zoom: 19.0,
+          tilt: 90.0,
         )));
   }
 
@@ -364,7 +365,7 @@ class _MapScrapsState extends State<MapScraps> {
 
   cameraAnime(GoogleMapController controller, double lat, double lng) {
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(lat, lng), zoom: 12, bearing: 90, tilt: 45)));
+        target: LatLng(lat, lng), zoom: 12, bearing: 0.0, tilt: 90)));
   }
 
   void _addMarker(String id, String user, String writer, String text,

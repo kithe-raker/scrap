@@ -4,6 +4,8 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/MapScraps.dart';
+import 'package:scrap/Page/NotificationHistory.dart';
+import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 
 class HomePage extends StatefulWidget {
@@ -139,6 +141,57 @@ class _HomePageState extends State<HomePage> {
                         width: a.width / 4,
                       )),
                   //ส่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
+
+                  SizedBox(
+                    width: a.width / 5,
+                  ),
+                  Container(
+                      height: a.width / 5,
+                      alignment: Alignment.center,
+                      child: InkWell(
+                        child: Container(
+                          width: a.width / 10,
+                          height: a.width / 10,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(a.width),
+                                    border: Border.all(width : 2 , color: Colors.white),
+                            color: Color(0xff26A4FF),
+                          ),
+                          child: Icon(Icons.search,
+                              color: Colors.white, size: a.width / 15),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Search(
+                                        doc: widget.doc,
+                                      ))); //ไปยังหน้า Search
+                        },
+                      )),
+                  Container(
+                      height: a.width / 5,
+                      alignment: Alignment.center,
+                      child: InkWell(
+                        child: Container(
+                          width: a.width / 10,
+                          height: a.width / 10,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(a.width),
+                            color: Colors.white,
+                          ),
+                          child: Icon(Icons.notifications_active,
+                              color: Color(0xff26A4FF), size: a.width / 15),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NotificationHistory(
+                                        doc: widget.doc,
+                                      ))); //ไปยังหน้า NotificationHistory
+                        },
+                      )),
                   Container(
                       height: a.width / 5,
                       alignment: Alignment.center,
