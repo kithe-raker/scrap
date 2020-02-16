@@ -41,7 +41,8 @@ class _CreateProfileState extends State<CreateProfile> {
   }
 
   sendCam() async {
-    File img = await ImagePicker.pickImage(source: ImageSource.camera,imageQuality: 25);
+    File img = await ImagePicker.pickImage(
+        source: ImageSource.camera, imageQuality: 25);
     if (img != null) {
       image = img;
       setState(() {});
@@ -49,7 +50,8 @@ class _CreateProfileState extends State<CreateProfile> {
   }
 
   sendPic() async {
-    File img = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 25);
+    File img = await ImagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 25);
     if (img != null) {
       image = img;
       setState(() {});
@@ -212,7 +214,9 @@ class _CreateProfileState extends State<CreateProfile> {
                                                       : null;
                                                 }),
                                                 onSaved: (gId) =>
-                                                    id = gId.trim(),
+                                                    gId.trim()[0] == '@'
+                                                        ? id = gId.trim().substring(1)
+                                                        : id = gId.trim(),
                                                 textInputAction:
                                                     TextInputAction.next,
                                                 decoration: InputDecoration(

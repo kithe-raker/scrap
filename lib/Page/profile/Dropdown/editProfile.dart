@@ -73,7 +73,7 @@ class _EditProfileState extends State<EditProfile> {
           return val.trim() == "" ? 'put isas' : null;
         },
         onSaved: (val) {
-          id = val.trim();
+          val.trim()[0] == '@' ? id = val.trim().substring(1) : id = val.trim();
         },
       ),
     );
