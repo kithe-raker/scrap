@@ -314,7 +314,7 @@ class _MapScrapsState extends State<MapScraps> {
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
       GeoPoint loca = data['position']['geopoint'];
-      widget.collection.contains(data['text']) ||
+      widget.collection.contains(data['id']) ||
               data['uid'] == widget.uid ||
               picked.contains(data['id'])
           ? null
