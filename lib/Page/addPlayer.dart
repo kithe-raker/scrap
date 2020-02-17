@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/widget/Arrow_back.dart';
 
 class AddPlayer extends StatefulWidget {
   @override
@@ -16,49 +17,30 @@ class _AddPlayerState extends State<AddPlayer> {
         color: Colors.black,
         child: Column(
           children: <Widget>[
+            Arrow_back(),
             Container(
-              padding: EdgeInsets.only(
-                  top: a.width / 15,
-                  right: a.width / 25,
-                  left: a.width / 25,
-                  bottom: a.width / 8.0),
-              child: Row(
-                children: <Widget>[
-                  InkWell(
-                    //back btn
-                    child: Container(
-                      width: a.width / 7,
-                      height: a.width / 10,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Colors.white),
-                      child: Icon(Icons.arrow_back,
-                          color: Colors.black, size: a.width / 15),
-                    ),
-                    onTap: () {
-                      Navigator.pop(
-                        context,
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: a.width,
-              alignment: Alignment.topLeft,
+                padding: EdgeInsets.only(left: a.width / 15, top: a.width / 10),
+                width: a.width,
+                alignment: Alignment.topLeft,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "ผู้คนรอบตัว",
-                  style: TextStyle(color: Colors.white,fontSize: a.width/7),
-                ),
-                Text(
-                    "พบกับระบบค้นหาผู้คนรอบตัวคุณ \nแล้วปากระดาษใส่พวกเขาได้ทันที เร็วๆนี้",
-                    style: TextStyle(color: Colors.white,fontSize: a.width/20))
-              ],
-            )),
+                  children: <Widget>[
+                    Text(
+                      "ผู้คนรอบตัว",
+                      style:
+                          TextStyle(color: Colors.white, fontSize: a.width / 7),
+                    ),
+                    Text(
+                        "พบกับระบบค้นหาผู้คนรอบตัวคุณ \nแล้วปากระดาษใส่พวกเขาได้ทันที เร็วๆนี้",
+                        style: TextStyle(
+                            color: Colors.white, fontSize: a.width / 20))
+                  ],
+                )),
+            Container(margin: EdgeInsets.only(top: a.width/8),
+              width: a.width / 1.2,
+              height: a.width / 1.2,
+              child: Image.asset("assets/peoplescan.png"),
+            )
           ],
         ),
       ),

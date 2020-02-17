@@ -453,8 +453,8 @@ class _HomePageState extends State<HomePage> {
                                       child: Row(
                                         children: <Widget>[
                                           Container(
-                                            width: a.width / 15,
-                                            height: a.width / 15,
+                                            width: a.width / 13,
+                                            height: a.width / 13,
                                             decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(
@@ -523,16 +523,26 @@ class _HomePageState extends State<HomePage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          Text(
-                                            public ?? false
-                                                ? 'เขียนโดย : @${widget.doc['id']}'
-                                                : 'เขียนโดย : ใครสักคน',
-                                            style:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                          // Text("เวลา" + " : " + time,
-                                          //     style:
-                                          //         TextStyle(color: Colors.grey))
+                                          public ?? false
+                                              ? Row(
+                                                children: <Widget>[
+                                                  Text(
+                                                      "เขียนโดย : ",
+                                                      style: TextStyle(
+                                                          fontSize: a.width / 22,
+                                                          color: Colors.grey),
+                                                    ),Text("@${widget.doc['id']}",style: TextStyle(
+                                                          fontSize: a.width / 22,
+                                                          color: Color(0xff26A4FF)))
+                                                ],
+                                              )
+                                              : Text('เขียนโดย : ใครสักคน',style: TextStyle(
+                                                      fontSize: a.width / 22,
+                                                      color: Colors.grey),),
+                                          Text("เวลา" + " : " + time,
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: a.width / 22))
                                         ],
                                       ),
                                     ),

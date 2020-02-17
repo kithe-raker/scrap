@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/widget/Arrow_back.dart';
 
 class About extends StatefulWidget {
   @override
@@ -10,39 +11,30 @@ class _AboutState extends State<About> {
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            InkWell(
-              child: Container(
-                width: a.width / 7,
-                height: a.width / 10,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(a.width),
-                    color: Colors.white),
-                child: Icon(Icons.arrow_back,
-                    color: Colors.black, size: a.width / 15),
+        backgroundColor: Colors.black,
+        body: Container(
+          width: a.width,
+          height: a.height,
+          color: Colors.black,
+          child: Column(
+            children: <Widget>[
+              Container(
+                width: a.width,
+                child: Arrow_back(),
               ),
-              onTap: () {
-                Navigator.pop(
-                  context,
-                );
-              },
-            ),
-            Container(
-              child: Text(
-                "About",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: a.width / 8,
-                    fontWeight: FontWeight.bold),
+              Container(
+                padding: EdgeInsets.only(left: a.width / 15, top: a.width / 10),
+                width: a.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                  Text("เกี่ยวกับแอปพลิเคชัน",style: TextStyle(color: Colors.white,fontSize: a.width/8)),
+                  Text("ข้อมูลทั่วไปของแอปพลิเคชัน",style: TextStyle(color: Colors.white,fontSize: a.width/20))
+                ],),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
+              Container(child: Stack(children: <Widget>[Container(child: Image.asset("assets/paper-readed.png"))],),)
+            ],
+          ),
+        ));
   }
 }
