@@ -8,6 +8,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:scrap/Page/addPlayer.dart';
 
 class MapScraps extends StatefulWidget {
   final Position currentLocation;
@@ -252,7 +253,7 @@ class _MapScrapsState extends State<MapScraps> {
                       iconSize: a.width / 12,
                       onPressed: () {
                         _animateToUser();
-                      },
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AddPlayer(),));                      },
                     ),
                   ),
                   SizedBox(
