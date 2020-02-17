@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                           height: a.width / 10,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(a.width),
-                                    border: Border.all(width : 2 , color: Colors.white),
+                            border: Border.all(width: 2, color: Colors.white),
                             color: Color(0xff26A4FF),
                           ),
                           child: Icon(Icons.search,
@@ -266,11 +266,15 @@ class _HomePageState extends State<HomePage> {
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
-            return MapScraps(
-              collection: snap?.data['id'] ?? [],
-              currentLocation: widget.currentLocation,
-              uid: widget.doc['uid'],
-            );
+            return widget?.currentLocation == null
+                ? Center(
+                    child: Text('กรุณาตรวจสอบGPSของคุณ'),
+                  )
+                : MapScraps(
+                    collection: snap?.data['id'] ?? [],
+                    currentLocation: widget.currentLocation,
+                    uid: widget.doc['uid'],
+                  );
           } else {
             return Center(
               child: CircularProgressIndicator(),
@@ -430,7 +434,7 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
+                                  //ปุ่ม������ดหากต้องการที่จะเปิดเผยตัวตน
                                   Container(
                                     child: Row(
                                       children: <Widget>[
@@ -627,6 +631,7 @@ class _HomePageState extends State<HomePage> {
   throwTo(Map selectedID) async {
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
+    String date = DateFormat('d/M/y').format(now);
     await Firestore.instance
         .collection('Users')
         .document(selectedID['uid'])
@@ -644,10 +649,23 @@ class _HomePageState extends State<HomePage> {
         ])
       }
     }, merge: true);
+    await notifaication(selectedID['uid'], date, time);
     await increaseTransaction(widget.doc['uid'], 'written');
     await increaseTransaction(selectedID['uid'], 'threw');
   }
 
+  notifaication(String who, String date, String time) async {
+    await Firestore.instance.collection('Notifications').add({'uid': who});
+    await Firestore.instance
+        .collection('Users')
+        .document(who)
+        .collection('notification')
+        .add({
+      'writer': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+      'date': date,
+      'time': time
+    });
+  }
   // throwTo(Map selectedID) async {
   //   await Firestore.instance
   //       .collection('Users')

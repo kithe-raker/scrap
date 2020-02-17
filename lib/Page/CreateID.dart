@@ -43,7 +43,7 @@ class _CreateIDState extends State<CreateID> {
       // user.linkWithCredential(credent);
     };
     PhoneVerificationFailed failed = (AuthException error) {
-      print(error);
+      print(error.message);
     };
     await FirebaseAuth.instance
         .verifyPhoneNumber(

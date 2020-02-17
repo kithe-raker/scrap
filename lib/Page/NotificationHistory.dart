@@ -10,17 +10,20 @@ class NotificationHistory extends StatefulWidget {
 
 class _NotificationHistoryState extends State<NotificationHistory> {
   var _key = GlobalKey<FormState>();
-  String id;
 
-  summit(String uid) async {
-    List index = [];
-    for (int i = 0; i <= id.length; i++) {
-      index.add(i == 0 ? id[0] : id.substring(0, i));
-    }
+  deleteHistory(String id) async {
     await Firestore.instance
         .collection('Users')
-        .document(uid)
-        .updateData({'id': id, 'NotificationHistoryIndex': index});
+        .document(widget.doc['uid'])
+        .collection('notification')
+        .document(id)
+        .delete();
+  }
+
+  clearHistory(List docs) async {
+    for (var doc in docs) {
+      await deleteHistory(doc.documentID);
+    }
   }
 
   @override
@@ -64,8 +67,23 @@ class _NotificationHistoryState extends State<NotificationHistory> {
                     ),
                     FloatingActionButton.extended(
                       backgroundColor: Colors.white,
-                      onPressed: () {
-                        //save
+                      onPressed: () async {
+                        await Firestore.instance
+                            .collection('Users')
+                            .document(widget.doc['uid'])
+                            .collection('notification')
+                            .getDocuments()
+                            .then((docs) {
+                          if (docs?.documents?.length == null ||
+                              docs?.documents?.length == 0) {
+                          } else {
+                            warnDialog(
+                                'คุณต้องการลบการแจ้งเตือนทั้งหมดนี้ใช่หรือไม่',
+                                () async {
+                              await clearHistory(docs.documents);
+                            });
+                          }
+                        });
                       },
                       icon: Icon(
                         Icons.clear_all,
@@ -80,9 +98,7 @@ class _NotificationHistoryState extends State<NotificationHistory> {
                     ),
                   ],
                 ), //back btn
-
                 SizedBox(height: a.height / 12.5),
-
                 Padding(
                   padding: const EdgeInsets.only(left: 15),
                   child: Column(
@@ -99,280 +115,30 @@ class _NotificationHistoryState extends State<NotificationHistory> {
                     ],
                   ),
                 ),
-                Column(
-                  children: <Widget>[
-                    //////////// make widget ////////////////////
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 5.0, right: 5.0),
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            height: a.height / 7,
-                            width: a.width,
-                            decoration: BoxDecoration(
-                                color: Color(0xff282828),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(16.0),
-                                  topRight: Radius.circular(16.0),
-                                  bottomRight: Radius.circular(16.0),
-                                  bottomLeft: Radius.circular(0.0),
-                                )),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              '@somename ',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Color(0xff26A4FF)),
-                                            ),
-                                            Text(
-                                              'ปากระดาษใส่คุณ',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Colors.grey[300]),
-                                            ),
-                                          ],
-                                        ),
-                                        Text(
-                                          '14:49 15/02/2020',
-                                          style: TextStyle(
-                                              fontSize: a.width / 18,
-                                              color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ]),
-                          ),
-                          Positioned(
-                            right: 10.0,
-                            top: 10.0,
-                            child: Icon(
-                              Icons.clear,
-                              color: Color(0xffA3A3A3),
-                              size: 30.0,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 5.0, right: 5.0),
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            height: a.height / 7,
-                            width: a.width,
-                            decoration: BoxDecoration(
-                                color: Color(0xff282828),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(16.0),
-                                  topRight: Radius.circular(16.0),
-                                  bottomRight: Radius.circular(16.0),
-                                  bottomLeft: Radius.circular(0.0),
-                                )),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              'ใครบางคน ',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Colors.grey[300]),
-                                            ),
-                                            Text(
-                                              'ปากระดาษใส่คุณ',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Colors.grey[300]),
-                                            ),
-                                          ],
-                                        ),
-                                        Text(
-                                          '14:49 15/02/2020',
-                                          style: TextStyle(
-                                              fontSize: a.width / 18,
-                                              color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ]),
-                          ),
-                          Positioned(
-                            right: 10.0,
-                            top: 10.0,
-                            child: Icon(
-                              Icons.clear,
-                              color: Color(0xffA3A3A3),
-                              size: 30.0,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 5.0, right: 5.0),
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            height: a.height / 7,
-                            width: a.width,
-                            decoration: BoxDecoration(
-                                color: Color(0xff282828),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(16.0),
-                                  topRight: Radius.circular(16.0),
-                                  bottomRight: Radius.circular(16.0),
-                                  bottomLeft: Radius.circular(0.0),
-                                )),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              'ใครบางคน ',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Colors.grey[300]),
-                                            ),
-                                            Text(
-                                              'อ่านกระดาษที่คุณโยนทิ้งไว้',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Colors.grey[300]),
-                                            ),
-                                          ],
-                                        ),
-                                        Text(
-                                          '14:49 15/02/2020',
-                                          style: TextStyle(
-                                              fontSize: a.width / 18,
-                                              color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ]),
-                          ),
-                          Positioned(
-                            right: 10.0,
-                            top: 10.0,
-                            child: Icon(
-                              Icons.clear,
-                              color: Color(0xffA3A3A3),
-                              size: 30.0,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 5.0, right: 5.0),
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            height: a.height / 7,
-                            width: a.width,
-                            decoration: BoxDecoration(
-                                color: Color(0xff282828),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(16.0),
-                                  topRight: Radius.circular(16.0),
-                                  bottomRight: Radius.circular(16.0),
-                                  bottomLeft: Radius.circular(0.0),
-                                )),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              '@somename ',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Color(0xff26A4FF)),
-                                            ),
-                                            Text(
-                                              'อ่านกระดาษที่คุณปาใส่',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Colors.grey[300]),
-                                            ),
-                                          ],
-                                        ),
-                                        Text(
-                                          '14:49 15/02/2020',
-                                          style: TextStyle(
-                                              fontSize: a.width / 18,
-                                              color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ]),
-                          ),
-                          Positioned(
-                            right: 10.0,
-                            top: 10.0,
-                            child: Icon(
-                              Icons.clear,
-                              color: Color(0xffA3A3A3),
-                              size: 30.0,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    //////////// make widget ////////////////////
-                  ],
-                ),
+                StreamBuilder(
+                    stream: Firestore.instance
+                        .collection('Users')
+                        .document(widget.doc['uid'])
+                        .collection('notification')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData &&
+                          snapshot.connectionState == ConnectionState.active) {
+                        List documents = snapshot?.data?.documents;
+                        return documents?.length == null ||
+                                documents?.length == 0
+                            ? guide(a, 'ขณะนี้คุณยังไม่มีการแจ้งเตือน')
+                            : Column(
+                                children: documents
+                                    .map((doc) => notiBox(a, doc))
+                                    .toList(),
+                              );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
               ],
             ),
           ),
@@ -381,28 +147,127 @@ class _NotificationHistoryState extends State<NotificationHistory> {
     );
   }
 
-  Widget inputBox(Size a, String hint, String value) {
-    var tx = TextEditingController();
-    tx.text = value;
+  warnDialog(String warn, Function function) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text(warn),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('ยกเลิก')),
+              FlatButton(onPressed: function, child: Text('ok'))
+            ],
+          );
+        });
+  }
+
+  Widget guide(Size a, String text) {
     return Container(
+      height: a.height / 1.8,
       width: a.width,
-      height: a.width / 6,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(a.width)),
-      child: TextFormField(
-        style: TextStyle(color: Colors.black, fontSize: a.width / 15),
-        controller: tx,
-        decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: hint,
-            labelStyle: TextStyle(color: Colors.black, fontSize: a.width / 15)),
-        validator: (val) {
-          return val.trim() == "" ? 'กรุณากรอก' : null;
-        },
-        onSaved: (val) {
-          val.trim()[0] == '@' ? id = val.trim().substring(1) : id = val.trim();
-        },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            'assets/paper.png',
+            color: Colors.white60,
+            height: a.height / 10,
+          ),
+          Text(
+            text,
+            style: TextStyle(
+                fontSize: a.width / 16,
+                color: Colors.white60,
+                fontWeight: FontWeight.w300),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget notiBox(Size a, DocumentSnapshot doc) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0, left: 5.0, right: 5.0),
+      child: Stack(
+        children: <Widget>[
+          Container(
+            height: a.height / 7,
+            width: a.width,
+            decoration: BoxDecoration(
+                color: Color(0xff282828),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.0),
+                  topRight: Radius.circular(16.0),
+                  bottomRight: Radius.circular(16.0),
+                  bottomLeft: Radius.circular(0.0),
+                )),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              doc.data['writer'] == 'ไม่ระบุตัวตน'
+                                  ? 'ใครบางคน'
+                                  : '@' + doc.data['writer'],
+                              style: TextStyle(
+                                  fontSize: a.width / 15,
+                                  color: doc.data['writer'] == 'ไม่ระบุตัวตน'
+                                      ? Colors.white
+                                      : Color(0xff26A4FF)),
+                            ),
+                            Text(
+                              'ปากระดาษใส่คุณ',
+                              style: TextStyle(
+                                  fontSize: a.width / 15,
+                                  color: Colors.grey[300]),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '${doc.data['time']} ${doc.data['date']}',
+                          style: TextStyle(
+                              fontSize: a.width / 18, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ]),
+          ),
+          Positioned(
+            right: 10.0,
+            top: 10.0,
+            child: IconButton(
+              icon: Icon(Icons.clear),
+              color: Color(0xffA3A3A3),
+              iconSize: 30.0,
+              onPressed: () {
+                warnDialog(
+                  'คุณต้องการลบการแจ้งเตือนนี้ใช่หรือไม่',
+                  () async {
+                    Navigator.pop(context);
+                    await deleteHistory(doc.documentID);
+                  },
+                );
+              },
+            ),
+          )
+        ],
       ),
     );
   }
