@@ -407,248 +407,254 @@ class _HomePageState extends State<HomePage> {
   void dialog() {
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
-    Navigator.of(context).push(new MaterialPageRoute<Null>(
+    Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) {
           Size a = MediaQuery.of(context).size;
-          return Scaffold(
-            backgroundColor: Colors.black,
-            body: Stack(
-              children: <Widget>[
-                InkWell(
-                  child: Container(
-                    child: Image.asset(
-                      'assets/bg.png',
-                      fit: BoxFit.cover,
-                      width: a.width,
-                      height: a.height,
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            return Scaffold(
+              backgroundColor: Colors.black,
+              body: Stack(
+                children: <Widget>[
+                  InkWell(
+                    child: Container(
+                      child: Image.asset(
+                        'assets/bg.png',
+                        fit: BoxFit.cover,
+                        width: a.width,
+                        height: a.height,
+                      ),
                     ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Container(
-                  margin: EdgeInsets.only(
-                      top: a.height / 8,
-                      right: a.width / 20,
-                      left: 20,
-                      bottom: a.width / 8),
-                  child: ListView(
-                    children: <Widget>[
-                      Form(
-                        key: _key,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              width: a.height,
-                              alignment: Alignment.center,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Container(
-                                          width: a.width / 12,
-                                          height: a.width / 12,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      a.width / 50),
-                                              border: Border.all(
-                                                  color: Colors.white)),
-                                          child: CircularCheckBox(
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
-                                            
-                                            activeColor: Colors.white,
-                                            value: public ?? false,
-                                            onChanged: (bool value) {
-                                              setState(() {
-                                                public = value;
-                                              });
-                                            },
+                  Container(
+                    margin: EdgeInsets.only(
+                        top: a.height / 8,
+                        right: a.width / 20,
+                        left: 20,
+                        bottom: a.width / 8),
+                    child: ListView(
+                      children: <Widget>[
+                        Form(
+                          key: _key,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                width: a.height,
+                                alignment: Alignment.center,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
+                                    Container(
+                                      child: Row(
+                                        children: <Widget>[
+                                          Container(
+                                            width: a.width / 15,
+                                            height: a.width / 15,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        a.width / 50),
+                                                border: Border.all(
+                                                    color: Colors.white)),
+                                            child: Checkbox(
+                                              value: public ?? false,
+                                              onChanged: (bool value) {
+                                                setState(() {
+                                                  public = value;
+                                                });
+                                              },
+                                            ),
                                           ),
-                                        ),
-                                        Container(
-                                          child: Text(
-                                            "\t" + "เปิดเผยตัวตน",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: a.width / 20),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  //ออกจากหน้านี้
-                                  InkWell(
-                                    child: Icon(
-                                      Icons.clear,
-                                      size: a.width / 10,
-                                      color: Colors.white,
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            //ส่ว��ของกระดาษที่เขีย���
-                            Container(
-                              margin: EdgeInsets.only(top: a.width / 50),
-                              width: a.width / 1,
-                              height: a.height / 2,
-                              //ทำเป็นชั้นๆ
-                              child: Stack(
-                                children: <Widget>[
-                                  //ช���้นที่ 1 ส่วนของก���ะดาษ
-                                  Container(
-                                    child: Image.asset(
-                                      'assets/paper-readed.png',
-                                      width: a.width / 1,
-                                      height: a.height / 2,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  //ชั้นที่ 2
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        left: a.width / 20, top: a.width / 20),
-                                    width: a.width,
-                                    alignment: Alignment.topLeft,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          public ?? false
-                                              ? 'เขียนโดย : @${widget.doc['id']}'
-                                              : 'เขียนโดย : ใครสักคน',
-                                          style: TextStyle(color: Colors.grey),
-                                        ),
-                                        // Text("เวลา" + " : " + time,
-                                        //     style:
-                                        //         TextStyle(color: Colors.grey))
-                                      ],
-                                    ),
-                                  ),
-                                  //ชั้นที่ 3 เอาไว้สำหรับเขียนข้อความ
-                                  Container(
-                                    width: a.width,
-                                    height: a.height,
-                                    alignment: Alignment.center,
-                                    child: SizedBox(
-                                      width: a.width / 2,
-                                      child: TextFormField(
-                                        textAlign: TextAlign
-                                            .center, //เพื่อให้ข้อความอยู่ตรงกลาง
-                                        style:
-                                            TextStyle(fontSize: a.width / 15),
-                                        maxLines: null,
-                                        decoration: InputDecoration(
-                                          border: InputBorder
-                                              .none, //สำหรับใหเส้นใต้หาย
-                                          hintText: 'เขียนข้อความบางอย่าง',
-                                          hintStyle: TextStyle(
-                                            fontSize: a.width / 18,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        //หากไม่ได้กรอกจะขึ้น
-                                        validator: (val) {
-                                          return val.trim() == null ||
-                                                  val.trim() == ""
-                                              ? 'เขียนบางอย่างสิ'
-                                              : null;
-                                        },
-                                        //เนื้อหาที่กรอกเข้าไปใน text
-                                        onChanged: (val) {
-                                          text = val;
-                                        },
+                                          Container(
+                                            child: Text(
+                                              "\t" + "เปิดเผยตัวตน",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: a.width / 20),
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     ),
-                                  )
-                                  //)
-                                ],
+                                    //ออกจากหน้านี้
+                                    InkWell(
+                                      child: Icon(
+                                        Icons.clear,
+                                        size: a.width / 10,
+                                        color: Colors.white,
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: a.width / 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  InkWell(
-                                    child: Container(
+                              //ส่ว��ของกระดาษที่เขีย���
+                              Container(
+                                margin: EdgeInsets.only(top: a.width / 50),
+                                width: a.width / 1,
+                                height: a.height / 1.8,
+                                //ทำเป็นชั้นๆ
+                                child: Stack(
+                                  children: <Widget>[
+                                    //ช���้นที่ 1 ส่วนของก���ะดาษ
+                                    Container(
+                                      child: Image.asset(
+                                        'assets/paper-readed.png',
+                                        width: a.width / 1,
+                                        height: a.height / 1.8,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    //ชั้นที่ 2
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: a.width / 20,
+                                          top: a.width / 20),
+                                      width: a.width,
+                                      alignment: Alignment.topLeft,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            public ?? false
+                                                ? 'เขียนโดย : @${widget.doc['id']}'
+                                                : 'เขียนโดย : ใครสักคน',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          // Text("เวลา" + " : " + time,
+                                          //     style:
+                                          //         TextStyle(color: Colors.grey))
+                                        ],
+                                      ),
+                                    ),
+                                    //ชั้นที่ 3 เอาไว้สำหรับเขียนข้อความ
+                                    Container(
+                                      width: a.width,
+                                      height: a.height,
+                                      alignment: Alignment.center,
+                                      child: SizedBox(
+                                        width: a.width / 1.5,
+                                        child: TextFormField(
+                                          textAlign: TextAlign
+                                              .center, //เพื่อให้ข้อความอยู่ตรงกลาง
+                                          style:
+                                              TextStyle(fontSize: a.width / 15),
+                                          maxLines: null,
+                                          decoration: InputDecoration(
+                                            border: InputBorder
+                                                .none, //สำหรับใหเส้นใต้หาย
+                                            hintText: 'เขียนข้อความบางอย่าง',
+                                            hintStyle: TextStyle(
+                                              fontSize: a.width / 18,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          //หากไม่ได้กรอกจะขึ้น
+                                          validator: (val) {
+                                            return val.trim() == null ||
+                                                    val.trim() == ""
+                                                ? 'เขียนบางอย่างสิ'
+                                                : null;
+                                          },
+                                          //เนื้อหาที่กรอกเข้าไปใน text
+                                          onChanged: (val) {
+                                            text = val;
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                    //)
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: a.width / 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    InkWell(
+                                      child: Container(
+                                          width: a.width / 4.5,
+                                          height: a.width / 8,
+                                          margin: EdgeInsets.only(
+                                              right: a.width / 20),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      a.width)),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "ทิ้งไว้",
+                                            style: TextStyle(
+                                                fontSize: a.width / 15,
+                                                fontWeight: FontWeight.bold),
+                                          )),
+                                      onTap: () async {
+                                        if (_key.currentState.validate()) {
+                                          _key.currentState.save();
+                                          Navigator.pop(context);
+                                          await binScrap(time);
+                                        } else {
+                                          print('nope');
+                                        }
+                                      },
+                                    ),
+                                    //ปุ่มปาใส่
+                                    InkWell(
+                                      child: Container(
+                                        margin:
+                                            EdgeInsets.only(left: a.width / 20),
                                         width: a.width / 4.5,
                                         height: a.width / 8,
-                                        margin: EdgeInsets.only(
-                                            right: a.width / 20),
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
                                                 BorderRadius.circular(a.width)),
                                         alignment: Alignment.center,
-                                        child: Text(
-                                          "ทิ้งไว้",
-                                          style: TextStyle(
-                                              fontSize: a.width / 15,
-                                              fontWeight: FontWeight.bold),
-                                        )),
-                                    onTap: () async {
-                                      if (_key.currentState.validate()) {
-                                        _key.currentState.save();
-                                        Navigator.pop(context);
-                                        await binScrap(time);
-                                      } else {
-                                        print('nope');
-                                      }
-                                    },
-                                  ),
-                                  //ปุ่มปาใส่
-                                  InkWell(
-                                    child: Container(
-                                      margin:
-                                          EdgeInsets.only(left: a.width / 20),
-                                      width: a.width / 4.5,
-                                      height: a.width / 8,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(a.width)),
-                                      alignment: Alignment.center,
-                                      child: Text("ปาใส่",
-                                          style: TextStyle(
-                                              fontSize: a.width / 15,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                    //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                    onTap: () {
-                                      if (_key.currentState.validate()) {
-                                        _key.currentState.save();
-                                        Navigator.pop(context);
-                                        chooseUser();
-                                      } else {
-                                        print('nope');
-                                      }
-                                    },
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
+                                        child: Text("ปาใส่",
+                                            style: TextStyle(
+                                                fontSize: a.width / 15,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
+                                      onTap: () {
+                                        if (_key.currentState.validate()) {
+                                          _key.currentState.save();
+                                          Navigator.pop(context);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Search(doc: null),
+                                              ));
+                                        } else {
+                                          print('nope');
+                                        }
+                                      },
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
+                ],
+              ),
+            );
+          });
         },
         fullscreenDialog: true));
   }
