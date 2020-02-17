@@ -101,9 +101,12 @@ class _ProfileState extends State<Profile> {
                                   color: Colors.white, width: a.width / 150)),
                           width: a.width / 3,
                           height: a.width / 3,
-                          child: snapshot.data['img'] == null
-                              ? Image.asset("assets/userprofile.png")
-                              : Image.network(snapshot.data['img']),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(a.width),
+                            child: snapshot.data['img'] == null
+                                ? Image.asset("assets/userprofile.png")
+                                : Image.network(snapshot.data['img'],fit: BoxFit.cover,),
+                          ),
                         ),
                         // ชื่อของ account
                         Container(

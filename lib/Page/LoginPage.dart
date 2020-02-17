@@ -92,261 +92,267 @@ class _LoginPageState extends State<LoginPage> {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              child: Text(
-                "ยินดีต้อนรับ",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: a.width / 9,
-                    fontFamily: 'ThaiSans',
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            Container(
-              child: Text(
-                "\"สู่โลกที่เต็มไปด้วยเศษกระดาษ\"",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: a.width / 18,
-                  fontFamily: 'ThaiSans',
+      body: ListView(
+        
+        children: <Widget>[
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: a.width/8,),
+                Container(
+                  child: Text(
+                    "ยินดีต้อนรับ",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: a.width / 9,
+                        fontFamily: 'ThaiSans',
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-            ),
-            Form(
-              key: _key,
-              child: Container(
-                margin: EdgeInsets.only(top: a.width / 15),
-                width: a.width / 1.15,
-                padding: EdgeInsets.only(bottom: a.width / 20),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xff595959),
-                        Color(0xff292929),
-                      ],
+                Container(
+                  child: Text(
+                    "\"สู่โลกที่เต็มไปด้วยเศษกระดาษ\"",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: a.width / 18,
+                      fontFamily: 'ThaiSans',
                     ),
-                    borderRadius: BorderRadius.circular(a.width / 20)),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                        width: a.width,
-                        padding: EdgeInsets.only(
-                            top: a.width / 20,
-                            left: a.width / 20,
-                            bottom: a.width / 80),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.mail,
-                              color: Colors.white,
-                              size: a.width / 22,
-                            ),
-                            SizedBox(width: 5.0),
-                            Text(
-                              'อีเมล',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: a.width / 20,
-                                  fontWeight: FontWeight.w600),
-                            ),
+                  ),
+                ),
+                Form(
+                  key: _key,
+                  child: Container(
+                    margin: EdgeInsets.only(top: a.width / 15),
+                    width: a.width / 1.15,
+                    padding: EdgeInsets.only(bottom: a.width / 20),
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xff595959),
+                            Color(0xff292929),
                           ],
-                        )),
-                    Container(
-                      width: a.width / 1.3,
-                      height: a.width / 6.5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(a.width)),
-                      child: TextFormField(
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                          fontSize: a.width / 15,
                         ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'example@mail.com',
-                          hintStyle: TextStyle(
-                            color: Colors.grey[500],
-                            fontWeight: FontWeight.w900,
-                            fontSize: a.width / 15,
-                          ),
-                        ),
-                        validator: (val) {
-                          return val.trim() == ""
-                              ? 'กรุณากรอกข้อมูลให้ครบ'
-                              : null;
-                        },
-                        onSaved: (val) {
-                          _email = val.trim();
-                        },
-                      ),
-                    ),
-                    Container(
-                      width: a.width,
-                      padding: EdgeInsets.only(
-                          top: a.width / 20,
-                          left: a.width / 20,
-                          bottom: a.width / 80),
-                      child:
-                          /*Text(
-                          "Password",
-                          style: TextStyle(
-                              color: Colors.white, fontSize: a.width / 20 , fontWeight: FontWeight.w600),
-                        )*/
-                          Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.lock,
-                            color: Colors.white,
-                            size: a.width / 22,
-                          ),
-                          SizedBox(width: 5.0),
-                          Text(
-                            'รหัสผ่าน',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: a.width / 20,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: a.width / 1.3,
-                      height: a.width / 6.5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(a.width)),
-                      child: TextFormField(
-                        obscureText: true,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          letterSpacing: 10,
-                          fontWeight: FontWeight.w900,
-                          fontSize: a.width / 15,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: '••••••••',
-                          hintStyle: TextStyle(
-                            color: Colors.grey[500],
-                            fontWeight: FontWeight.w900,
-                            fontSize: a.width / 15,
-                          ),
-                        ),
-                        validator: (val) {
-                          return val.trim() == ""
-                              ? 'กรุณากรอกข้อมูลให้ครบ'
-                              : null;
-                        },
-                        onSaved: (val) {
-                          _password = val.trim();
-                        },
-                      ),
-                    ),
-                    InkWell(
-                        child: Container(
-                            width: a.width / 1.3,
-                            height: a.width / 6.5,
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(
-                                top: a.width / 15, bottom: a.width / 35),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.circular(a.width / 40)),
-                            child: Text("เข้าสู่ระบบ",
-                                style: TextStyle(
-                                  fontSize: a.width / 16,
-                                  fontWeight: FontWeight.bold,
-                                ))),
-                        onTap: () async {
-                          if (_key.currentState.validate()) {
-                            _key.currentState.save();
-                            await login();
-                          } else {
-                            print('nope');
-                          }
-                        }),
-                    InkWell(
-                        child: FlatButton(
+                        borderRadius: BorderRadius.circular(a.width / 20)),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                            width: a.width,
+                            padding: EdgeInsets.only(
+                                top: a.width / 20,
+                                left: a.width / 20,
+                                bottom: a.width / 80),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Icon(
-                                  Icons.phone,
+                                  Icons.mail,
                                   color: Colors.white,
-                                  size: a.width / 20,
+                                  size: a.width / 22,
                                 ),
                                 SizedBox(width: 5.0),
                                 Text(
-                                  'เข้าสู่ระบบด้วยเบอร์โทร',
+                                  'อีเมล',
                                   style: TextStyle(
-                                      decoration: TextDecoration.underline,
                                       color: Colors.white,
-                                      fontSize: a.width / 17,
+                                      fontSize: a.width / 20,
                                       fontWeight: FontWeight.w600),
                                 ),
                               ],
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginPhone()));
-                            })),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: a.width / 30),
-              child: InkWell(
-                child: Container(
-                    width: a.width / 1.3,
-                    height: a.width / 6.5,
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(
-                        top: a.width / 22, bottom: a.width / 35),
-                    decoration: BoxDecoration(
-                        color: Color(0xff26A4FF),
-                        borderRadius: BorderRadius.circular(a.width / 2)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.account_circle,
-                          color: Colors.white,
-                          size: a.width / 20,
-                        ),
-                        SizedBox(width: 5.0),
-                        Text("สร้างบัญชี SCRAP",
+                            )),
+                        Container(
+                          width: a.width / 1.3,
+                          height: a.width / 6.5,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(a.width)),
+                          child: TextFormField(
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: a.width / 18,
-                              fontWeight: FontWeight.bold,
-                            )),
+                              fontWeight: FontWeight.w900,
+                              fontSize: a.width / 15,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'example@mail.com',
+                              hintStyle: TextStyle(
+                                color: Colors.grey[500],
+                                fontWeight: FontWeight.w900,
+                                fontSize: a.width / 15,
+                              ),
+                            ),
+                            validator: (val) {
+                              return val.trim() == ""
+                                  ? 'กรุณากรอกข้อมูลให้ครบ'
+                                  : null;
+                            },
+                            onSaved: (val) {
+                              _email = val.trim();
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: a.width,
+                          padding: EdgeInsets.only(
+                              top: a.width / 20,
+                              left: a.width / 20,
+                              bottom: a.width / 80),
+                          child:
+                              /*Text(
+                              "Password",
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: a.width / 20 , fontWeight: FontWeight.w600),
+                            )*/
+                              Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.lock,
+                                color: Colors.white,
+                                size: a.width / 22,
+                              ),
+                              SizedBox(width: 5.0),
+                              Text(
+                                'รหัสผ่าน',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 20,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: a.width / 1.3,
+                          height: a.width / 6.5,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(a.width)),
+                          child: TextFormField(
+                            obscureText: true,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              letterSpacing: 10,
+                              fontWeight: FontWeight.w900,
+                              fontSize: a.width / 15,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: '••••••••',
+                              hintStyle: TextStyle(
+                                color: Colors.grey[500],
+                                fontWeight: FontWeight.w900,
+                                fontSize: a.width / 15,
+                              ),
+                            ),
+                            validator: (val) {
+                              return val.trim() == ""
+                                  ? 'กรุณากรอกข้อมูลให้ครบ'
+                                  : null;
+                            },
+                            onSaved: (val) {
+                              _password = val.trim();
+                            },
+                          ),
+                        ),
+                        InkWell(
+                            child: Container(
+                                width: a.width / 1.3,
+                                height: a.width / 6.5,
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(
+                                    top: a.width / 15, bottom: a.width / 35),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width / 40)),
+                                child: Text("เข้าสู่ระบบ",
+                                    style: TextStyle(
+                                      fontSize: a.width / 16,
+                                      fontWeight: FontWeight.bold,
+                                    ))),
+                            onTap: () async {
+                              if (_key.currentState.validate()) {
+                                _key.currentState.save();
+                                await login();
+                              } else {
+                                print('nope');
+                              }
+                            }),
+                        InkWell(
+                            child: FlatButton(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.phone,
+                                      color: Colors.white,
+                                      size: a.width / 20,
+                                    ),
+                                    SizedBox(width: 5.0),
+                                    Text(
+                                      'เข้าสู่ระบบด้วยเบอร์โทร',
+                                      style: TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          color: Colors.white,
+                                          fontSize: a.width / 17,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => LoginPhone()));
+                                })),
                       ],
-                    )),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SignUpMail()));
-                },
-              ),
-            )
-          ],
-        ),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: a.width / 30),
+                  child: InkWell(
+                    child: Container(
+                        width: a.width / 1.3,
+                        height: a.width / 6.5,
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(
+                            top: a.width / 22, bottom: a.width / 35),
+                        decoration: BoxDecoration(
+                            color: Color(0xff26A4FF),
+                            borderRadius: BorderRadius.circular(a.width / 2)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.account_circle,
+                              color: Colors.white,
+                              size: a.width / 20,
+                            ),
+                            SizedBox(width: 5.0),
+                            Text("สร้างบัญชี SCRAP",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: a.width / 18,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                          ],
+                        )),
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SignUpMail()));
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/viewprofile.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -85,6 +86,7 @@ class _SearchState extends State<Search> {
                   padding: const EdgeInsets.all(5.0),
                   child: Container(
                     width: a.width,
+                    height: a.width / 6.5,
                     decoration: BoxDecoration(
                       color: Color(0xff282828),
                       borderRadius: BorderRadius.all(Radius.circular(300)),
@@ -94,7 +96,7 @@ class _SearchState extends State<Search> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: a.width / 12,
+                        fontSize: a.width / 14,
                         fontWeight: FontWeight.w300,
                       ),
                       keyboardType: TextInputType.phone,
@@ -192,77 +194,91 @@ class _SearchState extends State<Search> {
                 ? Padding(
                     padding:
                         const EdgeInsets.only(top: 50.0, left: 5.0, right: 5.0),
-                    child: Stack(
-                      children: <Widget>[
-                        Container(
-                          height: a.height / 4.5,
-                          width: a.width,
-                          decoration: BoxDecoration(
-                              color: Color(0xff282828),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(16.0),
-                                topRight: Radius.circular(16.0),
-                                bottomRight: Radius.circular(16.0),
-                                bottomLeft: Radius.circular(16.0),
-                              )),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(left: 20, right: 13),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
+                    child: InkWell(
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                            height: a.height / 4.5,
+                            width: a.width,
+                            decoration: BoxDecoration(
+                                color: Color(0xff282828),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(16.0),
+                                  topRight: Radius.circular(16.0),
+                                  bottomRight: Radius.circular(16.0),
+                                  bottomLeft: Radius.circular(16.0),
+                                )),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    margin:
+                                        EdgeInsets.only(left: 20, right: 13),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(a.width),
+                                        border: Border.all(
+                                            color: Colors.white,
+                                            width: a.width / 190)),
+                                    width: a.width / 3.3,
+                                    height: a.width / 3.3,
+                                    child: ClipRRect(
+                                      child: Image.network(
+                                        snapshot.data['img'],
+                                        fit: BoxFit.cover,
+                                      ),
                                       borderRadius:
                                           BorderRadius.circular(a.width),
-                                      border: Border.all(
-                                          color: Colors.white,
-                                          width: a.width / 190)),
-                                  width: a.width / 3.3,
-                                  height: a.width / 3.3,
-                                  child: ClipRRect(
-                                    child: Image.network(
-                                      snapshot.data['img'],
-                                      fit: BoxFit.cover,
                                     ),
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
                                   ),
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      '@${doc.data['id']}',
-                                      style: TextStyle(
-                                          fontSize: a.width / 13,
-                                          color: Colors.white),
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        Text(
-                                          'Join ${snapshot.data['createdDay']}',
-                                          style: TextStyle(
-                                              fontSize: a.width / 11,
-                                              color: Color(0xff26A4FF)),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ]),
-                        ),
-                        Positioned(
-                          right: 10.0,
-                          top: 10.0,
-                          child: Icon(
-                            Icons.arrow_forward,
-                            color: Color(0xffA3A3A3),
-                            size: 30.0,
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        '@${doc.data['id']}',
+                                        style: TextStyle(
+                                            fontSize: a.width / 13,
+                                            color: Colors.white),
+                                      ),
+                                      Row(
+                                        children: <Widget>[
+                                          Text(
+                                            'Join ${snapshot.data['createdDay']}',
+                                            style: TextStyle(
+                                                fontSize: a.width / 11,
+                                                color: Color(0xff26A4FF)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ]),
                           ),
-                        )
-                      ],
+                          Positioned(
+                            right: 10.0,
+                            top: 10.0,
+                            child: Icon(
+                              Icons.arrow_forward,
+                              color: Color(0xffA3A3A3),
+                              size: 30.0,
+                            ),
+                          )
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Viewprofile(
+                                info: snapshot.data,
+                                account: doc,
+                              ),
+                            ));
+                      },
                     ),
                   )
                 : SizedBox();
