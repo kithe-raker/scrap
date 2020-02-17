@@ -1,3 +1,4 @@
+import 'package:circular_check_box/circular_check_box.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -154,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                           height: a.width / 10,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(a.width),
-                                    border: Border.all(width : 2 , color: Colors.white),
+                            border: Border.all(width: 2, color: Colors.white),
                             color: Color(0xff26A4FF),
                           ),
                           child: Icon(Icons.search,
@@ -403,29 +404,45 @@ class _HomePageState extends State<HomePage> {
   }
 
 //ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี้ขึ้นมาไว้สร้าง Contents
-  dialog() {
+  void dialog() {
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
-    return showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-              backgroundColor: Colors.transparent,
-              content:
-                  StatefulBuilder(builder: (context, StateSetter setState) {
-                Size a = MediaQuery.of(context).size;
-                return Container(
-                  width: a.height,
-                  height: a.height / 1.3,
+    Navigator.of(context).push(new MaterialPageRoute<Null>(
+        builder: (BuildContext context) {
+          Size a = MediaQuery.of(context).size;
+          return Scaffold(
+            backgroundColor: Colors.black,
+            body: Stack(
+              children: <Widget>[
+                InkWell(
+                  child: Container(
+                    child: Image.asset(
+                      'assets/bg.png',
+                      fit: BoxFit.cover,
+                      width: a.width,
+                      height: a.height,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                      top: a.height / 8,
+                      right: a.width / 20,
+                      left: 20,
+                      bottom: a.width / 8),
                   child: ListView(
                     children: <Widget>[
                       Form(
                         key: _key,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Container(
                               width: a.height,
-                              alignment: Alignment.topRight,
+                              alignment: Alignment.center,
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -435,15 +452,19 @@ class _HomePageState extends State<HomePage> {
                                     child: Row(
                                       children: <Widget>[
                                         Container(
-                                          width: a.width / 15,
-                                          height: a.width / 15,
+                                          width: a.width / 12,
+                                          height: a.width / 12,
                                           decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(
                                                       a.width / 50),
                                               border: Border.all(
                                                   color: Colors.white)),
-                                          child: Checkbox(
+                                          child: CircularCheckBox(
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize.padded,
+                                            
+                                            activeColor: Colors.white,
                                             value: public ?? false,
                                             onChanged: (bool value) {
                                               setState(() {
@@ -497,7 +518,7 @@ class _HomePageState extends State<HomePage> {
                                   //ชั้นที่ 2
                                   Container(
                                     margin: EdgeInsets.only(
-                                        left: a.width / 10, top: a.width / 20),
+                                        left: a.width / 20, top: a.width / 20),
                                     width: a.width,
                                     alignment: Alignment.topLeft,
                                     child: Column(
@@ -507,7 +528,7 @@ class _HomePageState extends State<HomePage> {
                                         Text(
                                           public ?? false
                                               ? 'เขียนโดย : @${widget.doc['id']}'
-                                              : 'เขียนโดย : ไม่ระบุตัวตน',
+                                              : 'เขียนโดย : ใครสักคน',
                                           style: TextStyle(color: Colors.grey),
                                         ),
                                         // Text("เวลา" + " : " + time,
@@ -522,7 +543,7 @@ class _HomePageState extends State<HomePage> {
                                     height: a.height,
                                     alignment: Alignment.center,
                                     child: SizedBox(
-                                      width: a.width / 3,
+                                      width: a.width / 2,
                                       child: TextFormField(
                                         textAlign: TextAlign
                                             .center, //เพื่อให้ข้อความอยู่ตรงกลาง
@@ -534,7 +555,7 @@ class _HomePageState extends State<HomePage> {
                                               .none, //สำหรับใหเส้นใต้หาย
                                           hintText: 'เขียนข้อความบางอย่าง',
                                           hintStyle: TextStyle(
-                                            fontSize: a.width / 25,
+                                            fontSize: a.width / 18,
                                             color: Colors.grey,
                                           ),
                                         ),
@@ -557,15 +578,16 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(top: a.width / 24),
+                              margin: EdgeInsets.only(top: a.width / 10),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   InkWell(
                                     child: Container(
                                         width: a.width / 4.5,
                                         height: a.width / 8,
+                                        margin: EdgeInsets.only(
+                                            right: a.width / 20),
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
@@ -573,8 +595,9 @@ class _HomePageState extends State<HomePage> {
                                         alignment: Alignment.center,
                                         child: Text(
                                           "ทิ้งไว้",
-                                          style:
-                                              TextStyle(fontSize: a.width / 15),
+                                          style: TextStyle(
+                                              fontSize: a.width / 15,
+                                              fontWeight: FontWeight.bold),
                                         )),
                                     onTap: () async {
                                       if (_key.currentState.validate()) {
@@ -589,6 +612,8 @@ class _HomePageState extends State<HomePage> {
                                   //ปุ่มปาใส่
                                   InkWell(
                                     child: Container(
+                                      margin:
+                                          EdgeInsets.only(left: a.width / 20),
                                       width: a.width / 4.5,
                                       height: a.width / 8,
                                       decoration: BoxDecoration(
@@ -598,7 +623,8 @@ class _HomePageState extends State<HomePage> {
                                       alignment: Alignment.center,
                                       child: Text("ปาใส่",
                                           style: TextStyle(
-                                              fontSize: a.width / 15)),
+                                              fontSize: a.width / 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
                                     //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
                                     onTap: () {
@@ -619,9 +645,12 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                );
-              }));
-        });
+                ),
+              ],
+            ),
+          );
+        },
+        fullscreenDialog: true));
   }
 
   throwTo(Map selectedID) async {
@@ -681,8 +710,16 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
                           Container(
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
+                                InkWell(
+                                    child: Icon(Icons.arrow_back,
+                                        size: a.width / 15,
+                                        color: Colors.white),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      dialog();
+                                    }),
                                 // InkWell(
                                 //   child: Icon(Icons.arrow_back,
                                 //       size: a.width / 15, color: Colors.white),
@@ -726,8 +763,9 @@ class _HomePageState extends State<HomePage> {
                                           margin: EdgeInsets.only(
                                               left: a.width / 20),
                                           child: TextFormField(
-                                            style:
-                                                TextStyle(color: Colors.white),
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: a.width / 15),
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               hintText: '@someoneuserid',
@@ -803,10 +841,11 @@ class _HomePageState extends State<HomePage> {
                                                                           child: Container(
                                                                               padding: EdgeInsets.all(a.width / 21),
                                                                               width: a.width / 1.1,
-                                                                              height: a.height / 12,
+                                                                              height: a.height / 10,
+                                                                              alignment: Alignment.center,
                                                                               child: Text(
                                                                                 '@' + doc['id'],
-                                                                                style: TextStyle(fontSize: a.width / 12),
+                                                                                style: TextStyle(fontSize: a.width / 12, color: Colors.white),
                                                                               )),
                                                                           onTap:
                                                                               () {
