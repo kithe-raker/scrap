@@ -303,8 +303,8 @@ class _MapScrapsState extends State<MapScraps> {
     Geolocator().getPositionStream().listen((location) {
       userMarker(location.latitude, location.longitude);
       _addCircle(100, location.latitude, location.longitude);
-      _startQuery(position: location);
       _animateToUser(position: location);
+      _startQuery(position: location);
     });
   }
 
