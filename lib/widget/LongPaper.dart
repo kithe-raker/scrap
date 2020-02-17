@@ -15,10 +15,10 @@ class _LongPaperState extends State<LongPaper> {
     Size a = MediaQuery.of(context).size;
     return Container(
         margin: EdgeInsets.only(right: a.width / 15, top: a.width / 20),
-        width: a.width / 1.5,
-        height: a.width / 2.3,
+        width: a.width / 1.3,
+        height: a.width / 3,
         decoration: BoxDecoration(
-          color: Colors.white,
+         
           image: DecorationImage(
             image: AssetImage('assets/paper-readed.png'),
             fit: BoxFit.cover,
