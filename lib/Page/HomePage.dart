@@ -606,12 +606,12 @@ class _HomePageState extends State<HomePage> {
                                                   ],
                                                 )
                                               : Text(
-                                                  'เขียนโ���ย : ใครสักคน',
+                                                  'เขียนโดย : ใครสักคน',
                                                   style: TextStyle(
                                                       fontSize: a.width / 22,
                                                       color: Colors.grey),
                                                 ),
-                                          Text("��วลา" + " : " + time,
+                                          Text("เวลา" + " : " + time,
                                               style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: a.width / 22))

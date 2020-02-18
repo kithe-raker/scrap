@@ -145,6 +145,7 @@ class _OTPScreenState extends State<OTPScreen> {
       'password': widget.password,
       'phone': widget.phone,
       'uid': uid,
+      'accept': false
     });
     await Firestore.instance
         .collection('Users')
