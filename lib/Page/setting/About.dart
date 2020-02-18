@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/setting/servicedoc.dart';
+import 'package:scrap/Page/setting/sqUserdoc.dart';
 import 'package:scrap/widget/Arrow_back.dart';
 
 class About extends StatefulWidget {
@@ -60,11 +62,15 @@ class _AboutState extends State<About> {
                                 children: <Widget>[
                                   Text(
                                     "เขียนโดย : ",
-                                    style: TextStyle(color: Colors.grey,fontSize: a.width/25),
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: a.width / 25),
                                   ),
                                   Text(
                                     "@scrapteam",
-                                    style: TextStyle(color:Color(0xff26A4FF),fontSize: a.width/25),
+                                    style: TextStyle(
+                                        color: Color(0xff26A4FF),
+                                        fontSize: a.width / 25),
                                   )
                                 ],
                               ),
@@ -72,31 +78,46 @@ class _AboutState extends State<About> {
                                 children: <Widget>[
                                   Text(
                                     "เวลา : ",
-                                    style: TextStyle(color: Colors.grey,fontSize: a.width/25),
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: a.width / 25),
                                   ),
                                   Text(
                                     "00.00",
-                                    style: TextStyle(color: Colors.grey,fontSize: a.width/25),
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: a.width / 25),
                                   )
                                 ],
-                              ),SizedBox(height: a.width/10,),
+                              ),
+                              SizedBox(
+                                height: a.width / 10,
+                              ),
                               Row(
                                 children: <Widget>[
                                   Text(
-                                    "เวอร์ชัน : ",style: TextStyle(fontSize: a.width/20),
+                                    "เวอร์ชัน : ",
+                                    style: TextStyle(fontSize: a.width / 20),
                                   ),
                                   Text(
-                                    "1.0.1",style: TextStyle(fontSize: a.width/20),
+                                    "1.0.1",
+                                    style: TextStyle(fontSize: a.width / 20),
                                   )
                                 ],
                               ),
                               Row(
                                 children: <Widget>[
                                   Text(
-                                    "ผู้พัฒนา : ",style: TextStyle(fontSize: a.width/20),
+                                    "ผู้พัฒนา : ",
+                                    style: TextStyle(fontSize: a.width / 20),
                                   ),
                                   Text(
-                                    "Bualoitech.co.th",style: TextStyle(color:Color(0xff26A4FF),fontSize: a.width/20,decoration: TextDecoration.underline,),
+                                    "Bualoitech.co.th",
+                                    style: TextStyle(
+                                      color: Color(0xff26A4FF),
+                                      fontSize: a.width / 20,
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   )
                                 ],
                               )
@@ -104,23 +125,54 @@ class _AboutState extends State<About> {
                           ),
                           Column(
                             children: <Widget>[
-                              Container(
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text("ข้อกำหนดการใช้บริการ",style: TextStyle(color:Colors.grey,fontSize: a.width/20)),
-                                      Icon(Icons.play_arrow,color: Colors.grey,)
-                                    ]),
+                              InkWell(
+                                child: Container(
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text("ข้อกำหนดการใช้บริการ",
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: a.width / 20)),
+                                        Icon(
+                                          Icons.play_arrow,
+                                          color: Colors.grey,
+                                        )
+                                      ]),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Servicedoc(),
+                                      ));
+                                },
                               ),
-                              Container(
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text("นโยบายความเป็นส่วนตัว",style: TextStyle(color:Colors.grey,fontSize: a.width/20,)),
-                                      Icon(Icons.play_arrow,color: Colors.grey,)
-                                    ]),
+                              InkWell(
+                                child: Container(
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text("นโยบายความเป็นส่วนตัว",
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: a.width / 20,
+                                            )),
+                                        Icon(
+                                          Icons.play_arrow,
+                                          color: Colors.grey,
+                                        )
+                                      ]),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SqUserdoc(),
+                                      ));
+                                },
                               )
                             ],
                           )
