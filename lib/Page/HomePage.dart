@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -7,7 +8,6 @@ import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/Page/profile/createProfile1.dart';
 
 class HomePage extends StatefulWidget {
   final Position currentLocation;
@@ -624,6 +624,7 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
+                                          toast('คุรได้ทิ้งกระดาษไว้แล้ว');
                                           Navigator.pop(context);
                                           await binScrap(time);
                                         } else {
@@ -684,6 +685,17 @@ class _HomePageState extends State<HomePage> {
           });
         },
         fullscreenDialog: true));
+  }
+
+  toast(String text) {
+    return Fluttertoast.showToast(
+        msg: text,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.white60,
+        textColor: Colors.black,
+        fontSize: 16.0);
   }
 
   // throwTo(Map selectedID) async {

@@ -148,8 +148,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                   },
                                 ),
                                 Container(
-                                  // padding: EdgeInsets.all(16),
-                                  // color: Colors.grey[300],
                                   child: Form(
                                     key: _formKey,
                                     child: Column(
@@ -157,16 +155,12 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                           CrossAxisAlignment.stretch,
                                       children: <Widget>[
                                         Column(
-                                          // crossAxisAlignment:
-                                          //     CrossAxisAlignment.stretch,
-                                          // mainAxisAlignment:
-                                          //     MainAxisAlignment.spaceEvenly,
                                           children: <Widget>[
                                             Container(
                                               margin: EdgeInsets.only(
                                                   top: scr.width / 16),
-                                              width: scr.width / 1.5,
-                                              height: scr.height / 11.5,
+                                              width: scr.width / 1.8,
+                                              height: scr.height / 12.1,
                                               decoration: BoxDecoration(
                                                 color: Colors.black,
                                                 borderRadius: BorderRadius.only(
@@ -208,7 +202,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                     TextInputType.phone,
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
-                                                  hintText: '@somename',
+                                                  hintText: '@yourname',
                                                   hintStyle: TextStyle(
                                                       color: Colors.grey[500]),
                                                 ),
@@ -274,7 +268,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                                   },
                                                                 )))
                                                     : warnDate(
-                                                        'กรุณาอัปโหลดรูปภาพของท่าน');
+                                                        'กรุณาเลือกรูปโปรไฟล์ของท่าน');
                                               }
                                             },
                                             color: Colors.white,
