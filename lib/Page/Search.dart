@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -142,9 +143,22 @@ class _SearchState extends State<Search> {
                                       );
                               } else {
                                 return Container(
-                                  height: a.height / 2.4,
+                                  height: a.height / 2.1,
+                                  width: a.width,
                                   child: Center(
-                                    child: CircularProgressIndicator(),
+                                    child: Container(
+                                      width: a.width / 3.6,
+                                      height: a.width / 3.6,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.42),
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                      child: FlareActor(
+                                        'assets/paper_loading.flr',
+                                        animation: 'Untitled',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
                                 );
                               }
@@ -281,6 +295,7 @@ class _SearchState extends State<Search> {
                                   builder: (context) => Viewprofile(
                                     info: snapshot.data,
                                     account: doc,
+                                    self: widget.doc,
                                   ),
                                 ))
                             : warnDialog(doc.data['id'], doc.data['uid']);
@@ -289,7 +304,7 @@ class _SearchState extends State<Search> {
                   )
                 : SizedBox();
           } else {
-            return Text('loading');
+            return SizedBox();
           }
         });
   }
@@ -312,6 +327,7 @@ class _SearchState extends State<Search> {
               FlatButton(
                 child: Text('ok'),
                 onPressed: () async {
+                  toast('ปาใส่"$user"แล้ว');
                   Navigator.pop(context);
                   Navigator.pop(context);
                   await throwTo(widget.data, thrownID);
@@ -320,6 +336,17 @@ class _SearchState extends State<Search> {
             ],
           );
         });
+  }
+
+  toast(String text) {
+    return Fluttertoast.showToast(
+        msg: text,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.white60,
+        textColor: Colors.black,
+        fontSize: 16.0);
   }
 
   throwTo(Map data, String thrownID) async {
@@ -337,9 +364,8 @@ class _SearchState extends State<Search> {
         widget.doc['uid']: FieldValue.arrayUnion([
           {
             'text': data['text'],
-            'writer': data['public'] ?? false
-                ? widget.doc['id']
-                : 'ไม่ระบุตัวตน',
+            'writer':
+                data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
             'time': time
           }
         ])

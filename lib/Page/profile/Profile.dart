@@ -105,7 +105,10 @@ class _ProfileState extends State<Profile> {
                             borderRadius: BorderRadius.circular(a.width),
                             child: snapshot.data['img'] == null
                                 ? Image.asset("assets/userprofile.png")
-                                : Image.network(snapshot.data['img'],fit: BoxFit.cover,),
+                                : Image.network(
+                                    snapshot.data['img'],
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                         // ชื่อของ account
@@ -660,19 +663,10 @@ class _ProfileState extends State<Profile> {
                       info: info,
                     )));
         break;
-      case Constans.UserReport:
-        print('UserReport');
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => UserReport()));
-        break;
       case Constans.Feedback:
         print('Feedback');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => FeedbackPage()));
-        break;
-      case Constans.About:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => About()));
         break;
       case Constans.SignOut:
         Auth auth = Provider.of(context).auth;
@@ -689,16 +683,12 @@ class _ProfileState extends State<Profile> {
 
 class Constans {
   static const String Account = 'แก้ไขบัญชี';
-  static const String UserReport = 'ร้องเรียนผู้ใช้';
   static const String Feedback = 'ให้คำแนะนำ';
-  static const String About = 'เกี่ยวกับแอป';
   static const String SignOut = 'ออกจากระบบ';
 
   static const List<String> choices = <String>[
     Account,
-    UserReport,
     Feedback,
-    About,
     SignOut,
   ];
 }

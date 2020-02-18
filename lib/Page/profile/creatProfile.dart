@@ -142,23 +142,7 @@ class _CreateProfileState extends State<CreateProfile> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                // Text('กรอกข้อมูล'),
-                                // Padding(
-                                //   padding: const EdgeInsets.only(bottom: 15),
-                                //   child: Row(
-                                //     mainAxisAlignment: MainAxisAlignment.start,
-                                //     children: <Widget>[
-                                //       Text(
-                                //         'สร้างบัญชี',
-                                //         style: TextStyle(
-                                //           color: Colors.grey[800],
-                                //           fontSize: 25,
-                                //           fontWeight: FontWeight.bold,
-                                //         ),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
+
                                 InkWell(
                                   child: Container(
                                     width: scr.width / 3,
@@ -191,8 +175,6 @@ class _CreateProfileState extends State<CreateProfile> {
                                 ),
 
                                 Container(
-                                  // padding: EdgeInsets.all(16),
-                                  // color: Colors.grey[300],
                                   child: Form(
                                     key: _formKey,
                                     child: Column(
@@ -200,10 +182,6 @@ class _CreateProfileState extends State<CreateProfile> {
                                           CrossAxisAlignment.stretch,
                                       children: <Widget>[
                                         Column(
-                                          // crossAxisAlignment:
-                                          //     CrossAxisAlignment.stretch,
-                                          // mainAxisAlignment:
-                                          //     MainAxisAlignment.spaceEvenly,
                                           children: <Widget>[
                                             Container(
                                               width: scr.width,
@@ -213,7 +191,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
                                                       ?  Taoast().toast("กรุณากรอก @ ของคุณ") 
-                                                      : "";
+                                                      : null;
                                                 }),
                                                 onSaved: (gId) =>
                                                     gId.trim()[0] == '@'
@@ -237,7 +215,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
                                                       ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
-                                                      : "";
+                                                      : null;
                                                 }),
                                                 onSaved: (nam) =>
                                                     name = nam.trim(),
@@ -255,7 +233,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
                                                       ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
-                                                      : "";
+                                                      : null;
                                                 }),
                                                 onSaved: (lnam) =>
                                                     lname = lnam.trim(),
@@ -319,7 +297,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                       validator: ((val) {
                                                         return val.trim() == ''
                                                             ?  Taoast().toast("กรุณาระบุเพศ") 
-                                                            : "";
+                                                            : null;
                                                       }),
                                                       onSaved: (gen) =>
                                                           genders = gen.trim(),

@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -25,6 +25,7 @@ class OTPScreen extends StatefulWidget {
 class _OTPScreenState extends State<OTPScreen> {
   var _key = GlobalKey<FormState>();
   String otpCode, newVerified, token;
+  bool loading = false;
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   Future<void> resend() async {
@@ -70,6 +71,9 @@ class _OTPScreenState extends State<OTPScreen> {
       await user.linkWithCredential(credential);
       await toDb(user.uid);
       await addToken(user.uid);
+      setState(() {
+        loading = false;
+      });
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Authen()));
     }).catchError((e) {
@@ -90,6 +94,9 @@ class _OTPScreenState extends State<OTPScreen> {
     var authCredential = PhoneAuthProvider.getCredential(
         verificationId: newVerified ?? widget.verifiedID, smsCode: otpCode);
     await FirebaseAuth.instance.signInWithCredential(authCredential).then((_) {
+      setState(() {
+        loading = false;
+      });
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Authen()));
     }).catchError((e) {
@@ -114,6 +121,9 @@ class _OTPScreenState extends State<OTPScreen> {
           .collection('Users')
           .document(user.uid)
           .updateData({'phone': widget.phone});
+      setState(() {
+        loading = false;
+      });
       Navigator.pop(context);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Authen()));
@@ -187,133 +197,145 @@ class _OTPScreenState extends State<OTPScreen> {
           'การดำเนินการจะไม่เสร็จสมบูรณ์คุณต้องการออกจากหน้านี้ใช่หรือไม่'),
       child: Scaffold(
           backgroundColor: Colors.black,
-          body: Padding(
-            padding: EdgeInsets.all(a.width / 20),
-            child: Form(
-              key: _key,
-              child: Container(
-                  width: a.width,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        width: a.width / 7,
-                        height: a.width / 10,
-                        child: InkWell(
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(a.width),
-                                color: Colors.white),
-                            child: Icon(Icons.arrow_back,
-                                color: Colors.black, size: a.width / 15),
-                          ),
-                          onTap: () {
-                            warning2(context,
-                                'การดำเนินการจะไม่เสร็จสมบูรณ์คุณต้องการออกจากหน้านี้ใช่หรือไม่');
-                          },
-                        ),
-                      ),
-                      Container(
-                          width: a.width,
-                          margin: EdgeInsets.only(top: a.width / 4),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "ยืนยันตัวตน",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: a.width / 8),
-                              ),
-                              Container(
-                                width: a.width / 2,
+          body: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(a.width / 20),
+                child: Form(
+                  key: _key,
+                  child: Container(
+                      width: a.width,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            width: a.width / 7,
+                            height: a.width / 10,
+                            child: InkWell(
+                              child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.black,
-                                ),
-                                child: TextFormField(
-                                  maxLength: 6,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: a.width / 10,
-                                    color: Colors.white,
-                                    letterSpacing: 10,
-                                  ),
-                                  decoration: InputDecoration(
-                                    hintText: '******',
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    border: InputBorder.none,
-                                  ),
-                                  validator: (val) {
-                                    return val.trim() == "" ||
-                                            val.trim().length < 6
-                                        ?  Taoast().toast("กรุณากรอกเลข 6 หลัก") 
-                                        : "";
-                                  },
-                                  onSaved: (val) => otpCode = val,
-                                ),
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    color: Colors.white),
+                                child: Icon(Icons.arrow_back,
+                                    color: Colors.black, size: a.width / 15),
                               ),
-                              Column(
+                              onTap: () {
+                                warning2(context,
+                                    'การดำเนินการจะไม่เสร็จสมบูรณ์คุณต้องการออกจากหน้านี้ใช่หรือไม่');
+                              },
+                            ),
+                          ),
+                          Container(
+                              width: a.width,
+                              margin: EdgeInsets.only(top: a.width / 4),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    'โปรดใส่รหัสยืนยันที่ได้รับจากทาง SMS\nหากไม่ได้รับ SMS ขอให้ดำเนินการตามวิธิต่อไปนี้',
+                                    "ยืนยันตัวตน",
                                     style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: a.width / 19,
-                                    ),
-                                    textAlign: TextAlign.center,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: a.width / 8),
                                   ),
-                                  FlatButton(
-                                    child: Text(
-                                      'ส่งรหัสยืนยันอีกครั้ง',
+                                  Container(
+                                    width: a.width / 2,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                    ),
+                                    child: TextFormField(
+                                      maxLength: 6,
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
+                                        fontSize: a.width / 10,
+                                        color: Colors.white,
+                                        letterSpacing: 10,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: '******',
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey),
+                                        border: InputBorder.none,
+                                      ),
+                                      validator: (val) {
+                                        return val.trim() == "" ||
+                                                val.trim().length < 6
+                                            ? 'กรุณากรอกเลข 6 หลัก'
+                                            : null;
+                                      },
+                                      onSaved: (val) => otpCode = val,
+                                    ),
+                                  ),
+                                  Column(
+                                    children: <Widget>[
+                                      Text(
+                                        'โปรดใส่รหัสยืนยันที่ได้รับจากทาง SMS\nหากไม่ได้รับ SMS ขอให้ดำเนินการตามวิธิต่อไปนี้',
+                                        style: TextStyle(
                                           color: Colors.white,
                                           fontSize: a.width / 19,
-                                          fontWeight: FontWeight.w700,
-                                          decoration: TextDecoration.underline),
-                                      textAlign: TextAlign.center,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      FlatButton(
+                                        child: Text(
+                                          'ส่งรหัสยืนยันอีกครั้ง',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: a.width / 19,
+                                              fontWeight: FontWeight.w700,
+                                              decoration:
+                                                  TextDecoration.underline),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        onPressed: () async {
+                                          await resend();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  InkWell(
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.only(top: a.width / 10),
+                                      width: a.width / 1.5,
+                                      height: a.width / 6,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(a.width)),
+                                      child: Text(
+                                        "ยืนยัน",
+                                        style: TextStyle(
+                                            fontSize: a.width / 14,
+                                            fontWeight: FontWeight.w900),
+                                      ),
                                     ),
-                                    onPressed: () async {
-                                      await resend();
+                                    onTap: () async {
+                                      if (_key.currentState.validate()) {
+                                        _key.currentState.save();
+                                        setState(() {
+                                          loading = true;
+                                        });
+                                        widget.email != null
+                                            ? await register()
+                                            : widget.edit
+                                                ? await changePhone()
+                                                : await login();
+                                      } else {
+                                        print('nope');
+                                      }
                                     },
                                   ),
                                 ],
-                              ),
-                              InkWell(
-                                child: Container(
-                                  margin: EdgeInsets.only(top: a.width / 10),
-                                  width: a.width / 1.5,
-                                  height: a.width / 6,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(a.width)),
-                                  child: Text(
-                                    "ยืนยัน",
-                                    style: TextStyle(
-                                        fontSize: a.width / 14,
-                                        fontWeight: FontWeight.w900),
-                                  ),
-                                ),
-                                onTap: () async {
-                                  if (_key.currentState.validate()) {
-                                    _key.currentState.save();
-                                    widget.email != null
-                                        ? await register()
-                                        : widget.edit
-                                            ? await changePhone()
-                                            : await login();
-                                  } else {
-                                    print('nope');
-                                  }
-                                },
-                              ),
-                            ],
-                          ))
-                    ],
-                  )),
-            ),
+                              ))
+                        ],
+                      )),
+                ),
+              ),
+              loading ? Loading() : SizedBox()
+            ],
           )),
     );
   }
@@ -349,6 +371,9 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   warning(BuildContext context, String sub) {
+    setState(() {
+      loading = false;
+    });
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

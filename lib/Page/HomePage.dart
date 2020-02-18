@@ -1,3 +1,4 @@
+//import 'package:circular_check_box/circular_check_box.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,6 @@ import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/Page/profile/createProfile1.dart';
 
 class HomePage extends StatefulWidget {
   final Position currentLocation;
@@ -588,8 +588,9 @@ class _HomePageState extends State<HomePage> {
                                           validator: (val) {
                                             return val.trim() == null ||
                                                     val.trim() == ""
-                                                ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
-                                                : "";
+                                                ? Taoast().toast(
+                                                    "ลองเขียนข้อความบางอย่างสิ")
+                                                : null;
                                           },
                                           //เนื้อหาที่กรอกเข้าไปใน text
                                           onChanged: (val) {
@@ -628,6 +629,7 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
+                                          toast('คุรได้ทิ้งกระดาษไว้แล้ว');
                                           Navigator.pop(context);
                                           await binScrap(time);
                                         } else {
@@ -689,6 +691,17 @@ class _HomePageState extends State<HomePage> {
           });
         },
         fullscreenDialog: true));
+  }
+
+  toast(String text) {
+    return Fluttertoast.showToast(
+        msg: text,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.white60,
+        textColor: Colors.black,
+        fontSize: 16.0);
   }
 
   // throwTo(Map selectedID) async {

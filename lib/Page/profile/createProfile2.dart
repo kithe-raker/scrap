@@ -6,6 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class CreateProfile2 extends StatefulWidget {
@@ -84,11 +86,19 @@ class _CreateProfile2State extends State<CreateProfile2> {
         .collection('Users')
         .document(uid)
         .updateData({'id': widget.pro['id'], 'searchIndex': index});
+    setState(() {
+      loading = false;
+    });
   }
 
   creatProfile() async {
     try {
+      setState(() {
+        loading = true;
+      });
       await addData(widget.uid);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Authen()));
     } catch (e) {
       setState(() {
         loading = false;
@@ -102,231 +112,232 @@ class _CreateProfile2State extends State<CreateProfile2> {
     Size scr = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: <Widget>[
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: scr.width / 20, left: scr.width / 20),
-                  child: InkWell(
-                    child: Container(
-                      width: scr.width / 7,
-                      height: scr.width / 10,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(scr.width),
-                          color: Colors.white),
-                      child: Icon(Icons.arrow_back,
-                          color: Colors.black, size: scr.width / 15),
+      body: SafeArea(
+        child: Stack(
+          children: <Widget>[
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: scr.width / 20, left: scr.width / 20),
+                    child: InkWell(
+                      child: Container(
+                        width: scr.width / 7,
+                        height: scr.width / 10,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(scr.width),
+                            color: Colors.white),
+                        child: Icon(Icons.arrow_back,
+                            color: Colors.black, size: scr.width / 15),
+                      ),
+                      onTap: () {
+                        Navigator.pop(
+                          context,
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.pop(
-                        context,
-                      );
-                    },
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: scr.width / 10, left: scr.width / 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'เกือบเสร็จแล้ว!',
-                        style: TextStyle(
-                          fontSize: scr.width / 12,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      Text(
-                        'สำหรับการให้ของขวัญในโอกาสพิเศษ',
-                        style: TextStyle(
-                          fontSize: scr.width / 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w100,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(30, 0, 20, 0),
-                  margin: EdgeInsets.only(top: scr.width / 15),
-                  child: Form(
-                    key: _formKey,
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: scr.width / 10, left: scr.width / 12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'วันเกิด',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: scr.width / 8),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                IconButton(
-                                  padding: EdgeInsets.all(0),
-                                  iconSize: scr.width / 9,
-                                  icon: Icon(Icons.date_range),
-                                  color: Color(0xff26A4FF),
-                                  onPressed: () => _selectDate(context),
-                                ),
-                                FlatButton(
-                                  child: Text(
-                                    bDay,
-                                    style: TextStyle(
-                                      fontSize: scr.width / 10,
-                                      color: Color(0xff26A4FF),
-                                    ),
-                                  ),
-                                  onPressed: () => _selectDate(context),
-                                )
-                              ],
-                            ),
-                          ],
+                        Text(
+                          'เกือบเสร็จแล้ว!',
+                          style: TextStyle(
+                            fontSize: scr.width / 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'เพศของคุณ',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: scr.width / 8),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Radio(
-                                  onChanged: (String ty) {
-                                    setState(() => genders = ty);
-                                  },
-                                  value: 'ชาย',
-                                  groupValue: genders,
-                                  activeColor: Color(0xff26A4FF),
-                                ),
-                                Text(
-                                  'ชาย',
-                                  style: TextStyle(
-                                      fontSize: scr.width / 10,
-                                      color: Colors.white),
-                                ),
-                                Radio(
-                                  onChanged: (String ty) {
-                                    setState(() => genders = ty);
-                                  },
-                                  value: 'หญิง',
-                                  groupValue: genders,
-                                  activeColor: Color(0xff26A4FF),
-                                ),
-                                Text(
-                                  'หญิง',
-                                  style: TextStyle(
-                                      fontSize: scr.width / 10,
-                                      color: Colors.white),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Radio(
-                                  onChanged: (String ty) {
-                                    setState(() => genders = ty);
-                                  },
-                                  value: '',
-                                  groupValue: genders,
-                                  activeColor: Color(0xff26A4FF),
-                                ),
-                                Text(
-                                  'อื่นๆ',
-                                  style: TextStyle(
-                                      fontSize: scr.width / 10,
-                                      color: Colors.white),
-                                ),
-                                SizedBox(width: scr.width / 30),
-                                genders == ''
-                                    ? Expanded(
-                                        child: TextFormField(
-                                        style: TextStyle(
-                                            fontSize: scr.width / 12,
-                                            color: Colors.white),
-                                        validator: ((val) {
-                                          return val.trim() == ''
-                                              ?  Taoast().toast("กรุณาระบุเพศ") 
-                                              : "";
-                                        }),
-                                        onSaved: (gen) => genders = gen.trim(),
-                                        textInputAction: TextInputAction.next,
-                                        decoration: InputDecoration(
-                                          hintText: 'ระบุ',
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey[400]),
-                                        ),
-                                      ))
-                                    : SizedBox(width: scr.width / 20),
-                                SizedBox(width: scr.width / 10),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: scr.height / 15),
-                          child: MaterialButton(
-                            child: Text('เสร็จสิน',
-                                style: TextStyle(
-                                  fontSize: scr.width / 12,
-                                  color: Color(0xfffffffff),
-                                  fontWeight: FontWeight.w800,
-                                )),
-                            onPressed: () async {
-                              _formKey.currentState.save();
-                              if (_formKey.currentState.validate() &&
-                                  genders != null &&
-                                  bDay != created) {
-                                setState(() {
-                                  loading = true;
-                                });
-                                await creatProfile();
-                              } else {
-                                bDay == created
-                                    ? warnDate('อย่าลืมเลือกวันเกิดของคุณ')
-                                    : warnDate('อย่าลืมเลือกเพศของคุณ');
-                              }
-                            },
-                            color: Color(0xff26A4FF),
-                            elevation: 0,
-                            minWidth: 350,
-                            height: 60,
-                            textColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
+                        Text(
+                          'สำหรับการให้ของขวัญในโอกาสพิเศษ',
+                          style: TextStyle(
+                            fontSize: scr.width / 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w100,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  Container(
+                    padding: EdgeInsets.fromLTRB(30, 0, 20, 0),
+                    margin: EdgeInsets.only(top: scr.width / 15),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'วันเกิด',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: scr.width / 8),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  IconButton(
+                                    padding: EdgeInsets.all(0),
+                                    iconSize: scr.width / 9,
+                                    icon: Icon(Icons.date_range),
+                                    color: Color(0xff26A4FF),
+                                    onPressed: () => _selectDate(context),
+                                  ),
+                                  FlatButton(
+                                    child: Text(
+                                      bDay,
+                                      style: TextStyle(
+                                        fontSize: scr.width / 10,
+                                        color: Color(0xff26A4FF),
+                                      ),
+                                    ),
+                                    onPressed: () => _selectDate(context),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'เพศของคุณ',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: scr.width / 8),
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Radio(
+                                    onChanged: (String ty) {
+                                      setState(() => genders = ty);
+                                    },
+                                    value: 'ชาย',
+                                    groupValue: genders,
+                                    activeColor: Color(0xff26A4FF),
+                                  ),
+                                  Text(
+                                    'ชาย',
+                                    style: TextStyle(
+                                        fontSize: scr.width / 10,
+                                        color: Colors.white),
+                                  ),
+                                  Radio(
+                                    onChanged: (String ty) {
+                                      setState(() => genders = ty);
+                                    },
+                                    value: 'หญิง',
+                                    groupValue: genders,
+                                    activeColor: Color(0xff26A4FF),
+                                  ),
+                                  Text(
+                                    'หญิง',
+                                    style: TextStyle(
+                                        fontSize: scr.width / 10,
+                                        color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Radio(
+                                    onChanged: (String ty) {
+                                      setState(() => genders = ty);
+                                    },
+                                    value: '',
+                                    groupValue: genders,
+                                    activeColor: Color(0xff26A4FF),
+                                  ),
+                                  Text(
+                                    'อื่นๆ',
+                                    style: TextStyle(
+                                        fontSize: scr.width / 10,
+                                        color: Colors.white),
+                                  ),
+                                  SizedBox(width: scr.width / 30),
+                                  genders == ''
+                                      ? Expanded(
+                                          child: TextFormField(
+                                          style: TextStyle(
+                                              fontSize: scr.width / 12,
+                                              color: Colors.white),
+                                          validator: ((val) {
+                                            return val.trim() == ''
+                                                ? 'กรุณาระบุเพศ'
+                                                : null;
+                                          }),
+                                          onSaved: (gen) =>
+                                              genders = gen.trim(),
+                                          textInputAction: TextInputAction.next,
+                                          decoration: InputDecoration(
+                                            hintText: 'ระบุ',
+                                            hintStyle: TextStyle(
+                                                color: Colors.grey[400]),
+                                          ),
+                                        ))
+                                      : SizedBox(width: scr.width / 20),
+                                  SizedBox(width: scr.width / 10),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: scr.height / 15),
+                            child: MaterialButton(
+                              child: Text('เสร็จสิน',
+                                  style: TextStyle(
+                                    fontSize: scr.width / 12,
+                                    color: Color(0xfffffffff),
+                                    fontWeight: FontWeight.w800,
+                                  )),
+                              onPressed: () async {
+                                _formKey.currentState.save();
+                                if (_formKey.currentState.validate() &&
+                                    genders != null &&
+                                    bDay != created) {
+                                  setState(() {
+                                    loading = true;
+                                  });
+                                  await creatProfile();
+                                } else {
+                                  bDay == created
+                                      ? warnDate('อย่าลืมเลือกวันเกิดของคุณ')
+                                      : warnDate('อย่าลืมเลือกเพศของคุณ');
+                                }
+                              },
+                              color: Color(0xff26A4FF),
+                              elevation: 0,
+                              minWidth: 350,
+                              height: 60,
+                              textColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          loading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : SizedBox()
-        ],
+            loading ? Loading() : SizedBox()
+          ],
+        ),
       ),
     );
   }
