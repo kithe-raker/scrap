@@ -78,130 +78,140 @@ class _MapScrapsState extends State<MapScraps> {
       Size a = MediaQuery.of(context).size;
       return StatefulBuilder(builder: (context, StateSetter setState) {
         return Scaffold(
-          
           body: Stack(
-            children: <Widget>[InkWell(
-                    child: Container(
+            children: <Widget>[
+              InkWell(
+                child: Container(
+                  child: Image.asset(
+                    'assets/bg.png',
+                    fit: BoxFit.cover,
+                    width: a.width,
+                    height: a.height,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  top: a.height / 5,
+                ),
+                padding:
+                    EdgeInsets.only(left: a.width / 20, right: a.width / 20),
+                width: a.width,
+                height: a.height / 1.6,
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      width: a.width,
                       child: Image.asset(
-                        'assets/bg.png',
-                        fit: BoxFit.cover,
+                        'assets/paper-readed.png',
                         width: a.width,
-                        height: a.height,
+                        height: a.height / 2.1,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-              Container(
-                margin: EdgeInsets.only(top: a.height / 5,),
-                        padding: EdgeInsets.only(left: a.width/20,right: a.width/20),
-                        width: a.width,
-                        height: a.height / 1.6,
-                        child: Stack(
-                          children: <Widget>[
-                            Container(
-                              
-                              width: a.width,
-                              child: Image.asset(
-                                'assets/paper-readed.png',
-                                width: a.width,
-                                height: a.height / 2.1,
-                                fit: BoxFit.cover,
+                    Positioned(
+                        top: 12,
+                        left: 12,
+                        right: 12,
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                writer == 'ไม่ระบุ'
+                                    ? 'เขียนโดย : ไม่ระบุตัวตน'
+                                    : 'เขียนโดย : @$writer',
+                                style: TextStyle(fontSize: a.width / 30),
                               ),
-                            ),
-                            Positioned(
-                                top: 12,
-                                left: 12,
-                                right: 12,
-                                child: Container(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(writer == 'ไม่ระบุ'
-                                          ? 'เขียนโดย : ไม่ระบุตัวตน'
-                                          : 'เขียนโดย : @$writer',style: TextStyle(fontSize: a.width/30),),
-                                      Text('เวลา : $time',style: TextStyle(fontSize: a.width/30))
-                                    ],
-                                  ),
-                                )),
-                            Positioned(
-                              bottom: 0,
-                              left: 12,
-                                right: 12,
+                              Text('เวลา : $time',
+                                  style: TextStyle(fontSize: a.width / 30))
+                            ],
+                          ),
+                        )),
+                    Positioned(
+                      bottom: 0,
+                      left: 12,
+                      right: 12,
+                      child: Container(
+                        width: a.width,
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            InkWell(
                               child: Container(
-                                width: a.width,
+                                width: a.width / 3.5,
+                                height: a.width / 6.5,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
                                 alignment: Alignment.center,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    InkWell(
-                                      child: Container(
-                                        width: a.width / 3.5,
-                                        height: a.width / 6.5,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(a.width)),
-                                        alignment: Alignment.center,
-                                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(Icons.arrow_downward,color: Color(0xff26A4FF),),
-                                            Text("เก็บไว้",
-                                                style: TextStyle(
-                                                    fontSize: a.width / 15,
-                                                    color: Color(0xff26A4FF))),
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () async {
-                                        Navigator.pop(context);
-                                        await pickScrap(id, text, time, writer);
-                                      },
+                                    Icon(
+                                      Icons.arrow_downward,
+                                      color: Color(0xff26A4FF),
                                     ),
-                                    InkWell(
-                                      child: Container(
-                                        width: a.width / 3.5,
-                                        height: a.width / 6.5,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(a.width)),
-                                        alignment: Alignment.center,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(Icons.clear),
-                                            Text(
-                                              "ทิ้งไว้",
-                                              style: TextStyle(fontSize: a.width / 15),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
+                                    Text("เก็บไว้",
+                                        style: TextStyle(
+                                            fontSize: a.width / 15,
+                                            color: Color(0xff26A4FF))),
+                                  ],
+                                ),
+                              ),
+                              onTap: () async {
+                                Navigator.pop(context);
+                                await pickScrap(id, text, time, writer);
+                              },
+                            ),
+                            InkWell(
+                              child: Container(
+                                width: a.width / 3.5,
+                                height: a.width / 6.5,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                                alignment: Alignment.center,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.clear),
+                                    Text(
+                                      "ทิ้งไว้",
+                                      style: TextStyle(fontSize: a.width / 15),
                                     ),
                                   ],
                                 ),
                               ),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
                             ),
-                            Positioned(
-                                left: a.width / 16,
-                                top: a.height / 12,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  height: a.height / 3.2,
-                                  width: a.width / 1.3,
-                                  child: Text(
-                                    text,
-                                    style: TextStyle(fontSize: a.width / 10),
-                                  ),
-                                ))
                           ],
                         ),
                       ),
+                    ),
+                    Positioned(
+                        left: a.width / 16,
+                        top: a.height / 12,
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: a.height / 3.2,
+                          width: a.width / 1.3,
+                          child: Text(
+                            text,
+                            style: TextStyle(fontSize: a.width / 10),
+                          ),
+                        ))
+                  ],
+                ),
+              ),
             ],
           ),
         );
@@ -285,7 +295,6 @@ class _MapScrapsState extends State<MapScraps> {
                       color: Color(0xff26A4FF),
                       iconSize: a.width / 12,
                       onPressed: () {
-                        _animateToUser();
                         Navigator.push(
                             context,
                             MaterialPageRoute(

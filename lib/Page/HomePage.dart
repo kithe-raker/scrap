@@ -1,6 +1,8 @@
 //import 'package:circular_check_box/circular_check_box.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +10,7 @@ import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class HomePage extends StatefulWidget {
   final Position currentLocation;
@@ -267,11 +270,15 @@ class _HomePageState extends State<HomePage> {
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
-            return MapScraps(
-              collection: snap?.data['id'] ?? [],
-              currentLocation: widget.currentLocation,
-              uid: widget.doc['uid'],
-            );
+            return widget?.currentLocation == null
+                ? Center(
+                    child: Text('กรุณาตรวจสอบGPSของคุณ'),
+                  )
+                : MapScraps(
+                    collection: snap?.data['id'] ?? [],
+                    currentLocation: widget.currentLocation,
+                    uid: widget.doc['uid'],
+                  );
           } else {
             return Center(
               child: CircularProgressIndicator(),
@@ -418,7 +425,7 @@ class _HomePageState extends State<HomePage> {
                   InkWell(
                     child: Container(
                       child: Image.asset(
-                        'assets/bg.png',
+                        './assets/bg.png',
                         fit: BoxFit.cover,
                         width: a.width,
                         height: a.height,
@@ -525,20 +532,28 @@ class _HomePageState extends State<HomePage> {
                                         children: <Widget>[
                                           public ?? false
                                               ? Row(
-                                                children: <Widget>[
-                                                  Text(
+                                                  children: <Widget>[
+                                                    Text(
                                                       "เขียนโดย : ",
                                                       style: TextStyle(
-                                                          fontSize: a.width / 22,
+                                                          fontSize:
+                                                              a.width / 22,
                                                           color: Colors.grey),
-                                                    ),Text("@${widget.doc['id']}",style: TextStyle(
-                                                          fontSize: a.width / 22,
-                                                          color: Color(0xff26A4FF)))
-                                                ],
-                                              )
-                                              : Text('เขียนโดย : ใครสักคน',style: TextStyle(
+                                                    ),
+                                                    Text("@${widget.doc['id']}",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                                a.width / 22,
+                                                            color: Color(
+                                                                0xff26A4FF)))
+                                                  ],
+                                                )
+                                              : Text(
+                                                  'เขียนโดย : ใครสักคน',
+                                                  style: TextStyle(
                                                       fontSize: a.width / 22,
-                                                      color: Colors.grey),),
+                                                      color: Colors.grey),
+                                                ),
                                           Text("เวลา" + " : " + time,
                                               style: TextStyle(
                                                   color: Colors.grey,
@@ -559,6 +574,7 @@ class _HomePageState extends State<HomePage> {
                                           style:
                                               TextStyle(fontSize: a.width / 15),
                                           maxLines: null,
+                                          keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
                                             border: InputBorder
                                                 .none, //สำหรับใหเส้นใต้หาย
@@ -572,7 +588,8 @@ class _HomePageState extends State<HomePage> {
                                           validator: (val) {
                                             return val.trim() == null ||
                                                     val.trim() == ""
-                                                ? 'เขียนบางอย่างสิ'
+                                                ? Taoast().toast(
+                                                    "ลองเขียนข้อความบางอย่างสิ")
                                                 : null;
                                           },
                                           //เนื้อหาที่กรอกเข้าไปใน text
@@ -612,6 +629,7 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
+                                          toast('คุรได้ทิ้งกระดาษไว้แล้ว');
                                           Navigator.pop(context);
                                           await binScrap(time);
                                         } else {
@@ -620,6 +638,7 @@ class _HomePageState extends State<HomePage> {
                                       },
                                     ),
                                     //ปุ่มปาใส่
+
                                     InkWell(
                                       child: Container(
                                         margin:
@@ -644,8 +663,13 @@ class _HomePageState extends State<HomePage> {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Search(doc: null),
+                                                builder: (context) => Search(
+                                                  doc: widget.doc,
+                                                  data: {
+                                                    'text': text,
+                                                    'public': public ?? false
+                                                  },
+                                                ),
                                               ));
                                         } else {
                                           print('nope');
@@ -669,28 +693,15 @@ class _HomePageState extends State<HomePage> {
         fullscreenDialog: true));
   }
 
-  throwTo(Map selectedID) async {
-    DateTime now = DateTime.now();
-    String time = DateFormat('Hm').format(now);
-    await Firestore.instance
-        .collection('Users')
-        .document(selectedID['uid'])
-        .collection('scraps')
-        .document('recently')
-        .setData({
-      'id': FieldValue.arrayUnion([widget.doc['uid']]),
-      'scraps': {
-        widget.doc['uid']: FieldValue.arrayUnion([
-          {
-            'text': text,
-            'writer': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-            'time': time
-          }
-        ])
-      }
-    }, merge: true);
-    await increaseTransaction(widget.doc['uid'], 'written');
-    await increaseTransaction(selectedID['uid'], 'threw');
+  toast(String text) {
+    return Fluttertoast.showToast(
+        msg: text,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.white60,
+        textColor: Colors.black,
+        fontSize: 16.0);
   }
 
   // throwTo(Map selectedID) async {
@@ -782,6 +793,7 @@ class _HomePageState extends State<HomePage> {
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: a.width / 15),
+                                            keyboardType: TextInputType.text,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               hintText: '@someoneuserid',
@@ -944,7 +956,7 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                                 onTap: () async {
                                                   Navigator.pop(context);
-                                                  await throwTo(selectedID);
+                                                  //  await throwTo(selectedID);
                                                 },
                                               ),
                                             ],

@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class CreateProfile extends StatefulWidget {
   final String uid;
@@ -188,12 +190,14 @@ class _CreateProfileState extends State<CreateProfile> {
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
-                                                      ? 'กรุณากรอก@ของคุณ'
+                                                      ?  Taoast().toast("กรุณากรอก @ ของคุณ") 
                                                       : null;
                                                 }),
                                                 onSaved: (gId) =>
                                                     gId.trim()[0] == '@'
-                                                        ? id = gId.trim().substring(1)
+                                                        ? id = gId
+                                                            .trim()
+                                                            .substring(1)
                                                         : id = gId.trim(),
                                                 textInputAction:
                                                     TextInputAction.next,
@@ -210,7 +214,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
-                                                      ? 'กรุณากรอกชื่อของท่าน'
+                                                      ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
                                                       : null;
                                                 }),
                                                 onSaved: (nam) =>
@@ -228,7 +232,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
-                                                      ? 'กรุณากรอกนามสกุลของท่าน'
+                                                      ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
                                                       : null;
                                                 }),
                                                 onSaved: (lnam) =>
@@ -292,7 +296,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                     child: TextFormField(
                                                       validator: ((val) {
                                                         return val.trim() == ''
-                                                            ? 'กรุณาระบุเพศ'
+                                                            ?  Taoast().toast("กรุณาระบุเพศ") 
                                                             : null;
                                                       }),
                                                       onSaved: (gen) =>

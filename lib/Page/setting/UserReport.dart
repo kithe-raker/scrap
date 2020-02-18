@@ -431,7 +431,7 @@ class _UserReportState extends State<UserReport> {
                         fontSize: a.width / 13,
                         fontWeight: FontWeight.w300,
                       ),
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: '@somename',
@@ -439,7 +439,7 @@ class _UserReportState extends State<UserReport> {
                       ),
                       validator: ((val) {
                         return val.trim() == null || val.trim() == ''
-                            ? ' '
+                            ? Taoast().toast("") 
                             : null;
                       }),
                       textInputAction: TextInputAction.next,

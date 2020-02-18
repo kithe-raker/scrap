@@ -1,28 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
-  Search({@required this.doc});
+  final Map data;
+  Search({@required this.doc, this.data});
   @override
   _SearchState createState() => _SearchState();
 }
 
 class _SearchState extends State<Search> {
-  var _key = GlobalKey<FormState>();
   String id;
-
-  summit(String uid) async {
-    List index = [];
-    for (int i = 0; i <= id.length; i++) {
-      index.add(i == 0 ? id[0] : id.substring(0, i));
-    }
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .updateData({'id': id, 'searchIndex': index});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +91,7 @@ class _SearchState extends State<Search> {
                   padding: const EdgeInsets.all(5.0),
                   child: Container(
                     width: a.width,
-                    height: a.width/6.5,
+                    height: a.width / 6.5,
                     decoration: BoxDecoration(
                       color: Color(0xff282828),
                       borderRadius: BorderRadius.all(Radius.circular(300)),
@@ -111,111 +104,119 @@ class _SearchState extends State<Search> {
                         fontSize: a.width / 14,
                         fontWeight: FontWeight.w300,
                       ),
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: '@somename',
                         hintStyle: TextStyle(color: Colors.grey[700]),
                       ),
-                      validator: ((val) {
-                        return val.trim() == null || val.trim() == ''
-                            ? ' '
-                            : null;
-                      }),
-                      //onSaved: (gId) => id = gId.trim(),
+                      onChanged: (value) {
+                        id = value.trim();
+                        setState(() {});
+                      },
                       textInputAction: TextInputAction.next,
                     ),
                   ),
                 ),
-
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 5.0, right: 5.0),
-                      child: Stack(
-                        children: <Widget>[
-                          InkWell(
-                            child: Container(
-                              height: a.height / 5.4,
-                              width: a.width,
-                              decoration: BoxDecoration(
-                                  color: Color(0xff282828),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16.0),
-                                    topRight: Radius.circular(16.0),
-                                    bottomRight: Radius.circular(16.0),
-                                    bottomLeft: Radius.circular(16.0),
-                                  )),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                        margin:
-                                            EdgeInsets.only(left: 20, right: 13),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(a.width),
-                                            border: Border.all(
-                                                color: Colors.white,
-                                                width: a.width / 190)),
-                                        width: a.width / 4.5,
-                                        height: a.width / 4.5,
-                                        child: Image.asset(
-                                            "assets/userprofile.png")),
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '@somename',
-                                          style: TextStyle(
-                                              fontSize: a.width / 13,
-                                              color: Colors.white),
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              'Join ',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Color(0xff26A4FF)),
-                                            ),
-                                            Text(
-                                              '15/02/2020',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Color(0xff26A4FF)),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                id == null || id == ''
+                    ? guide(a, 'ค้นหาคนที่คุณต้องการปาใส่')
+                    : id[0] != '@'
+                        ? guide(a, 'ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid')
+                        : StreamBuilder(
+                            stream: Firestore.instance
+                                .collection('Users')
+                                .where('searchIndex',
+                                    arrayContains: id.substring(1))
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData &&
+                                  snapshot.connectionState ==
+                                      ConnectionState.active) {
+                                List docs = snapshot.data.documents;
+                                return docs?.length == null || docs?.length == 0
+                                    ? guide(
+                                        a, 'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว')
+                                    : Column(
+                                        children: docs
+                                            .map((data) => userCard(a, data))
+                                            .toList(),
+                                      );
+                              } else {
+                                return Container(
+                                  height: a.height / 2.1,
+                                  width: a.width,
+                                  child: Center(
+                                    child: Container(
+                                      width: a.width / 3.6,
+                                      height: a.width / 3.6,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.42),
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                      child: FlareActor(
+                                        'assets/paper_loading.flr',
+                                        animation: 'Untitled',
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
-                                  ]),
-                            ),onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Viewprofile(),));},
+                                  ),
+                                );
+                              }
+                            },
                           ),
-                          Positioned(
-                            right: 10.0,
-                            top: 10.0,
-                            child: Icon(
-                              Icons.arrow_forward,
-                              color: Color(0xffA3A3A3),
-                              size: 30.0,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 5.0, right: 5.0),
+              ],
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget guide(Size a, String text) {
+    return Container(
+      height: a.height / 2.4,
+      width: a.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            'assets/paper.png',
+            color: Colors.white60,
+            height: a.height / 10,
+          ),
+          Text(
+            text,
+            style: TextStyle(
+                fontSize: a.width / 16,
+                color: Colors.white60,
+                fontWeight: FontWeight.w300),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget userCard(Size a, DocumentSnapshot doc) {
+    return StreamBuilder(
+        stream: Firestore.instance
+            .collection('Users')
+            .document(doc.data['uid'])
+            .collection('info')
+            .document(doc.data['uid'])
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.active) {
+            return doc.data['id'] != widget.doc['id']
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(top: 50.0, left: 5.0, right: 5.0),
+                    child: InkWell(
                       child: Stack(
                         children: <Widget>[
                           Container(
-                            height: a.height / 5.4,
+                            height: a.height / 4.5,
                             width: a.width,
                             decoration: BoxDecoration(
                                 color: Color(0xff282828),
@@ -230,26 +231,33 @@ class _SearchState extends State<Search> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Container(
-                                      margin:
-                                          EdgeInsets.only(left: 20, right: 13),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(a.width),
-                                          border: Border.all(
-                                              color: Colors.white,
-                                              width: a.width / 190)),
-                                      width: a.width / 4.5,
-                                      height: a.width / 4.5,
-                                      child: Image.asset(
-                                          "assets/userprofile.png")),
+                                    margin:
+                                        EdgeInsets.only(left: 20, right: 13),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(a.width),
+                                        border: Border.all(
+                                            color: Colors.white,
+                                            width: a.width / 190)),
+                                    width: a.width / 3.3,
+                                    height: a.width / 3.3,
+                                    child: ClipRRect(
+                                      child: Image.network(
+                                        snapshot.data['img'],
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                    ),
+                                  ),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        '@somename',
+                                        '@${doc.data['id']}',
                                         style: TextStyle(
                                             fontSize: a.width / 13,
                                             color: Colors.white),
@@ -257,15 +265,9 @@ class _SearchState extends State<Search> {
                                       Row(
                                         children: <Widget>[
                                           Text(
-                                            'Join ',
+                                            'Join ${snapshot.data['createdDay']}',
                                             style: TextStyle(
-                                                fontSize: a.width / 16,
-                                                color: Color(0xff26A4FF)),
-                                          ),
-                                          Text(
-                                            '15/02/2020',
-                                            style: TextStyle(
-                                                fontSize: a.width / 16,
+                                                fontSize: a.width / 11,
                                                 color: Color(0xff26A4FF)),
                                           ),
                                         ],
@@ -285,40 +287,122 @@ class _SearchState extends State<Search> {
                           )
                         ],
                       ),
+                      onTap: () {
+                        widget.data == null
+                            ? Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Viewprofile(
+                                    info: snapshot.data,
+                                    account: doc,
+                                    self: widget.doc,
+                                  ),
+                                ))
+                            : warnDialog(doc.data['id'], doc.data['uid']);
+                      },
                     ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ]),
-    );
+                  )
+                : SizedBox();
+          } else {
+            return SizedBox();
+          }
+        });
   }
 
-  Widget inputBox(Size a, String hint, String value) {
-    var tx = TextEditingController();
-    tx.text = value;
-    return Container(
-      width: a.width,
-      height: a.width / 6,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(a.width)),
-      child: TextFormField(
-        style: TextStyle(color: Colors.black, fontSize: a.width / 15),
-        controller: tx,
-        decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: hint,
-            labelStyle: TextStyle(color: Colors.black, fontSize: a.width / 15)),
-        validator: (val) {
-          return val.trim() == "" ? 'กรุณากรอก' : null;
-        },
-        onSaved: (val) {
-          val.trim()[0] == '@' ? id = val.trim().substring(1) : id = val.trim();
-        },
-      ),
-    );
+  warnDialog(String user, String thrownID) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text('คุณต้องการปาใส่' + user + 'ใช่หรือไม่'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('ยกเลิก')),
+              FlatButton(
+                child: Text('ok'),
+                onPressed: () async {
+                  toast('ปาใส่"$user"แล้ว');
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  await throwTo(widget.data, thrownID);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  toast(String text) {
+    return Fluttertoast.showToast(
+        msg: text,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.white60,
+        textColor: Colors.black,
+        fontSize: 16.0);
+  }
+
+  throwTo(Map data, String thrownID) async {
+    DateTime now = DateTime.now();
+    String time = DateFormat('Hm').format(now);
+    String date = DateFormat('d/M/y').format(now);
+    await Firestore.instance
+        .collection('Users')
+        .document(thrownID)
+        .collection('scraps')
+        .document('recently')
+        .setData({
+      'id': FieldValue.arrayUnion([widget.doc['uid']]),
+      'scraps': {
+        widget.doc['uid']: FieldValue.arrayUnion([
+          {
+            'text': data['text'],
+            'writer':
+                data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+            'time': time
+          }
+        ])
+      }
+    }, merge: true);
+    await notifaication(thrownID, date, time);
+    await increaseTransaction(widget.doc['uid'], 'written');
+    await increaseTransaction(thrownID, 'threw');
+  }
+
+  notifaication(String who, String date, String time) async {
+    await Firestore.instance.collection('Notifications').add({'uid': who});
+    await Firestore.instance
+        .collection('Users')
+        .document(who)
+        .collection('notification')
+        .add({
+      'writer':
+          widget.data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+      'date': date,
+      'time': time
+    });
+  }
+
+  increaseTransaction(String uid, String key) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document(uid)
+        .get()
+        .then((value) => Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('info')
+            .document(uid)
+            .updateData(
+                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 }
