@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scrap/Page/OTPScreen.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -319,7 +318,7 @@ class _EditProfileState extends State<EditProfile> {
                                             : val.contains('@') &&
                                                     val.contains(
                                                         '.com', val.length - 4)
-                                                ?  null
+                                                ? null
                                                 : Taoast().toast("format pls")),
                                     SizedBox(height: a.height / 30),
                                     Row(

@@ -1,11 +1,7 @@
 import 'dart:io'; //ref from creatProfile
 import 'package:flutter/material.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:scrap/Page/profile/createProfile2.dart';
 
 class CreateProfile1 extends StatefulWidget {

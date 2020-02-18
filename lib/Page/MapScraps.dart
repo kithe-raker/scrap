@@ -8,7 +8,6 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:scrap/Page/addPlayer.dart';
 
 class MapScraps extends StatefulWidget {
   final Position currentLocation;
@@ -310,18 +309,19 @@ class _MapScrapsState extends State<MapScraps> {
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
       GeoPoint loca = data['position']['geopoint'];
-      widget.collection.contains(data['id']) ||
-              data['uid'] == widget.uid ||
-              picked.contains(data['id'])
-          ? null
-          : _addMarker(
-              data['id'],
-              data['uid'],
-              data['scrap']['user'],
-              data['scrap']['text'],
-              data['scrap']['time'],
-              loca.latitude,
-              loca.longitude);
+      if (widget.collection.contains(data['id']) ||
+          data['uid'] == widget.uid ||
+          picked.contains(data['id'])) {
+      } else {
+        _addMarker(
+            data['id'],
+            data['uid'],
+            data['scrap']['user'],
+            data['scrap']['text'],
+            data['scrap']['time'],
+            loca.latitude,
+            loca.longitude);
+      }
     });
   }
 
