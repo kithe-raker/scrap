@@ -110,7 +110,7 @@ class _UserReportState extends State<UserReport> {
                         fontSize: a.width / 13,
                         fontWeight: FontWeight.w300,
                       ),
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: '@somename',

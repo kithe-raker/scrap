@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
@@ -572,6 +573,7 @@ class _HomePageState extends State<HomePage> {
                                           style:
                                               TextStyle(fontSize: a.width / 15),
                                           maxLines: null,
+                                          keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
                                             border: InputBorder
                                                 .none, //สำหรับใหเส้นใต้หาย
@@ -810,6 +812,7 @@ class _HomePageState extends State<HomePage> {
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: a.width / 15),
+                                            keyboardType: TextInputType.text,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               hintText: '@someoneuserid',

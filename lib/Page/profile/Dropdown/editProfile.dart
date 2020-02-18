@@ -484,7 +484,7 @@ class _EditProfileState extends State<EditProfile> {
     return Container(
       width: a.width / 2,
       height: a.height / 21,
-      child: TextFormField(
+      child: TextFormField(keyboardType: TextInputType.emailAddress,
         readOnly: read,
         controller: tx,
         style: TextStyle(fontSize: a.width / 13, color: Colors.white),
@@ -528,7 +528,7 @@ class _EditProfileState extends State<EditProfile> {
           fontSize: a.width / 13,
           fontWeight: FontWeight.w900,
         ),
-        keyboardType: TextInputType.phone,
+        keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,

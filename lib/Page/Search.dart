@@ -101,7 +101,7 @@ class _SearchState extends State<Search> {
                         fontSize: a.width / 14,
                         fontWeight: FontWeight.w300,
                       ),
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: '@somename',
@@ -300,6 +300,7 @@ class _SearchState extends State<Search> {
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(a.width)),
       child: TextFormField(
+        keyboardType: TextInputType.text,
         style: TextStyle(color: Colors.black, fontSize: a.width / 15),
         controller: tx,
         decoration: InputDecoration(

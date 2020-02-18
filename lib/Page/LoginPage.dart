@@ -177,6 +177,7 @@ class _LoginPageState extends State<LoginPage> {
                               fontWeight: FontWeight.w900,
                               fontSize: a.width / 15,
                             ),
+                            keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'example@mail.com',
@@ -233,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: BoxDecoration(
                               color: Colors.black,
                               borderRadius: BorderRadius.circular(a.width)),
-                          child: TextFormField(
+                          child: TextFormField(keyboardType: TextInputType.visiblePassword,
                             obscureText: true,
                             textAlign: TextAlign.center,
                             style: TextStyle(

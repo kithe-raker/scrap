@@ -138,6 +138,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                 TextAlign.center, //เพื่อให้ข้อความอยู่ตรงกลาง
                             style: TextStyle(fontSize: a.width / 15),
                             maxLines: null,
+                            keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               border: InputBorder.none, //สำหรับใหเส้นใต้หาย
                               hintText: 'เขียนข้อความบางอย่าง',
