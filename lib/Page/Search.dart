@@ -10,19 +10,7 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  var _key = GlobalKey<FormState>();
   String id;
-
-  summit(String uid) async {
-    List index = [];
-    for (int i = 0; i <= id.length; i++) {
-      index.add(i == 0 ? id[0] : id.substring(0, i));
-    }
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .updateData({'id': id, 'searchIndex': index});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +86,7 @@ class _SearchState extends State<Search> {
                   padding: const EdgeInsets.all(5.0),
                   child: Container(
                     width: a.width,
-                    height: a.width/6.5,
+                    height: a.width / 6.5,
                     decoration: BoxDecoration(
                       color: Color(0xff282828),
                       borderRadius: BorderRadius.all(Radius.circular(300)),
@@ -117,105 +105,100 @@ class _SearchState extends State<Search> {
                         hintText: '@somename',
                         hintStyle: TextStyle(color: Colors.grey[700]),
                       ),
-                      validator: ((val) {
-                        return val.trim() == null || val.trim() == ''
-                            ? ' '
-                            : null;
-                      }),
-                      //onSaved: (gId) => id = gId.trim(),
+                      onChanged: (value) {
+                        id = value.trim();
+                        setState(() {});
+                      },
                       textInputAction: TextInputAction.next,
                     ),
                   ),
                 ),
-
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 5.0, right: 5.0),
-                      child: Stack(
-                        children: <Widget>[
-                          InkWell(
-                            child: Container(
-                              height: a.height / 5.4,
-                              width: a.width,
-                              decoration: BoxDecoration(
-                                  color: Color(0xff282828),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16.0),
-                                    topRight: Radius.circular(16.0),
-                                    bottomRight: Radius.circular(16.0),
-                                    bottomLeft: Radius.circular(16.0),
-                                  )),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                        margin:
-                                            EdgeInsets.only(left: 20, right: 13),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(a.width),
-                                            border: Border.all(
-                                                color: Colors.white,
-                                                width: a.width / 190)),
-                                        width: a.width / 4.5,
-                                        height: a.width / 4.5,
-                                        child: Image.asset(
-                                            "assets/userprofile.png")),
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '@somename',
-                                          style: TextStyle(
-                                              fontSize: a.width / 13,
-                                              color: Colors.white),
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              'Join ',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Color(0xff26A4FF)),
-                                            ),
-                                            Text(
-                                              '15/02/2020',
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Color(0xff26A4FF)),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ]),
-                            ),onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Viewprofile(),));},
+                id == null || id == ''
+                    ? guide(a, 'ค้นหาคนที่คุณต้องการปาใส่')
+                    : id[0] != '@'
+                        ? guide(a, 'ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid')
+                        : StreamBuilder(
+                            stream: Firestore.instance
+                                .collection('Users')
+                                .where('searchIndex',
+                                    arrayContains: id.substring(1))
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData &&
+                                  snapshot.connectionState ==
+                                      ConnectionState.active) {
+                                List docs = snapshot.data.documents;
+                                return docs?.length == null || docs?.length == 0
+                                    ? guide(
+                                        a, 'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว')
+                                    : Column(
+                                        children: docs
+                                            .map((data) => userCard(a, data))
+                                            .toList(),
+                                      );
+                              } else {
+                                return Container(
+                                  height: a.height / 2.4,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                            },
                           ),
-                          Positioned(
-                            right: 10.0,
-                            top: 10.0,
-                            child: Icon(
-                              Icons.arrow_forward,
-                              color: Color(0xffA3A3A3),
-                              size: 30.0,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 5.0, right: 5.0),
+              ],
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget guide(Size a, String text) {
+    return Container(
+      height: a.height / 2.4,
+      width: a.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            'assets/paper.png',
+            color: Colors.white60,
+            height: a.height / 10,
+          ),
+          Text(
+            text,
+            style: TextStyle(
+                fontSize: a.width / 16,
+                color: Colors.white60,
+                fontWeight: FontWeight.w300),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget userCard(Size a, DocumentSnapshot doc) {
+    return StreamBuilder(
+        stream: Firestore.instance
+            .collection('Users')
+            .document(doc.data['uid'])
+            .collection('info')
+            .document(doc.data['uid'])
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.active) {
+            return doc.data['id'] != widget.doc['id']
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(top: 50.0, left: 5.0, right: 5.0),
+                    child: InkWell(
                       child: Stack(
                         children: <Widget>[
                           Container(
-                            height: a.height / 5.4,
+                            height: a.height / 4.5,
                             width: a.width,
                             decoration: BoxDecoration(
                                 color: Color(0xff282828),
@@ -230,26 +213,33 @@ class _SearchState extends State<Search> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Container(
-                                      margin:
-                                          EdgeInsets.only(left: 20, right: 13),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(a.width),
-                                          border: Border.all(
-                                              color: Colors.white,
-                                              width: a.width / 190)),
-                                      width: a.width / 4.5,
-                                      height: a.width / 4.5,
-                                      child: Image.asset(
-                                          "assets/userprofile.png")),
+                                    margin:
+                                        EdgeInsets.only(left: 20, right: 13),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(a.width),
+                                        border: Border.all(
+                                            color: Colors.white,
+                                            width: a.width / 190)),
+                                    width: a.width / 3.3,
+                                    height: a.width / 3.3,
+                                    child: ClipRRect(
+                                      child: Image.network(
+                                        snapshot.data['img'],
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                    ),
+                                  ),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        '@somename',
+                                        '@${doc.data['id']}',
                                         style: TextStyle(
                                             fontSize: a.width / 13,
                                             color: Colors.white),
@@ -257,15 +247,9 @@ class _SearchState extends State<Search> {
                                       Row(
                                         children: <Widget>[
                                           Text(
-                                            'Join ',
+                                            'Join ${snapshot.data['createdDay']}',
                                             style: TextStyle(
-                                                fontSize: a.width / 16,
-                                                color: Color(0xff26A4FF)),
-                                          ),
-                                          Text(
-                                            '15/02/2020',
-                                            style: TextStyle(
-                                                fontSize: a.width / 16,
+                                                fontSize: a.width / 11,
                                                 color: Color(0xff26A4FF)),
                                           ),
                                         ],
@@ -285,15 +269,23 @@ class _SearchState extends State<Search> {
                           )
                         ],
                       ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Viewprofile(
+                                info: snapshot.data,
+                                account: doc,
+                              ),
+                            ));
+                      },
                     ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ]),
-    );
+                  )
+                : SizedBox();
+          } else {
+            return Text('loading');
+          }
+        });
   }
 
   Widget inputBox(Size a, String hint, String value) {

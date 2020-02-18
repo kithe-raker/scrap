@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/OTPScreen.dart';
@@ -12,15 +13,19 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String _email, _password;
+  String _email, _password, token;
   var _key = GlobalKey<FormState>();
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   login() async {
     try {
       await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _email, password: _password);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Authen()));
+          .signInWithEmailAndPassword(email: _email, password: _password)
+          .then((value) async {
+        await updateToken(value.user.uid);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Authen()));
+      });
     } catch (e) {
       switch (e.toString()) {
         case 'PlatformException(ERROR_INVALID_EMAIL, The email address is badly formatted., null)':
@@ -42,6 +47,44 @@ class _LoginPageState extends State<LoginPage> {
       }
       print(e.toString());
     }
+  }
+
+  updateToken(String uid) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('token')
+        .document(uid)
+        .get()
+        .then((value) async {
+      if (value.documentID != token) {
+        await Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('token')
+            .document(value.documentID)
+            .delete();
+        await Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('token')
+            .document(token)
+            .setData({'token': token});
+      }
+    });
+  }
+
+  void getToken() {
+    firebaseMessaging.getToken().then((String tken) {
+      assert(tken != null);
+      token = tken;
+    });
+  }
+
+  @override
+  void initState() {
+    getToken();
+    super.initState();
   }
 
   @override
@@ -535,7 +578,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                           ),
                         ),
                         Text(
-                          "เราจะส่งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
+                          "เราจะส���งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,

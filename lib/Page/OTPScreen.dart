@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/MainPage.dart';
 
@@ -21,8 +22,8 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   var _key = GlobalKey<FormState>();
-  String otpCode;
-  String newVerified;
+  String otpCode, newVerified, token;
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   Future<void> resend() async {
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
@@ -66,6 +67,7 @@ class _OTPScreenState extends State<OTPScreen> {
           email: widget.email, password: widget.password);
       await user.linkWithCredential(credential);
       await toDb(user.uid);
+      await addToken(user.uid);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Authen()));
     }).catchError((e) {
@@ -145,6 +147,34 @@ class _OTPScreenState extends State<OTPScreen> {
         .collection('scraps')
         .document('collection')
         .setData({});
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('scraps')
+        .document('notification')
+        .setData({});
+  }
+
+  addToken(String uid) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('token')
+        .document(token)
+        .setData({'token': token});
+  }
+
+  void getToken() {
+    firebaseMessaging.getToken().then((String tken) {
+      assert(tken != null);
+      token = tken;
+    });
+  }
+
+  @override
+  void initState() {
+    getToken();
+    super.initState();
   }
 
   @override

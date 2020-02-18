@@ -1,4 +1,3 @@
-import 'package:circular_check_box/circular_check_box.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -268,11 +267,15 @@ class _HomePageState extends State<HomePage> {
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
-            return MapScraps(
-              collection: snap?.data['id'] ?? [],
-              currentLocation: widget.currentLocation,
-              uid: widget.doc['uid'],
-            );
+            return widget?.currentLocation == null
+                ? Center(
+                    child: Text('กรุณาตรวจสอบGPSของคุณ'),
+                  )
+                : MapScraps(
+                    collection: snap?.data['id'] ?? [],
+                    currentLocation: widget.currentLocation,
+                    uid: widget.doc['uid'],
+                  );
           } else {
             return Center(
               child: CircularProgressIndicator(),
@@ -419,7 +422,7 @@ class _HomePageState extends State<HomePage> {
                   InkWell(
                     child: Container(
                       child: Image.asset(
-                        'assets/bg.png',
+                        './assets/bg.png',
                         fit: BoxFit.cover,
                         width: a.width,
                         height: a.height,
@@ -681,6 +684,7 @@ class _HomePageState extends State<HomePage> {
   throwTo(Map selectedID) async {
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
+    String date = DateFormat('d/M/y').format(now);
     await Firestore.instance
         .collection('Users')
         .document(selectedID['uid'])
@@ -698,10 +702,23 @@ class _HomePageState extends State<HomePage> {
         ])
       }
     }, merge: true);
+    await notifaication(selectedID['uid'], date, time);
     await increaseTransaction(widget.doc['uid'], 'written');
     await increaseTransaction(selectedID['uid'], 'threw');
   }
 
+  notifaication(String who, String date, String time) async {
+    await Firestore.instance.collection('Notifications').add({'uid': who});
+    await Firestore.instance
+        .collection('Users')
+        .document(who)
+        .collection('notification')
+        .add({
+      'writer': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+      'date': date,
+      'time': time
+    });
+  }
   // throwTo(Map selectedID) async {
   //   await Firestore.instance
   //       .collection('Users')
