@@ -7,6 +7,7 @@ import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/Page/profile/createProfile1.dart';
 
 class HomePage extends StatefulWidget {
   final Position currentLocation;
@@ -528,20 +529,28 @@ class _HomePageState extends State<HomePage> {
                                         children: <Widget>[
                                           public ?? false
                                               ? Row(
-                                                children: <Widget>[
-                                                  Text(
+                                                  children: <Widget>[
+                                                    Text(
                                                       "เขียนโดย : ",
                                                       style: TextStyle(
-                                                          fontSize: a.width / 22,
+                                                          fontSize:
+                                                              a.width / 22,
                                                           color: Colors.grey),
-                                                    ),Text("@${widget.doc['id']}",style: TextStyle(
-                                                          fontSize: a.width / 22,
-                                                          color: Color(0xff26A4FF)))
-                                                ],
-                                              )
-                                              : Text('เขียนโดย : ใครสักคน',style: TextStyle(
+                                                    ),
+                                                    Text("@${widget.doc['id']}",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                                a.width / 22,
+                                                            color: Color(
+                                                                0xff26A4FF)))
+                                                  ],
+                                                )
+                                              : Text(
+                                                  'เขียนโดย : ใครสักคน',
+                                                  style: TextStyle(
                                                       fontSize: a.width / 22,
-                                                      color: Colors.grey),),
+                                                      color: Colors.grey),
+                                                ),
                                           Text("เวลา" + " : " + time,
                                               style: TextStyle(
                                                   color: Colors.grey,
@@ -647,8 +656,13 @@ class _HomePageState extends State<HomePage> {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Search(doc: null),
+                                                builder: (context) => Search(
+                                                  doc: widget.doc,
+                                                  data: {
+                                                    'text': text,
+                                                    'public': public ?? false
+                                                  },
+                                                ),
                                               ));
                                         } else {
                                           print('nope');
@@ -672,44 +686,6 @@ class _HomePageState extends State<HomePage> {
         fullscreenDialog: true));
   }
 
-  throwTo(Map selectedID) async {
-    DateTime now = DateTime.now();
-    String time = DateFormat('Hm').format(now);
-    String date = DateFormat('d/M/y').format(now);
-    await Firestore.instance
-        .collection('Users')
-        .document(selectedID['uid'])
-        .collection('scraps')
-        .document('recently')
-        .setData({
-      'id': FieldValue.arrayUnion([widget.doc['uid']]),
-      'scraps': {
-        widget.doc['uid']: FieldValue.arrayUnion([
-          {
-            'text': text,
-            'writer': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-            'time': time
-          }
-        ])
-      }
-    }, merge: true);
-    await notifaication(selectedID['uid'], date, time);
-    await increaseTransaction(widget.doc['uid'], 'written');
-    await increaseTransaction(selectedID['uid'], 'threw');
-  }
-
-  notifaication(String who, String date, String time) async {
-    await Firestore.instance.collection('Notifications').add({'uid': who});
-    await Firestore.instance
-        .collection('Users')
-        .document(who)
-        .collection('notification')
-        .add({
-      'writer': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-      'date': date,
-      'time': time
-    });
-  }
   // throwTo(Map selectedID) async {
   //   await Firestore.instance
   //       .collection('Users')
@@ -961,7 +937,7 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                                 onTap: () async {
                                                   Navigator.pop(context);
-                                                  await throwTo(selectedID);
+                                                  //  await throwTo(selectedID);
                                                 },
                                               ),
                                             ],

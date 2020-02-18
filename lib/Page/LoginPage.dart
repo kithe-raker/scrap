@@ -93,13 +93,14 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: ListView(
-        
         children: <Widget>[
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: a.width/8,),
+                SizedBox(
+                  height: a.width / 8,
+                ),
                 Container(
                   child: Text(
                     "ยินดีต้อนรับ",
@@ -185,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             validator: (val) {
-                              return val.trim() == ""
+                              return val.trim() == "" || val == null
                                   ? 'กรุณากรอกข้อมูลให้ครบ'
                                   : null;
                             },
@@ -250,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             validator: (val) {
-                              return val.trim() == ""
+                              return val.trim() == "" || val == null
                                   ? 'กรุณากรอกข้อมูลให้ครบ'
                                   : null;
                             },
@@ -344,8 +345,10 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         )),
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SignUpMail()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignUpMail()));
                     },
                   ),
                 )
@@ -563,7 +566,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                                         TextStyle(color: Colors.grey[500]),
                                   ),
                                   validator: (val) {
-                                    return val.trim() == ""
+                                    return val.trim() == "" || val == null
                                         ? 'put isas'
                                         : val.trim().length > 10
                                             ? 'check 10 หลัก'
@@ -578,7 +581,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                           ),
                         ),
                         Text(
-                          "เราจะส���งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
+                          "เราจะส่งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,

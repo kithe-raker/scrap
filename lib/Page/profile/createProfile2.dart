@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class CreateProfile2 extends StatefulWidget {
   final String uid;
-  CreateProfile2({@required this.uid});
+  final Map pro;
+  CreateProfile2({@required this.uid, @required this.pro});
   @override
   _CreateProfile2State createState() => _CreateProfile2State();
 }
@@ -16,13 +16,12 @@ class CreateProfile2 extends StatefulWidget {
 class _CreateProfile2State extends State<CreateProfile2> {
   var _formKey = GlobalKey<FormState>();
   DateTime selectedDate = DateTime.now();
-  String date, genders, name, created, lname, selectYear, id;
-  File image;
+  String bDay, genders, created, selectYear;
   bool loading = false;
 
   @override
   void initState() {
-    date = DateFormat('d/M/y').format(selectedDate);
+    bDay = DateFormat('d/M/y').format(selectedDate);
     created = DateFormat('d/M/y').format(selectedDate);
     selectYear = DateFormat('y').format(selectedDate);
     super.initState();
@@ -36,31 +35,15 @@ class _CreateProfile2State extends State<CreateProfile2> {
         lastDate: DateTime(int.parse(selectYear), 1));
     if (picked != null && picked != selectedDate)
       setState(() {
-        date = DateFormat('d/M/y').format(picked);
+        bDay = DateFormat('d/M/y').format(picked);
       });
   }
 
-  sendCam() async {
-    File img = await ImagePicker.pickImage(source: ImageSource.camera);
-    if (img != null) {
-      image = img;
-      setState(() {});
-    }
-  }
-
-  sendPic() async {
-    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if (img != null) {
-      image = img;
-      setState(() {});
-    }
-  }
-
-  Future cimg(File img, String uuid, String imgNm) async {
+  Future cimg(File img, String uid, String imgNm) async {
     final StorageReference ref = FirebaseStorage.instance.ref().child(imgNm);
     final StorageUploadTask task = ref.putFile(img);
     var picUrl = await (await task.onComplete).ref.getDownloadURL();
-    await addImg(uuid, picUrl);
+    await addImg(uid, picUrl);
     if (task.isInProgress) {
       setState(() {
         loading = true;
@@ -83,25 +66,21 @@ class _CreateProfile2State extends State<CreateProfile2> {
 
   addData(String uid) async {
     List index = [];
-    for (int i = 0; i <= id.length; i++) {
-      index.add(i == 0 ? id[0] : id.substring(0, i));
+    for (int i = 0; i <= widget.pro['id'].length; i++) {
+      index
+          .add(i == 0 ? widget.pro['id'][0] : widget.pro['id'].substring(0, i));
     }
     await Firestore.instance
         .collection('Users')
         .document(uid)
         .collection('info')
         .document(uid)
-        .setData({
-      'name': name + ' ' + lname,
-      'birthDay': date,
-      'genders': genders,
-      'createdDay': created
-    });
-    await cimg(image, widget.uid, widget.uid + '_pro');
+        .setData({'birthDay': bDay, 'genders': genders, 'createdDay': created});
+    await cimg(widget.pro['img'], widget.uid, widget.uid + '_pro');
     await Firestore.instance
         .collection('Users')
         .document(uid)
-        .updateData({'id': id, 'searchIndex': index});
+        .updateData({'id': widget.pro['id'], 'searchIndex': index});
   }
 
   creatProfile() async {
@@ -111,7 +90,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
       setState(() {
         loading = false;
       });
-      print(e.toString());
+      warnDate('เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองอีกครั้ง');
     }
   }
 
@@ -192,17 +171,21 @@ class _CreateProfile2State extends State<CreateProfile2> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 IconButton(
-                                  iconSize: 40,
+                                  padding: EdgeInsets.all(0),
+                                  iconSize: scr.width / 9,
                                   icon: Icon(Icons.date_range),
                                   color: Color(0xff26A4FF),
                                   onPressed: () => _selectDate(context),
                                 ),
-                                Text(
-                                  date,
-                                  style: TextStyle(
-                                    fontSize: scr.width / 10,
-                                    color: Color(0xff26A4FF),
+                                FlatButton(
+                                  child: Text(
+                                    bDay,
+                                    style: TextStyle(
+                                      fontSize: scr.width / 10,
+                                      color: Color(0xff26A4FF),
+                                    ),
                                   ),
+                                  onPressed: () => _selectDate(context),
                                 )
                               ],
                             ),
@@ -307,19 +290,15 @@ class _CreateProfile2State extends State<CreateProfile2> {
                               _formKey.currentState.save();
                               if (_formKey.currentState.validate() &&
                                   genders != null &&
-                                  date != created &&
-                                  image != null) {
+                                  bDay != created) {
                                 setState(() {
                                   loading = true;
                                 });
                                 await creatProfile();
                               } else {
-                                date == created
-                                    ? warnDate('กรุณาเลือกวันเกิดของท่าน')
-                                    : image == null
-                                        ? warnDate(
-                                            'กรุณาเลือกรูปโปรไฟล์ของท่าน')
-                                        : null;
+                                bDay == created
+                                    ? warnDate('อย่าลืมเลือกวันเกิดของคุณ')
+                                    : warnDate('อย่าลืมเลือกเพศของคุณ');
                               }
                             },
                             color: Color(0xff26A4FF),
@@ -367,78 +346,5 @@ class _CreateProfile2State extends State<CreateProfile2> {
             ],
           );
         });
-  }
-
-  selectImg(BuildContext context) {
-    Size scr = MediaQuery.of(context).size;
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        contentPadding: EdgeInsets.all(3),
-        content: Container(
-          height: scr.height / 3.8,
-          width: scr.width / 1.1,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(bottom: 20, top: 20),
-                child: Text(
-                  "อัปโหลดรูปภาพ",
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  iconImg(
-                    Icons.image,
-                    () {
-                      sendPic();
-                      Navigator.pop(context);
-                    },
-                  ),
-                  iconImg(Icons.camera_alt, () {
-                    sendCam();
-                    Navigator.pop(context);
-                  })
-                ],
-              )
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'ยกเลิก',
-              style: TextStyle(fontSize: 16, color: Colors.grey[800]),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget iconImg(IconData icon, Function func) {
-    Size scr = MediaQuery.of(context).size;
-    return Container(
-      width: scr.width / 1.1 / 2.8,
-      height: scr.height / 6.4,
-      decoration: BoxDecoration(
-          color: Colors.grey[200], borderRadius: BorderRadius.circular(18)),
-      child: IconButton(
-          icon: Icon(
-            icon,
-            size: scr.width / 6,
-            color: Colors.grey[800],
-          ),
-          onPressed: func),
-    );
   }
 }
