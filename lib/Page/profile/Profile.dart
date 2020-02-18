@@ -668,6 +668,11 @@ class _ProfileState extends State<Profile> {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => FeedbackPage()));
         break;
+      case Constans.About: 
+        print('About');
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => About()));
+        break;
       case Constans.SignOut:
         Auth auth = Provider.of(context).auth;
         await auth.signOut().then((value) {
@@ -684,11 +689,13 @@ class _ProfileState extends State<Profile> {
 class Constans {
   static const String Account = 'แก้ไขบัญชี';
   static const String Feedback = 'ให้คำแนะนำ';
+  static const String About = 'เกี่ยวกับแอป';
   static const String SignOut = 'ออกจากระบบ';
 
   static const List<String> choices = <String>[
     Account,
     Feedback,
+    About,
     SignOut,
   ];
 }
