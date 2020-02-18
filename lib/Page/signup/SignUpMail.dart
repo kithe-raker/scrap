@@ -154,7 +154,7 @@ class _SignUpMailState extends State<SignUpMail> {
                                 ),
                                 validator: (val) {
                                   return val.trim() == ""
-                                      ? Taoast().toast("put isas")
+                                      ? Taoast().toast("put Address")
                                       : val.contains('@') &&
                                               val.contains('.com', val.length - 4)
                                           ? null

@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/LoginPage.dart';
 import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/Page/profile/creatProfile.dart';
+import 'package:scrap/Page/profile/createProfile1.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 
@@ -150,7 +150,7 @@ class _MainStreamState extends State<MainStream> {
               snap.connectionState == ConnectionState.active &&
               currentLocation != null) {
             return snap.data['id'] == null
-                ? CreateProfile(uid: snap.data['uid'])
+                ? CreateProfile1(uid: snap.data['uid'])
                 : HomePage(
                     doc: snap.data,
                     currentLocation: currentLocation,

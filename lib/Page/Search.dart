@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
-  Search({@required this.doc});
+  final Map data;
+  Search({@required this.doc, this.data});
   @override
   _SearchState createState() => _SearchState();
 }
@@ -272,14 +274,16 @@ class _SearchState extends State<Search> {
                         ],
                       ),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Viewprofile(
-                                info: snapshot.data,
-                                account: doc,
-                              ),
-                            ));
+                        widget.data == null
+                            ? Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Viewprofile(
+                                    info: snapshot.data,
+                                    account: doc,
+                                  ),
+                                ))
+                            : warnDialog(doc.data['id'], doc.data['uid']);
                       },
                     ),
                   )
@@ -290,32 +294,89 @@ class _SearchState extends State<Search> {
         });
   }
 
-  Widget inputBox(Size a, String hint, String value) {
-    var tx = TextEditingController();
-    tx.text = value;
-    return Container(
-      width: a.width,
-      height: a.width / 6,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(a.width)),
-      child: TextFormField(
-        keyboardType: TextInputType.text,
-        style: TextStyle(color: Colors.black, fontSize: a.width / 15),
-        controller: tx,
-        decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: hint,
-            labelStyle: TextStyle(color: Colors.black, fontSize: a.width / 15)),
-        validator: (val) {
-          return val.trim() == ""
-              ?  Taoast().toast("กรุณากรอก") 
-              : "";
-        },
-        onSaved: (val) {
-          val.trim()[0] == '@' ? id = val.trim().substring(1) : id = val.trim();
-        },
-      ),
-    );
+  warnDialog(String user, String thrownID) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text('คุณต้องการปาใส่' + user + 'ใช่หรือไม่'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('ยกเลิก')),
+              FlatButton(
+                child: Text('ok'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  await throwTo(widget.data, thrownID);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  throwTo(Map data, String thrownID) async {
+    DateTime now = DateTime.now();
+    String time = DateFormat('Hm').format(now);
+    String date = DateFormat('d/M/y').format(now);
+    await Firestore.instance
+        .collection('Users')
+        .document(thrownID)
+        .collection('scraps')
+        .document('recently')
+        .setData({
+      'id': FieldValue.arrayUnion([widget.doc['uid']]),
+      'scraps': {
+        widget.doc['uid']: FieldValue.arrayUnion([
+          {
+            'text': data['text'],
+            'writer': data['public'] ?? false
+                ? widget.doc['id']
+                : 'ไม่ระบุตัวตน',
+            'time': time
+          }
+        ])
+      }
+    }, merge: true);
+    await notifaication(thrownID, date, time);
+    await increaseTransaction(widget.doc['uid'], 'written');
+    await increaseTransaction(thrownID, 'threw');
+  }
+
+  notifaication(String who, String date, String time) async {
+    await Firestore.instance.collection('Notifications').add({'uid': who});
+    await Firestore.instance
+        .collection('Users')
+        .document(who)
+        .collection('notification')
+        .add({
+      'writer':
+          widget.data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+      'date': date,
+      'time': time
+    });
+  }
+
+  increaseTransaction(String uid, String key) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document(uid)
+        .get()
+        .then((value) => Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('info')
+            .document(uid)
+            .updateData(
+                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 }

@@ -111,9 +111,9 @@ class _CreateIDState extends State<CreateID> {
                           
                           validator: (val) {
                                             return val.trim() == ""
-                                                ?  Taoast().toast("put isas")  : val.contains('@') &&
+                                                ?  Taoast().toast("put @")  : val.contains('@') &&
                                         val.contains('.com', val.length - 4)
-                                    ? "" :  Taoast().toast("put isas") ;
+                                    ? "" :  Taoast().toast("put .com") ;
                                                 
                                           },
                           onSaved: (val) {
@@ -133,7 +133,7 @@ class _CreateIDState extends State<CreateID> {
                           ),
                           validator: (val) {
                                             return val.trim() == ""
-                                ?  Taoast().toast("put isas") 
+                                ?  Taoast().toast("put pass") 
                                                 : val.length < 6 ?  Taoast().toast("6 ตัวขึ้นไป")  : "";
                                           },
                           onChanged: (val) {
@@ -196,7 +196,7 @@ class _CreateIDState extends State<CreateID> {
                                 ),
                                 validator: (val) {
                                                return val.trim() == ""
-                                ?  Taoast().toast("put isas") 
+                                ?  Taoast().toast("put phone number") 
                                                 : val.trim().length >10 ? Taoast().toast("check pls")  : "";
                                           },
                                 onSaved: (val) {

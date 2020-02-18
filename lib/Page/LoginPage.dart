@@ -95,13 +95,14 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: ListView(
-        
         children: <Widget>[
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: a.width/8,),
+                SizedBox(
+                  height: a.width / 8,
+                ),
                 Container(
                   child: Text(
                     "ยินดีต้อนรับ",
@@ -347,8 +348,10 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         )),
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SignUpMail()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignUpMail()));
                     },
                   ),
                 )
@@ -568,7 +571,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                                   
                                   validator: (val) {
                                             return  val.trim() == ""
-                                                ? Taoast().toast("isas") 
+                                                ? Taoast().toast("put phone") 
                                                 : val.trim().length > 10 ? Taoast().toast("check 10 หลัก") : null;
                                           },
                                   onSaved: (val) {
@@ -580,7 +583,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                           ),
                         ),
                         Text(
-                          "เราจะส���งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
+                          "เราจะส่งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,

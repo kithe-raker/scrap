@@ -301,10 +301,10 @@ class _EditProfileState extends State<EditProfile> {
                                     ),
                                   ],
                                 ),
-                                editAccount(a, 'email', 'name@mail.com',
+                                editAccount(false, a, 'email', 'name@mail.com',
                                     widget.doc['email'],
                                     validator: (val) => val.trim() == ""
-                                        ?  Taoast().toast("put isas") 
+                                        ?  Taoast().toast("put Address") 
                                         : val.contains('@') &&
                                                 val.contains(
                                                     '.com', val.length - 4)
@@ -329,7 +329,7 @@ class _EditProfileState extends State<EditProfile> {
                                     ),
                                   ],
                                 ),
-                                editAccount(a, 'password', '••••••••',
+                                editAccount(true, a, 'password', '••••••••',
                                     widget.doc['password'],
                                     validator: (val) => val.trim() == ""
                                         ?  Taoast().toast("กรุณากรอกข้อมูลให้ครบ") 
@@ -502,7 +502,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget editAccount(Size a, String type, String hint, String value,
+  Widget editAccount(bool pass, Size a, String type, String hint, String value,
       {String validator(String val)}) {
     var tx = TextEditingController();
     tx.text = value;
@@ -520,6 +520,7 @@ class _EditProfileState extends State<EditProfile> {
             bottomLeft: const Radius.circular(10.0)),
       ),
       child: TextFormField(
+        obscureText: pass,
         readOnly: readMail,
         controller: tx,
         textAlign: TextAlign.start,
