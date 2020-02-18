@@ -587,8 +587,9 @@ class _HomePageState extends State<HomePage> {
                                           validator: (val) {
                                             return val.trim() == null ||
                                                     val.trim() == ""
-                                                ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
-                                                : "";
+                                                ? Taoast().toast(
+                                                    "ลองเขียนข้อความบางอย่างสิ")
+                                                : null;
                                           },
                                           //เนื้อหาที่กรอกเข้าไปใน text
                                           onChanged: (val) {

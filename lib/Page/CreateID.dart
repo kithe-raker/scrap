@@ -108,14 +108,14 @@ class _CreateIDState extends State<CreateID> {
                           decoration: InputDecoration(
                             hintText: 'email',
                           ),
-                          
                           validator: (val) {
-                                            return val.trim() == ""
-                                                ?  Taoast().toast("put @")  : val.contains('@') &&
+                            return val.trim() == ""
+                                ? Taoast().toast("put @")
+                                : val.contains('@') &&
                                         val.contains('.com', val.length - 4)
-                                    ? "" :  Taoast().toast("put .com") ;
-                                                
-                                          },
+                                    ? null
+                                    : Taoast().toast("put .com");
+                          },
                           onSaved: (val) {
                             _email = val.trim();
                           },
@@ -132,10 +132,12 @@ class _CreateIDState extends State<CreateID> {
                             hintText: 'pass',
                           ),
                           validator: (val) {
-                                            return val.trim() == ""
-                                ?  Taoast().toast("put pass") 
-                                                : val.length < 6 ?  Taoast().toast("6 ตัวขึ้นไป")  : "";
-                                          },
+                            return val.trim() == ""
+                                ? Taoast().toast("put pass")
+                                : val.length < 6
+                                    ? Taoast().toast("6 ตัวขึ้นไป")
+                                    : null;
+                          },
                           onChanged: (val) {
                             _pass = val.trim();
                           },
@@ -152,10 +154,10 @@ class _CreateIDState extends State<CreateID> {
                             hintText: 'password',
                           ),
                           validator: (val) {
-                                            return val.trim() == ""
-                                ?  Taoast().toast("") 
-                                                :_pass != val ?Taoast().toast("put pls") : "";
-                                          },
+                            return val.trim() == ""
+                                ? Taoast().toast("")
+                                : _pass != val ? Taoast().toast("put pls") : null;
+                          },
                           onSaved: (val) {
                             _password = val.trim();
                           },
@@ -195,10 +197,12 @@ class _CreateIDState extends State<CreateID> {
                                   hintText: 'phone numbers',
                                 ),
                                 validator: (val) {
-                                               return val.trim() == ""
-                                ?  Taoast().toast("put phone number") 
-                                                : val.trim().length >10 ? Taoast().toast("check pls")  : "";
-                                          },
+                                  return val.trim() == ""
+                                      ? Taoast().toast("put phone number")
+                                      : val.trim().length > 10
+                                          ? Taoast().toast("check pls")
+                                          : null;
+                                },
                                 onSaved: (val) {
                                   phone = val.trim();
                                 },

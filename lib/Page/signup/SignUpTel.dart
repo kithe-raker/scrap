@@ -202,7 +202,7 @@ class _SignUpTelState extends State<SignUpTel> {
                                             : val.trim().length != 10
                                                 ? Taoast().toast(
                                                     "กรุณากรอกข้อมูลให้ครบ 10 หลัก")
-                                                : "";
+                                                : null;
                                       },
                                       onSaved: (val) {
                                         phone = val.trim();

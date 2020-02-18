@@ -215,7 +215,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                 return val.trim() == null ||
                                                         val.trim() == ''
                                                     ?  Taoast().toast("กรุณาใส่ @ นำหน้าไอดี") 
-                                                    : "";
+                                                    : null;
                                               }),
                                               
                                                 onSaved: (gId) =>

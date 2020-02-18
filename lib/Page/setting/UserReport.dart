@@ -119,7 +119,7 @@ class _UserReportState extends State<UserReport> {
                       validator: ((val) {
                         return val.trim() == null || val.trim() == ''
                             ? Taoast().toast("") 
-                            : "";
+                            : null;
                             
                       }
                       ),

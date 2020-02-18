@@ -213,7 +213,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
                                                       ?  Taoast().toast("กรุณากรอก @ ของคุณ") 
-                                                      : "";
+                                                      : null;
                                                 }),
                                                 onSaved: (gId) =>
                                                     gId.trim()[0] == '@'
@@ -237,7 +237,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
                                                       ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
-                                                      : "";
+                                                      : null;
                                                 }),
                                                 onSaved: (nam) =>
                                                     name = nam.trim(),
@@ -255,7 +255,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
                                                       ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
-                                                      : "";
+                                                      : null;
                                                 }),
                                                 onSaved: (lnam) =>
                                                     lname = lnam.trim(),
@@ -319,7 +319,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                       validator: ((val) {
                                                         return val.trim() == ''
                                                             ?  Taoast().toast("กรุณาระบุเพศ") 
-                                                            : "";
+                                                            : null;
                                                       }),
                                                       onSaved: (gen) =>
                                                           genders = gen.trim(),

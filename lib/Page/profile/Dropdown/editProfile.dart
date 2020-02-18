@@ -319,7 +319,7 @@ class _EditProfileState extends State<EditProfile> {
                                             : val.contains('@') &&
                                                     val.contains(
                                                         '.com', val.length - 4)
-                                                ? ""
+                                                ?  null
                                                 : Taoast().toast("format pls")),
                                     SizedBox(height: a.height / 30),
                                     Row(
@@ -348,7 +348,7 @@ class _EditProfileState extends State<EditProfile> {
                                             : val.trim().length < 6
                                                 ? Taoast().toast(
                                                     "รหัสต้องมีอย่างน้อย 6 ตัว")
-                                                : "")
+                                                : null)
                                   ],
                                 ),
                               ),
@@ -509,7 +509,7 @@ class _EditProfileState extends State<EditProfile> {
         decoration:
             InputDecoration(border: InputBorder.none, hintText: 'ใส่@ของคุณ'),
         validator: (val) {
-          return val.trim() == "" ? Taoast().toast("กรุณากรอกข้อความ") : "";
+          return val.trim() == "" ? Taoast().toast("กรุณากรอกข้อความ") : null;
         },
         onSaved: (val) {
           val.trim()[0] == '@' ? id = val.trim().substring(1) : id = val.trim();
@@ -825,7 +825,7 @@ class _ChangePhoneState extends State<ChangePhone> {
                                             : val.trim().length > 10
                                                 ? Taoast()
                                                     .toast("cheak 10 หลัก")
-                                                : "";
+                                                : null;
                                       },
                                       onSaved: (val) {
                                         phone = val.trim();
