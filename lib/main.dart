@@ -19,11 +19,13 @@ class MyApp extends StatelessWidget {
     return Provider(
       auth: Auth(),
       child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Scrap.',
-          theme: ThemeData(
-              fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: MainPage()),
+        debugShowCheckedModeBanner: false,
+        title: 'Scrap.',
+        theme: ThemeData(
+            fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
+        home: MainPage()
+      ),
     );
   }
 }
+

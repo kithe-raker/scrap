@@ -88,10 +88,10 @@ class _ProfileState extends State<Profile> {
                             ],
                           ),
                         ),
-                        // ||
+                        // ||   
                         // ||   เป็นส่วนของรูปภาพ Profile
-                        //\  /
-                        // \/
+                        //\  /  
+                        // \/   
                         Container(
                           margin: EdgeInsets.only(top: a.width / 10),
                           decoration: BoxDecoration(

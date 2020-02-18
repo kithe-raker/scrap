@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
@@ -32,21 +34,27 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     return Material(
-      color: Colors.black,
-      child: InkWell(
-        child: Container(
-          child: Center(
-              child: Image.asset(
-            './assets/SCRAP.png',
+        color: Colors.black,
+        child: InkWell(
+          child: Container(
             width: a.width / 2,
-          )),
-        ),
-        onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Authen()));
-        },
-      ),
-    );
+            height: a.width / 5,
+            child: SplashScreen.callback(
+              name: 'assets/SCRAP_logo_2.flr',
+              startAnimation: 'Untitled',
+              onSuccess: (data) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
+                    ));
+              },
+              loopAnimation: '1',
+              until: () => Future.delayed(Duration(seconds: 1)),
+              endAnimation: '0',
+            ),
+          ),
+        ));
   }
 }
 
