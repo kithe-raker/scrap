@@ -8,6 +8,7 @@ import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/OTPScreen.dart';
 import 'package:scrap/Page/signup/SignUpMail.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -198,9 +199,13 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                                 validator: (val) {
-                                  return val.trim() == "" || val == null
-                                      ? 'กรุณากรอกข้อมูลให้ครบ'
-                                      : null;
+                                  return val.trim() == ""
+                                      ? Taoast().toast("put Address")
+                                      : val.contains('@') &&
+                                              val.contains(
+                                                  '.com', val.length - 4)
+                                          ? null
+                                          : Taoast().toast("format pls'");
                                 },
                                 onSaved: (val) {
                                   _email = val.trim();
@@ -263,9 +268,12 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                                 validator: (val) {
-                                  return val.trim() == "" || val == null
-                                      ? 'กรุณากรอกข้อมูลให้ครบ'
-                                      : null;
+                                  return val.trim() == ""
+                                      ? Taoast().toast("กรุณากรอกข้อมูลให้ครบ")
+                                      : val.trim().length < 6
+                                          ? Taoast().toast(
+                                              "รหัสต้องมีอย่างน้อย 6 ตัว")
+                                          : null;
                                 },
                                 onSaved: (val) {
                                   _password = val.trim();
@@ -600,10 +608,11 @@ class _LoginPhoneState extends State<LoginPhone> {
                                             TextStyle(color: Colors.grey[500]),
                                       ),
                                       validator: (val) {
-                                        return val.trim() == "" || val == null
-                                            ? 'put isas'
+                                        return val.trim() == ""
+                                            ? Taoast().toast("put phone")
                                             : val.trim().length > 10
-                                                ? 'check 10 หลัก'
+                                                ? Taoast()
+                                                    .toast("check 10 หลัก")
                                                 : null;
                                       },
                                       onSaved: (val) {

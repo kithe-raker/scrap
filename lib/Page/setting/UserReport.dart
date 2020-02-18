@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class UserReport extends StatefulWidget {
   @override
@@ -108,7 +110,7 @@ class _UserReportState extends State<UserReport> {
                         fontSize: a.width / 13,
                         fontWeight: FontWeight.w300,
                       ),
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: '@somename',
@@ -116,9 +118,11 @@ class _UserReportState extends State<UserReport> {
                       ),
                       validator: ((val) {
                         return val.trim() == null || val.trim() == ''
-                            ? ' '
-                            : null;
-                      }),
+                            ? Taoast().toast("") 
+                            : "";
+                            
+                      }
+                      ),
                       //onSaved: (gId) => id = gId.trim(),
                       textInputAction: TextInputAction.next,
                     ),

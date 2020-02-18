@@ -1,5 +1,10 @@
 import 'dart:io'; //ref from creatProfile
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:scrap/widget/Toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scrap/Page/profile/createProfile2.dart';
 
@@ -207,11 +212,12 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       color: Colors.grey[500]),
                                                 ),
                                                 validator: ((val) {
-                                                  return val.trim() == null ||
-                                                          val.trim() == ''
-                                                      ? 'กรุณาใส่@ของคุณ'
-                                                      : null;
-                                                }),
+                                                return val.trim() == null ||
+                                                        val.trim() == ''
+                                                    ?  Taoast().toast("กรุณาใส่ @ นำหน้าไอดี") 
+                                                    : "";
+                                              }),
+                                              
                                                 onSaved: (gId) =>
                                                     gId.trim()[0] == '@'
                                                         ? id = gId
@@ -221,6 +227,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                 textInputAction:
                                                     TextInputAction.done,
                                               ),
+                                              
                                             ),
                                           ],
                                         ),

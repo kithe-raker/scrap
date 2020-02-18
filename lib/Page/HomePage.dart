@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,6 +9,7 @@ import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class HomePage extends StatefulWidget {
   final Position currentLocation;
@@ -571,6 +573,7 @@ class _HomePageState extends State<HomePage> {
                                           style:
                                               TextStyle(fontSize: a.width / 15),
                                           maxLines: null,
+                                          keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
                                             border: InputBorder
                                                 .none, //สำหรับใหเส้นใต้หาย
@@ -584,8 +587,8 @@ class _HomePageState extends State<HomePage> {
                                           validator: (val) {
                                             return val.trim() == null ||
                                                     val.trim() == ""
-                                                ? 'เขียนบางอย่างสิ'
-                                                : null;
+                                                ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
+                                                : "";
                                           },
                                           //เนื้อหาที่กรอกเข้าไปใน text
                                           onChanged: (val) {
@@ -633,6 +636,7 @@ class _HomePageState extends State<HomePage> {
                                       },
                                     ),
                                     //ปุ่มปาใส่
+
                                     InkWell(
                                       child: Container(
                                         margin:
@@ -787,6 +791,7 @@ class _HomePageState extends State<HomePage> {
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: a.width / 15),
+                                            keyboardType: TextInputType.text,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               hintText: '@someoneuserid',

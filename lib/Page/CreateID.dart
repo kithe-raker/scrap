@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/OTPScreen.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class CreateID extends StatefulWidget {
   @override
@@ -106,14 +108,14 @@ class _CreateIDState extends State<CreateID> {
                           decoration: InputDecoration(
                             hintText: 'email',
                           ),
+                          
                           validator: (val) {
-                            return val.trim() == ""
-                                ? 'put isas'
-                                : val.contains('@') &&
+                                            return val.trim() == ""
+                                                ?  Taoast().toast("put @")  : val.contains('@') &&
                                         val.contains('.com', val.length - 4)
-                                    ? null
-                                    : 'format pls';
-                          },
+                                    ? "" :  Taoast().toast("put .com") ;
+                                                
+                                          },
                           onSaved: (val) {
                             _email = val.trim();
                           },
@@ -130,10 +132,10 @@ class _CreateIDState extends State<CreateID> {
                             hintText: 'pass',
                           ),
                           validator: (val) {
-                            return val.trim() == ""
-                                ? 'put isas'
-                                : val.length < 6 ? '6ตัวขึ้นไป' : null;
-                          },
+                                            return val.trim() == ""
+                                ?  Taoast().toast("put pass") 
+                                                : val.length < 6 ?  Taoast().toast("6 ตัวขึ้นไป")  : "";
+                                          },
                           onChanged: (val) {
                             _pass = val.trim();
                           },
@@ -150,10 +152,10 @@ class _CreateIDState extends State<CreateID> {
                             hintText: 'password',
                           ),
                           validator: (val) {
-                            return val.trim() == ""
-                                ? 'put isas'
-                                : _pass != val ? 'check pls' : null;
-                          },
+                                            return val.trim() == ""
+                                ?  Taoast().toast("") 
+                                                :_pass != val ?Taoast().toast("put pls") : "";
+                                          },
                           onSaved: (val) {
                             _password = val.trim();
                           },
@@ -193,12 +195,10 @@ class _CreateIDState extends State<CreateID> {
                                   hintText: 'phone numbers',
                                 ),
                                 validator: (val) {
-                                  return val.trim() == ""
-                                      ? 'put isas'
-                                      : val.trim().length > 10
-                                          ? 'put 10 หลัก'
-                                          : null;
-                                },
+                                               return val.trim() == ""
+                                ?  Taoast().toast("put phone number") 
+                                                : val.trim().length >10 ? Taoast().toast("check pls")  : "";
+                                          },
                                 onSaved: (val) {
                                   phone = val.trim();
                                 },

@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class CreateProfile extends StatefulWidget {
   final String uid;
@@ -210,12 +212,14 @@ class _CreateProfileState extends State<CreateProfile> {
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
-                                                      ? 'กรุณากรอก@ของคุณ'
-                                                      : null;
+                                                      ?  Taoast().toast("กรุณากรอก @ ของคุณ") 
+                                                      : "";
                                                 }),
                                                 onSaved: (gId) =>
                                                     gId.trim()[0] == '@'
-                                                        ? id = gId.trim().substring(1)
+                                                        ? id = gId
+                                                            .trim()
+                                                            .substring(1)
                                                         : id = gId.trim(),
                                                 textInputAction:
                                                     TextInputAction.next,
@@ -232,8 +236,8 @@ class _CreateProfileState extends State<CreateProfile> {
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
-                                                      ? 'กรุณากรอกชื่อของท่าน'
-                                                      : null;
+                                                      ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
+                                                      : "";
                                                 }),
                                                 onSaved: (nam) =>
                                                     name = nam.trim(),
@@ -250,8 +254,8 @@ class _CreateProfileState extends State<CreateProfile> {
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
-                                                      ? 'กรุณากรอกนามสกุลของท่าน'
-                                                      : null;
+                                                      ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
+                                                      : "";
                                                 }),
                                                 onSaved: (lnam) =>
                                                     lname = lnam.trim(),
@@ -314,8 +318,8 @@ class _CreateProfileState extends State<CreateProfile> {
                                                     child: TextFormField(
                                                       validator: ((val) {
                                                         return val.trim() == ''
-                                                            ? 'กรุณาระบุเพศ'
-                                                            : null;
+                                                            ?  Taoast().toast("กรุณาระบุเพศ") 
+                                                            : "";
                                                       }),
                                                       onSaved: (gen) =>
                                                           genders = gen.trim(),

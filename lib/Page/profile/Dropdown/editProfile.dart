@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scrap/Page/OTPScreen.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class EditProfile extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -313,12 +315,12 @@ class _EditProfileState extends State<EditProfile> {
                                     editAccount(false, a, 'email',
                                         'name@mail.com', widget.doc['email'],
                                         validator: (val) => val.trim() == ""
-                                            ? 'put isas'
+                                            ? Taoast().toast("put Address")
                                             : val.contains('@') &&
                                                     val.contains(
                                                         '.com', val.length - 4)
-                                                ? null
-                                                : 'format pls'),
+                                                ? ""
+                                                : Taoast().toast("format pls")),
                                     SizedBox(height: a.height / 30),
                                     Row(
                                       children: <Widget>[
@@ -341,10 +343,12 @@ class _EditProfileState extends State<EditProfile> {
                                     editAccount(true, a, 'password', '••••••••',
                                         widget.doc['password'],
                                         validator: (val) => val.trim() == ""
-                                            ? 'กรุณากรอกข้อมูลให้ครบ'
+                                            ? Taoast()
+                                                .toast("กรุณากรอกข้อมูลให้ครบ")
                                             : val.trim().length < 6
-                                                ? 'รหัสต้องมีอย่างน้อย 6 ตัว'
-                                                : null)
+                                                ? Taoast().toast(
+                                                    "รหัสต้องมีอย่างน้อย 6 ตัว")
+                                                : "")
                                   ],
                                 ),
                               ),
@@ -498,13 +502,14 @@ class _EditProfileState extends State<EditProfile> {
       width: a.width / 2,
       height: a.height / 21,
       child: TextFormField(
+        keyboardType: TextInputType.emailAddress,
         readOnly: read,
         controller: tx,
         style: TextStyle(fontSize: a.width / 13, color: Colors.white),
         decoration:
             InputDecoration(border: InputBorder.none, hintText: 'ใส่@ของคุณ'),
         validator: (val) {
-          return val.trim() == "" ? 'กรุณากรอก' : null;
+          return val.trim() == "" ? Taoast().toast("กรุณากรอกข้อความ") : "";
         },
         onSaved: (val) {
           val.trim()[0] == '@' ? id = val.trim().substring(1) : id = val.trim();
@@ -540,7 +545,7 @@ class _EditProfileState extends State<EditProfile> {
           fontSize: a.width / 13,
           fontWeight: FontWeight.w900,
         ),
-        keyboardType: TextInputType.phone,
+        keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
@@ -816,10 +821,11 @@ class _ChangePhoneState extends State<ChangePhone> {
                                       ),
                                       validator: (val) {
                                         return val.trim() == ""
-                                            ? 'put isas'
-                                            : val.trim().length != 10
-                                                ? 'check 10 หลัก'
-                                                : null;
+                                            ? Taoast().toast("put isas")
+                                            : val.trim().length > 10
+                                                ? Taoast()
+                                                    .toast("cheak 10 หลัก")
+                                                : "";
                                       },
                                       onSaved: (val) {
                                         phone = val.trim();
