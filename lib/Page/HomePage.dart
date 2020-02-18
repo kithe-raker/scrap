@@ -1,5 +1,6 @@
 //import 'package:circular_check_box/circular_check_box.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,7 +10,9 @@ import 'package:intl/intl.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/Search.dart';
+import 'package:scrap/Page/addPlayer.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       body: Stack(
         children: <Widget>[
           scrapPatt(a, context),
@@ -42,8 +46,35 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    SizedBox(
+                    Container(
                       width: a.width / 7,
+                      height: a.width / 7,
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0xff1a1a1a),
+                              blurRadius: 3.0,
+                              spreadRadius: 2.0,
+                              offset: Offset(
+                                0.0,
+                                3.2,
+                              ),
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(a.width),
+                          color: Colors.white),
+                      child: IconButton(
+                        icon: Icon(Icons.people),
+                        color: Color(0xff26A4FF),
+                        iconSize: a.width / 12,
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddPlayer(),
+                              ));
+                        },
+                      ),
                     ),
                     SizedBox(
                       width: a.width / 21,
@@ -271,20 +302,46 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return widget?.currentLocation == null
-                ? Center(
-                    child: Text('กรุณาตรวจสอบGPSของคุณ'),
-                  )
+                ? gpsCheck(a)
                 : MapScraps(
                     collection: snap?.data['id'] ?? [],
                     currentLocation: widget.currentLocation,
                     uid: widget.doc['uid'],
                   );
           } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return Loading();
           }
         });
+  }
+
+  Widget gpsCheck(Size a) {
+    return Center(
+      child: Container(
+        width: a.width / 1.2,
+        height: a.width / 3.2,
+        child: Stack(
+          children: <Widget>[
+            Center(
+              child: Container(
+                width: a.width / 3.2,
+                height: a.width / 3.2,
+                child: FlareActor(
+                  'assets/paper_loading.flr',
+                  animation: 'Untitled',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  'กรุณาตรวจสอบGPSหรืออินเทอร์เน็ตของท่าน',
+                  style: TextStyle(fontSize: a.width / 16, color: Colors.white),
+                ))
+          ],
+        ),
+      ),
+    );
   }
 
   selectDialog(BuildContext context) {
@@ -410,7 +467,7 @@ class _HomePageState extends State<HomePage> {
                 {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 
-//ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี้ขึ้นมาไว้สร้าง Contents
+//ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี���ขึ้นมาไว้สร้าง Contents
   void dialog() {
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
@@ -549,12 +606,12 @@ class _HomePageState extends State<HomePage> {
                                                   ],
                                                 )
                                               : Text(
-                                                  'เขียนโดย : ใครสักคน',
+                                                  'เขียนโ���ย : ใครสักคน',
                                                   style: TextStyle(
                                                       fontSize: a.width / 22,
                                                       color: Colors.grey),
                                                 ),
-                                          Text("เวลา" + " : " + time,
+                                          Text("��วลา" + " : " + time,
                                               style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: a.width / 22))

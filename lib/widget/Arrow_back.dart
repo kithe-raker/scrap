@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Arrow_back extends StatefulWidget {
+class ArrowBack extends StatefulWidget {
   @override
-  _Arrow_backState createState() => _Arrow_backState();
+  _ArrowBackState createState() => _ArrowBackState();
 }
 
-class _Arrow_backState extends State<Arrow_back> {
+class _ArrowBackState extends State<ArrowBack> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;

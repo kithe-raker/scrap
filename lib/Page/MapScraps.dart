@@ -8,7 +8,6 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:scrap/Page/addPlayer.dart';
 
 class MapScraps extends StatefulWidget {
   final Position currentLocation;
@@ -262,58 +261,6 @@ class _MapScrapsState extends State<MapScraps> {
                   child: CircularProgressIndicator(),
                 ),
         ),
-        Positioned(
-          bottom: 0,
-          child: Container(
-            padding: EdgeInsets.only(bottom: a.width / 10),
-            alignment: Alignment.bottomCenter,
-            width: a.width,
-            height: a.height / 1.1,
-            child: Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Container(
-                    width: a.width / 7,
-                    height: a.width / 7,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xff1a1a1a),
-                            blurRadius: 3.0,
-                            spreadRadius: 2.0,
-                            offset: Offset(
-                              0.0,
-                              3.2,
-                            ),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(a.width),
-                        color: Colors.white),
-                    child: IconButton(
-                      icon: Icon(Icons.people),
-                      color: Color(0xff26A4FF),
-                      iconSize: a.width / 12,
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddPlayer(),
-                            ));
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: a.width / 21,
-                  ),
-                  SizedBox(
-                    width: a.width / 7,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
       ],
     ));
   }
@@ -362,18 +309,19 @@ class _MapScrapsState extends State<MapScraps> {
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
       GeoPoint loca = data['position']['geopoint'];
-      widget.collection.contains(data['id']) ||
-              data['uid'] == widget.uid ||
-              picked.contains(data['id'])
-          ? null
-          : _addMarker(
-              data['id'],
-              data['uid'],
-              data['scrap']['user'],
-              data['scrap']['text'],
-              data['scrap']['time'],
-              loca.latitude,
-              loca.longitude);
+      if (widget.collection.contains(data['id']) ||
+          data['uid'] == widget.uid ||
+          picked.contains(data['id'])) {
+      } else {
+        _addMarker(
+            data['id'],
+            data['uid'],
+            data['scrap']['user'],
+            data['scrap']['text'],
+            data['scrap']['time'],
+            loca.latitude,
+            loca.longitude);
+      }
     });
   }
 

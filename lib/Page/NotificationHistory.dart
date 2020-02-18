@@ -90,6 +90,7 @@ class _NotificationHistoryState extends State<NotificationHistory> {
                                 warnDialog(
                                     'คุณต้องการลบการแจ้งเตือนทั้งหมดนี้ใช่หรือไม่',
                                     () async {
+                                  Navigator.pop(context);
                                   await clearHistory(docs.documents);
                                 });
                               }

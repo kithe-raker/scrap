@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,6 +10,7 @@ import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
+import 'package:scrap/widget/Loading.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -40,18 +40,22 @@ class _MainPageState extends State<MainPage> {
             width: a.width / 2,
             height: a.width / 5,
             child: SplashScreen.callback(
-              name: 'assets/SCRAP_logo_2.flr',
+              name: 'assets/splash.flr',
               startAnimation: 'Untitled',
               onSuccess: (data) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => LoginPage(),
+                      builder: (context) => Authen(),
                     ));
               },
               loopAnimation: '1',
               until: () => Future.delayed(Duration(seconds: 1)),
               endAnimation: '0',
+              onError: (e, er) {
+                print(e);
+                print(er);
+              },
             ),
           ),
         ));
@@ -151,6 +155,7 @@ class _MainStreamState extends State<MainStream> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: StreamBuilder(
         stream: userStream(context),
         builder: (context, snap) {
@@ -164,9 +169,7 @@ class _MainStreamState extends State<MainStream> {
                     currentLocation: currentLocation,
                   );
           } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return Loading();
           }
         },
       ),

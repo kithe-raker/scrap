@@ -20,7 +20,7 @@ class _AboutState extends State<About> {
             children: <Widget>[
               Container(
                 width: a.width,
-                child: Arrow_back(),
+                child: ArrowBack(),
               ),
               Container(
                 padding: EdgeInsets.only(left: a.width / 15, top: a.width / 10),
