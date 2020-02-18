@@ -1,6 +1,7 @@
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -572,7 +573,7 @@ class _HomePageState extends State<HomePage> {
                                           validator: (val) {
                                             return val.trim() == null ||
                                                     val.trim() == ""
-                                                ? 'เขียนบางอย่างสิ'
+                                                ? ''
                                                 : null;
                                           },
                                           //เนื้อหาที่กรอกเข้าไปใน text
@@ -637,7 +638,15 @@ class _HomePageState extends State<HomePage> {
                                                 fontWeight: FontWeight.bold)),
                                       ),
                                       //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                      onTap: () {
+                                      onTap: () {Fluttertoast.showToast(
+        msg: "This is Center Short Toast",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
                                           Navigator.pop(context);
