@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class OTPScreen extends StatefulWidget {
   final String verifiedID;
@@ -245,8 +247,8 @@ class _OTPScreenState extends State<OTPScreen> {
                                   validator: (val) {
                                     return val.trim() == "" ||
                                             val.trim().length < 6
-                                        ? 'กรุณากรอกเลข 6 หลัก'
-                                        : null;
+                                        ?  Taoast().toast("กรุณากรอกเลข 6 หลัก") 
+                                        : "";
                                   },
                                   onSaved: (val) => otpCode = val,
                                 ),

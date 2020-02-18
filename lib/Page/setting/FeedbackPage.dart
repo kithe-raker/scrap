@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class FeedbackPage extends StatefulWidget {
   @override
@@ -147,8 +149,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
                             //หากไม่ได้กรอกจะขึ้น
                             validator: (val) {
                               return val.trim() == null || val.trim() == ""
-                                  ? 'เขียนบางอย่างสิ'
-                                  : null;
+                                  ?  Taoast().toast("เขียนข้อความบางอย่างสิ") 
+                                  : "";
                             },
                             //เนื้อหาที่กรอกเข้าไปใน text
                             onChanged: (val) {

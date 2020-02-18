@@ -8,6 +8,7 @@ import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class HomePage extends StatefulWidget {
   final Position currentLocation;
@@ -529,20 +530,28 @@ class _HomePageState extends State<HomePage> {
                                         children: <Widget>[
                                           public ?? false
                                               ? Row(
-                                                children: <Widget>[
-                                                  Text(
+                                                  children: <Widget>[
+                                                    Text(
                                                       "เขียนโดย : ",
                                                       style: TextStyle(
-                                                          fontSize: a.width / 22,
+                                                          fontSize:
+                                                              a.width / 22,
                                                           color: Colors.grey),
-                                                    ),Text("@${widget.doc['id']}",style: TextStyle(
-                                                          fontSize: a.width / 22,
-                                                          color: Color(0xff26A4FF)))
-                                                ],
-                                              )
-                                              : Text('เขียนโดย : ใครสักคน',style: TextStyle(
+                                                    ),
+                                                    Text("@${widget.doc['id']}",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                                a.width / 22,
+                                                            color: Color(
+                                                                0xff26A4FF)))
+                                                  ],
+                                                )
+                                              : Text(
+                                                  'เขียนโดย : ใครสักคน',
+                                                  style: TextStyle(
                                                       fontSize: a.width / 22,
-                                                      color: Colors.grey),),
+                                                      color: Colors.grey),
+                                                ),
                                           Text("เวลา" + " : " + time,
                                               style: TextStyle(
                                                   color: Colors.grey,
@@ -576,8 +585,8 @@ class _HomePageState extends State<HomePage> {
                                           validator: (val) {
                                             return val.trim() == null ||
                                                     val.trim() == ""
-                                                ? ''
-                                                : null;
+                                                ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
+                                                : "";
                                           },
                                           //เนื้อหาที่กรอกเข้าไปใน text
                                           onChanged: (val) {
@@ -624,6 +633,7 @@ class _HomePageState extends State<HomePage> {
                                       },
                                     ),
                                     //ปุ่มปาใส่
+
                                     InkWell(
                                       child: Container(
                                         margin:
@@ -641,15 +651,7 @@ class _HomePageState extends State<HomePage> {
                                                 fontWeight: FontWeight.bold)),
                                       ),
                                       //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                      onTap: () {Fluttertoast.showToast(
-        msg: "This is Center Short Toast",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIos: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
+                                      onTap: () {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
                                           Navigator.pop(context);

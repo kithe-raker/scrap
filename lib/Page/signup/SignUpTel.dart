@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/OTPScreen.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class SignUpTel extends StatefulWidget {
   final String email;
@@ -186,12 +188,10 @@ class _SignUpTelState extends State<SignUpTel> {
                                     hintStyle:
                                         TextStyle(color: Colors.grey[500]),
                                   ),
-                                  validator: (val) {
-                                    return val.trim() == ""
-                                        ? 'กรุณากรอกข้อมูล'
-                                        : val.trim().length != 10
-                                            ? 'กรุณากรอกเบอร์โทรให้ครบ 10 หลัก'
-                                            : null;
+                                  validator:(val){
+                                         return val.trim() == ""
+                                ?  Taoast().toast("กรุณากอกข้อมูล") 
+                                                :val.trim().length != 10 ? Taoast().toast("กรุณากรอกข้อมูลให้ครบ 10 หลัก")  : "";
                                   },
                                   onSaved: (val) {
                                     phone = val.trim();

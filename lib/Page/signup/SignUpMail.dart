@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/signup/SignUpTel.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class SignUpMail extends StatefulWidget {
   SignUpMail({Key key}) : super(key: key);
@@ -150,11 +152,11 @@ class _SignUpMailState extends State<SignUpMail> {
                             ),
                             validator: (val) {
                               return val.trim() == ""
-                                  ? 'put isas'
+                                  ? Taoast().toast("text")
                                   : val.contains('@') &&
                                           val.contains('.com', val.length - 4)
-                                      ? null
-                                      : 'format pls';
+                                      ? ""
+                                      :Taoast().toast("text");
                             },
                             onSaved: (val) {
                               _email = val.trim();
@@ -218,10 +220,10 @@ class _SignUpMailState extends State<SignUpMail> {
                             ),
                             validator: (val) {
                               return val.trim() == ""
-                                  ? 'กรุณากรอกข้อมูลให้ครบ'
+                                  ? Taoast().toast("text")
                                   : val.trim().length < 6
-                                      ? 'รหัสต้องมีอย่างน้อย 6 ตัว'
-                                      : null;
+                                      ? Taoast().toast("text")
+                                      : "";
                             },
                             onSaved: (val) {
                               _password = val.trim();

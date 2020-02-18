@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/OTPScreen.dart';
 import 'package:scrap/Page/signup/SignUpMail.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -185,10 +187,10 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             validator: (val) {
-                              return val.trim() == ""
-                                  ? 'กรุณากรอกข้อมูลให้ครบ'
-                                  : null;
-                            },
+                                            return val.trim() == ""
+                                                ? Taoast().toast("text")
+                                                :  null;
+                                          },
                             onSaved: (val) {
                               _email = val.trim();
                             },
@@ -250,10 +252,10 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             validator: (val) {
-                              return val.trim() == ""
-                                  ? 'กรุณากรอกข้อมูลให้ครบ'
-                                  : null;
-                            },
+                                            return val.trim() == ""
+                                                ?  Taoast().toast("text")
+                                                : null;
+                                          },
                             onSaved: (val) {
                               _password = val.trim();
                             },
@@ -562,13 +564,12 @@ class _LoginPhoneState extends State<LoginPhone> {
                                     hintStyle:
                                         TextStyle(color: Colors.grey[500]),
                                   ),
+                                  
                                   validator: (val) {
-                                    return val.trim() == ""
-                                        ? 'put isas'
-                                        : val.trim().length > 10
-                                            ? 'check 10 หลัก'
-                                            : null;
-                                  },
+                                            return  val.trim() == ""
+                                                ? Taoast().toast("isas") 
+                                                : val.trim().length > 10 ? Taoast().toast("check 10 หลัก") : null;
+                                          },
                                   onSaved: (val) {
                                     phone = val.trim();
                                   },

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -305,7 +307,9 @@ class _SearchState extends State<Search> {
             hintText: hint,
             labelStyle: TextStyle(color: Colors.black, fontSize: a.width / 15)),
         validator: (val) {
-          return val.trim() == "" ? 'กรุณากรอก' : null;
+          return val.trim() == ""
+              ?  Taoast().toast("กรุณากรอก") 
+              : "";
         },
         onSaved: (val) {
           val.trim()[0] == '@' ? id = val.trim().substring(1) : id = val.trim();

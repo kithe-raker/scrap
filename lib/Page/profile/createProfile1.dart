@@ -3,8 +3,10 @@ import 'dart:io'; //ref from creatProfile
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class CreateProfile1 extends StatefulWidget {
   final String uid;
@@ -271,8 +273,8 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                               validator: ((val) {
                                                 return val.trim() == null ||
                                                         val.trim() == ''
-                                                    ? 'กรุณาใส่@นำหน้าชื่อไอดี'
-                                                    : null;
+                                                    ?  Taoast().toast("กรุณาใส่ @ นำหน้าไอดี") 
+                                                    : "";
                                               }),
                                               onSaved: (gId) => id = gId.trim(),
                                               textInputAction:
