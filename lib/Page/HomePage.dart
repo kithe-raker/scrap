@@ -27,6 +27,18 @@ class _HomePageState extends State<HomePage> {
   String type, select, text;
   bool public;
   var _key = GlobalKey<FormState>();
+  var currentLocation;
+
+  @override
+  void initState() {
+    Geolocator().getCurrentPosition().then((curlo) {
+      setState(() {
+        currentLocation = curlo;
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -305,7 +317,7 @@ class _HomePageState extends State<HomePage> {
                 ? gpsCheck(a)
                 : MapScraps(
                     collection: snap?.data['id'] ?? [],
-                    currentLocation: widget.currentLocation,
+                    currentLocation: widget?.currentLocation ?? currentLocation,
                     uid: widget.doc['uid'],
                   );
           } else {

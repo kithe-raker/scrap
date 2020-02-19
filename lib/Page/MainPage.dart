@@ -160,9 +160,7 @@ class _MainStreamState extends State<MainStream> {
       body: StreamBuilder(
         stream: userStream(context),
         builder: (context, snap) {
-          if (snap.hasData &&
-              snap.connectionState == ConnectionState.active &&
-              currentLocation != null) {
+          if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return snap.data['id'] == null
                 ? CreateProfile1(uid: snap.data['uid'])
                 : snap?.data['accept'] ?? false

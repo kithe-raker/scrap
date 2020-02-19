@@ -483,9 +483,9 @@ class _LoginPhoneState extends State<LoginPhone> {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: ListView(
+      body: Stack(
         children: <Widget>[
-          Stack(
+          ListView(
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(a.width / 20),
@@ -504,7 +504,8 @@ class _LoginPhoneState extends State<LoginPhone> {
                             child: InkWell(
                               child: Container(
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(a.width),
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
                                     color: Colors.white),
                                 child: Icon(Icons.arrow_back,
                                     color: Colors.black, size: a.width / 15),
@@ -535,18 +536,23 @@ class _LoginPhoneState extends State<LoginPhone> {
                                         decoration: BoxDecoration(
                                           color: Colors.black,
                                           borderRadius: BorderRadius.only(
-                                              topLeft: const Radius.circular(40.0),
+                                              topLeft:
+                                                  const Radius.circular(40.0),
                                               bottomLeft:
                                                   const Radius.circular(40.0)),
                                           border: Border(
                                             top: BorderSide(
-                                                width: 1.0, color: Colors.white),
+                                                width: 1.0,
+                                                color: Colors.white),
                                             left: BorderSide(
-                                                width: 1.0, color: Colors.white),
+                                                width: 1.0,
+                                                color: Colors.white),
                                             right: BorderSide(
-                                                width: 1.0, color: Colors.white),
+                                                width: 1.0,
+                                                color: Colors.white),
                                             bottom: BorderSide(
-                                                width: 1.0, color: Colors.white),
+                                                width: 1.0,
+                                                color: Colors.white),
                                           ),
                                         ),
                                         width: a.width / 4,
@@ -582,18 +588,23 @@ class _LoginPhoneState extends State<LoginPhone> {
                                         decoration: BoxDecoration(
                                           color: Colors.black,
                                           borderRadius: BorderRadius.only(
-                                              topRight: const Radius.circular(40.0),
+                                              topRight:
+                                                  const Radius.circular(40.0),
                                               bottomRight:
                                                   const Radius.circular(40.0)),
                                           border: Border(
                                             top: BorderSide(
-                                                width: 1.0, color: Colors.white),
+                                                width: 1.0,
+                                                color: Colors.white),
                                             left: BorderSide(
-                                                width: 1.0, color: Colors.white),
+                                                width: 1.0,
+                                                color: Colors.white),
                                             right: BorderSide(
-                                                width: 1.0, color: Colors.white),
+                                                width: 1.0,
+                                                color: Colors.white),
                                             bottom: BorderSide(
-                                                width: 1.0, color: Colors.white),
+                                                width: 1.0,
+                                                color: Colors.white),
                                           ),
                                         ),
                                         child: TextFormField(
@@ -606,8 +617,8 @@ class _LoginPhoneState extends State<LoginPhone> {
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             hintText: 'เบอร์โทรศัพท์',
-                                            hintStyle:
-                                                TextStyle(color: Colors.grey[500]),
+                                            hintStyle: TextStyle(
+                                                color: Colors.grey[500]),
                                           ),
                                           validator: (val) {
                                             return val.trim() == ""
@@ -639,8 +650,8 @@ class _LoginPhoneState extends State<LoginPhone> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(a.width / 10)),
+                                        borderRadius: BorderRadius.circular(
+                                            a.width / 10)),
                                     width: a.width / 2.5,
                                     padding: EdgeInsets.all(10.0),
                                     alignment: Alignment.center,
@@ -673,7 +684,7 @@ class _LoginPhoneState extends State<LoginPhone> {
                             alignment: Alignment.center,
                             color: Colors.black,
                             child: Text(
-                              'สร้างบัญชีใหม่',
+                              'เข้าสู่ระบบ',
                               style: TextStyle(
                                   fontSize: a.width / 18,
                                   fontWeight: FontWeight.bold,
@@ -684,9 +695,9 @@ class _LoginPhoneState extends State<LoginPhone> {
                       )),
                 ),
               ),
-              loading ? Loading() : SizedBox()
             ],
           ),
+          loading ? Loading() : SizedBox()
         ],
       ),
     );
