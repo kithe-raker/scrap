@@ -27,8 +27,8 @@ class _EditProfileState extends State<EditProfile> {
 
   summitNewID(String uid) async {
     List index = [];
-    for (int i = 0; i <= id.length; i++) {
-      index.add(i == 0 ? id[0] : id.substring(0, i));
+    for (int i = 0; i < id.length; i++) {
+      index.add(id.substring(0, ++i));
     }
     await Firestore.instance
         .collection('Users')
