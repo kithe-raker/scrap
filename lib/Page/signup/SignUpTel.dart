@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/OTPScreen.dart';
+import 'package:scrap/function/toDatabase/phoneAuthen.dart';
+import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -14,8 +18,11 @@ class SignUpTel extends StatefulWidget {
 }
 
 class _SignUpTelState extends State<SignUpTel> {
-  String phone;
+  String phone, token;
   bool loading = false;
+
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+
   var _key = GlobalKey<FormState>();
 
   Future<bool> hasAccount(String phone) async {
@@ -29,6 +36,11 @@ class _SignUpTelState extends State<SignUpTel> {
   }
 
   Future<void> phoneVerified() async {
+    Register register = Register(
+        email: widget.email,
+        phone: phone,
+        password: widget.password,
+        token: token);
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
       print(id);
     };
@@ -47,9 +59,12 @@ class _SignUpTelState extends State<SignUpTel> {
                   )));
     };
     final PhoneVerificationCompleted success = (AuthCredential credent) async {
-      print('yes sure');
-      // FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      // user.linkWithCredential(credent);
+      await register.register(credent);
+      setState(() {
+        loading = false;
+      });
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Authen()));
     };
     PhoneVerificationFailed failed = (AuthException error) {
       warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง');
@@ -65,6 +80,41 @@ class _SignUpTelState extends State<SignUpTel> {
         .catchError((e) {
       warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง');
     });
+  }
+
+  signUp() async {
+    try {
+      Register regis = Register(
+          email: widget.email,
+          password: widget.password,
+          phone: phone,
+          token: token);
+      final uid = await Provider.of(context)
+          .auth
+          .createUserWithEmailAndPassword(widget.email, widget.password);
+      await regis.toDb(uid);
+      await regis.addToken(uid);
+      setState(() {
+        loading = false;
+      });
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Authen()));
+    } catch (e) {
+      warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง');
+    }
+  }
+
+  void getToken() {
+    firebaseMessaging.getToken().then((String tken) {
+      assert(tken != null);
+      token = tken;
+    });
+  }
+
+  @override
+  void initState() {
+    getToken();
+    super.initState();
   }
 
   @override
@@ -106,7 +156,7 @@ class _SignUpTelState extends State<SignUpTel> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              "ยืนยันตัวตน",
+                              "กรอกเบอร์โทรของคุณ",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -212,13 +262,13 @@ class _SignUpTelState extends State<SignUpTel> {
                                 ],
                               ),
                             ),
-                            Text(
-                              "เราจะ SMS ไปยังมือถือคุณ",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: a.width / 18),
-                            ),
+                            // Text(
+                            //   "เราจะ SMS ไปยังมือถือคุณ",
+                            //   style: TextStyle(
+                            //       color: Colors.white,
+                            //       fontWeight: FontWeight.bold,
+                            //       fontSize: a.width / 18),
+                            // ),
                             SizedBox(
                               height: a.width / 7,
                             ),
@@ -247,7 +297,7 @@ class _SignUpTelState extends State<SignUpTel> {
                                   await hasAccount(phone)
                                       ? warning(context,
                                           'ขออภัยค่ะเบอร์โทรนี้ได้มีการลงทะเบียนไว้แล้ว')
-                                      : await phoneVerified();
+                                      : await signUp();
                                 } else {
                                   print('nope');
                                 }

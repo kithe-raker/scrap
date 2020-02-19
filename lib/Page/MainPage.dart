@@ -44,6 +44,7 @@ class _MainPageState extends State<MainPage> {
               name: 'assets/splash.flr',
               startAnimation: 'Untitled',
               onSuccess: (data) {
+                Navigator.pop(context);
                 Navigator.push(
                     context,
                     MaterialPageRoute(

@@ -30,7 +30,6 @@ class _MapScrapsState extends State<MapScraps> {
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   GoogleMapController mapController;
   var radius = BehaviorSubject<double>.seeded(0.1);
-  Stream<dynamic> query;
   StreamSubscription subscription;
   Set picked = {};
 
@@ -235,34 +234,42 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   @override
+  dispose() {
+    subscription?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     _createMarkerImageFromAsset(context);
     _createScrapImageFromAsset(context);
     return Scaffold(
+        backgroundColor: Colors.grey[900],
         body: Stack(
-      children: <Widget>[
-        Container(
-          width: a.width,
-          height: a.height,
-          child: loadMap
-              ? GoogleMap(
-                  myLocationButtonEnabled: false,
-                  myLocationEnabled: false,
-                  onMapCreated: onMapCreated,
-                  initialCameraPosition: CameraPosition(
-                      target: LatLng(currentLocation?.latitude ?? 0,
-                          currentLocation?.longitude ?? 0),
-                      zoom: 18),
-                  markers: Set<Marker>.of(markers.values),
-                  circles: Set<Circle>.of(circles.values),
-                )
-              : Center(
-                  child: CircularProgressIndicator(),
-                ),
-        ),
-      ],
-    ));
+          children: <Widget>[
+            Container(
+              color:  Colors.grey[900],
+              width: a.width,
+              height: a.height,
+              child: loadMap
+                  ? GoogleMap(
+                      myLocationButtonEnabled: false,
+                      myLocationEnabled: false,
+                      onMapCreated: onMapCreated,
+                      initialCameraPosition: CameraPosition(
+                          target: LatLng(currentLocation?.latitude ?? 0,
+                              currentLocation?.longitude ?? 0),
+                          zoom: 18),
+                      markers: Set<Marker>.of(markers.values),
+                      circles: Set<Circle>.of(circles.values),
+                    )
+                  : Center(
+                      child: CircularProgressIndicator(),
+                    ),
+            ),
+          ],
+        ));
   }
   /*
          Set id = {};
@@ -472,11 +479,5 @@ class _MapScrapsState extends State<MapScraps> {
             .document(uid)
             .updateData(
                 {key: value?.data[key] == null ? 1 : ++value.data[key]}));
-  }
-
-  @override
-  dispose() {
-    subscription.cancel();
-    super.dispose();
   }
 }

@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/LoginID.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/OTPScreen.dart';
 import 'package:scrap/Page/signup/SignUpMail.dart';
+import 'package:scrap/function/toDatabase/phoneAuthen.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -336,7 +338,7 @@ class _LoginPageState extends State<LoginPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  LoginPhone()));
+                                                  LoginID()));
                                     })),
                           ],
                         ),
@@ -429,6 +431,7 @@ class LoginPhone extends StatefulWidget {
 class _LoginPhoneState extends State<LoginPhone> {
   String phone;
   bool loading = false;
+  PhoneLogin phoneLogin;
   var _key = GlobalKey<FormState>();
 
   Future<void> phoneVerified() async {
@@ -445,9 +448,12 @@ class _LoginPhoneState extends State<LoginPhone> {
               builder: (context) => OTPScreen(verifiedID: id, phone: phone)));
     };
     final PhoneVerificationCompleted success = (AuthCredential credent) async {
-      print('yes sure');
-      // FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      // user.linkWithCredential(credent);
+      await phoneLogin.login(credent);
+      setState(() {
+        loading = false;
+      });
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Authen()));
     };
     PhoneVerificationFailed failed = (AuthException error) {
       warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ กรุณาลองอีกครั้ง');

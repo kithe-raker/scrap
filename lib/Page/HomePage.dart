@@ -42,231 +42,234 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.grey[900],
-      body: Stack(
-        children: <Widget>[
-          scrapPatt(a, context),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              padding: EdgeInsets.only(bottom: a.width / 10),
-              alignment: Alignment.bottomCenter,
-              width: a.width,
-              height: a.height / 1.1,
+    return WillPopScope(
+      onWillPop: () => null,
+      child: Scaffold(
+        backgroundColor: Colors.grey[900],
+        body: Stack(
+          children: <Widget>[
+            scrapPatt(a, context),
+            Positioned(
+              bottom: 0,
               child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Container(
-                      width: a.width / 7,
-                      height: a.width / 7,
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xff1a1a1a),
-                              blurRadius: 3.0,
-                              spreadRadius: 2.0,
-                              offset: Offset(
-                                0.0,
-                                3.2,
-                              ),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Colors.white),
-                      child: IconButton(
-                        icon: Icon(Icons.people),
-                        color: Color(0xff26A4FF),
-                        iconSize: a.width / 12,
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddPlayer(),
-                              ));
-                        },
+                padding: EdgeInsets.only(bottom: a.width / 10),
+                alignment: Alignment.bottomCenter,
+                width: a.width,
+                height: a.height / 1.1,
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Container(
+                        width: a.width / 7,
+                        height: a.width / 7,
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xff1a1a1a),
+                                blurRadius: 3.0,
+                                spreadRadius: 2.0,
+                                offset: Offset(
+                                  0.0,
+                                  3.2,
+                                ),
+                              )
+                            ],
+                            borderRadius: BorderRadius.circular(a.width),
+                            color: Colors.white),
+                        child: IconButton(
+                          icon: Icon(Icons.people),
+                          color: Color(0xff26A4FF),
+                          iconSize: a.width / 12,
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddPlayer(),
+                                ));
+                          },
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: a.width / 21,
-                    ),
-                    Container(
-                      width: a.width / 7,
-                      height: a.width / 7,
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xff1a1a1a),
-                              blurRadius: 10.0,
-                              spreadRadius: 0.0,
-                              offset: Offset(
-                                0.0,
-                                2.0,
-                              ),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Color(0xff26A4FF)),
-                      child: IconButton(
-                        icon: Icon(Icons.refresh),
-                        color: Colors.white,
-                        iconSize: a.width / 15,
-                        onPressed: () {
-                          setState(() {});
-                          // selectDialog(context);
-                        },
+                      SizedBox(
+                        width: a.width / 21,
                       ),
-                    ),
-                  ],
+                      Container(
+                        width: a.width / 7,
+                        height: a.width / 7,
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xff1a1a1a),
+                                blurRadius: 10.0,
+                                spreadRadius: 0.0,
+                                offset: Offset(
+                                  0.0,
+                                  2.0,
+                                ),
+                              )
+                            ],
+                            borderRadius: BorderRadius.circular(a.width),
+                            color: Color(0xff26A4FF)),
+                        child: IconButton(
+                          icon: Icon(Icons.refresh),
+                          color: Colors.white,
+                          iconSize: a.width / 15,
+                          onPressed: () {
+                            setState(() {});
+                            // selectDialog(context);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: a.height / 42,
-            left: a.width / 2.8,
-            child: InkWell(
-              child: Container(
-                width: a.width / 3.6,
-                height: a.width / 3.6,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(a.width),
-                    border: Border.all(
-                        color: Colors.white38, width: a.width / 500)),
+            Positioned(
+              bottom: a.height / 42,
+              left: a.width / 2.8,
+              child: InkWell(
                 child: Container(
-                  margin: EdgeInsets.all(a.width / 35),
-                  width: a.width / 5,
-                  height: a.width / 5,
+                  width: a.width / 3.6,
+                  height: a.width / 3.6,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(a.width),
-                      border: Border.all(color: Colors.white)),
+                      border: Border.all(
+                          color: Colors.white38, width: a.width / 500)),
                   child: Container(
                     margin: EdgeInsets.all(a.width / 35),
                     width: a.width / 5,
                     height: a.width / 5,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(a.width),
-                        color: Colors.white,
                         border: Border.all(color: Colors.white)),
-                    child: Icon(
-                      Icons.create,
-                      size: a.width / 12,
-                      color: Colors.black,
+                    child: Container(
+                      margin: EdgeInsets.all(a.width / 35),
+                      width: a.width / 5,
+                      height: a.width / 5,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(a.width),
+                          color: Colors.white,
+                          border: Border.all(color: Colors.white)),
+                      child: Icon(
+                        Icons.create,
+                        size: a.width / 12,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ),
+                onTap: () {
+                  dialog();
+                },
               ),
-              onTap: () {
-                dialog();
-              },
             ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Container(
-              // ส่วนของ แทบสีดำด้านบน
-              color: Colors.black,
-              width: a.width,
-              height: a.width / 5,
-              padding: EdgeInsets.only(
-                top: a.height / 36,
-                right: a.width / 20,
-                left: a.width / 20,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  //Logo
-                  Container(
-                      height: a.width / 6,
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        'assets/SCRAP.png',
-                        width: a.width / 4,
-                      )),
-                  //ส่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
+            Positioned(
+              top: 0,
+              left: 0,
+              child: Container(
+                // ส่วนของ แทบสีดำด้านบน
+                color: Colors.black,
+                width: a.width,
+                height: a.width / 5,
+                padding: EdgeInsets.only(
+                  top: a.height / 36,
+                  right: a.width / 20,
+                  left: a.width / 20,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    //Logo
+                    Container(
+                        height: a.width / 6,
+                        alignment: Alignment.center,
+                        child: Image.asset(
+                          'assets/SCRAP.png',
+                          width: a.width / 4,
+                        )),
+                    //ส่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
 
-                  SizedBox(
-                    width: a.width / 5,
-                  ),
-                  Container(
-                      height: a.width / 5,
-                      alignment: Alignment.center,
-                      child: InkWell(
-                        child: Container(
-                          width: a.width / 10,
-                          height: a.width / 10,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(a.width),
-                            border: Border.all(width: 2, color: Colors.white),
-                            color: Color(0xff26A4FF),
+                    SizedBox(
+                      width: a.width / 5,
+                    ),
+                    Container(
+                        height: a.width / 5,
+                        alignment: Alignment.center,
+                        child: InkWell(
+                          child: Container(
+                            width: a.width / 10,
+                            height: a.width / 10,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(a.width),
+                              border: Border.all(width: 2, color: Colors.white),
+                              color: Color(0xff26A4FF),
+                            ),
+                            child: Icon(Icons.search,
+                                color: Colors.white, size: a.width / 15),
                           ),
-                          child: Icon(Icons.search,
-                              color: Colors.white, size: a.width / 15),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Search(
-                                        doc: widget.doc,
-                                      ))); //ไปยังหน้า Search
-                        },
-                      )),
-                  Container(
-                      height: a.width / 5,
-                      alignment: Alignment.center,
-                      child: InkWell(
-                        child: Container(
-                          width: a.width / 10,
-                          height: a.width / 10,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(a.width),
-                            color: Colors.white,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Search(
+                                          doc: widget.doc,
+                                        ))); //ไปยังหน้า Search
+                          },
+                        )),
+                    Container(
+                        height: a.width / 5,
+                        alignment: Alignment.center,
+                        child: InkWell(
+                          child: Container(
+                            width: a.width / 10,
+                            height: a.width / 10,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(a.width),
+                              color: Colors.white,
+                            ),
+                            child: Icon(Icons.notifications_active,
+                                color: Color(0xff26A4FF), size: a.width / 15),
                           ),
-                          child: Icon(Icons.notifications_active,
-                              color: Color(0xff26A4FF), size: a.width / 15),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => NotificationHistory(
-                                        doc: widget.doc,
-                                      ))); //ไปยังหน้า NotificationHistory
-                        },
-                      )),
-                  Container(
-                      height: a.width / 5,
-                      alignment: Alignment.center,
-                      child: InkWell(
-                        child: Container(
-                          width: a.width / 10,
-                          height: a.width / 10,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(a.width),
-                            color: Colors.white,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NotificationHistory(
+                                          doc: widget.doc,
+                                        ))); //ไปยังหน้า NotificationHistory
+                          },
+                        )),
+                    Container(
+                        height: a.width / 5,
+                        alignment: Alignment.center,
+                        child: InkWell(
+                          child: Container(
+                            width: a.width / 10,
+                            height: a.width / 10,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(a.width),
+                              color: Colors.white,
+                            ),
+                            child: Icon(Icons.person,
+                                color: Colors.black, size: a.width / 15),
                           ),
-                          child: Icon(Icons.person,
-                              color: Colors.black, size: a.width / 15),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Profile(
-                                        doc: widget.doc,
-                                      ))); //ไปยังหน้า Profile
-                        },
-                      ))
-                ],
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Profile(
+                                          doc: widget.doc,
+                                        ))); //ไปยังหน้า Profile
+                          },
+                        ))
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
