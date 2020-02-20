@@ -326,7 +326,7 @@ class _LoginPageState extends State<LoginPage> {
                                         ),
                                         SizedBox(width: 5.0),
                                         Text(
-                                          'เข้าสู่ระบบด้วยเบอร์โทร',
+                                          'เข้าสู่ระบบด้วยเบอร์โทรศัพท์',
                                           style: TextStyle(
                                               decoration:
                                                   TextDecoration.underline,
