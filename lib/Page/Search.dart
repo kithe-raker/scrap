@@ -15,6 +15,7 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   String id;
+  bool search = false;
 
   @override
   Widget build(BuildContext context) {
@@ -35,134 +36,260 @@ class _SearchState extends State<Search> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    InkWell(
-                      //back btn
-                      child: Container(
-                        width: a.width / 7,
-                        height: a.width / 10,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(a.width),
-                            color: Colors.white),
-                        child: Icon(Icons.arrow_back,
-                            color: Colors.black, size: a.width / 15),
-                      ),
-                      onTap: () {
-                        Navigator.pop(
-                          context,
-                        );
-                      },
-                    ),
-                  ],
-                ), //back btn
-
-                SizedBox(height: a.height / 12.5),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'ค้นหาผู้ใช้',
-                        style: TextStyle(
-                            fontSize: a.width / 6.5,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w300),
-                      ),
-                      Text(
-                        'ค้นหาคนที่คุณรู้จักแล้วปากระดาษใส่พวกเขากัน',
-                        style: TextStyle(
-                            fontSize: a.width / 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w300),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: a.width / 13,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Container(
-                    width: a.width,
-                    height: a.width / 6.5,
-                    decoration: BoxDecoration(
-                      color: Color(0xff282828),
-                      borderRadius: BorderRadius.all(Radius.circular(300)),
-                      border: Border.all(width: 2, color: Colors.grey[800]),
-                    ),
-                    child: TextFormField(
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: a.width / 14,
-                        fontWeight: FontWeight.w300,
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: '@somename',
-                        hintStyle: TextStyle(color: Colors.grey[700]),
-                      ),
-                      onChanged: (value) {
-                        id = value.trim();
-                        setState(() {});
-                      },
-                      textInputAction: TextInputAction.next,
-                    ),
-                  ),
-                ),
-                id == null || id == ''
-                    ? guide(a, 'ค้นหาคนที่คุณต้องการปาใส่')
-                    : id[0] != '@'
-                        ? guide(a, 'ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid')
-                        : StreamBuilder(
-                            stream: Firestore.instance
-                                .collection('Users')
-                                .where('searchIndex',
-                                    arrayContains: id.substring(1))
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData &&
-                                  snapshot.connectionState ==
-                                      ConnectionState.active) {
-                                List docs = snapshot.data.documents;
-                                return docs?.length == null || docs?.length == 0
-                                    ? guide(
-                                        a, 'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว')
-                                    : Column(
-                                        children: docs
-                                            .map((data) => userCard(a, data))
-                                            .toList(),
-                                      );
-                              } else {
-                                return Container(
-                                  height: a.height / 2.1,
-                                  width: a.width,
-                                  child: Center(
-                                    child: Container(
-                                      width: a.width / 3.6,
-                                      height: a.width / 3.6,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.42),
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                      child: FlareActor(
-                                        'assets/paper_loading.flr',
-                                        animation: 'Untitled',
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
+                search
+                    ? Row(
+                        children: <Widget>[
+                          IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                                size: a.width / 12,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  search = false;
+                                });
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Container(
+                              width: a.width * 9 / 12,
+                              height: a.width / 6.5,
+                              decoration: BoxDecoration(
+                                color: Color(0xff282828),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(300)),
+                                border: Border.all(
+                                    width: 2, color: Colors.grey[800]),
+                              ),
+                              child: TextFormField(
+                                autofocus: true,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: a.width / 14,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: '@somename',
+                                  hintStyle: TextStyle(color: Colors.grey[700]),
+                                ),
+                                onChanged: (value) {
+                                  id = value.trim();
+                                  setState(() {});
+                                },
+                                textInputAction: TextInputAction.done,
+                              ),
+                            ),
                           ),
+                        ],
+                      )
+                    : Column(
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              InkWell(
+                                //back btn
+                                child: Container(
+                                  width: a.width / 7,
+                                  height: a.width / 10,
+                                  decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                      color: Colors.white),
+                                  child: Icon(Icons.arrow_back,
+                                      color: Colors.black, size: a.width / 15),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(
+                                    context,
+                                  );
+                                },
+                              ),
+                            ],
+                          ), //back btn
+
+                          SizedBox(height: a.height / 12.5),
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  'ค้นหาผู้ใช้',
+                                  style: TextStyle(
+                                      fontSize: a.width / 6.5,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                Text(
+                                  'ค้นหาคนที่คุณรู้จักแล้วปากระดาษใส่พวกเขากัน',
+                                  style: TextStyle(
+                                      fontSize: a.width / 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: a.width / 13,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Container(
+                              width: a.width,
+                              height: a.width / 6.5,
+                              decoration: BoxDecoration(
+                                color: Color(0xff282828),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(300)),
+                                border: Border.all(
+                                    width: 2, color: Colors.grey[800]),
+                              ),
+                              child: TextFormField(
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: a.width / 14,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: '@somename',
+                                  hintStyle: TextStyle(color: Colors.grey[700]),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    search = true;
+                                  });
+                                },
+                                // onChanged: (value) {
+                                //   id = value.trim();
+                                //   setState(() {});
+                                // },
+                                //textInputAction: TextInputAction.next,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                search
+                    ? id == null || id == ''
+                        ? guide(
+                            a,
+                            'ค้นหาคนที่คุณต้องการปาใส่',
+                            a.height / 1.5,
+                          )
+                        : id[0] != '@'
+                            ? guide(
+                                a,
+                                'ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid',
+                                a.height / 1.5,
+                              )
+                            : StreamBuilder(
+                                stream: Firestore.instance
+                                    .collection('Users')
+                                    .where('searchIndex',
+                                        arrayContains: id.substring(1))
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData &&
+                                      snapshot.connectionState ==
+                                          ConnectionState.active) {
+                                    List docs = snapshot.data.documents;
+                                    return docs?.length == null ||
+                                            docs?.length == 0
+                                        ? guide(
+                                            a,
+                                            'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว',
+                                            a.height / 1.5,
+                                          )
+                                        : Column(
+                                            children: docs
+                                                .map((data) =>
+                                                    userCard(a, data, false))
+                                                .toList(),
+                                          );
+                                  } else {
+                                    return Container(
+                                      height: a.height / 2.1,
+                                      width: a.width,
+                                      child: Center(
+                                        child: Container(
+                                          width: a.width / 3.6,
+                                          height: a.width / 3.6,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white
+                                                  .withOpacity(0.42),
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
+                                          child: FlareActor(
+                                            'assets/paper_loading.flr',
+                                            animation: 'Untitled',
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              )
+                    : StreamBuilder(
+                        stream: Firestore.instance
+                            .collection('Users')
+                            .document(widget.doc['uid'])
+                            .collection('info')
+                            .document('searchHist')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData &&
+                              snapshot.connectionState ==
+                                  ConnectionState.active) {
+                            List users = snapshot?.data['history'];
+                            return users == null || users.length == null
+                                ? guide(
+                                    a,
+                                    'คุณไม่มีประวัติการปา',
+                                    a.height / 2.4,
+                                  )
+                                : Column(
+                                    children: users
+                                        .map((data) => userCard(
+                                            a,
+                                            users[users.length -
+                                                1 -
+                                                users.indexOf(data)],
+                                            true))
+                                        .toList(),
+                                  );
+                          } else {
+                            return Container(
+                              height: a.height / 2.1,
+                              width: a.width,
+                              child: Center(
+                                child: Container(
+                                  width: a.width / 3.6,
+                                  height: a.width / 3.6,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.42),
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: FlareActor(
+                                    'assets/paper_loading.flr',
+                                    animation: 'Untitled',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        })
               ],
             ),
           ),
@@ -171,9 +298,9 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget guide(Size a, String text) {
+  Widget guide(Size a, String text, double heigth) {
     return Container(
-      height: a.height / 2.4,
+      height: heigth,
       width: a.width,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -196,7 +323,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget userCard(Size a, DocumentSnapshot doc) {
+  Widget userCard(Size a, DocumentSnapshot doc, bool hist) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Users')
@@ -278,11 +405,22 @@ class _SearchState extends State<Search> {
                           Positioned(
                             right: 10.0,
                             top: 10.0,
-                            child: Icon(
-                              Icons.arrow_forward,
-                              color: Color(0xffA3A3A3),
-                              size: 30.0,
-                            ),
+                            child: hist
+                                ? IconButton(
+                                    icon: Icon(
+                                      Icons.clear,
+                                      color: Color(0xffA3A3A3),
+                                      size: 30.0,
+                                    ),
+                                    onPressed: () {
+                                      warnClear(snapshot.data['id'],
+                                          snapshot.data['uid']);
+                                    })
+                                : Icon(
+                                    Icons.arrow_forward,
+                                    color: Color(0xffA3A3A3),
+                                    size: 30.0,
+                                  ),
                           )
                         ],
                       ),
@@ -337,6 +475,45 @@ class _SearchState extends State<Search> {
         });
   }
 
+  warnClear(String user, String thrownID) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text('คุณต้องนำ' + user + 'อกกจากประวัติใช่หรือไม่'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('ยกเลิก')),
+              FlatButton(
+                child: Text('ok'),
+                onPressed: () async {
+                  toast('ลบ"$user"ออกแล้ว');
+                  Navigator.pop(context);
+                  await clearHist(thrownID);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  clearHist(String thrown) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document('searchHist')
+        .updateData({
+      'history': FieldValue.arrayRemove([thrown])
+    });
+  }
+
   toast(String text) {
     return Fluttertoast.showToast(
         msg: text,
@@ -371,8 +548,20 @@ class _SearchState extends State<Search> {
       }
     }, merge: true);
     await notifaication(thrownID, date, time);
+    await updateHistory(widget.doc['uid'], thrownID);
     await increaseTransaction(widget.doc['uid'], 'written');
     await increaseTransaction(thrownID, 'threw');
+  }
+
+  updateHistory(String uid, String thrown) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document('searchHist')
+        .updateData({
+      'history': FieldValue.arrayUnion([thrown])
+    });
   }
 
   notifaication(String who, String date, String time) async {

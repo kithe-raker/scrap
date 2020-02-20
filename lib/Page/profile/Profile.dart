@@ -267,7 +267,7 @@ class _ProfileState extends State<Profile> {
                                             : Wrap(
                                                 children: users
                                                     .map((userID) =>
-                                                        mScrap(a, userID, data))
+                                                        mScrap(a, users[users.length - 1 - users.indexOf(userID)], data))
                                                     .toList());
                                       } else {
                                         return Center(

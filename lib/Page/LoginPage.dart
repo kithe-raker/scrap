@@ -202,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 validator: (val) {
                                   return val.trim() == ""
-                                      ? Taoast().toast("put Address")
+                                      ? Taoast().toast("ใส่อีเมลของท่าน")
                                       : val.contains('@') &&
                                               val.contains(
                                                   '.com', val.length - 4)
@@ -317,13 +317,13 @@ class _LoginPageState extends State<LoginPage> {
                                           MainAxisAlignment.center,
                                       children: <Widget>[
                                         Icon(
-                                          Icons.phone,
+                                          Icons.person,
                                           color: Colors.white,
                                           size: a.width / 20,
                                         ),
                                         SizedBox(width: 5.0),
                                         Text(
-                                          'เข้าสู่ระบบด้วยเบอร์โทร',
+                                          'เข้าสู่ระบบด้วยไอดี',
                                           style: TextStyle(
                                               decoration:
                                                   TextDecoration.underline,
