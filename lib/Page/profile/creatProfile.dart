@@ -86,8 +86,8 @@ class _CreateProfileState extends State<CreateProfile> {
 
   addData(String uid) async {
     List index = [];
-    for (int i = 0; i <= id.length; i++) {
-      index.add(i == 0 ? id[0] : id.substring(0, i));
+    for (int i = 0; i < id.length; i++) {
+      index.add(id.substring(0, ++i));
     }
     await Firestore.instance
         .collection('Users')
@@ -141,7 +141,6 @@ class _CreateProfileState extends State<CreateProfile> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-
                                 InkWell(
                                   child: Container(
                                     width: scr.width / 3,
@@ -172,7 +171,6 @@ class _CreateProfileState extends State<CreateProfile> {
                                     selectImg(context);
                                   },
                                 ),
-
                                 Container(
                                   child: Form(
                                     key: _formKey,
@@ -189,7 +187,8 @@ class _CreateProfileState extends State<CreateProfile> {
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
-                                                      ?  Taoast().toast("กรุณากรอก @ ของคุณ") 
+                                                      ? Taoast().toast(
+                                                          "กรุณากรอก @ ของคุณ")
                                                       : null;
                                                 }),
                                                 onSaved: (gId) =>
@@ -202,7 +201,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                     TextInputAction.next,
                                                 decoration: InputDecoration(
                                                     helperText:
-                                                        'ทุกคนสามารถเห็น"ชื่อ"ของคุณและปากระดาษหาคุณได้',
+                                                        'ทุกคนสามารถเห็น"ชื่อ"ของคุณและปากระดาษหาคุ��ได้',
                                                     hintText: ' ใส่ชื่อของคุณ'),
                                               ),
                                             ),
@@ -213,7 +212,8 @@ class _CreateProfileState extends State<CreateProfile> {
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
-                                                      ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
+                                                      ? Taoast().toast(
+                                                          "กรุณากรอกชื่อของท่าน")
                                                       : null;
                                                 }),
                                                 onSaved: (nam) =>
@@ -231,7 +231,8 @@ class _CreateProfileState extends State<CreateProfile> {
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
-                                                      ?  Taoast().toast("กรุณากรอกชื่อของท่าน") 
+                                                      ? Taoast().toast(
+                                                          "กรุณากรอกชื่อของท่าน")
                                                       : null;
                                                 }),
                                                 onSaved: (lnam) =>
@@ -295,7 +296,8 @@ class _CreateProfileState extends State<CreateProfile> {
                                                     child: TextFormField(
                                                       validator: ((val) {
                                                         return val.trim() == ''
-                                                            ?  Taoast().toast("กรุณาระบุเพศ") 
+                                                            ? Taoast().toast(
+                                                                "กรุณาระบุเพศ")
                                                             : null;
                                                       }),
                                                       onSaved: (gen) =>

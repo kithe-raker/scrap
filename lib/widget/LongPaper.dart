@@ -53,6 +53,7 @@ class _LongPaperState extends State<LongPaper> {
               ),
             ),
             Container(
+              padding: EdgeInsets.all(24),
               width: a.width,
               height: a.width,
               alignment: Alignment.center,

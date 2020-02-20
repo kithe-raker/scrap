@@ -8,6 +8,7 @@ import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/LoginPage.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
+import 'package:scrap/Page/setting/servicedoc.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -43,6 +44,7 @@ class _MainPageState extends State<MainPage> {
               name: 'assets/splash.flr',
               startAnimation: 'Untitled',
               onSuccess: (data) {
+                Navigator.pop(context);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -159,15 +161,17 @@ class _MainStreamState extends State<MainStream> {
       body: StreamBuilder(
         stream: userStream(context),
         builder: (context, snap) {
-          if (snap.hasData &&
-              snap.connectionState == ConnectionState.active &&
-              currentLocation != null) {
+          if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return snap.data['id'] == null
                 ? CreateProfile1(uid: snap.data['uid'])
-                : HomePage(
-                    doc: snap.data,
-                    currentLocation: currentLocation,
-                  );
+                : snap?.data['accept'] ?? false
+                    ? HomePage(
+                        doc: snap.data,
+                        currentLocation: currentLocation,
+                      )
+                    : Servicedoc(
+                        regis: true,
+                      );
           } else {
             return Loading();
           }

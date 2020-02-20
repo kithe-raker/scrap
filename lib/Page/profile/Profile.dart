@@ -6,6 +6,7 @@ import 'package:scrap/Page/setting/FeedbackPage.dart';
 import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/LongPaper.dart';
 
 class Profile extends StatefulWidget {
@@ -87,10 +88,10 @@ class _ProfileState extends State<Profile> {
                             ],
                           ),
                         ),
-                        // ||   
+                        // ||
                         // ||   เป็นส่วนของรูปภาพ Profile
-                        //\  /  
-                        // \/   
+                        //\  /
+                        // \/
                         Container(
                           margin: EdgeInsets.only(top: a.width / 10),
                           decoration: BoxDecoration(
@@ -391,9 +392,7 @@ class _ProfileState extends State<Profile> {
                 ],
               );
             } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
+              return Center(child: Loading());
             }
           }),
     );
@@ -667,7 +666,7 @@ class _ProfileState extends State<Profile> {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => FeedbackPage()));
         break;
-      case Constans.About: 
+      case Constans.About:
         print('About');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => About()));

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/function/toDatabase/phoneAuthen.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/warning.dart';
 
@@ -36,11 +37,8 @@ class _OTPScreenState extends State<OTPScreen> {
       print(id.toString() + " sent and " + resendCode.toString());
       newVerified = id;
     };
-    final PhoneVerificationCompleted success = (AuthCredential credent) async {
-      print('yes sure');
-      // FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      // user.linkWithCredential(credent);
-    };
+    final PhoneVerificationCompleted success =
+        (AuthCredential credent) async {};
     PhoneVerificationFailed failed = (AuthException error) {
       print(error.message);
       Dg().warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองใหม่', "เกิดข้อผิดพลาด");
@@ -60,23 +58,20 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   register() async {
-    var authCredential = PhoneAuthProvider.getCredential(
-        verificationId: newVerified ?? widget.verifiedID, smsCode: otpCode);
-    await FirebaseAuth.instance
-        .signInWithCredential(authCredential)
-        .then((AuthResult auth) async {
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      var credential = EmailAuthProvider.getCredential(
-          email: widget.email, password: widget.password);
-      await user.linkWithCredential(credential);
-      await toDb(user.uid);
-      await addToken(user.uid);
+    try {
+      Register register = Register(
+          email: widget.email,
+          phone: widget.phone,
+          password: widget.password,
+          token: token);
+      await register.registerWithPhone(
+          newVerified ?? widget.verifiedID, otpCode);
       setState(() {
         loading = false;
       });
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Authen()));
-    }).catchError((e) {
+    } catch (e) {
       switch (e.toString()) {
         case 'PlatformException(ERROR_INVALID_VERIFICATION_CODE, The SMS verification code used to create the phone auth credential is invalid. Please resend the verification code SMS and be sure to use the verification code provided by the user., null)':
           Dg().warning(context, 'กรุณาเช็ครหัสOTPของท่าน', "เกิดข้อผิดพลาด");
@@ -87,13 +82,13 @@ class _OTPScreenState extends State<OTPScreen> {
           break;
       }
       print(e.toString());
-    });
+    }
   }
 
-  login() async {
-    var authCredential = PhoneAuthProvider.getCredential(
-        verificationId: newVerified ?? widget.verifiedID, smsCode: otpCode);
-    await FirebaseAuth.instance.signInWithCredential(authCredential).then((_) {
+  login() {
+    PhoneLogin()
+        .loginWithOTP(newVerified ?? widget.verifiedID, otpCode)
+        .then((_) {
       setState(() {
         loading = false;
       });
@@ -146,6 +141,7 @@ class _OTPScreenState extends State<OTPScreen> {
       'password': widget.password,
       'phone': widget.phone,
       'uid': uid,
+      'accept': false
     });
     await Firestore.instance
         .collection('Users')

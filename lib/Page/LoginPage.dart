@@ -4,10 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/LoginID.dart';
 import 'package:scrap/Page/MainPage.dart';
 
 import 'package:scrap/Page/signup/SignUpMail.dart';
-
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -341,7 +341,7 @@ class _LoginPageState extends State<LoginPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  LoginPhone()));
+                                                  LoginID()));
                                     })),
                           ],
                         ),
@@ -398,5 +398,4 @@ class _LoginPageState extends State<LoginPage> {
 
 
 }
-
 

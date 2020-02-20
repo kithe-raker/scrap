@@ -1,42 +1,90 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/signup/SignUpTel.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/warning.dart';
 
-class SignUpMail extends StatefulWidget {
-  SignUpMail({Key key}) : super(key: key);
+class LoginID extends StatefulWidget {
   @override
-  _SignUpMailState createState() => _SignUpMailState();
+  _LoginIDState createState() => _LoginIDState();
 }
 
-class _SignUpMailState extends State<SignUpMail> {
-  String _email, _password;
+class _LoginIDState extends State<LoginID> {
+  String id, _password, token;
   bool loading = false;
   var _key = GlobalKey<FormState>();
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  List acc = [];
 
-  Future<bool> uniqueEmail(String email) async {
-    final QuerySnapshot emails = await Firestore.instance
+  Future<bool> hasAccount(String user) async {
+    final QuerySnapshot users = await Firestore.instance
         .collection('Users')
-        .where('email', isEqualTo: email)
+        .where('id', isEqualTo: user)
         .limit(1)
         .getDocuments();
-    final List<DocumentSnapshot> doc = emails.documents;
-    return doc.length < 1;
+    final List<DocumentSnapshot> doc = users.documents;
+    if (doc.length == 1) {
+      acc = doc;
+    }
+    return doc.length == 1;
   }
 
-  continueSignUp() {
-    setState(() {
-      loading = false;
+  continueSignUp() async {
+    DocumentSnapshot doc = acc[0];
+    doc.data['password'] == _password
+        ? await signIn(doc.data['email'])
+        : warning(context, 'กรุณาตรวจสอบรหัสผ่านของท่าน');
+  }
+
+  signIn(String email) async {
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: _password)
+        .then((auth) async {
+      await updateToken(auth.user.uid);
+      setState(() {
+        loading = false;
+      });
+      Navigator.pop(context);
     });
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SignUpTel(
-                  email: _email,
-                  password: _password,
-                )));
+  }
+
+  updateToken(String uid) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('token')
+        .document(uid)
+        .get()
+        .then((value) async {
+      if (value.documentID != token) {
+        await Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('token')
+            .document(value.documentID)
+            .delete();
+        await Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('token')
+            .document(token)
+            .setData({'token': token});
+      }
+    });
+  }
+
+  void getToken() {
+    firebaseMessaging.getToken().then((String tken) {
+      assert(tken != null);
+      token = tken;
+    });
+  }
+
+  @override
+  void initState() {
+    getToken();
+    super.initState();
   }
 
   @override
@@ -76,7 +124,7 @@ class _SignUpMailState extends State<SignUpMail> {
                         Container(
                           margin: EdgeInsets.only(top: a.width / 6),
                           child: Text(
-                            "สมัครสมาชิก",
+                            "เข้าสู่ระบบ",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: a.width / 9,
@@ -122,13 +170,13 @@ class _SignUpMailState extends State<SignUpMail> {
                                     child: Row(
                                       children: <Widget>[
                                         Icon(
-                                          Icons.mail,
+                                          Icons.person,
                                           color: Colors.white,
                                           size: a.width / 22,
                                         ),
                                         SizedBox(width: 5.0),
                                         Text(
-                                          'อีเมล',
+                                          'ไอดี',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: a.width / 20,
@@ -153,7 +201,7 @@ class _SignUpMailState extends State<SignUpMail> {
                                     ),
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      hintText: 'example@mail.com',
+                                      hintText: '@someone',
                                       hintStyle: TextStyle(
                                         color: Colors.grey[500],
                                         fontWeight: FontWeight.w900,
@@ -162,15 +210,14 @@ class _SignUpMailState extends State<SignUpMail> {
                                     ),
                                     validator: (val) {
                                       return val.trim() == ""
-                                          ? Taoast().toast("กรุณากรอกรหัสผ่าน")
-                                          : val.contains('@') &&
-                                                  val.contains(
-                                                      '.com', val.length - 4)
+                                          ? Taoast().toast("ใส่ไอดีของคุณ")
+                                          : val.trim()[0] == '@'
                                               ? null
-                                              : Taoast().toast("โปรดเขียนอีเมลให้ถูกต้อง");
+                                              : Taoast()
+                                                  .toast("ใส่@ด้านหน้สไอดีคุณ");
                                     },
                                     onSaved: (val) {
-                                      _email = val.trim();
+                                      id = val.trim().substring(1);
                                     },
                                   ),
                                 ),
@@ -233,11 +280,8 @@ class _SignUpMailState extends State<SignUpMail> {
                                     validator: (val) {
                                       return val.trim() == ""
                                           ? Taoast()
-                                              .toast("กรุณากรอกรหัสผ่าน")
-                                          : val.trim().length < 6
-                                              ? Taoast().toast(
-                                                  "รหัสต้องมีอย่างน้อย 6 ตัว")
-                                              : null;
+                                              .toast("กรุณากรอกข้อมูลให้ครบ")
+                                          : null;
                                     },
                                     onSaved: (val) {
                                       _password = val.trim();
@@ -256,7 +300,7 @@ class _SignUpMailState extends State<SignUpMail> {
                                             color: Colors.white,
                                             borderRadius: BorderRadius.circular(
                                                 a.width / 40)),
-                                        child: Text("ดำเนินการต่อ",
+                                        child: Text("เข้าสู่ระบบ",
                                             style: TextStyle(
                                               fontSize: a.width / 16,
                                               fontWeight: FontWeight.bold,
@@ -267,12 +311,10 @@ class _SignUpMailState extends State<SignUpMail> {
                                         setState(() {
                                           loading = true;
                                         });
-                                        await uniqueEmail(_email)
+                                        await hasAccount(id)
                                             ? continueSignUp()
-                                            : Dg().warning(context,
-                                                'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว', "เกิดผิดพลาด");
-                                      } else {
-                                        print('nope');
+                                            : warning(
+                                                context, 'ไม่พบบัญชีดังกล่าว');
                                       }
                                     }),
                               ],
@@ -290,5 +332,35 @@ class _SignUpMailState extends State<SignUpMail> {
         ]));
   }
 
-  
+  warning(BuildContext context, String sub) {
+    setState(() {
+      loading = false;
+    });
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: ListTile(
+          title: Text(
+            "เกิดข้อผิดพลาด",
+            style: TextStyle(fontSize: 20),
+          ),
+          subtitle: Text(
+            sub,
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              'ตกลง',
+              style: TextStyle(fontSize: 16),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
 }

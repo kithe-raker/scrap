@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scrap/Page/OTPScreen.dart';
+import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -26,8 +27,8 @@ class _EditProfileState extends State<EditProfile> {
 
   summitNewID(String uid) async {
     List index = [];
-    for (int i = 0; i <= id.length; i++) {
-      index.add(i == 0 ? id[0] : id.substring(0, i));
+    for (int i = 0; i < id.length; i++) {
+      index.add(id.substring(0, ++i));
     }
     await Firestore.instance
         .collection('Users')
@@ -689,6 +690,19 @@ class _ChangePhoneState extends State<ChangePhone> {
     return doc.length == 1;
   }
 
+  changeNumber() async {
+    final uid = await Provider.of(context).auth.currentUser();
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .updateData({'phone': phone});
+    setState(() {
+      loading = false;
+    });
+    Navigator.pop(context);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -869,26 +883,11 @@ class _ChangePhoneState extends State<ChangePhone> {
                                   await alreadyUse(phone)
                                       ? warning(context,
                                           'เบอร์โทรนี้ได้ทำการลงทะเบียนไว้แล้ว')
-                                      : await phoneVerified();
-                                } else {
-                                  print('nope');
+                                      : await changeNumber();
                                 }
                               },
                             )
                           ],
-                        ),
-                      ),
-                      Container(
-                        width: a.width,
-                        height: a.width / 10,
-                        alignment: Alignment.center,
-                        color: Colors.black,
-                        child: Text(
-                          'สร้างบัญชีใหม่',
-                          style: TextStyle(
-                              fontSize: a.width / 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[500]),
                         ),
                       ),
                     ],

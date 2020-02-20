@@ -61,29 +61,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(
-                              top: scr.width / 20, left: scr.width / 20),
-                          child: InkWell(
-                            child: Container(
-                              width: scr.width / 7,
-                              height: scr.width / 10,
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(scr.width),
-                                  color: Colors.white),
-                              child: Icon(Icons.arrow_back,
-                                  color: Colors.black, size: scr.width / 15),
-                            ),
-                            onTap: () {
-                              warnDate('คุณต้องการออกจากหน้านี้ใช่หรือไม่',
-                                  function: () {
-                                Navigator.of(context).pop(context);
-                                Navigator.pop(context);
-                              });
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
                               top: scr.width / 10, left: scr.width / 12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,8 +176,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                   fontSize: scr.width / 13,
                                                   fontWeight: FontWeight.w900,
                                                 ),
-                                                keyboardType:
-                                                    TextInputType.phone,
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
                                                   hintText: '@yourname',
@@ -208,12 +183,12 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       color: Colors.grey[500]),
                                                 ),
                                                 validator: ((val) {
-                                                return val.trim() == null ||
-                                                        val.trim() == ''
-                                                    ?  Taoast().toast("กรุณาใส่ @ นำหน้าไอดี") 
-                                                    : null;
-                                              }),
-                                              
+                                                  return val.trim() == null ||
+                                                          val.trim() == ''
+                                                      ? Taoast().toast(
+                                                          "กรุณาใส่ @ นำหน้าไอดี")
+                                                      : null;
+                                                }),
                                                 onSaved: (gId) =>
                                                     gId.trim()[0] == '@'
                                                         ? id = gId
@@ -223,7 +198,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                 textInputAction:
                                                     TextInputAction.done,
                                               ),
-                                              
                                             ),
                                           ],
                                         ),
