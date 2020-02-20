@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/warning.dart';
 
 class NotificationHistory extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -87,7 +88,7 @@ class _NotificationHistoryState extends State<NotificationHistory> {
                               if (docs?.documents?.length == null ||
                                   docs?.documents?.length == 0) {
                               } else {
-                                warnDialog(
+                                Dg().warnDialog(context,
                                     'คุณต้องการลบการแจ้งเตือนทั้งหมดนี้ใช่หรือไม่',
                                     () async {
                                   Navigator.pop(context);
@@ -178,26 +179,7 @@ class _NotificationHistoryState extends State<NotificationHistory> {
     );
   }
 
-  warnDialog(String warn, Function function) {
-    showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text(warn),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ยกเลิก')),
-              FlatButton(onPressed: function, child: Text('ok'))
-            ],
-          );
-        });
-  }
+  
 
   Widget guide(Size a, String text) {
     return Container(
@@ -288,7 +270,7 @@ class _NotificationHistoryState extends State<NotificationHistory> {
               color: Color(0xffA3A3A3),
               iconSize: 30.0,
               onPressed: () {
-                warnDialog(
+                Dg().warnDialog(context,
                   'คุณต้องการลบการแจ้งเตือนนี้ใช่หรือไม่',
                   () async {
                     Navigator.pop(context);

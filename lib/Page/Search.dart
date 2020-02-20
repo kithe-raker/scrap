@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/guide.dart';
+import 'package:scrap/widget/warning.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -172,8 +174,6 @@ class _SearchState extends State<Search> {
     );
   }
 
-  
-
   Widget userCard(Size a, DocumentSnapshot doc) {
     return StreamBuilder(
         stream: Firestore.instance
@@ -275,7 +275,8 @@ class _SearchState extends State<Search> {
                                     self: widget.doc,
                                   ),
                                 ))
-                            : warnDialog(doc.data['id'], doc.data['uid']);
+                            : Dg().warnDialog(
+                                context, doc.data['id'], doc.data['uid']);
                       },
                     ),
                   )
@@ -284,46 +285,6 @@ class _SearchState extends State<Search> {
             return SizedBox();
           }
         });
-  }
-
-  warnDialog(String user, String thrownID) {
-    showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text('คุณต้องการปาใส่' + user + 'ใช่หรือไม่'),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ยกเลิก')),
-              FlatButton(
-                child: Text('ok'),
-                onPressed: () async {
-                  toast('ปาใส่"$user"แล้ว');
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  await throwTo(widget.data, thrownID);
-                },
-              )
-            ],
-          );
-        });
-  }
-
-  toast(String text) {
-    return Fluttertoast.showToast(
-        msg: text,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIos: 1,
-        backgroundColor: Colors.white60,
-        textColor: Colors.black,
-        fontSize: 16.0);
   }
 
   throwTo(Map data, String thrownID) async {
