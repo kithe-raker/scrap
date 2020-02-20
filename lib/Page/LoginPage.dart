@@ -5,12 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/LoginID.dart';
-import 'package:scrap/Page/MainPage.dart';
-import 'package:scrap/Page/OTPScreen.dart';
+
 import 'package:scrap/Page/signup/SignUpMail.dart';
-import 'package:scrap/function/toDatabase/phoneAuthen.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+
+import 'package:scrap/widget/warning.dart';
+import 'Auth.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -42,20 +43,21 @@ class _LoginPageState extends State<LoginPage> {
       });
       switch (e.toString()) {
         case 'PlatformException(ERROR_INVALID_EMAIL, The email address is badly formatted., null)':
-          warning(context, 'กรุณาตรวจสอบ"อีเมล"ของท่าน');
+         
+          Dg().warning(context, 'กรุณาตรวจสอบ"อีเมล"ของท่าน',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
           break;
         case 'PlatformException(ERROR_USER_NOT_FOUND, There is no user record corresponding to this identifier. The user may have been deleted., null)':
-          warning(context, 'ไม่พบบัญชีผู้ใช้กรุณาตรวจสอบใหม่');
+           Dg().warning(context, 'ไม่พบบัญชีผู้ใช้กรุณาตรวจสอบใหม่',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
           break;
         case 'PlatformException(ERROR_WRONG_PASSWORD, The password is invalid or the user does not have a password., null)':
-          warning(context, 'กรุณาตรวจสอบรหัสผ่านของท่าน');
+           Dg().warning(context, 'กรุณาตรวจสอบรหัสผ่านของท่าน',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
           break;
         case "'package:firebase_auth/src/firebase_auth.dart': Failed assertion: line 224 pos 12: 'email != null': is not true.":
-          warning(context, 'กรุณากรอกอีเมลและรหัสผ่าน');
+           Dg().warning(context, 'กรุณากรอกอีเมลและรหัสผ่าน',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
           break;
         default:
-          warning(context,
-              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อต่ออินเทอร์เน็ต');
+           Dg().warning(context,
+              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อต่ออินเทอร์เน็ต',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
           break;
       }
       print(e.toString());
@@ -207,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                                               val.contains(
                                                   '.com', val.length - 4)
                                           ? null
-                                          : Taoast().toast("format pls'");
+                                          : Taoast().toast("โปรดเขียนอีเมลให้ถูกต้อง");
                                 },
                                 onSaved: (val) {
                                   _email = val.trim();
@@ -271,7 +273,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 validator: (val) {
                                   return val.trim() == ""
-                                      ? Taoast().toast("กรุณากรอกข้อมูลให้ครบ")
+                                      ? Taoast().toast("กรุณากรอกรหัสผ่าน")
                                       : val.trim().length < 6
                                           ? Taoast().toast(
                                               "รหัสต้องมีอย่างน้อย 6 ตัว")
@@ -393,351 +395,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  warning(BuildContext context, String sub) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: ListTile(
-          title: Text(
-            "ขออภัยการเข้าสู่ระบบผิดพลาด",
-            style: TextStyle(fontSize: 20),
-          ),
-          subtitle: Text(
-            sub,
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'ตกลง',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+
 }
 
-class LoginPhone extends StatefulWidget {
-  @override
-  _LoginPhoneState createState() => _LoginPhoneState();
-}
-
-class _LoginPhoneState extends State<LoginPhone> {
-  String phone;
-  bool loading = false;
-  PhoneLogin phoneLogin;
-  var _key = GlobalKey<FormState>();
-
-  Future<void> phoneVerified() async {
-    final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
-      print(id);
-    };
-    final PhoneCodeSent smsCode = (String id, [int resendCode]) {
-      setState(() {
-        loading = false;
-      });
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OTPScreen(verifiedID: id, phone: phone)));
-    };
-    final PhoneVerificationCompleted success = (AuthCredential credent) async {
-      await phoneLogin.login(credent);
-      setState(() {
-        loading = false;
-      });
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Authen()));
-    };
-    PhoneVerificationFailed failed = (AuthException error) {
-      warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ กรุณาลองอีกครั้ง');
-    };
-    await FirebaseAuth.instance
-        .verifyPhoneNumber(
-            phoneNumber: '+66' + phone,
-            timeout: Duration(seconds: 120),
-            verificationCompleted: success,
-            verificationFailed: failed,
-            codeSent: smsCode,
-            codeAutoRetrievalTimeout: autoRetrieval)
-        .catchError((e) {
-      setState(() {
-        loading = false;
-      });
-      print(e.toString());
-    });
-  }
-
-  Future<bool> hasAccount(String phone) async {
-    final QuerySnapshot phones = await Firestore.instance
-        .collection('Users')
-        .where('phone', isEqualTo: phone)
-        .limit(1)
-        .getDocuments();
-    final List<DocumentSnapshot> doc = phones.documents;
-    return doc.length == 1;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Size a = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: <Widget>[
-          ListView(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(a.width / 20),
-                child: Container(
-                  width: a.width,
-                  alignment: Alignment.topLeft,
-                  child: Form(
-                      key: _key,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            width: a.width / 7,
-                            height: a.width / 10,
-                            child: InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
-                                    color: Colors.white),
-                                child: Icon(Icons.arrow_back,
-                                    color: Colors.black, size: a.width / 15),
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                          Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  "ยืนยันตัวตน",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: a.width / 8),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: a.width / 20, bottom: a.width / 20),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          borderRadius: BorderRadius.only(
-                                              topLeft:
-                                                  const Radius.circular(40.0),
-                                              bottomLeft:
-                                                  const Radius.circular(40.0)),
-                                          border: Border(
-                                            top: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                            left: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                            right: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                            bottom: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                        width: a.width / 4,
-                                        height: a.width / 6.3,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              '+66',
-                                              style: TextStyle(
-                                                fontSize: a.width / 13,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            SizedBox(width: 6),
-                                            Container(
-                                              child: Image.asset(
-                                                'assets/thai-flag-round.png',
-                                                width: a.width / 18,
-                                                height: a.width / 18,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Container(
-                                        width: a.width / 1.7,
-                                        height: a.width / 6.3,
-                                        padding: EdgeInsets.only(left: 15),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          borderRadius: BorderRadius.only(
-                                              topRight:
-                                                  const Radius.circular(40.0),
-                                              bottomRight:
-                                                  const Radius.circular(40.0)),
-                                          border: Border(
-                                            top: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                            left: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                            right: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                            bottom: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                        child: TextFormField(
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: a.width / 14,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                          keyboardType: TextInputType.phone,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            hintText: 'เบอร์โทรศัพท์',
-                                            hintStyle: TextStyle(
-                                                color: Colors.grey[500]),
-                                          ),
-                                          validator: (val) {
-                                            return val.trim() == ""
-                                                ? Taoast().toast("put phone")
-                                                : val.trim().length > 10
-                                                    ? Taoast()
-                                                        .toast("check 10 หลัก")
-                                                    : null;
-                                          },
-                                          onSaved: (val) {
-                                            phone = val.trim();
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  "เราจะส่งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: a.width / 18),
-                                ),
-                                SizedBox(
-                                  height: a.width / 7,
-                                ),
-                                InkWell(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(
-                                            a.width / 10)),
-                                    width: a.width / 2.5,
-                                    padding: EdgeInsets.all(10.0),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "ต่อไป",
-                                      style: TextStyle(
-                                          fontSize: a.width / 14,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  onTap: () async {
-                                    if (_key.currentState.validate()) {
-                                      _key.currentState.save();
-                                      setState(() {
-                                        loading = true;
-                                      });
-                                      await hasAccount(phone)
-                                          ? await phoneVerified()
-                                          : warning(context,
-                                              'ไม่พบัญชีที่ใช้เบอร์โทรนี้');
-                                    }
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: a.width,
-                            height: a.width / 10,
-                            alignment: Alignment.center,
-                            color: Colors.black,
-                            child: Text(
-                              'เข้าสู่ระบบ',
-                              style: TextStyle(
-                                  fontSize: a.width / 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[500]),
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-              ),
-            ],
-          ),
-          loading ? Loading() : SizedBox()
-        ],
-      ),
-    );
-  }
-
-  warning(BuildContext context, String sub) {
-    setState(() {
-      loading = false;
-    });
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: ListTile(
-          title: Text(
-            "เกิดผิดพลาด",
-            style: TextStyle(fontSize: 20),
-          ),
-          subtitle: Text(
-            sub,
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'ตกลง',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}

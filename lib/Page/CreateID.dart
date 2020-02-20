@@ -110,11 +110,11 @@ class _CreateIDState extends State<CreateID> {
                           ),
                           validator: (val) {
                             return val.trim() == ""
-                                ? Taoast().toast("put @")
+                                ? Taoast().toast("กรุณากรอก @")
                                 : val.contains('@') &&
                                         val.contains('.com', val.length - 4)
                                     ? null
-                                    : Taoast().toast("put .com");
+                                    : Taoast().toast("กรุณากรอก .com");
                           },
                           onSaved: (val) {
                             _email = val.trim();
@@ -133,7 +133,7 @@ class _CreateIDState extends State<CreateID> {
                           ),
                           validator: (val) {
                             return val.trim() == ""
-                                ? Taoast().toast("put pass")
+                                ? Taoast().toast("กรุณากรอกรหัสผ่าน")
                                 : val.length < 6
                                     ? Taoast().toast("6 ตัวขึ้นไป")
                                     : null;
@@ -156,7 +156,7 @@ class _CreateIDState extends State<CreateID> {
                           validator: (val) {
                             return val.trim() == ""
                                 ? Taoast().toast("")
-                                : _pass != val ? Taoast().toast("put pls") : null;
+                                : _pass != val ? Taoast().toast("กรุณากรอก") : null;
                           },
                           onSaved: (val) {
                             _password = val.trim();
@@ -198,7 +198,7 @@ class _CreateIDState extends State<CreateID> {
                                 ),
                                 validator: (val) {
                                   return val.trim() == ""
-                                      ? Taoast().toast("put phone number")
+                                      ? Taoast().toast("กรุณาใส่เบอร์โทรศัพท์")
                                       : val.trim().length > 10
                                           ? Taoast().toast("check pls")
                                           : null;

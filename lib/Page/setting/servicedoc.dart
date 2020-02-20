@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/services/provider.dart';
+import 'package:scrap/widget/Arrow_back.dart';
 import 'package:scrap/widget/Loading.dart';
 
 class Servicedoc extends StatefulWidget {
@@ -26,15 +27,7 @@ class _ServicedocState extends State<Servicedoc> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  InkWell(
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+                  ArrowBack(),
                   Text(
                     "ข้อกำหนดการใช้บริการ",
                     style:

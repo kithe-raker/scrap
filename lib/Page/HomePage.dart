@@ -701,7 +701,7 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          toast('คุรได้ทิ้งกระดาษไว้แล้ว');
+                                          toast('คุณได้ทิ้งกระดาษไว้แล้ว');
                                           Navigator.pop(context);
                                           await binScrap(time);
                                         } else {

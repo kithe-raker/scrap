@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/guide.dart';
+import 'package:scrap/widget/warning.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -435,7 +438,8 @@ class _SearchState extends State<Search> {
                                     self: widget.doc,
                                   ),
                                 ))
-                            : warnDialog(doc.data['id'], doc.data['uid']);
+                            : Dg().warnDialog(
+                                context, doc.data['id'], doc.data['uid']);
                       },
                     ),
                   )

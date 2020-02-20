@@ -4,8 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/widget/Loading.dart';
+
+import '../Auth.dart';
 
 class CreateProfile2 extends StatefulWidget {
   final String uid;
