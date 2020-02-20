@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
-import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/guide.dart';
-import 'package:scrap/widget/warning.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -216,8 +213,11 @@ class _SearchState extends State<Search> {
                                           )
                                         : Column(
                                             children: docs
-                                                .map((data) =>
-                                                    userCard(a, data, false))
+                                                .map((data) => cardStream(
+                                                      a,
+                                                      false,
+                                                      doc: data,
+                                                    ))
                                                 .toList(),
                                           );
                                   } else {
@@ -264,12 +264,13 @@ class _SearchState extends State<Search> {
                                   )
                                 : Column(
                                     children: users
-                                        .map((data) => userCard(
-                                            a,
-                                            users[users.length -
-                                                1 -
-                                                users.indexOf(data)],
-                                            true))
+                                        .map((data) => cardStream(
+                                              a,
+                                              true,
+                                              uid: users[users.length -
+                                                  1 -
+                                                  users.indexOf(data)],
+                                            ))
                                         .toList(),
                                   );
                           } else {
@@ -326,128 +327,147 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget userCard(Size a, DocumentSnapshot doc, bool hist) {
+  Widget cardStream(Size a, bool hist, {DocumentSnapshot doc, String uid}) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Users')
-            .document(doc.data['uid'])
+            .document(uid ?? doc.data['uid'])
             .collection('info')
-            .document(doc.data['uid'])
+            .document(uid ?? doc.data['uid'])
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.active) {
-            return doc.data['id'] != widget.doc['id']
-                ? Padding(
-                    padding:
-                        const EdgeInsets.only(top: 50.0, left: 5.0, right: 5.0),
-                    child: InkWell(
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            height: a.height / 4.5,
-                            width: a.width,
-                            decoration: BoxDecoration(
-                                color: Color(0xff282828),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(16.0),
-                                  topRight: Radius.circular(16.0),
-                                  bottomRight: Radius.circular(16.0),
-                                  bottomLeft: Radius.circular(16.0),
-                                )),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    margin:
-                                        EdgeInsets.only(left: 20, right: 13),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(a.width),
-                                        border: Border.all(
-                                            color: Colors.white,
-                                            width: a.width / 190)),
-                                    width: a.width / 3.3,
-                                    height: a.width / 3.3,
-                                    child: ClipRRect(
-                                      child: Image.network(
-                                        snapshot.data['img'],
-                                        fit: BoxFit.cover,
-                                      ),
-                                      borderRadius:
-                                          BorderRadius.circular(a.width),
-                                    ),
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        '@${doc.data['id']}',
-                                        style: TextStyle(
-                                            fontSize: a.width / 13,
-                                            color: Colors.white),
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          Text(
-                                            'Join ${snapshot.data['createdDay']}',
-                                            style: TextStyle(
-                                                fontSize: a.width / 11,
-                                                color: Color(0xff26A4FF)),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ]),
-                          ),
-                          Positioned(
-                            right: 10.0,
-                            top: 10.0,
-                            child: hist
-                                ? IconButton(
-                                    icon: Icon(
-                                      Icons.clear,
-                                      color: Color(0xffA3A3A3),
-                                      size: 30.0,
-                                    ),
-                                    onPressed: () {
-                                      warnClear(snapshot.data['id'],
-                                          snapshot.data['uid']);
-                                    })
-                                : Icon(
-                                    Icons.arrow_forward,
-                                    color: Color(0xffA3A3A3),
-                                    size: 30.0,
-                                  ),
-                          )
-                        ],
-                      ),
-                      onTap: () {
-                        widget.data == null
-                            ? Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Viewprofile(
-                                    info: snapshot.data,
-                                    account: doc,
-                                    self: widget.doc,
-                                  ),
-                                ))
-                            : Dg().warnDialog(
-                                context, doc.data['id'], doc.data['uid']);
-                      },
-                    ),
-                  )
-                : SizedBox();
+            return hist
+                ? StreamBuilder(
+                    stream: Firestore.instance
+                        .collection('Users')
+                        .document(uid ?? doc.data['uid'])
+                        .snapshots(),
+                    builder: (context, snap) {
+                      if (snap.hasData &&
+                          snap.connectionState == ConnectionState.active) {
+                        return userCard(
+                            a,
+                            snapshot.data['img'],
+                            uid,
+                            snap.data['id'],
+                            snap.data['uid'],
+                            snapshot.data['createdDay'],
+                            hist);
+                      } else {
+                        return SizedBox();
+                      }
+                    })
+                : doc.data['id'] != widget.doc['id']
+                    ? userCard(a, snapshot.data['img'], uid, doc.data['id'],
+                        doc.data['uid'], snapshot.data['createdDay'], hist)
+                    : SizedBox();
           } else {
             return SizedBox();
           }
         });
+  }
+
+  Widget userCard(Size a, String img, String uid, String throwID, String tID,
+      String created, bool hist,
+      {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 50.0, left: 5.0, right: 5.0),
+      child: InkWell(
+        child: Stack(
+          children: <Widget>[
+            Container(
+              height: a.height / 4.5,
+              width: a.width,
+              decoration: BoxDecoration(
+                  color: Color(0xff282828),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                    bottomRight: Radius.circular(16.0),
+                    bottomLeft: Radius.circular(16.0),
+                  )),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 20, right: 13),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(a.width),
+                          border: Border.all(
+                              color: Colors.white, width: a.width / 190)),
+                      width: a.width / 3.3,
+                      height: a.width / 3.3,
+                      child: ClipRRect(
+                        child: Image.network(
+                          img,
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(a.width),
+                      ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          throwID,
+                          style: TextStyle(
+                              fontSize: a.width / 13, color: Colors.white),
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Join $created',
+                              style: TextStyle(
+                                  fontSize: a.width / 11,
+                                  color: Color(0xff26A4FF)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ]),
+            ),
+            Positioned(
+              right: 10.0,
+              top: 10.0,
+              child: hist
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.clear,
+                        color: Color(0xffA3A3A3),
+                        size: 30.0,
+                      ),
+                      onPressed: () {
+                        warnClear(throwID, tID);
+                      })
+                  : Icon(
+                      Icons.arrow_forward,
+                      color: Color(0xffA3A3A3),
+                      size: 30.0,
+                    ),
+            )
+          ],
+        ),
+        onTap: () {
+          widget.data == null
+              ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Viewprofile(
+                      info: infoDoc,
+                      account: accDoc,
+                      self: widget.doc,
+                    ),
+                  ))
+              : warnDialog(throwID, tID);
+        },
+      ),
+    );
   }
 
   warnDialog(String user, String thrownID) {
@@ -546,7 +566,7 @@ class _SearchState extends State<Search> {
             'text': data['text'],
             'writer':
                 data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-            'time': time
+            'time': '$time $date'
           }
         ])
       }

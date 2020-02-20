@@ -1,11 +1,7 @@
-import 'dart:js';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/services/provider.dart';
 
 class Dg {
-  warning(BuildContext context, String sub,String text) {
+  warning(BuildContext context, String sub, String text) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -34,7 +30,7 @@ class Dg {
     );
   }
 
-  warnDialog(BuildContext context,String warn, Function function) {
+  warnDialog(BuildContext context, String warn, Function function) {
     showDialog(
         context: context,
         builder: (builder) {
@@ -54,8 +50,4 @@ class Dg {
           );
         });
   }
-
-  
 }
-
-

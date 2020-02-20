@@ -505,13 +505,13 @@ class _ViewprofileState extends State<Viewprofile> {
         .collection('scraps')
         .document('recently')
         .setData({
-      'id': FieldValue.arrayUnion([widget.self['id']]),
+      'id': FieldValue.arrayUnion([widget.self['uid']]),
       'scraps': {
         widget.self['uid']: FieldValue.arrayUnion([
           {
             'text': text,
             'writer': public ?? false ? widget.self['id'] : 'ไม่ระบุตัวตน',
-            'time': time
+            'time': '$time $date'
           }
         ])
       }

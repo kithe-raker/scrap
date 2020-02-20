@@ -69,7 +69,8 @@ class _SignUpTelState extends State<SignUpTel> {
           context, MaterialPageRoute(builder: (context) => Authen()));
     };
     PhoneVerificationFailed failed = (AuthException error) {
-       Dg().warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง',"เกิดผิดพลาด");
+      Dg().warning(
+          context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง', "เกิดผิดพลาด");
     };
     await FirebaseAuth.instance
         .verifyPhoneNumber(
@@ -80,7 +81,11 @@ class _SignUpTelState extends State<SignUpTel> {
             codeSent: smsCode,
             codeAutoRetrievalTimeout: autoRetrieval)
         .catchError((e) {
-      Dg().warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง', "เกิดผิดพลาด",);
+      Dg().warning(
+        context,
+        'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง',
+        "เกิดผิดพลาด",
+      );
     });
   }
 
@@ -102,7 +107,11 @@ class _SignUpTelState extends State<SignUpTel> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Authen()));
     } catch (e) {
-      Dg().warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง',"เกิดผิดพลาด");
+      setState(() {
+        loading = false;
+      });
+      Dg().warning(
+          context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง', "เกิดผิดพลาด");
     }
   }
 
@@ -297,11 +306,8 @@ class _SignUpTelState extends State<SignUpTel> {
                                     loading = true;
                                   });
                                   await hasAccount(phone)
-                                      ? Dg().warning(context,
-                                          'ขออภัยค่ะเบอร์โทรนี้ได้มีการลงทะเบียนไว้แล้ว', "เกิดผิดพลาด")
-                                      : await phoneVerified();
-                                } else {
-                                  print('nope');
+                                      ? fail()
+                                      : await signUp();
                                 }
                               },
                             )
@@ -331,5 +337,11 @@ class _SignUpTelState extends State<SignUpTel> {
     );
   }
 
-  
+  fail() {
+    setState(() {
+      loading = false;
+    });
+    Dg().warning(
+        context, 'ขออภัยค่ะเบอร์โทรนี้ได้มีการลงทะเบียนไว้แล้ว', "เกิดผิดพลาด");
+  }
 }
