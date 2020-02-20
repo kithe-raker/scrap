@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:scrap/Page/OTPScreen.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/warning.dart';
 
 class SignUpTel extends StatefulWidget {
   final String email;
@@ -52,7 +53,7 @@ class _SignUpTelState extends State<SignUpTel> {
       // user.linkWithCredential(credent);
     };
     PhoneVerificationFailed failed = (AuthException error) {
-      warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง');
+       Dg().warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง',"เกิดผิดพลาด");
     };
     await FirebaseAuth.instance
         .verifyPhoneNumber(
@@ -63,7 +64,7 @@ class _SignUpTelState extends State<SignUpTel> {
             codeSent: smsCode,
             codeAutoRetrievalTimeout: autoRetrieval)
         .catchError((e) {
-      warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง');
+      Dg().warning(context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง', "เกิดผิดพลาด",);
     });
   }
 
@@ -198,7 +199,7 @@ class _SignUpTelState extends State<SignUpTel> {
                                       ),
                                       validator: (val) {
                                         return val.trim() == ""
-                                            ? Taoast().toast("กรุณากอกข้อมูล")
+                                            ? Taoast().toast("กรุณากรอกข้อมูล")
                                             : val.trim().length != 10
                                                 ? Taoast().toast(
                                                     "กรุณากรอกข้อมูลให้ครบ 10 หลัก")
@@ -245,8 +246,8 @@ class _SignUpTelState extends State<SignUpTel> {
                                     loading = true;
                                   });
                                   await hasAccount(phone)
-                                      ? warning(context,
-                                          'ขออภัยค่ะเบอร์โทรนี้ได้มีการลงทะเบียนไว้แล้ว')
+                                      ? Dg().warning(context,
+                                          'ขออภัยค่ะเบอร์โทรนี้ได้มีการลงทะเบียนไว้แล้ว', "เกิดผิดพลาด")
                                       : await phoneVerified();
                                 } else {
                                   print('nope');
@@ -279,35 +280,5 @@ class _SignUpTelState extends State<SignUpTel> {
     );
   }
 
-  warning(BuildContext context, String sub) {
-    setState(() {
-      loading = false;
-    });
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: ListTile(
-          title: Text(
-            "เกิดข้อผิดพลาด",
-            style: TextStyle(fontSize: 20),
-          ),
-          subtitle: Text(
-            sub,
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'ตกลง',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  
 }

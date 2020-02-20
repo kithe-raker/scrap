@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/warning.dart';
 
 class OTPScreen extends StatefulWidget {
   final String verifiedID;
@@ -42,7 +43,7 @@ class _OTPScreenState extends State<OTPScreen> {
     };
     PhoneVerificationFailed failed = (AuthException error) {
       print(error.message);
-      warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองใหม่');
+      Dg().warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองใหม่', "เกิดข้อผิดพลาด");
     };
     await FirebaseAuth.instance
         .verifyPhoneNumber(
@@ -53,7 +54,7 @@ class _OTPScreenState extends State<OTPScreen> {
             codeSent: smsCode,
             codeAutoRetrievalTimeout: autoRetrieval)
         .catchError((e) {
-      warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองใหม่');
+      Dg().warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองใหม่', "เกิดข้อผิดพลาด");
       print(e.toString());
     });
   }
@@ -78,11 +79,11 @@ class _OTPScreenState extends State<OTPScreen> {
     }).catchError((e) {
       switch (e.toString()) {
         case 'PlatformException(ERROR_INVALID_VERIFICATION_CODE, The SMS verification code used to create the phone auth credential is invalid. Please resend the verification code SMS and be sure to use the verification code provided by the user., null)':
-          warning(context, 'กรุณาเช็ครหัสOTPของท่าน');
+          Dg().warning(context, 'กรุณาเช็ครหัสOTPของท่าน', "เกิดข้อผิดพลาด");
           break;
         default:
-          warning(context,
-              'เกิดข้อผิดพลาด OTP อาจหมดเวลาและกรุณาเช็คการเชื่อต่อของคุณ');
+         Dg().warning(context,
+              'เกิดข้อผิดพลาด OTP อาจหมดเวลาและกรุณาเช็คการเชื่อต่อของคุณ', "เกิดข้อผิดพลาด");
           break;
       }
       print(e.toString());
@@ -101,11 +102,11 @@ class _OTPScreenState extends State<OTPScreen> {
     }).catchError((e) {
       switch (e.toString()) {
         case 'PlatformException(ERROR_INVALID_VERIFICATION_CODE, The SMS verification code used to create the phone auth credential is invalid. Please resend the verification code SMS and be sure to use the verification code provided by the user., null)':
-          warning(context, 'กรุณาเช็ครหัสOTPของท่าน');
+          Dg().warning(context, 'กรุณาเช็ครหัสOTPของท่าน', "เกิดข้อผิดพลาด");
           break;
         default:
-          warning(context,
-              'เกิดข้อผิดพลาด OTP อาจหมดเวลาและกรุณาเช็คการเชื่อต่อของคุณ');
+          Dg().warning(context,
+              'เกิดข้อผิดพลาด OTP อาจหมดเวลาและกรุณาเช็คการเชื่อต่อของคุณ', "เกิดข้อผิดพลาด");
           break;
       }
     });
@@ -129,11 +130,11 @@ class _OTPScreenState extends State<OTPScreen> {
     }).catchError((e) {
       switch (e.toString()) {
         case 'PlatformException(ERROR_INVALID_VERIFICATION_CODE, The SMS verification code used to create the phone auth credential is invalid. Please resend the verification code SMS and be sure to use the verification code provided by the user., null)':
-          warning(context, 'กรุณาเช็ครหัสOTPของท่าน');
+          Dg().warning(context, 'กรุณาเช็ครหัสOTPของท่าน', "เกิดข้อผิดพลาด");
           break;
         default:
-          warning(context,
-              'เกิดข้อผิดพลาด OTP อาจหมดเวลาและกรุณาเช็คการเชื่อต่อของคุณ');
+          Dg().warning(context,
+              'เกิดข้อผิดพลาด OTP อาจหมดเวลาและกรุณาเช็คการเชื่อต่อของคุณ', "เกิดข้อผิดพลาด");
           break;
       }
     });
@@ -369,35 +370,5 @@ class _OTPScreenState extends State<OTPScreen> {
     );
   }
 
-  warning(BuildContext context, String sub) {
-    setState(() {
-      loading = false;
-    });
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: ListTile(
-          title: Text(
-            "เกิดข้อผิดพลาด",
-            style: TextStyle(fontSize: 20),
-          ),
-          subtitle: Text(
-            sub,
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'ตกลง',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  
 }

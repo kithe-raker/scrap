@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scrap/Page/signup/SignUpTel.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/warning.dart';
 
 class SignUpMail extends StatefulWidget {
   SignUpMail({Key key}) : super(key: key);
@@ -161,12 +162,12 @@ class _SignUpMailState extends State<SignUpMail> {
                                     ),
                                     validator: (val) {
                                       return val.trim() == ""
-                                          ? Taoast().toast("put Address")
+                                          ? Taoast().toast("กรุณากรอกรหัสผ่าน")
                                           : val.contains('@') &&
                                                   val.contains(
                                                       '.com', val.length - 4)
                                               ? null
-                                              : Taoast().toast("format pls'");
+                                              : Taoast().toast("โปรดเขียนอีเมลให้ถูกต้อง");
                                     },
                                     onSaved: (val) {
                                       _email = val.trim();
@@ -232,7 +233,7 @@ class _SignUpMailState extends State<SignUpMail> {
                                     validator: (val) {
                                       return val.trim() == ""
                                           ? Taoast()
-                                              .toast("กรุณากรอกข้อมูลให้ครบ")
+                                              .toast("กรุณากรอกรหัสผ่าน")
                                           : val.trim().length < 6
                                               ? Taoast().toast(
                                                   "รหัสต้องมีอย่างน้อย 6 ตัว")
@@ -268,8 +269,8 @@ class _SignUpMailState extends State<SignUpMail> {
                                         });
                                         await uniqueEmail(_email)
                                             ? continueSignUp()
-                                            : warning(context,
-                                                'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว');
+                                            : Dg().warning(context,
+                                                'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว', "เกิดผิดพลาด");
                                       } else {
                                         print('nope');
                                       }
@@ -289,35 +290,5 @@ class _SignUpMailState extends State<SignUpMail> {
         ]));
   }
 
-  warning(BuildContext context, String sub) {
-    setState(() {
-      loading = false;
-    });
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: ListTile(
-          title: Text(
-            "เกิดข้อผิดพลาด",
-            style: TextStyle(fontSize: 20),
-          ),
-          subtitle: Text(
-            sub,
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'ตกลง',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  
 }

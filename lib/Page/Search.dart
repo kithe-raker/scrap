@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/widget/guide.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -171,30 +172,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget guide(Size a, String text) {
-    return Container(
-      height: a.height / 2.4,
-      width: a.width,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/paper.png',
-            color: Colors.white60,
-            height: a.height / 10,
-          ),
-          Text(
-            text,
-            style: TextStyle(
-                fontSize: a.width / 16,
-                color: Colors.white60,
-                fontWeight: FontWeight.w300),
-          ),
-        ],
-      ),
-    );
-  }
+  
 
   Widget userCard(Size a, DocumentSnapshot doc) {
     return StreamBuilder(

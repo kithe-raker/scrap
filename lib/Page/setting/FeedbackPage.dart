@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/warning.dart';
 
 class FeedbackPage extends StatefulWidget {
   @override
@@ -48,7 +49,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       });
       Navigator.pop(context);
     } catch (e) {
-      warning(context, 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+      Dg().warning(context, 'เกิดข้อผิดพลาด กรุณาลองใหม่', "เกิดผิดพลาด");
     }
   }
 
@@ -350,37 +351,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     );
   }
 
-  warning(BuildContext context, String sub) {
-    setState(() {
-      loading = false;
-    });
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: ListTile(
-          title: Text(
-            "เกิดข้อผิดพลาด",
-            style: TextStyle(fontSize: 20),
-          ),
-          subtitle: Text(
-            sub,
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'ตกลง',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+ 
 
   selectImg(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
