@@ -354,14 +354,18 @@ class _SearchState extends State<Search> {
                             snap.data['id'],
                             snap.data['uid'],
                             snapshot.data['createdDay'],
-                            hist);
+                            hist,
+                            accDoc: snap.data,
+                            infoDoc: snapshot.data
+                            );
                       } else {
                         return SizedBox();
                       }
                     })
                 : doc.data['id'] != widget.doc['id']
                     ? userCard(a, snapshot.data['img'], uid, doc.data['id'],
-                        doc.data['uid'], snapshot.data['createdDay'], hist)
+                        doc.data['uid'], snapshot.data['createdDay'], hist, accDoc: doc,
+                            infoDoc: snapshot.data)
                     : SizedBox();
           } else {
             return SizedBox();
