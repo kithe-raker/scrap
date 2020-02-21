@@ -70,5 +70,9 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>FirebaseScreenReportingEnabled</key>
+	<true/>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
 </dict>
 </plist>
