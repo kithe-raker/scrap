@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/warning.dart';
 
 import 'ChangePhone.dart';
 
@@ -116,10 +117,7 @@ class _EditProfileState extends State<EditProfile> {
       Navigator.pop(context);
       Navigator.pop(context);
     } catch (e) {
-      setState(() {
-        loading = false;
-      });
-      warning(context, 'เกิดข้อผิดพลาด,กรุณาลองใหม่');
+      Dg().warning1(context, 'เกิดข้อผิดพลาด,กรุณาลองใหม่');
     }
   }
 
@@ -224,7 +222,7 @@ class _EditProfileState extends State<EditProfile> {
                                     InkWell(
                                       child: Container(
                                         margin: EdgeInsets.only(
-                                            left: 20, right: 13),
+                                            left: a.width/20, right:  a.width/33),
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
@@ -274,7 +272,7 @@ class _EditProfileState extends State<EditProfile> {
                               child: IconButton(
                                 icon: Icon(Icons.create),
                                 color: Color(0xff5F5F5F),
-                                iconSize: 30.0,
+                                iconSize: a.width/13,
                                 onPressed: () {
                                   read = false;
                                   setState(() {});
@@ -364,7 +362,7 @@ class _EditProfileState extends State<EditProfile> {
                               child: IconButton(
                                 icon: Icon(Icons.create),
                                 color: Color(0xff5F5F5F),
-                                iconSize: 30.0,
+                                iconSize: a.width/13,
                                 onPressed: () {
                                   readMail = false;
                                   setState(() {});
@@ -427,7 +425,7 @@ class _EditProfileState extends State<EditProfile> {
                                             builder: (context) =>
                                                 ChangePhone()));
                                   } else {
-                                    warning(context,
+                                    Dg().warning1(context,
                                         'ข้อมูลที่ท่านกรอกไว้จะหายไปทั้งหมด');
                                   }
                                 },
@@ -437,16 +435,7 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ),
 
-                      /* Form(
-                            //id section
-                            key: _key,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                inputBox(a, 'ชื่อของคุณ', widget.doc['id']),
-                              ],
-                            ),
-                          ), //id section */
+                  
                     ],
                   ),
                 ),
@@ -459,46 +448,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  warning(BuildContext context, String sub) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: ListTile(
-          title: Text(
-            "คุณต้องการออกจากหน้านี้ใช่หรือไม่",
-            style: TextStyle(fontSize: 20),
-          ),
-          subtitle: Text(
-            sub,
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'ยกเลิก',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          FlatButton(
-            child: Text(
-              'ตกลง',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pop(context);
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ChangePhone()));
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  
 
   Widget inputID(Size a, String value) {
     var tx = TextEditingController();

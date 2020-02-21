@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/warning.dart';
 
 import '../Auth.dart';
 
@@ -101,7 +102,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
       setState(() {
         loading = false;
       });
-      warnDate('เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองอีกครั้ง');
+      Dg().warnDate(context,'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองอีกครั้ง');
     }
   }
 
@@ -312,8 +313,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                   await creatProfile();
                                 } else {
                                   bDay == created
-                                      ? warnDate('อย่าลืมเลือกวันเกิดของคุณ')
-                                      : warnDate('อย่าลืมเลือกเพศของคุณ');
+                                      ? Dg().warnDate(context,'อย่าลืมเลือกวันเกิดของคุณ')
+                                      : Dg().warnDate(context,'อย่าลืมเลือกเพศของคุณ');
                                 }
                               },
                               color: Color(0xff26A4FF),
@@ -340,23 +341,5 @@ class _CreateProfile2State extends State<CreateProfile2> {
     );
   }
 
-  warnDate(String warn) {
-    return showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text(warn),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ok'))
-            ],
-          );
-        });
-  }
+ 
 }

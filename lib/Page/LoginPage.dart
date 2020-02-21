@@ -221,7 +221,8 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 validator: (val) {
                                   return val.trim() == ""
-                                      ? Taoast().toast("ใส่อีเมลของท่าน")
+                                      ? Taoast()
+                                          .toast("โปรดใส่อีเมลและรหัสผ่าน")
                                       : val.contains('@') &&
                                               val.contains(
                                                   '.com', val.length - 4)

@@ -181,13 +181,7 @@ class _SignUpMailState extends State<SignUpMail> {
                                       top: a.width / 20,
                                       left: a.width / 20,
                                       bottom: a.width / 80),
-                                  child:
-                                      /*Text(
-                                  "Password",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: a.width / 20 , fontWeight: FontWeight.w600),
-                                )*/
-                                      Row(
+                                  child: Row(
                                     children: <Widget>[
                                       Icon(
                                         Icons.lock,

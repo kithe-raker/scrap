@@ -356,16 +356,15 @@ class _SearchState extends State<Search> {
                             snapshot.data['createdDay'],
                             hist,
                             accDoc: snap.data,
-                            infoDoc: snapshot.data
-                            );
+                            infoDoc: snapshot.data);
                       } else {
                         return SizedBox();
                       }
                     })
                 : doc.data['id'] != widget.doc['id']
                     ? userCard(a, snapshot.data['img'], uid, doc.data['id'],
-                        doc.data['uid'], snapshot.data['createdDay'], hist, accDoc: doc,
-                            infoDoc: snapshot.data)
+                        doc.data['uid'], snapshot.data['createdDay'], hist,
+                        accDoc: doc, infoDoc: snapshot.data)
                     : SizedBox();
           } else {
             return SizedBox();

@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -443,7 +442,7 @@ class _ViewprofileState extends State<Viewprofile> {
                                           _key.currentState.save();
                                           Navigator.pop(context);
                                           Navigator.pop(context);
-                                          toast(
+                                          Taoast().toast(
                                               'ปาใส่"${widget.account['id']}"แล้ว');
                                           throwTo(widget.account['uid']);
                                         } else {
@@ -466,17 +465,6 @@ class _ViewprofileState extends State<Viewprofile> {
           });
         },
         fullscreenDialog: true));
-  }
-
-  toast(String text) {
-    return Fluttertoast.showToast(
-        msg: text,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIos: 1,
-        backgroundColor: Colors.white60,
-        textColor: Colors.black,
-        fontSize: 16.0);
   }
 
   increaseTransaction(String uid, String key) async {
