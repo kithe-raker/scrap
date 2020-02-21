@@ -1,10 +1,8 @@
+  
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
-import 'package:scrap/widget/guide.dart';
-import 'package:scrap/widget/warning.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -143,22 +141,9 @@ class _SearchState extends State<Search> {
                                       );
                               } else {
                                 return Container(
-                                  height: a.height / 2.1,
-                                  width: a.width,
+                                  height: a.height / 2.4,
                                   child: Center(
-                                    child: Container(
-                                      width: a.width / 3.6,
-                                      height: a.width / 3.6,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.42),
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                      child: FlareActor(
-                                        'assets/paper_loading.flr',
-                                        animation: 'Untitled',
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
+                                    child: CircularProgressIndicator(),
                                   ),
                                 );
                               }
@@ -169,6 +154,31 @@ class _SearchState extends State<Search> {
           ),
         ),
       ]),
+    );
+  }
+
+  Widget guide(Size a, String text) {
+    return Container(
+      height: a.height / 2.4,
+      width: a.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            'assets/paper.png',
+            color: Colors.white60,
+            height: a.height / 10,
+          ),
+          Text(
+            text,
+            style: TextStyle(
+                fontSize: a.width / 16,
+                color: Colors.white60,
+                fontWeight: FontWeight.w300),
+          ),
+        ],
+      ),
     );
   }
 
@@ -270,18 +280,44 @@ class _SearchState extends State<Search> {
                                   builder: (context) => Viewprofile(
                                     info: snapshot.data,
                                     account: doc,
-                                    self: widget.doc,
                                   ),
                                 ))
-                            : Dg().warnDialog(
-                                context, doc.data['id'], doc.data['uid']);
+                            : warnDialog(doc.data['id'], doc.data['uid']);
                       },
                     ),
                   )
                 : SizedBox();
           } else {
-            return SizedBox();
+            return Text('loading');
           }
+        });
+  }
+
+  warnDialog(String user, String thrownID) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text('คุณต้องการปาใส่' + user + 'ใช่หรือไม่'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('ยกเลิก')),
+              FlatButton(
+                child: Text('ok'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  await throwTo(widget.data, thrownID);
+                },
+              )
+            ],
+          );
         });
   }
 
@@ -300,8 +336,9 @@ class _SearchState extends State<Search> {
         widget.doc['uid']: FieldValue.arrayUnion([
           {
             'text': data['text'],
-            'writer':
-                data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+            'writer': data['public'] ?? false
+                ? widget.doc['id']
+                : 'ไม่ระบุตัวตน',
             'time': time
           }
         ])
