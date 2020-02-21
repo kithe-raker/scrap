@@ -220,7 +220,7 @@ class _EditProfileState extends State<EditProfile> {
                                     InkWell(
                                       child: Container(
                                         margin: EdgeInsets.only(
-                                            left: 20, right: 13),
+                                            left: a.width/20, right:  a.width/33),
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
@@ -270,7 +270,7 @@ class _EditProfileState extends State<EditProfile> {
                               child: IconButton(
                                 icon: Icon(Icons.create),
                                 color: Color(0xff5F5F5F),
-                                iconSize: 30.0,
+                                iconSize: a.width/13,
                                 onPressed: () {
                                   read = false;
                                   setState(() {});
@@ -360,7 +360,7 @@ class _EditProfileState extends State<EditProfile> {
                               child: IconButton(
                                 icon: Icon(Icons.create),
                                 color: Color(0xff5F5F5F),
-                                iconSize: 30.0,
+                                iconSize: a.width/13,
                                 onPressed: () {
                                   readMail = false;
                                   setState(() {});
