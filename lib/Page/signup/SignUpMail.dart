@@ -167,7 +167,8 @@ class _SignUpMailState extends State<SignUpMail> {
                                                   val.contains(
                                                       '.com', val.length - 4)
                                               ? null
-                                              : Taoast().toast("โปรดเขียนอีเมลให้ถูกต้อง");
+                                              : Taoast().toast(
+                                                  "โปรดเขียนอีเมลให้ถูกต้อง");
                                     },
                                     onSaved: (val) {
                                       _email = val.trim();
@@ -180,13 +181,7 @@ class _SignUpMailState extends State<SignUpMail> {
                                       top: a.width / 20,
                                       left: a.width / 20,
                                       bottom: a.width / 80),
-                                  child:
-                                      /*Text(
-                                  "Password",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: a.width / 20 , fontWeight: FontWeight.w600),
-                                )*/
-                                      Row(
+                                  child: Row(
                                     children: <Widget>[
                                       Icon(
                                         Icons.lock,
@@ -232,8 +227,7 @@ class _SignUpMailState extends State<SignUpMail> {
                                     ),
                                     validator: (val) {
                                       return val.trim() == ""
-                                          ? Taoast()
-                                              .toast("กรุณากรอกรหัสผ่าน")
+                                          ? Taoast().toast("กรุณากรอกรหัสผ่าน")
                                           : val.trim().length < 6
                                               ? Taoast().toast(
                                                   "รหัสต้องมีอย่างน้อย 6 ตัว")
@@ -269,8 +263,10 @@ class _SignUpMailState extends State<SignUpMail> {
                                         });
                                         await uniqueEmail(_email)
                                             ? continueSignUp()
-                                            : Dg().warning(context,
-                                                'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว', "เกิดผิดพลาด");
+                                            : Dg().warning(
+                                                context,
+                                                'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว',
+                                                "เกิดผิดพลาด");
                                       } else {
                                         print('nope');
                                       }
@@ -289,6 +285,4 @@ class _SignUpMailState extends State<SignUpMail> {
           loading ? Loading() : SizedBox()
         ]));
   }
-
-  
 }

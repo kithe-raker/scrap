@@ -36,7 +36,11 @@ class _LoginPhoneState extends State<LoginPhone> {
       // user.linkWithCredential(credent);
     };
     PhoneVerificationFailed failed = (AuthException error) {
-      Dg().warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ กรุณาลองอีกครั้ง', "เกิดผิดพลาด",);
+      Dg().warning(
+        context,
+        'เกิดข้อผิดพลาดไม่ทราบสาเหตุ กรุณาลองอีกครั้ง',
+        "เกิดผิดพลาด",
+      );
     };
     await FirebaseAuth.instance
         .verifyPhoneNumber(
@@ -77,7 +81,6 @@ class _LoginPhoneState extends State<LoginPhone> {
                 padding: EdgeInsets.all(a.width / 20),
                 child: Container(
                   width: a.width,
-                  
                   alignment: Alignment.topLeft,
                   child: Form(
                       key: _key,
@@ -209,10 +212,11 @@ class _LoginPhoneState extends State<LoginPhone> {
                                           ),
                                           validator: (val) {
                                             return val.trim() == ""
-                                                ? Taoast().toast("กรุณาใส่เบอร์โทรศัพท์")
+                                                ? Taoast().toast(
+                                                    "กรุณาใส่เบอร์โทรศัพท์")
                                                 : val.trim().length > 10
-                                                    ? Taoast()
-                                                        .toast("ตรวจสอบเลข 10 หลัก")
+                                                    ? Taoast().toast(
+                                                        "ตรวจสอบเลข 10 หลัก")
                                                     : null;
                                           },
                                           onSaved: (val) {
@@ -257,8 +261,11 @@ class _LoginPhoneState extends State<LoginPhone> {
                                       });
                                       await hasAccount(phone)
                                           ? await phoneVerified()
-                                          : Dg().warning(context,
-                                              'ไม่พบัญชีที่ใช้เบอร์โทรนี้' ,"เกิดผิดพลาด",);
+                                          : Dg().warning(
+                                              context,
+                                              'ไม่พบัญชีที่ใช้เบอร์โทรนี้',
+                                              "เกิดผิดพลาด",
+                                            );
                                     }
                                   },
                                 )
@@ -289,6 +296,4 @@ class _LoginPhoneState extends State<LoginPhone> {
       ),
     );
   }
-
-  
 }

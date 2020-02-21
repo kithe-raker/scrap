@@ -176,29 +176,3 @@ class _PatternScrapState extends State<PatternScrap> {
         });
   }
 }
-
-/*
- List<String> hashList = [];
-   snapshot.data['hashTag'].forEach((dat) => hashList.add(dat.toString()));
-  DocumentSnapshot hash = snapshot.data;
-
-    return Container(
-                                height: scr.height / 8,
-                                width: scr.width,
-                                child: ListView(
-                                  children: <Widget>[
-                                    hashList.length == 0
-                                        ? Text(
-                                            'เลือกhasgTagของร้านคุณ',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          )
-                                        : Wrap(
-                                            children: hashList
-                                                .map((hash) =>
-                                                    chip(context, hash))
-                                                .toList()),
-                                  ],
-                                ),
-                              );
- */

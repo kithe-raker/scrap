@@ -45,21 +45,39 @@ class _LoginPageState extends State<LoginPage> {
       });
       switch (e.toString()) {
         case 'PlatformException(ERROR_INVALID_EMAIL, The email address is badly formatted., null)':
-         
-          Dg().warning(context, 'กรุณาตรวจสอบ"อีเมล"ของท่าน',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
+          Dg().warning(
+            context,
+            'กรุณาตรวจสอบ"อีเมล"ของท่าน',
+            "ขออภัยการเข้าสู่ระบบผิดพลาด",
+          );
           break;
         case 'PlatformException(ERROR_USER_NOT_FOUND, There is no user record corresponding to this identifier. The user may have been deleted., null)':
-           Dg().warning(context, 'ไม่พบบัญชีผู้ใช้กรุณาตรวจสอบใหม่',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
+          Dg().warning(
+            context,
+            'ไม่พบบัญชีผู้ใช้กรุณาตรวจสอบใหม่',
+            "ขออภัยการเข้าสู่ระบบผิดพลาด",
+          );
           break;
         case 'PlatformException(ERROR_WRONG_PASSWORD, The password is invalid or the user does not have a password., null)':
-           Dg().warning(context, 'กรุณาตรวจสอบรหัสผ่านของท่าน',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
+          Dg().warning(
+            context,
+            'กรุณาตรวจสอบรหัสผ่านของท่าน',
+            "ขออภัยการเข้าสู่ระบบผิดพลาด",
+          );
           break;
         case "'package:firebase_auth/src/firebase_auth.dart': Failed assertion: line 224 pos 12: 'email != null': is not true.":
-           Dg().warning(context, 'กรุณากรอกอีเมลและรหัสผ่าน',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
+          Dg().warning(
+            context,
+            'กรุณากรอกอีเมลและรหัสผ่าน',
+            "ขออภัยการเข้าสู่ระบบผิดพลาด",
+          );
           break;
         default:
-           Dg().warning(context,
-              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อต่ออินเทอร์เน็ต',"ขออภัยการเข้าสู่ระบบผิดพลาด",);
+          Dg().warning(
+            context,
+            'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อต่ออินเทอร์เน็ต',
+            "ขออภัยการเข้าสู่ระบบผิดพลาด",
+          );
           break;
       }
       print(e.toString());
@@ -206,12 +224,14 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 validator: (val) {
                                   return val.trim() == ""
-                                      ? Taoast().toast("โปรดใส่อีเมลและรหัสผ่าน")
+                                      ? Taoast()
+                                          .toast("โปรดใส่อีเมลและรหัสผ่าน")
                                       : val.contains('@') &&
                                               val.contains(
                                                   '.com', val.length - 4)
                                           ? null
-                                          : Taoast().toast("โปรดเขียนอีเมลให้ถูกต้อง");
+                                          : Taoast().toast(
+                                              "โปรดเขียนอีเมลให้ถูกต้อง");
                                 },
                                 onSaved: (val) {
                                   _email = val.trim();
@@ -341,8 +361,7 @@ class _LoginPageState extends State<LoginPage> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LoginID()));
+                                              builder: (context) => LoginID()));
                                     })),
                           ],
                         ),
@@ -396,7 +415,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-
 }
-
