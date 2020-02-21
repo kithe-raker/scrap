@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/LoginID.dart';
-import 'package:scrap/Page/MainPage.dart';
 
 import 'package:scrap/Page/signup/SignUpMail.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -13,7 +12,6 @@ import 'package:scrap/widget/Toast.dart';
 
 import 'package:scrap/widget/warning.dart';
 import 'Auth.dart';
-import 'LoginPhone.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -89,15 +87,14 @@ class _LoginPageState extends State<LoginPage> {
         .collection('Users')
         .document(uid)
         .collection('token')
-        .document(uid)
-        .get()
+        .getDocuments()
         .then((value) async {
-      if (value.documentID != token) {
+      if (value.documents[0].documentID != token) {
         await Firestore.instance
             .collection('Users')
             .document(uid)
             .collection('token')
-            .document(value.documentID)
+            .document(value.documents[0].documentID)
             .delete();
         await Firestore.instance
             .collection('Users')
@@ -341,13 +338,13 @@ class _LoginPageState extends State<LoginPage> {
                                           MainAxisAlignment.center,
                                       children: <Widget>[
                                         Icon(
-                                          Icons.phone,
+                                          Icons.person,
                                           color: Colors.white,
                                           size: a.width / 20,
                                         ),
                                         SizedBox(width: 5.0),
                                         Text(
-                                          'เข้าสู่ระบบด้วยเบอร์โทรศัพท์',
+                                          'เข้าสู่ระบบด้วยไอดี',
                                           style: TextStyle(
                                               decoration:
                                                   TextDecoration.underline,

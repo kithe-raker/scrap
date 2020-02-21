@@ -77,6 +77,12 @@ class Register {
         .collection('scraps')
         .document('notification')
         .setData({});
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document('searchHist')
+        .setData({});
   }
 }
 

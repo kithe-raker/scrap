@@ -93,12 +93,12 @@ class _MapScrapsState extends State<MapScraps> {
               ),
               Container(
                 margin: EdgeInsets.only(
-                  top: a.height / 5,
+                  top: a.height / 8,
                 ),
                 padding:
                     EdgeInsets.only(left: a.width / 20, right: a.width / 20),
                 width: a.width,
-                height: a.height / 1.6,
+                height: a.height / 1.3,
                 child: Stack(
                   children: <Widget>[
                     Container(
@@ -106,7 +106,7 @@ class _MapScrapsState extends State<MapScraps> {
                       child: Image.asset(
                         'assets/paper-readed.png',
                         width: a.width,
-                        height: a.height / 2.1,
+                        height: a.height / 1.6,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -122,14 +122,15 @@ class _MapScrapsState extends State<MapScraps> {
                                 writer == 'ไม่ระบุ'
                                     ? 'เขียนโดย : ไม่ระบุตัวตน'
                                     : 'เขียนโดย : @$writer',
-                                style: TextStyle(fontSize: a.width / 30),
+                                style: TextStyle(fontSize: a.width / 25),
                               ),
                               Text('เวลา : $time',
-                                  style: TextStyle(fontSize: a.width / 30))
+                                  style: TextStyle(fontSize: a.width / 25))
                             ],
                           ),
                         )),
                     Positioned(
+          
                       bottom: 0,
                       left: 12,
                       right: 12,
@@ -197,7 +198,7 @@ class _MapScrapsState extends State<MapScraps> {
                     ),
                     Positioned(
                         left: a.width / 16,
-                        top: a.height / 12,
+                        top: a.height / 6.6,
                         child: Container(
                           alignment: Alignment.center,
                           height: a.height / 3.2,

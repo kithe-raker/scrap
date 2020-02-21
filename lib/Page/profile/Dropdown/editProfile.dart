@@ -114,6 +114,8 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         loading = false;
       });
+      Navigator.pop(context);
+      Navigator.pop(context);
     } catch (e) {
       Dg().warning1(context, 'เกิดข้อผิดพลาด,กรุณาลองใหม่');
     }

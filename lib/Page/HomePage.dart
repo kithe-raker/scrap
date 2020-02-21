@@ -183,7 +183,8 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     //Logo
                     Container(
-                        height: a.width / 6,
+                        margin: EdgeInsets.only(top: a.width / 90),
+                        height: a.width / 7,
                         alignment: Alignment.center,
                         child: Image.asset(
                           'assets/SCRAP.png',
@@ -486,6 +487,7 @@ class _HomePageState extends State<HomePage> {
   void dialog() {
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
+    String date = DateFormat('d/M/y').format(now);
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) {
           Size a = MediaQuery.of(context).size;
@@ -576,7 +578,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               //ส่ว��ของกระดาษที่เขีย���
                               Container(
-                                margin: EdgeInsets.only(top: a.width / 50),
+                                margin: EdgeInsets.only(top: a.width / 150),
                                 width: a.width / 1,
                                 height: a.height / 1.8,
                                 //ทำเป็นชั้นๆ
@@ -587,7 +589,7 @@ class _HomePageState extends State<HomePage> {
                                       child: Image.asset(
                                         'assets/paper-readed.png',
                                         width: a.width / 1,
-                                        height: a.height / 1.8,
+                                        height: a.height / 1.2,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -626,7 +628,7 @@ class _HomePageState extends State<HomePage> {
                                                       fontSize: a.width / 22,
                                                       color: Colors.grey),
                                                 ),
-                                          Text("เวลา" + " : " + time,
+                                          Text("เวลา" + " : $time $date",
                                               style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: a.width / 22))
@@ -703,7 +705,7 @@ class _HomePageState extends State<HomePage> {
                                           _key.currentState.save();
                                           toast('คุณได้ทิ้งกระดาษไว้แล้ว');
                                           Navigator.pop(context);
-                                          await binScrap(time);
+                                          await binScrap('$time $date');
                                         } else {
                                           print('nope');
                                         }

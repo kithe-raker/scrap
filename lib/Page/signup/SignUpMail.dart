@@ -263,10 +263,7 @@ class _SignUpMailState extends State<SignUpMail> {
                                         });
                                         await uniqueEmail(_email)
                                             ? continueSignUp()
-                                            : Dg().warning(
-                                                context,
-                                                'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว',
-                                                "เกิดผิดพลาด");
+                                            : fail();
                                       } else {
                                         print('nope');
                                       }
@@ -284,5 +281,12 @@ class _SignUpMailState extends State<SignUpMail> {
           ),
           loading ? Loading() : SizedBox()
         ]));
+  }
+
+  fail() {
+    setState(() {
+      loading = false;
+    });
+    Dg().warning(context, 'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว', "เกิดผิดพลาด");
   }
 }
