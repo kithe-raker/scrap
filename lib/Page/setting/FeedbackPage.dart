@@ -49,6 +49,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
       });
       Navigator.pop(context);
     } catch (e) {
+      setState(() {
+        loading = false;
+      });
       Dg().warning(context, 'เกิดข้อผิดพลาด กรุณาลองใหม่', "เกิดผิดพลาด");
     }
   }
@@ -193,7 +196,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                 ],
                               ),
                             ),
-                            //ชั้นที่ 3 เอาไว้สำหรับเขียนข้อความ
+                            //ชั้��ที่ 3 เอาไว้สำหรับเขียนข้อความ
                             Container(
                               width: a.width,
                               height: a.height,
@@ -350,8 +353,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
       ),
     );
   }
-
- 
 
   selectImg(BuildContext context) {
     Size scr = MediaQuery.of(context).size;

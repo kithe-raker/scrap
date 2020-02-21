@@ -505,20 +505,32 @@ class _ViewprofileState extends State<Viewprofile> {
         .collection('scraps')
         .document('recently')
         .setData({
-      'id': FieldValue.arrayUnion([widget.self['id']]),
+      'id': FieldValue.arrayUnion([widget.self['uid']]),
       'scraps': {
         widget.self['uid']: FieldValue.arrayUnion([
           {
             'text': text,
             'writer': public ?? false ? widget.self['id'] : 'ไม่ระบุตัวตน',
-            'time': time
+            'time': '$time $date'
           }
         ])
       }
     }, merge: true);
     await notifaication(thrownID, date, time);
+    await updateHistory(widget.self['uid'], thrownID);
     await increaseTransaction(widget.self['uid'], 'written');
     await increaseTransaction(thrownID, 'threw');
+  }
+
+  updateHistory(String uid, String thrown) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document('searchHist')
+        .updateData({
+      'history': FieldValue.arrayUnion([thrown])
+    });
   }
 
   notifaication(String who, String date, String time) async {

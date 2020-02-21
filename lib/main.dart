@@ -6,10 +6,12 @@ import 'package:scrap/Page/MainPage.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(MyApp());
   });
+
 }
 
 class MyApp extends StatelessWidget {

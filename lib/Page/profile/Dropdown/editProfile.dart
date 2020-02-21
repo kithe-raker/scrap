@@ -113,7 +113,12 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         loading = false;
       });
+      Navigator.pop(context);
+      Navigator.pop(context);
     } catch (e) {
+      setState(() {
+        loading = false;
+      });
       warning(context, 'เกิดข้อผิดพลาด,กรุณาลองใหม่');
     }
   }

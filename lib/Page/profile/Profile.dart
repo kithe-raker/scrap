@@ -266,8 +266,13 @@ class _ProfileState extends State<Profile> {
                                                 ))
                                             : Wrap(
                                                 children: users
-                                                    .map((userID) =>
-                                                        mScrap(a, userID, data))
+                                                    .map((userID) => mScrap(
+                                                        a,
+                                                        users[users.length -
+                                                            1 -
+                                                            users.indexOf(
+                                                                userID)],
+                                                        data))
                                                     .toList());
                                       } else {
                                         return Center(
@@ -457,10 +462,19 @@ class _ProfileState extends State<Profile> {
         ? delete(id)
         : Wrap(
             children: scraps
-                .map((scrapData) => scrap(a, scrapData['text'],
-                    scrapData['writer'], scrapData['time'], scrapData, id))
+                .map((scrapData) => scrap(
+                    a,
+                    backward(scraps, scrapData)['text'],
+                    backward(scraps, scrapData)['writer'],
+                    backward(scraps, scrapData)['time'],
+                    backward(scraps, scrapData),
+                    id))
                 .toList(),
           );
+  }
+
+  dynamic backward(List list, dynamic value) {
+    return list[list.length - 1 - list.indexOf(value)];
   }
 
   Widget delete(String id) {

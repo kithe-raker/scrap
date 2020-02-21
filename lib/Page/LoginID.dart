@@ -54,15 +54,14 @@ class _LoginIDState extends State<LoginID> {
         .collection('Users')
         .document(uid)
         .collection('token')
-        .document(uid)
-        .get()
+        .getDocuments()
         .then((value) async {
-      if (value.documentID != token) {
+      if (value.documents[0].documentID != token) {
         await Firestore.instance
             .collection('Users')
             .document(uid)
             .collection('token')
-            .document(value.documentID)
+            .document(value.documents[0].documentID)
             .delete();
         await Firestore.instance
             .collection('Users')
