@@ -1,8 +1,14 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-
-import 'Auth.dart';
+import 'package:scrap/Page/Auth.dart';
+import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/services/provider.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -11,9 +17,59 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   Position currentLocation;
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
+
+  initLocalMessage() {
+    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var ios = IOSInitializationSettings();
+    var initMessaging = InitializationSettings(android, ios);
+    messaging.initialize(initMessaging, onSelectNotification: onTapMessage);
+  }
+
+  void initFirebaseMessaging() {
+    firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          displayNotification(message);
+        },
+        onLaunch: (Map<String, dynamic> message) async {
+          displayNotification(message);
+        },
+        onResume: (Map<String, dynamic> message) async {
+          displayNotification(message);
+        },
+        onBackgroundMessage: Platform.isIOS ? null : Fcm.backgroundHandler);
+
+    firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
+  }
+
+  displayNotification(Map message) async {
+    var androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('com.scrap', 'scrap.', 'description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await messaging.show(
+      0,
+      message['notification']['title'],
+      message['notification']['body'],
+      platformChannelSpecifics,
+      payload: '',
+    );
+  }
+
+  Future onTapMessage(String payload) async {
+    final uid = await Provider.of(context).auth.currentUser();
+    await Firestore.instance.collection('Users').document(uid).get().then(
+        (data) => Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Profile(doc: data))));
+  }
 
   @override
   void initState() {
+    initFirebaseMessaging();
+    initLocalMessage();
     Geolocator().getCurrentPosition().then((curlo) {
       setState(() {
         currentLocation = curlo;
@@ -52,5 +108,23 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
         ));
+  }
+}
+
+class Fcm {
+  static Future<dynamic> backgroundHandler(Map<String, dynamic> message)async {
+    if (message.containsKey('data')) {
+      // Handle data message
+      final dynamic data = message['data'];
+        print('DatabackgroundHandler');
+    }
+
+    if (message.containsKey('notification')) {
+      // Handle notification message
+      final dynamic notification = message['notification'];
+      print('NotibackgroundHandler');
+    }
+
+    // Or do other work.
   }
 }
