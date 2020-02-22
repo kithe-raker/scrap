@@ -17,9 +17,10 @@ class _AddPlayerState extends State<AddPlayer> {
         color: Colors.black,
         child: Column(
           children: <Widget>[
+            
             ArrowBack(),
             Container(
-                padding: EdgeInsets.only(left: a.width / 15, top: a.width / 10),
+                padding: EdgeInsets.only(left: a.width / 15, top: a.height / 300),
                 width: a.width,
                 alignment: Alignment.topLeft,
                 child: Column(
