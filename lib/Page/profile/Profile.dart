@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/Page/setting/FeedbackPage.dart';
 import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
@@ -8,10 +9,12 @@ import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/LongPaper.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class Profile extends StatefulWidget {
   final DocumentSnapshot doc;
-  Profile({@required this.doc});
+  final Map data;
+  Profile({@required this.doc, @required this.data});
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -19,7 +22,7 @@ class Profile extends StatefulWidget {
 //หน้า Account
 class _ProfileState extends State<Profile> {
   int page;
-
+  String text2;
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -510,118 +513,316 @@ class _ProfileState extends State<Profile> {
 //ส่วนของ กระดาษที่ถูกปาใส่ เม���่อกด
   dialog(
       String text, String writer, String time, Map scpData, String writerID) {
-    return showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-              contentPadding: EdgeInsets.all(0),
-              backgroundColor: Colors.transparent,
-              content:
-                  StatefulBuilder(builder: (context, StateSetter setState) {
-                Size a = MediaQuery.of(context).size;
-                return Container(
-                  width: a.width,
-                  height: a.height / 1.76,
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) {
+          Size a = MediaQuery.of(context).size;
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            return Scaffold(
+              backgroundColor: Colors.black,
+              body: Container(
+                height: a.height / 1.5,
+                margin: EdgeInsets.only(
+                    top: a.height / 5,
+                    right: a.width / 20,
+                    left: 20,
+                    bottom: a.width / 8),
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      width: a.width,
+                      child: Image.asset(
+                        'assets/paper-readed.png',
                         width: a.width,
-                        child: Image.asset(
-                          'assets/paper-readed.png',
-                          width: a.width,
-                          height: a.height / 2.1,
-                          fit: BoxFit.cover,
-                        ),
+                        height: a.height / 2.1,
+                        fit: BoxFit.cover,
                       ),
-                      Positioned(
-                          top: 12,
-                          left: 12,
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text('เขียนโดย : $writer'),
-                                Text('เวลา : $time')
-                              ],
-                            ),
-                          )),
-                      Positioned(
-                        bottom: 0,
+                    ),
+                    Positioned(
+                        top: 12,
+                        left: 12,
                         child: Container(
                           width: a.width / 1.2,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              InkWell(
-                                child: Container(
-                                  width: a.width / 3.5,
-                                  height: a.width / 6.5,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(a.width)),
-                                  alignment: Alignment.center,
-                                  child: Text("เก็บไว้",
-                                      style: TextStyle(
-                                          fontSize: a.width / 15,
-                                          color: Color(0xff26A4FF))),
-                                ),
-                                onTap: () async {
-                                  Navigator.pop(context);
-                                  await Firestore.instance
-                                      .collection('Users')
-                                      .document(widget.doc['uid'])
-                                      .collection('scraps')
-                                      .document('collection')
-                                      .setData({
-                                    'id': FieldValue.arrayUnion([writerID]),
-                                    'scraps': {
-                                      writerID: FieldValue.arrayUnion([scpData])
-                                    }
-                                  }, merge: true);
-                                  await ignore(writerID, scpData);
-                                },
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text('เขียนโดย : $writer'),
+                                  Text('เวลา : $time')
+                                ],
                               ),
                               InkWell(
                                 child: Container(
-                                  width: a.width / 3.5,
-                                  height: a.width / 6.5,
+                                  width: a.width / 7,
+                                  height: a.width / 12,
                                   decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      border: Border.all(color: Colors.black),
                                       borderRadius:
-                                          BorderRadius.circular(a.width)),
+                                          BorderRadius.circular(a.width / 10)),
                                   alignment: Alignment.center,
-                                  child: Text(
-                                    "ทิ้ง",
-                                    style: TextStyle(fontSize: a.width / 15),
-                                  ),
+                                  child: Text("ปากลับ"),
                                 ),
-                                onTap: () async {
-                                  Navigator.pop(context);
-                                  await ignore(writerID, scpData);
+                                onTap: () {
+                                  dialogPa(writerID);
                                 },
-                              ),
+                              )
                             ],
                           ),
+                        )),
+                    Positioned(
+                      bottom: 0,
+                      left: a.width / 8,
+                      width: a.width / 1.5,
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            InkWell(
+                              child: Container(
+                                margin: EdgeInsets.only(left: a.width / 55),
+                                width: a.width / 4.5,
+                                height: a.width / 8,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                                alignment: Alignment.center,
+                                child: Text("เก็บไว้",
+                                    style: TextStyle(
+                                        fontSize: a.width / 15,
+                                        color: Color(0xff26A4FF))),
+                              ),
+                              onTap: () async {
+                                Navigator.pop(context);
+                                await Firestore.instance
+                                    .collection('Users')
+                                    .document(widget.doc['uid'])
+                                    .collection('scraps')
+                                    .document('collection')
+                                    .setData({
+                                  'id': FieldValue.arrayUnion([writerID]),
+                                  'scraps': {
+                                    writerID: FieldValue.arrayUnion([scpData])
+                                  }
+                                }, merge: true);
+                                await ignore(writerID, scpData);
+                              },
+                            ),
+                            InkWell(
+                              child: Container(
+                                width: a.width / 4.5,
+                                height: a.width / 8,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "ทิ้ง",
+                                  style: TextStyle(fontSize: a.width / 15),
+                                ),
+                              ),
+                              onTap: () async {
+                                Navigator.pop(context);
+                                await ignore(writerID, scpData);
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                      Positioned(
-                          left: a.width / 16,
-                          top: a.height / 12,
-                          child: Container(
-                            alignment: Alignment.center,
-                            height: a.height / 3.2,
-                            width: a.width / 1.48,
-                            child: Text(
-                              text,
-                              style: TextStyle(fontSize: a.width / 14),
+                    ),
+                    Positioned(
+                        left: a.width / 16,
+                        top: a.height / 12,
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: a.height / 3.2,
+                          width: a.width / 1.2,
+                          child: Text(
+                            text,
+                            style: TextStyle(fontSize: a.width / 14),
+                          ),
+                        ))
+                  ],
+                ),
+              ),
+            );
+          });
+        },
+        fullscreenDialog: true));
+  }
+
+  dialogPa(String id) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          Size a = MediaQuery.of(context).size;
+          return Dialog(
+            child: Container(
+              height: a.width / 1.6,
+              padding: EdgeInsets.only(
+                  left: a.width / 100,
+                  right: a.width / 100,
+                  top: a.width / 100),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    padding:
+                        EdgeInsets.only(right: a.width / 0, left: a.width / 80),
+                    height: a.width / 8,
+                    decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Colors.grey))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              "ปาใส่กลับโดย : ",
+                              style: TextStyle(fontSize: a.width / 20),
                             ),
-                          ))
-                    ],
+                            Text(
+                              "@regonder",
+                              style: TextStyle(
+                                  color: Color(0xff26A4FF),
+                                  fontSize: a.width / 20),
+                            )
+                          ],
+                        ),
+                        InkWell(
+                          child: Container(
+                              width: a.width / 15,
+                              height: a.width / 15,
+                              decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(a.width)),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.white,
+                              )),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
                   ),
-                );
-              }));
+                  Container(
+                    padding: EdgeInsets.only(
+                        right: a.width / 40, left: a.width / 40),
+                    height: a.width / 3.4,
+                    child: TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        border: InputBorder.none, //สำหรับใหเส้นใต้หาย
+                        hintText: 'เขียนข้อความบางอย่าง',
+                        hintStyle: TextStyle(
+                          fontSize: a.width / 25,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      validator: (val) {
+                        return val.trim() == null || val.trim() == ""
+                            ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
+                            : null;
+                      },
+                      //เนื้อหาที่กรอกเข้าไปใน text
+                      onChanged: (val) {
+                        text2 = val;
+                      },
+                    ),
+                  ),
+                  InkWell(
+                    child: Container(
+                      width: a.width,
+                      alignment: Alignment.centerRight,
+                      margin: EdgeInsets.only(
+                          top: a.width / 15, right: a.width / 30),
+                      child: Container(
+                          width: a.width / 5.5,
+                          height: a.width / 11,
+                          decoration: BoxDecoration(
+                              color: Color(0xff26A4FF),
+                              borderRadius: BorderRadius.circular(a.width)),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "ปาเลย",
+                            style: TextStyle(color: Colors.white),
+                          )),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      print(id + " " + text2);
+                      throwTo(id, text2);
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
         });
+  }
+
+  throwTo(String thrownID, String text) async {
+    DateTime now = DateTime.now();
+    String time = DateFormat('Hm').format(now);
+    String date = DateFormat('d/M/y').format(now);
+    await Firestore.instance
+        .collection('Users')
+        .document(thrownID)
+        .collection('scraps')
+        .document('recently')
+        .setData({
+      'id': FieldValue.arrayUnion([widget.doc['uid']]),
+      'scraps': {
+        widget.doc['uid']: FieldValue.arrayUnion([
+          {'text': text, 'writer': widget.doc['id'], 'time': '$time $date'}
+        ])
+      }
+    }, merge: true);
+    await notifaication(thrownID, date, time);
+    await updateHistory(widget.doc['uid'], thrownID);
+    await increaseTransaction(widget.doc['uid'], 'written');
+    await increaseTransaction(thrownID, 'threw');
+  }
+
+  updateHistory(String uid, String thrown) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document('searchHist')
+        .updateData({
+      'history': FieldValue.arrayUnion([thrown])
+    });
+  }
+
+  notifaication(String who, String date, String time) async {
+    await Firestore.instance.collection('Notifications').add({'uid': who});
+    await Firestore.instance
+        .collection('Users')
+        .document(who)
+        .collection('notification')
+        .add({'writer': widget.doc, 'date': date, 'time': time});
+  }
+
+  increaseTransaction(String uid, String key) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document(uid)
+        .get()
+        .then((value) => Firestore.instance
+            .collection('Users')
+            .document(uid)
+            .collection('info')
+            .document(uid)
+            .updateData(
+                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 
   ignore(String writerID, Map scpData) async {
