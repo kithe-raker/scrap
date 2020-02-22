@@ -261,6 +261,7 @@ class _HomePageState extends State<HomePage> {
                                 MaterialPageRoute(
                                     builder: (context) => Profile(
                                           doc: widget.doc,
+                                          data: {'public': public ?? false},
                                         ))); //ไปยังหน้า Profile
                           },
                         ))

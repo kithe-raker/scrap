@@ -1,3 +1,4 @@
+  
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -367,7 +368,7 @@ class _SearchState extends State<Search> {
                         accDoc: doc, infoDoc: snapshot.data)
                     : SizedBox();
           } else {
-            return SizedBox();
+            return Text('loading');
           }
         });
   }
