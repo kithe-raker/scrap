@@ -489,7 +489,7 @@ class _SearchState extends State<Search> {
                   },
                   child: Text('ยกเลิก')),
               FlatButton(
-                child: Text('ok'),
+                child: Text('ตกลง'),
                 onPressed: () async {
                   toast('ปาใส่"$user"แล้ว');
                   Navigator.pop(context);
