@@ -16,9 +16,8 @@ import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class HomePage extends StatefulWidget {
-  final Position currentLocation;
   final DocumentSnapshot doc;
-  HomePage({@required this.doc, @required this.currentLocation});
+  HomePage({@required this.doc});
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -317,11 +316,11 @@ class _HomePageState extends State<HomePage> {
             .snapshots(),
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
-            return widget?.currentLocation == null
+            return currentLocation == null
                 ? gpsCheck(a)
                 : MapScraps(
                     collection: snap?.data['id'] ?? [],
-                    currentLocation: widget?.currentLocation ?? currentLocation,
+                    currentLocation: currentLocation,
                     uid: widget.doc['uid'],
                   );
           } else {
