@@ -262,7 +262,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                           children: <Widget>[
                                             Icon(
                                               Icons.image,
-                                              size: a.width / 13,
+                                              size: a.width / 13,color: Color(0xff26A4FF)
                                             ),
                                             SizedBox(
                                               width: 8,
@@ -271,6 +271,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                               'แตะเพื่อแนบภาพ',
                                               style: TextStyle(
                                                 fontSize: a.width / 15,
+                                                color: Color(0xff26A4FF)
                                               ),
                                             )
                                           ],
