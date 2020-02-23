@@ -13,8 +13,7 @@ import 'package:scrap/widget/Toast.dart';
 
 class Profile extends StatefulWidget {
   final DocumentSnapshot doc;
-  final Map data;
-  Profile({@required this.doc, @required this.data});
+  Profile({@required this.doc});
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -27,7 +26,6 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
-      
       backgroundColor: Colors.black,
       body: StreamBuilder(
           stream: Firestore.instance
@@ -117,7 +115,6 @@ class _ProfileState extends State<Profile> {
                         ),
                         // ชื่อของ account
                         Container(
-                            
                             margin: EdgeInsets.only(top: a.width / 15),
                             child: Text(
                               "@" + widget.doc['id'],
@@ -672,8 +669,7 @@ class _ProfileState extends State<Profile> {
                   Container(
                     height: a.width / 8,
                     decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: Colors.grey))),
+                        border: Border(bottom: BorderSide(color: Colors.grey))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -681,10 +677,11 @@ class _ProfileState extends State<Profile> {
                           children: <Widget>[
                             Text(
                               "ปาใส่กลับโดย : ",
-                              style: TextStyle(fontSize: a.width / 20,color:Colors.black),
+                              style: TextStyle(
+                                  fontSize: a.width / 20, color: Colors.black),
                             ),
                             Text(
-                             "@"+widget.doc['id'],
+                              "@" + widget.doc['id'],
                               style: TextStyle(
                                   color: Color(0xff26A4FF),
                                   fontSize: a.width / 20),
@@ -698,9 +695,7 @@ class _ProfileState extends State<Profile> {
                               decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(a.width)),
-                              child: Icon(
-                                Icons.clear,color:Colors.white
-                              )),
+                              child: Icon(Icons.clear, color: Colors.white)),
                           onTap: () {
                             Navigator.pop(context);
                           },
