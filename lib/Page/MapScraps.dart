@@ -212,7 +212,7 @@ class _MapScrapsState extends State<MapScraps> {
                           width: a.width / 1.3,
                           child: Text(
                             text,
-                            style: TextStyle(fontSize: a.width / 10),
+                            style: TextStyle(fontSize: a.width / 14),
                           ),
                         ))
                   ],
