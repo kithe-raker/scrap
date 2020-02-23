@@ -352,10 +352,12 @@ class _MapScrapsState extends State<MapScraps> {
     userMarker(position.latitude, position.longitude);
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
+      List read = data['read'] ?? [];
       GeoPoint loca = data['position']['geopoint'];
       if (widget.collection.contains(data['id']) ||
           data['uid'] == widget.uid ||
-          picked.contains(data['id'])) {
+          picked.contains(data['id']) ||
+          read.contains(widget.uid)) {
       } else {
         _addMarker(
           data['id'],
@@ -423,6 +425,7 @@ class _MapScrapsState extends State<MapScraps> {
           picked.add(id);
           setState(() {});
           dialog(text, writer, time, id);
+          official ? null : addRead(id);
           official ? null : increaseTransaction(user, 'read');
         } catch (e) {
           print(e.toString());
@@ -501,6 +504,17 @@ class _MapScrapsState extends State<MapScraps> {
   void _updateBitScrap(BitmapDescriptor bitmap) {
     setState(() {
       scrapIcon = bitmap;
+    });
+  }
+
+  addRead(String scrapID) async {
+    await Firestore.instance
+        .collection('Scraps')
+        .document('hatyai')
+        .collection('scrapsPosition')
+        .document(scrapID)
+        .updateData({
+      'read': FieldValue.arrayUnion([widget.uid])
     });
   }
 
