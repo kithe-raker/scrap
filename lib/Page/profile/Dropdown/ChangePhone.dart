@@ -114,8 +114,9 @@ class _ChangePhoneState extends State<ChangePhone> {
                         ),
                       ),
                       Container(
+                        height: a.height/1.2,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Text(
                               "เปลี่ยนเบอร์โทรศัพท์",

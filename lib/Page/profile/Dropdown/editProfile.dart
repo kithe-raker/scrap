@@ -271,7 +271,7 @@ class _EditProfileState extends State<EditProfile> {
                               top: 10.0,
                               child: IconButton(
                                 icon: Icon(Icons.create),
-                                color: Color(0xff5F5F5F),
+                                color: Colors.white,
                                 iconSize: a.width/13,
                                 onPressed: () {
                                   read = false;
@@ -361,7 +361,7 @@ class _EditProfileState extends State<EditProfile> {
                               top: 10.0,
                               child: IconButton(
                                 icon: Icon(Icons.create),
-                                color: Color(0xff5F5F5F),
+                                color: Colors.white,
                                 iconSize: a.width/13,
                                 onPressed: () {
                                   readMail = false;
@@ -377,7 +377,9 @@ class _EditProfileState extends State<EditProfile> {
                         child: Container(
                           height: a.height / 4.5,
                           width: a.width,
+                          
                           decoration: BoxDecoration(
+                            
                               color: Color(0xff282828),
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(16.0),

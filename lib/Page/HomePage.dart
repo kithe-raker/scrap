@@ -262,6 +262,7 @@ class _HomePageState extends State<HomePage> {
                                 MaterialPageRoute(
                                     builder: (context) => Profile(
                                           doc: widget.doc,
+                                          data: {'public': public ?? false},
                                         ))); //ไปยังหน้า Profile
                           },
                         ))
@@ -352,7 +353,7 @@ class _HomePageState extends State<HomePage> {
                 alignment: Alignment.bottomCenter,
                 child: Text(
                   'กรุณาตรวจสอบGPSหรืออินเทอร์เน็ตของท่าน',
-                  style: TextStyle(fontSize: a.width / 16, color: Colors.white),
+                  style: TextStyle(fontSize: a.width / 18, color: Colors.white),
                 ))
           ],
         ),
@@ -451,7 +452,7 @@ class _HomePageState extends State<HomePage> {
       'uid': widget.doc['uid'],
       'scrap': {
         'text': text,
-        'user': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+        'user': public ?? false ? widget.doc['id'] : 'ใครบางคน',
         'time': time
       },
       'position': point.data
