@@ -350,7 +350,7 @@ class _HomePageState extends State<HomePage> {
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Text(
-                  'กรุณาตรวจสอบGPSหรืออินเทอร์เน็ตของคุณ',
+                  'กรุณาตรวจสอบ GPS หรืออินเทอร์เน็ตของคุณ',
                   style: TextStyle(fontSize: a.width / 16, color: Colors.white),
                 ))
           ],
