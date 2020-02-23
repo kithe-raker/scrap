@@ -261,7 +261,6 @@ class _HomePageState extends State<HomePage> {
                                 MaterialPageRoute(
                                     builder: (context) => Profile(
                                           doc: widget.doc,
-                                          data: {'public': public ?? false},
                                         ))); //ไปยังหน้า Profile
                           },
                         ))
@@ -351,7 +350,7 @@ class _HomePageState extends State<HomePage> {
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Text(
-                  'กรุณาตรวจสอบGPSหรืออินเทอร์เน็ตของท่าน',
+                  'กรุณาตรวจสอบGPSหรืออินเทอร์เน็ตของคุณ',
                   style: TextStyle(fontSize: a.width / 16, color: Colors.white),
                 ))
           ],

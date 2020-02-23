@@ -1,4 +1,3 @@
-  
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -33,27 +32,33 @@ class _SearchState extends State<Search> {
                 right: a.width / 25,
                 left: a.width / 25,
                 bottom: a.width / 8.0),
-            child: Column(
+              child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 search
-                    ? Row(
+                     ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          IconButton(
-                              icon: Icon(
-                                Icons.arrow_back,
-                                color: Colors.white,
-                                size: a.width / 12,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  search = false;
-                                });
-                              }),
+                          Container(
+                              margin: EdgeInsets.only(bottom : 30),
+                            child: IconButton(
+                              
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                  size: a.width / 12,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    search = false;
+                                  });
+                                }),
+                          ),
                           Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Container(
+                              margin: EdgeInsets.only(bottom : 30),
                               width: a.width * 9 / 12,
                               height: a.width / 6.5,
                               decoration: BoxDecoration(
@@ -138,12 +143,17 @@ class _SearchState extends State<Search> {
                               ],
                             ),
                           ),
+
+                           
                           SizedBox(
                             height: a.width / 13,
                           ),
+
+
                           Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Container(
+                              margin: EdgeInsets.only(bottom : 30),
                               width: a.width,
                               height: a.width / 6.5,
                               decoration: BoxDecoration(
@@ -179,6 +189,8 @@ class _SearchState extends State<Search> {
                               ),
                             ),
                           ),
+
+
                         ],
                       ),
                 search
@@ -368,7 +380,7 @@ class _SearchState extends State<Search> {
                         accDoc: doc, infoDoc: snapshot.data)
                     : SizedBox();
           } else {
-            return Text('loading');
+            return SizedBox();
           }
         });
   }
@@ -377,7 +389,7 @@ class _SearchState extends State<Search> {
       String created, bool hist,
       {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
     return Padding(
-      padding: const EdgeInsets.only(top: 50.0, left: 5.0, right: 5.0),
+      padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0),
       child: InkWell(
         child: Stack(
           children: <Widget>[
