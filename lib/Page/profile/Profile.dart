@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/Page/setting/FeedbackPage.dart';
@@ -257,11 +258,14 @@ class _ProfileState extends State<Profile> {
                                       if (snapshot.hasData &&
                                           snapshot.connectionState ==
                                               ConnectionState.active) {
-                                        List users = snapshot?.data['id'];
-                                        Map data = snapshot?.data['scraps'];
-
+                                        Set mSet = {};
+                                        modiList(
+                                            snapshot?.data['id'],
+                                            snapshot?.data['scraps'],
+                                            mSet,
+                                            'recently');
                                         return snapshot?.data['id'] == null ||
-                                                users.length == 0
+                                                mSet.length == 0
                                             ? Container(
                                                 height: a.height / 12,
                                                 child: Center(
@@ -274,16 +278,10 @@ class _ProfileState extends State<Profile> {
                                                         fontSize: a.width / 18),
                                                   ),
                                                 ))
-                                            : Wrap(
-                                                children: users
-                                                    .map((userID) => mScrap(
-                                                        a,
-                                                        users[users.length -
-                                                            1 -
-                                                            users.indexOf(
-                                                                userID)],
-                                                        data))
-                                                    .toList());
+                                            : Container(
+                                                child:
+                                                    wrapScrap(a, mSet.toList()),
+                                              );
                                       } else {
                                         return Center(
                                           child: CircularProgressIndicator(),
@@ -306,8 +304,11 @@ class _ProfileState extends State<Profile> {
                                   snapshot.connectionState ==
                                       ConnectionState.active) {
                                 Set mSet = {};
-                                modiList(snapshot?.data['id'],
-                                    snapshot?.data['scraps'], mSet);
+                                modiList(
+                                    snapshot?.data['id'],
+                                    snapshot?.data['scraps'],
+                                    mSet,
+                                    'collection');
                                 return Column(
                                   children: <Widget>[
                                     Container(
@@ -413,11 +414,11 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  modiList(List users, Map data, Set mSet) {
+  modiList(List users, Map data, Set mSet, String key) {
     if (users != null || data != null) {
       for (var id in users) {
         if (data[id] == null || data[id].length == 0) {
-          clearScrap(data[id] == null, id);
+          clearScrap(data[id] == null, id, key);
         } else {
           for (var scraps in data[id]) {
             mSet.add({'scap': scraps, 'id': id});
@@ -427,12 +428,12 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  clearScrap(bool onlyID, String id) {
+  clearScrap(bool onlyID, String id, String key) {
     Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
         .collection('scraps')
-        .document('collection')
+        .document(key)
         .updateData({
       'id': FieldValue.arrayRemove([id])
     }).then((value) {
@@ -442,7 +443,7 @@ class _ProfileState extends State<Profile> {
               .collection('Users')
               .document(widget.doc['uid'])
               .collection('scraps')
-              .document('collection')
+              .document(key)
               .setData({
               'scraps': {id: FieldValue.delete()}
             }, merge: true);
@@ -457,7 +458,7 @@ class _ProfileState extends State<Profile> {
         scrollDirection: Axis.horizontal,
         children: mList
             .map((scrap) => LongPaper(
-                  scrap: mList[mList.length - 1 - mList.indexOf(scrap)],
+                  scrap: backward(mList, scrap),
                   uid: widget.doc['uid'],
                 ))
             .toList(),
@@ -466,21 +467,12 @@ class _ProfileState extends State<Profile> {
   }
 
 //data[data.length - 1 -data.indexOf(userID)]
-  Widget mScrap(Size a, String id, Map data) {
-    List scraps = data[id];
-    return scraps == null
-        ? delete(id)
-        : Wrap(
-            children: scraps
-                .map((scrapData) => scrap(
-                    a,
-                    backward(scraps, scrapData)['text'],
-                    backward(scraps, scrapData)['writer'],
-                    backward(scraps, scrapData)['time'],
-                    backward(scraps, scrapData),
-                    id))
-                .toList(),
-          );
+  Widget wrapScrap(Size a, List scraps) {
+    return Wrap(
+      children: scraps
+          .map((scrapData) => scrap(a, backward(scraps, scrapData)))
+          .toList(),
+    );
   }
 
   dynamic backward(List list, dynamic value) {
@@ -499,8 +491,7 @@ class _ProfileState extends State<Profile> {
     return SizedBox();
   }
 
-  Widget scrap(
-      Size a, String text, String writer, String time, Map scpData, String id) {
+  Widget scrap(Size a, Map scrap) {
     return Container(
       padding: EdgeInsets.all(a.width / 32),
       child: InkWell(
@@ -511,13 +502,14 @@ class _ProfileState extends State<Profile> {
           fit: BoxFit.cover,
         ),
         onTap: () {
-          dialog(text, writer, time, scpData, id);
+          dialog(scrap['scap']['text'], scrap['scap']['writer'],
+              scrap['scap']['time'], scrap['scap'], scrap['id']);
         },
       ),
     );
   }
 
-//ส่วนของ กระดาษที่ถูกปาใส่ เม���่อกด
+//ส่วนของ กระดาษที่ถูกปาใ��่ เม���่อกด
   dialog(
       String text, String writer, String time, Map scpData, String writerID) {
     Navigator.of(context).push(MaterialPageRoute(
@@ -577,7 +569,7 @@ class _ProfileState extends State<Profile> {
                                       child: Text("ปากลับ"),
                                     ),
                                     onTap: () {
-                                      dialogPa(writerID);
+                                      dialogPa(writerID , writer);
                                     },
                                   )
                                 ],
@@ -665,7 +657,7 @@ class _ProfileState extends State<Profile> {
         fullscreenDialog: true));
   }
 
-  dialogPa(String id) {
+  dialogPa(String id, String thrown) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -721,7 +713,6 @@ class _ProfileState extends State<Profile> {
                         right: a.width / 40, left: a.width / 40),
                     height: a.width / 3.4,
                     child: TextFormField(
-                      keyboardType: TextInputType.emailAddress,
                       maxLines: null,
                       decoration: InputDecoration(
                         border: InputBorder.none, //สำหรับใหเส้นใต้หาย
@@ -761,6 +752,9 @@ class _ProfileState extends State<Profile> {
                           )),
                     ),
                     onTap: () {
+                      toast(thrown == 'ไม่ระบุตัวตน'
+                          ? 'ปากลับแล้ว'
+                          : 'ปากลับใส่"$thrown"แล้ว');
                       Navigator.pop(context);
                       Navigator.pop(context);
                       throwTo(id, text2);
@@ -870,6 +864,17 @@ class _ProfileState extends State<Profile> {
         }, merge: true);
       }
     });
+  }
+
+  toast(String text) {
+    return Fluttertoast.showToast(
+        msg: text,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.white60,
+        textColor: Colors.black,
+        fontSize: 16.0);
   }
 
   void choiceAction(String choice, {DocumentSnapshot info}) async {
