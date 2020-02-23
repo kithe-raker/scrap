@@ -27,6 +27,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
+      
       backgroundColor: Colors.black,
       body: StreamBuilder(
           stream: Firestore.instance
@@ -116,6 +117,7 @@ class _ProfileState extends State<Profile> {
                         ),
                         // ชื่อของ account
                         Container(
+                            
                             margin: EdgeInsets.only(top: a.width / 15),
                             child: Text(
                               "@" + widget.doc['id'],
