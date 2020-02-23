@@ -98,7 +98,7 @@ class _ViewprofileState extends State<Viewprofile> {
               ),
               Text(
                 "Join ${widget.info.data['createdDay']}",
-                style: TextStyle(color: Colors.blue, fontSize: a.width / 12),
+                style: TextStyle(color: Colors.black, fontSize: a.width / 12),
               ),
               Container(
                 margin: EdgeInsets.only(top: a.width / 30 , left: a.width / 15 , right: a.width / 15),
@@ -110,7 +110,7 @@ class _ViewprofileState extends State<Viewprofile> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Container(
-                      color: Colors.blue,
+                      color: Colors.black,
                        width: a.width / 4.5,
                       child: Column(
                            crossAxisAlignment: CrossAxisAlignment.center,
@@ -134,7 +134,7 @@ class _ViewprofileState extends State<Viewprofile> {
                       ),
                     ),
                     Container(
-                      color: Colors.blue,
+                      color: Colors.black,
                        width: a.width / 4.5,
                       margin: EdgeInsets.only(
                           left: a.width / 10, right: a.width / 10),
