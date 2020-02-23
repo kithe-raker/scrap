@@ -101,16 +101,19 @@ class _ViewprofileState extends State<Viewprofile> {
                 style: TextStyle(color: Colors.blue, fontSize: a.width / 12),
               ),
               Container(
-                margin: EdgeInsets.only(top: a.width / 30),
+                margin: EdgeInsets.only(top: a.width / 30 , left: a.width / 15 , right: a.width / 15),
                 padding: EdgeInsets.only(top: a.width / 10),
                 height: a.width / 2.5,
                 //ใส่เส้นด้านใต้สุด
                 child: Row(
                   // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Container(
+                      color: Colors.blue,
+                       width: a.width / 4.5,
                       child: Column(
+                           crossAxisAlignment: CrossAxisAlignment.center,
                         //เพื่อใช้สำหรับให้ จำนวน และ เขียน
                         children: <Widget>[
                           Text(
@@ -131,9 +134,12 @@ class _ViewprofileState extends State<Viewprofile> {
                       ),
                     ),
                     Container(
+                      color: Colors.blue,
+                       width: a.width / 4.5,
                       margin: EdgeInsets.only(
                           left: a.width / 10, right: a.width / 10),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
                             //เพื่อใช้สำหรับ��ห้ จำนวน และ ผ�����้หยิบอ่าน
@@ -154,7 +160,10 @@ class _ViewprofileState extends State<Viewprofile> {
                       ),
                     ),
                     Container(
+                      color: Colors.blue,
+                       width: a.width / 4.5,
                       child: Column(
+                           crossAxisAlignment: CrossAxisAlignment.center,
                         //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
                         children: <Widget>[
                           Text(
@@ -422,8 +431,6 @@ class _ViewprofileState extends State<Viewprofile> {
 
                                     InkWell(
                                       child: Container(
-                                        margin:
-                                            EdgeInsets.only(left: a.width / 20),
                                         width: a.width / 4.5,
                                         height: a.width / 8,
                                         decoration: BoxDecoration(

@@ -73,11 +73,11 @@ class _LongPaperState extends State<LongPaper> {
           return AlertDialog(
             backgroundColor: Colors.white,
             content: Container(
-              child: Text('คุณต้องการลบจริงๆใช่มั้ย'),
+              child: Text('คุณต้องการลบกระดาษแผ่นนี้ใช่หรือไม่'),
             ),
             actions: <Widget>[
               FlatButton(
-                child: Text('ok'),
+                child: Text('ใช่'),
                 onPressed: () async {
                   Navigator.pop(context);
                   await remove();
