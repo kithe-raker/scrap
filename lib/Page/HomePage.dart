@@ -352,7 +352,7 @@ class _HomePageState extends State<HomePage> {
                 alignment: Alignment.bottomCenter,
                 child: Text(
                   'กรุณาตรวจสอบGPSหรืออินเทอร์เน็ตของท่าน',
-                  style: TextStyle(fontSize: a.width / 16, color: Colors.white),
+                  style: TextStyle(fontSize: a.width / 18, color: Colors.white),
                 ))
           ],
         ),

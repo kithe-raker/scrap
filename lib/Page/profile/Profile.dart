@@ -668,11 +668,10 @@ class _ProfileState extends State<Profile> {
               child: Column(
                 children: <Widget>[
                   Container(
-                    padding:
-                        EdgeInsets.only(right: a.width / 0, left: a.width / 80),
                     height: a.width / 8,
                     decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Colors.grey))),
+                        border: Border(
+                          bottom: BorderSide(color: Colors.grey))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -680,10 +679,10 @@ class _ProfileState extends State<Profile> {
                           children: <Widget>[
                             Text(
                               "ปาใส่กลับโดย : ",
-                              style: TextStyle(fontSize: a.width / 20),
+                              style: TextStyle(fontSize: a.width / 20,color:Colors.black),
                             ),
                             Text(
-                              "@regonder",
+                             "@"+widget.doc['id'],
                               style: TextStyle(
                                   color: Color(0xff26A4FF),
                                   fontSize: a.width / 20),
@@ -698,8 +697,7 @@ class _ProfileState extends State<Profile> {
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(a.width)),
                               child: Icon(
-                                Icons.clear,
-                                color: Colors.white,
+                                Icons.clear,color:Colors.white
                               )),
                           onTap: () {
                             Navigator.pop(context);
@@ -755,7 +753,6 @@ class _ProfileState extends State<Profile> {
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.pop(context);
-                      print(id + " " + text2);
                       throwTo(id, text2);
                     },
                   )
