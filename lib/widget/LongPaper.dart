@@ -18,7 +18,6 @@ class _LongPaperState extends State<LongPaper> {
         width: a.width / 1.3,
         height: a.width / 3,
         decoration: BoxDecoration(
-         
           image: DecorationImage(
             image: AssetImage('assets/paper-readed.png'),
             fit: BoxFit.cover,
