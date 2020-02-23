@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   bool public;
   Geolocator geo = Geolocator();
   var _key = GlobalKey<FormState>();
-  var currentLocation;
+  Position currentLocation;
 
   @override
   void initState() {

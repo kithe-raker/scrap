@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:scrap/function/randomLocation.dart';
 
 class MapScraps extends StatefulWidget {
   final Position currentLocation;
@@ -23,6 +26,7 @@ class MapScraps extends StatefulWidget {
 
 class _MapScrapsState extends State<MapScraps> {
   Position currentLocation;
+  String date, time;
   bool loadMap = false;
   BitmapDescriptor _curcon, scrapIcon;
   bool checkPlatform = Platform.isIOS;
@@ -31,10 +35,14 @@ class _MapScrapsState extends State<MapScraps> {
   GoogleMapController mapController;
   var radius = BehaviorSubject<double>.seeded(0.1);
   StreamSubscription subscription;
+  DateTime now = DateTime.now();
+
   Set picked = {};
 
   @override
   void initState() {
+    time = DateFormat('Hm').format(now);
+    date = DateFormat('d/M/y').format(now);
     currentLocation = widget.currentLocation;
     loadMap = true;
     super.initState();
@@ -130,7 +138,6 @@ class _MapScrapsState extends State<MapScraps> {
                           ),
                         )),
                     Positioned(
-          
                       bottom: 0,
                       left: 12,
                       right: 12,
@@ -250,7 +257,7 @@ class _MapScrapsState extends State<MapScraps> {
         body: Stack(
           children: <Widget>[
             Container(
-              color:  Colors.grey[900],
+              color: Colors.grey[900],
               width: a.width,
               height: a.height,
               child: loadMap
@@ -297,17 +304,46 @@ class _MapScrapsState extends State<MapScraps> {
   void onMapCreated(GoogleMapController controller) {
     this.mapController = controller;
     changeMapMode();
-    userMarker(
-      currentLocation != null ? currentLocation.latitude : 0.0,
-      currentLocation != null ? currentLocation.longitude : 0.0,
-    );
-    _addCircle(100, currentLocation.latitude, currentLocation.longitude);
-    _startQuery();
+    updateMap(currentLocation);
     Geolocator().getPositionStream().listen((location) {
-      userMarker(location.latitude, location.longitude);
-      _addCircle(100, location.latitude, location.longitude);
-      _animateToUser(position: location);
-      _startQuery(position: location);
+      updateMap(location);
+    });
+  }
+
+  caseRandomMarker(Position location) {
+    if (markers.length < 3) {
+      for (int i = 0; i < 3; i++) {
+        randomScrap(location);
+      }
+    } else if (markers.length < 5) {
+      for (int i = 0; i < 2; i++) {
+        randomScrap(location);
+      }
+    } else if (markers.length < 7) {
+      randomScrap(location);
+    }
+  }
+
+  updateMap(Position location) {
+    userMarker(location.latitude, location.longitude);
+    _addCircle(100, location.latitude, location.longitude);
+    _animateToUser(position: location);
+    _startQuery(position: location);
+  }
+
+  randomScrap(Position location) {
+    final random = Random();
+    int con, type;
+    Map randLocation = RandomLocation()
+        .getLocation(lat: location.latitude, lng: location.longitude);
+    Firestore.instance.collection('Contents').getDocuments().then((docs) {
+      type = random.nextInt(docs.documents.length);
+      List randContens = docs.documents[type].data['Contents'];
+      con = random.nextInt(randContens.length);
+      String getContent = randContens[con];
+      _addMarker(getContent, 'ไม่ระบุตัวตน', 'scrap.team', getContent,
+          '$time  $date', randLocation['lat'], randLocation['lng'],
+          official: true);
     });
   }
 
@@ -322,13 +358,14 @@ class _MapScrapsState extends State<MapScraps> {
           picked.contains(data['id'])) {
       } else {
         _addMarker(
-            data['id'],
-            data['uid'],
-            data['scrap']['user'],
-            data['scrap']['text'],
-            data['scrap']['time'],
-            loca.latitude,
-            loca.longitude);
+          data['id'],
+          data['uid'],
+          data['scrap']['user'],
+          data['scrap']['text'],
+          data['scrap']['time'],
+          loca.latitude,
+          loca.longitude,
+        );
       }
     });
   }
@@ -357,13 +394,13 @@ class _MapScrapsState extends State<MapScraps> {
     GeoFirePoint center = Geoflutterfire().point(
         latitude: position?.latitude ?? pos.latitude,
         longitude: position?.longitude ?? pos.longitude);
-
     // subscribe to query
     subscription = radius.switchMap((rad) {
       return Geoflutterfire().collection(collectionRef: ref).within(
           center: center, radius: rad, field: 'position', strictMode: true);
     }).listen((list) {
       _updateMarkers(list, position ?? pos);
+      caseRandomMarker(position ?? pos);
     });
   }
 
@@ -373,7 +410,8 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   void _addMarker(String id, String user, String writer, String text,
-      String time, double lat, double lng) {
+      String time, double lat, double lng,
+      {bool official = false}) {
     final MarkerId markerId = MarkerId(id);
     final Marker marker = Marker(
       markerId: markerId,
@@ -385,7 +423,7 @@ class _MapScrapsState extends State<MapScraps> {
           picked.add(id);
           setState(() {});
           dialog(text, writer, time, id);
-          increaseTransaction(user, 'read');
+          official ? null : increaseTransaction(user, 'read');
         } catch (e) {
           print(e.toString());
           error(context,
