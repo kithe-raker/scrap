@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:scrap/Page/Auth.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 
 class MainPage extends StatefulWidget {
@@ -102,7 +103,9 @@ class _MainPageState extends State<MainPage> {
               },
             ),
           ),
-        ));
+));
+
+        
   }
 }
 
