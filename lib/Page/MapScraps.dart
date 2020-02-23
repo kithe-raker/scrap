@@ -328,7 +328,7 @@ class _MapScrapsState extends State<MapScraps> {
   addRandScrap() {
     for (var scrap in scpContent.toList()) {
       Map data = randScrap[scrap];
-      _addMarker(data['text'], 'scrap.team', 'สุ่มโดยScrap', data['text'],
+      _addMarker(data['text'], 'scrap.team', 'สุ่มโดยSCRAP', data['text'],
           data['time'], data['lat'], data['lng'],
           official: true);
     }
