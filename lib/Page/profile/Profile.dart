@@ -147,7 +147,7 @@ class _ProfileState extends State<Profile> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
                               Container(
-                                //color: Colors.blue,
+                                //color: Colors.black,
                                 width: a.width / 4.5,
                                 child: Column(
                                   //เพื่อใช้สำหรับให้ จำนวน และ เขียน
