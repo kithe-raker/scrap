@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
 import 'package:scrap/Page/setting/servicedoc.dart';

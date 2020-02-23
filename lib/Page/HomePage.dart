@@ -25,6 +25,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String type, select, text;
   bool public;
+  Geolocator geo = Geolocator();
   var _key = GlobalKey<FormState>();
   var currentLocation;
 
@@ -440,9 +441,8 @@ class _HomePageState extends State<HomePage> {
 
   binScrap(String time) async {
     GeoFirePoint point;
-    await Geolocator().getCurrentPosition().then((value) => point =
-        Geoflutterfire()
-            .point(latitude: value.latitude, longitude: value.longitude));
+    await geo.getCurrentPosition().then((value) => point = Geoflutterfire()
+        .point(latitude: value.latitude, longitude: value.longitude));
     await Firestore.instance
         .collection('Scraps')
         .document('hatyai')

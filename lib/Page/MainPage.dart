@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:scrap/Page/Auth.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/services/provider.dart';
@@ -16,12 +15,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  Position currentLocation;
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
 
   initLocalMessage() {
-    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var android = AndroidInitializationSettings('noti_ic');
     var ios = IOSInitializationSettings();
     var initMessaging = InitializationSettings(android, ios);
     messaging.initialize(initMessaging, onSelectNotification: onTapMessage);
@@ -33,10 +31,12 @@ class _MainPageState extends State<MainPage> {
           displayNotification(message);
         },
         onLaunch: (Map<String, dynamic> message) async {
-          displayNotification(message);
+          debugPrint('onLaunch');
+          // displayNotification(message);
         },
         onResume: (Map<String, dynamic> message) async {
-          displayNotification(message);
+          debugPrint('onResume');
+          // displayNotification(message);
         },
         onBackgroundMessage: Platform.isIOS ? null : Fcm.backgroundHandler);
 
@@ -70,11 +70,6 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     initFirebaseMessaging();
     initLocalMessage();
-    Geolocator().getCurrentPosition().then((curlo) {
-      setState(() {
-        currentLocation = curlo;
-      });
-    });
     super.initState();
   }
 
@@ -112,17 +107,17 @@ class _MainPageState extends State<MainPage> {
 }
 
 class Fcm {
-  static Future<dynamic> backgroundHandler(Map<String, dynamic> message)async {
+  static Future<dynamic> backgroundHandler(Map<String, dynamic> message) async {
     if (message.containsKey('data')) {
       // Handle data message
       final dynamic data = message['data'];
-        print('DatabackgroundHandler');
+      debugPrint('DatabackgroundHandler');
     }
 
     if (message.containsKey('notification')) {
       // Handle notification message
       final dynamic notification = message['notification'];
-      print('NotibackgroundHandler');
+      debugPrint('NotibackgroundHandler');
     }
 
     // Or do other work.
