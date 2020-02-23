@@ -25,7 +25,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String type, select, text;
   bool public;
-  Geolocator geo = Geolocator();
   var _key = GlobalKey<FormState>();
   Position currentLocation;
 
@@ -351,7 +350,7 @@ class _HomePageState extends State<HomePage> {
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Text(
-                  'กรุณาตรวจสอบGPSหรืออินเทอร์เน็ตของท่าน',
+                  'กรุณาตรวจสอบGPSหรืออินเทอร์เน็ตของคุณ',
                   style: TextStyle(fontSize: a.width / 16, color: Colors.white),
                 ))
           ],
@@ -441,8 +440,9 @@ class _HomePageState extends State<HomePage> {
 
   binScrap(String time) async {
     GeoFirePoint point;
-    await geo.getCurrentPosition().then((value) => point = Geoflutterfire()
-        .point(latitude: value.latitude, longitude: value.longitude));
+    await Geolocator().getCurrentPosition().then((value) => point =
+        Geoflutterfire()
+            .point(latitude: value.latitude, longitude: value.longitude));
     await Firestore.instance
         .collection('Scraps')
         .document('hatyai')
@@ -451,7 +451,7 @@ class _HomePageState extends State<HomePage> {
       'uid': widget.doc['uid'],
       'scrap': {
         'text': text,
-        'user': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+        'user': public ?? false ? widget.doc['id'] : 'ใครบางคน',
         'time': time
       },
       'position': point.data
