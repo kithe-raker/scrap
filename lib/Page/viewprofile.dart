@@ -160,7 +160,7 @@ class _ViewprofileState extends State<Viewprofile> {
                       ),
                     ),
                     Container(
-                      color: Colors.blue,
+                      color: Colors.black,
                        width: a.width / 4.5,
                       child: Column(
                            crossAxisAlignment: CrossAxisAlignment.center,
