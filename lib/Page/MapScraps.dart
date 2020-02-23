@@ -36,7 +36,8 @@ class _MapScrapsState extends State<MapScraps> {
   var radius = BehaviorSubject<double>.seeded(0.1);
   StreamSubscription subscription;
   DateTime now = DateTime.now();
-
+  Map randScrap = {};
+  Set scpContent = {};
   Set picked = {};
 
   @override
@@ -128,7 +129,7 @@ class _MapScrapsState extends State<MapScraps> {
                             children: <Widget>[
                               Text(
                                 writer == 'ไม่ระบุ'
-                                    ? 'เขียนโดย : ไม่ระบุตัวตน'
+                                    ? 'เขียนโดย : ใครบางคน'
                                     : 'เขียนโดย : @$writer',
                                 style: TextStyle(fontSize: a.width / 25),
                               ),
@@ -212,7 +213,12 @@ class _MapScrapsState extends State<MapScraps> {
                           width: a.width / 1.3,
                           child: Text(
                             text,
+<<<<<<< HEAD
+                            textAlign: TextAlign.center,
                             style: TextStyle(fontSize: a.width / 10),
+=======
+                            style: TextStyle(fontSize: a.width / 14),
+>>>>>>> ad6763182825cb01a3059edcf4d1f0a12e058b6c
                           ),
                         ))
                   ],
@@ -324,6 +330,15 @@ class _MapScrapsState extends State<MapScraps> {
     }
   }
 
+  addRandScrap() {
+    for (var scrap in scpContent.toList()) {
+      Map data = randScrap[scrap];
+      _addMarker(data['text'], 'scrap.team', 'สุ่มโดยScrap', data['text'],
+          data['time'], data['lat'], data['lng'],
+          official: true);
+    }
+  }
+
   updateMap(Position location) {
     userMarker(location.latitude, location.longitude);
     _addCircle(100, location.latitude, location.longitude);
@@ -341,9 +356,16 @@ class _MapScrapsState extends State<MapScraps> {
       List randContens = docs.documents[type].data['Contents'];
       con = random.nextInt(randContens.length);
       String getContent = randContens[con];
-      _addMarker(getContent, 'ไม่ระบุตัวตน', 'scrap.team', getContent,
-          '$time  $date', randLocation['lat'], randLocation['lng'],
-          official: true);
+      scpContent.add(getContent);
+      randScrap[getContent] = {
+        'text': getContent,
+        'lat': randLocation['lat'],
+        'lng': randLocation['lng'],
+        'time': '$time  $date',
+      };
+      // _addMarker(getContent, 'ไม่ระบุตัวตน', 'scrap.team', getContent,
+      //     '$time  $date', randLocation['lat'], randLocation['lng'],
+      //     official: true);
     });
   }
 
@@ -370,6 +392,7 @@ class _MapScrapsState extends State<MapScraps> {
         );
       }
     });
+    addRandScrap();
   }
 
   _animateToUser({Position position}) async {
@@ -400,9 +423,9 @@ class _MapScrapsState extends State<MapScraps> {
     subscription = radius.switchMap((rad) {
       return Geoflutterfire().collection(collectionRef: ref).within(
           center: center, radius: rad, field: 'position', strictMode: true);
-    }).listen((list) {
+    }).listen((list) async {
+      scpContent.length < 3 ? caseRandomMarker(position ?? pos) : null;
       _updateMarkers(list, position ?? pos);
-      caseRandomMarker(position ?? pos);
     });
   }
 
@@ -423,6 +446,8 @@ class _MapScrapsState extends State<MapScraps> {
         try {
           markers.remove(markerId);
           picked.add(id);
+          official ? scpContent.remove(id) : null;
+          official ? randScrap.remove(id) : null;
           setState(() {});
           dialog(text, writer, time, id);
           official ? null : addRead(id);
@@ -430,7 +455,7 @@ class _MapScrapsState extends State<MapScraps> {
         } catch (e) {
           print(e.toString());
           error(context,
-              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อต่ออินเทอร์เน็ต');
+              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
         }
       },
     );
