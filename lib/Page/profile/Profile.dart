@@ -131,6 +131,30 @@ class _ProfileState extends State<Profile> {
                                   fontSize: a.width / 11,
                                   color: Color(0xff26A4FF)),
                             )),
+                        InkWell(
+                          child: Container(
+                              margin: EdgeInsets.only(top: a.width / 14),
+                              child: SizedBox(
+                                width: a.width / 1.6,
+                                child: Text(
+                                  snapshot?.data['status'] ??
+                                      'แตะเพื่อเพิ่มสเตตัส',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: a.width / 15,
+                                      color: snapshot?.data['status'] == null
+                                          ? Colors.grey
+                                          : Colors.white,
+                                      fontStyle:
+                                          snapshot?.data['status'] == null
+                                              ? null
+                                              : FontStyle.italic),
+                                ),
+                              )),
+                          onTap: () {
+                            editStatus(snapshot?.data['status'], "thrown");
+                          },
+                        ),
                         // ใส่ Container เพื่อสร้างกรอบ
                         Container(
                           margin: EdgeInsets.only(top: a.width / 30),
@@ -143,7 +167,7 @@ class _ProfileState extends State<Profile> {
                                       color:
                                           Colors.white))), //ใส่เส้นด้านใต้สุด
                           child: Row(
-                            // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
+                            // ใส��� Row ��พื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
                               Container(
@@ -658,6 +682,133 @@ class _ProfileState extends State<Profile> {
         fullscreenDialog: true));
   }
 
+  editStatus(String status, String thrown) {
+    String edit;
+    var tx = TextEditingController();
+    tx.text = status;
+    var _key = GlobalKey<FormState>();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          Size a = MediaQuery.of(context).size;
+          return Dialog(
+            child: Container(
+              height: a.width / 1.6,
+              padding: EdgeInsets.only(
+                  left: a.width / 100,
+                  right: a.width / 100,
+                  top: a.width / 100),
+              child: Stack(
+                children: <Widget>[
+                  Form(
+                    key: _key,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          width: a.width / 1.32,
+                          height: a.width / 8,
+                          padding: EdgeInsets.only(top: 6),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey[300]))),
+                          child: Text(
+                            "แก้ไขสเตตัส",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: a.width / 15,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(
+                              right: a.width / 40, left: a.width / 40),
+                          height: a.width / 3.4,
+                          child: TextFormField(
+                            style: TextStyle(
+                              fontSize: a.width / 17,
+                            ),
+                            controller: tx,
+                            decoration: InputDecoration(
+                              border: InputBorder.none, //สำหรับใหเส้นใต้หาย
+                              hintText: 'เขียนข้อความของคุณ',
+                              hintStyle: TextStyle(
+                                fontSize: a.width / 17,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            validator: (val) {
+                              return val.trim() == null || val.trim() == ""
+                                  ? toast('เขียนบางอย่างสิ')
+                                  : null;
+                            },
+                            //เนื้อหาที่กรอกเข้าไปใน text
+                            onSaved: (val) {
+                              edit = val;
+                            },
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            width: a.width,
+                            alignment: Alignment.centerRight,
+                            margin: EdgeInsets.only(
+                                top: a.width / 15, right: a.width / 33),
+                            child: Container(
+                                width: a.width / 5.5,
+                                height: a.width / 11,
+                                decoration: BoxDecoration(
+                                    color: Color(0xff26A4FF),
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "แก้ไข",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: a.width / 15),
+                                )),
+                          ),
+                          onTap: () {
+                            if (_key.currentState.validate()) {
+                              _key.currentState.save();
+                              Navigator.pop(context);
+                              statusEditer(edit);
+                              toast('แก้ไขสเตตัสเรียนร้อย');
+                            }
+                            // throwTo(id, text2);
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 4,
+                    top: 4,
+                    child: InkWell(
+                      child: Container(
+                          width: a.width / 12,
+                          height: a.width / 12,
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(a.width)),
+                          child: Icon(
+                            Icons.clear,
+                            color: Colors.white,
+                            size: a.width / 21,
+                          )),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   dialogPa(String id, String thrown) {
     showDialog(
         context: context,
@@ -684,7 +835,7 @@ class _ProfileState extends State<Profile> {
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                SizedBox(width : 5),
+                                SizedBox(width: 5),
                                 Text(
                                   "ปาใส่กลับโดย : ",
                                   style: TextStyle(
@@ -710,7 +861,7 @@ class _ProfileState extends State<Profile> {
                           maxLines: null,
                           decoration: InputDecoration(
                             border: InputBorder.none, //สำหรับใหเส้นใต้หาย
-                            hintText: 'เขียนข้อความบางอย่าง',
+                            hintText: 'เขียนข้อคว��มบางอย่า���',
                             hintStyle: TextStyle(
                               fontSize: a.width / 25,
                               color: Colors.grey,
@@ -742,7 +893,9 @@ class _ProfileState extends State<Profile> {
                               alignment: Alignment.center,
                               child: Text(
                                 "ปาเลย",
-                                style: TextStyle(color: Colors.white , fontSize: a.width / 15),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 15),
                               )),
                         ),
                         onTap: () {
@@ -777,6 +930,15 @@ class _ProfileState extends State<Profile> {
             ),
           );
         });
+  }
+
+  statusEditer(String status) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document(widget.doc['uid'])
+        .updateData({'status': status});
   }
 
   throwTo(String thrownID, String text) async {
@@ -924,7 +1086,7 @@ class _ProfileState extends State<Profile> {
 }
 
 class Constans {
-  static const String Account = 'แก้ไขบัญชี';
+  static const String Account = 'แก้ไข��ัญชี';
   static const String Feedback = 'ให้คำแนะนำ';
   static const String About = 'เกี่ยวกับแอป';
   static const String SignOut = 'ออกจากระบบ';

@@ -317,19 +317,19 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return currentLocation == null
-                ? gpsCheck(a)
+                ? gpsCheck(a, 'กรุณาตรวจสอบGPSของคุณ')
                 : MapScraps(
                     collection: snap?.data['id'] ?? [],
                     currentLocation: currentLocation,
                     uid: widget.doc['uid'],
                   );
           } else {
-            return Loading();
+            return gpsCheck(a, 'กรุณาตรวจสอบอินเทอร์เน็ตของคุณ');
           }
         });
   }
 
-  Widget gpsCheck(Size a) {
+  Widget gpsCheck(Size a, String text) {
     return Center(
       child: Container(
         width: a.width / 1.2,
@@ -350,7 +350,7 @@ class _HomePageState extends State<HomePage> {
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Text(
-                  'กรุณาตรวจสอบ GPS หรืออินเทอร์เน็ตของคุณ',
+                  text,
                   style: TextStyle(fontSize: a.width / 16, color: Colors.white),
                 ))
           ],

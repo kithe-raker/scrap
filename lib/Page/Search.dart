@@ -32,18 +32,17 @@ class _SearchState extends State<Search> {
                 right: a.width / 25,
                 left: a.width / 25,
                 bottom: a.width / 8.0),
-              child: Column(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 search
-                     ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                              margin: EdgeInsets.only(bottom : 30),
+                            margin: EdgeInsets.only(bottom: 30),
                             child: IconButton(
-                              
                                 icon: Icon(
                                   Icons.arrow_back,
                                   color: Colors.white,
@@ -58,7 +57,7 @@ class _SearchState extends State<Search> {
                           Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Container(
-                              margin: EdgeInsets.only(bottom : 30),
+                              margin: EdgeInsets.only(bottom: 30),
                               width: a.width * 9 / 12,
                               height: a.width / 6.5,
                               decoration: BoxDecoration(
@@ -144,16 +143,14 @@ class _SearchState extends State<Search> {
                             ),
                           ),
 
-                           
                           SizedBox(
                             height: a.width / 13,
                           ),
 
-
                           Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Container(
-                              margin: EdgeInsets.only(bottom : 30),
+                              margin: EdgeInsets.only(bottom: 30),
                               width: a.width,
                               height: a.width / 6.5,
                               decoration: BoxDecoration(
@@ -189,8 +186,6 @@ class _SearchState extends State<Search> {
                               ),
                             ),
                           ),
-
-
                         ],
                       ),
                 search
@@ -429,10 +424,14 @@ class _SearchState extends State<Search> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(
-                          throwID,
-                          style: TextStyle(
-                              fontSize: a.width / 13, color: Colors.white),
+                        SizedBox(
+                          width: a.width / 2.2,
+                          height: a.width / 10,
+                          child: Text(
+                            throwID,
+                            style: TextStyle(
+                                fontSize: a.width / 13, color: Colors.white),
+                          ),
                         ),
                         Row(
                           children: <Widget>[
