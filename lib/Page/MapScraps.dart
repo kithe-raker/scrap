@@ -272,7 +272,7 @@ class _MapScrapsState extends State<MapScraps> {
                       initialCameraPosition: CameraPosition(
                           target: LatLng(currentLocation?.latitude ?? 0,
                               currentLocation?.longitude ?? 0),
-                          zoom: 18),
+                          zoom: 18.5 , tilt: 90),
                       markers: Set<Marker>.of(markers.values),
                       circles: Set<Circle>.of(circles.values),
                     )
@@ -385,7 +385,7 @@ class _MapScrapsState extends State<MapScraps> {
             position == null ? pos.latitude : position.latitude,
             position == null ? pos.longitude : position.longitude,
           ),
-          zoom: 19.0,
+          zoom: 18.5,
           tilt: 90.0,
         )));
   }
@@ -411,7 +411,7 @@ class _MapScrapsState extends State<MapScraps> {
 
   cameraAnime(GoogleMapController controller, double lat, double lng) {
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(lat, lng), zoom: 12, bearing: 0.0, tilt: 90)));
+        target: LatLng(lat, lng), zoom: 18.5, bearing: 0.0, tilt: 90)));
   }
 
   void _addOfficial(String text, String time, double lat, double lng) {

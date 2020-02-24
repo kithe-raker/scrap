@@ -98,7 +98,7 @@ class _ViewprofileState extends State<Viewprofile> {
               ),
               Text(
                 "Join ${widget.info.data['createdDay']}",
-                style: TextStyle(color: Colors.black, fontSize: a.width / 12),
+                style: TextStyle(color: Color(0xff26A4FF), fontSize: a.width / 12),
               ),
               Container(
                 margin: EdgeInsets.only(top: a.width / 30 , left: a.width / 15 , right: a.width / 15),
