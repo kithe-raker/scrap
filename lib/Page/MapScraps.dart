@@ -129,8 +129,8 @@ class _MapScrapsState extends State<MapScraps> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                writer == 'ไม่ระบุ'
-                                    ? 'เขียนโดย : ไม่ระบุตัวตน'
+                                writer == 'ไม่ระบุตัวตน'
+                                    ? 'เขียนโดย : ใครบางคน'
                                     : 'เขียนโดย : @$writer',
                                 style: TextStyle(fontSize: a.width / 25),
                               ),

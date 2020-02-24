@@ -95,8 +95,8 @@ class _ViewprofileState extends State<Viewprofile> {
                   ),
                   Text(
                     "Join ${widget.info.data['createdDay']}",
-                    style:
-                        TextStyle(color: Colors.white, fontSize: a.width / 12),
+                    style: TextStyle(
+                        color: Color(0xff26A4FF), fontSize: a.width / 12),
                   ),
                   widget.info?.data['status'] == null
                       ? SizedBox(
