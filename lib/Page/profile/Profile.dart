@@ -861,7 +861,7 @@ class _ProfileState extends State<Profile> {
                           maxLines: null,
                           decoration: InputDecoration(
                             border: InputBorder.none, //สำหรับใหเส้นใต้หาย
-                            hintText: 'เขียนข้อคว��มบางอย่า���',
+                            hintText: 'เขียนข้อความบางอย่าง',
                             hintStyle: TextStyle(
                               fontSize: a.width / 25,
                               color: Colors.grey,
@@ -1086,7 +1086,7 @@ class _ProfileState extends State<Profile> {
 }
 
 class Constans {
-  static const String Account = 'แก้ไข��ัญชี';
+  static const String Account = 'แก้ไขบัญชี';
   static const String Feedback = 'ให้คำแนะนำ';
   static const String About = 'เกี่ยวกับแอป';
   static const String SignOut = 'ออกจากระบบ';

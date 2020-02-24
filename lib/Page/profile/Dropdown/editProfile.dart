@@ -21,7 +21,7 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   var _key = GlobalKey<FormState>();
-  bool read = true, readMail = true, loading = false;
+  bool loading = false;
   File image;
   String id;
   Map account = {};
@@ -92,6 +92,16 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
+  Future<bool> hasAccount(String user) async {
+    final QuerySnapshot users = await Firestore.instance
+        .collection('Users')
+        .where('id', isEqualTo: user)
+        .limit(1)
+        .getDocuments();
+    final List<DocumentSnapshot> doc = users.documents;
+    return doc.length == 1;
+  }
+
   updateAccount(String key, String value) async {
     await Firestore.instance
         .collection('User')
@@ -117,7 +127,7 @@ class _EditProfileState extends State<EditProfile> {
       Navigator.pop(context);
       Navigator.pop(context);
     } catch (e) {
-      Dg().warning1(context, 'เกิดข้อผิดพลาด,กรุณาลองใหม่');
+      warning('เกิดข้อผิดพลาดกรุราลองใหม่');
     }
   }
 
@@ -171,10 +181,17 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           FloatingActionButton.extended(
                             backgroundColor: Colors.white,
-                            onPressed: () {
+                            onPressed: () async {
                               if (_key.currentState.validate()) {
                                 _key.currentState.save();
-                                saveEdit();
+                                if (id != widget.doc['id']) {
+                                  await hasAccount(id)
+                                      ? warning(
+                                          'ไอดีนี้ได้ทำการลงทะเบียนไว้แล้ว')
+                                      : saveEdit();
+                                } else {
+                                  saveEdit();
+                                }
                               }
                             },
                             icon: Icon(
@@ -222,7 +239,8 @@ class _EditProfileState extends State<EditProfile> {
                                     InkWell(
                                       child: Container(
                                         margin: EdgeInsets.only(
-                                            left: a.width/20, right:  a.width/33),
+                                            left: a.width / 20,
+                                            right: a.width / 33),
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
@@ -269,14 +287,10 @@ class _EditProfileState extends State<EditProfile> {
                             Positioned(
                               right: 10.0,
                               top: 10.0,
-                              child: IconButton(
-                                icon: Icon(Icons.create),
+                              child: Icon(
+                                (Icons.create),
                                 color: Colors.white,
-                                iconSize: a.width/13,
-                                onPressed: () {
-                                  read = false;
-                                  setState(() {});
-                                },
+                                size: a.width / 13,
                               ),
                             )
                           ],
@@ -359,14 +373,10 @@ class _EditProfileState extends State<EditProfile> {
                             Positioned(
                               right: 10.0,
                               top: 10.0,
-                              child: IconButton(
-                                icon: Icon(Icons.create),
+                              child: Icon(
+                                (Icons.create),
                                 color: Colors.white,
-                                iconSize: a.width/13,
-                                onPressed: () {
-                                  readMail = false;
-                                  setState(() {});
-                                },
+                                size: a.width / 13,
                               ),
                             )
                           ],
@@ -377,9 +387,7 @@ class _EditProfileState extends State<EditProfile> {
                         child: Container(
                           height: a.height / 4.5,
                           width: a.width,
-                          
                           decoration: BoxDecoration(
-                            
                               color: Color(0xff282828),
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(16.0),
@@ -419,25 +427,17 @@ class _EditProfileState extends State<EditProfile> {
                                   ],
                                 ),
                                 onTap: () {
-                                  if (read && readMail) {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ChangePhone()));
-                                  } else {
-                                    Dg().warning1(context,
-                                        'ข้อมูลที่ท่านกรอกไว้จะหายไปทั้งหมด');
-                                  }
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ChangePhone()));
                                 },
                               ),
                             ],
                           ),
                         ),
                       ),
-
-                  
                     ],
                   ),
                 ),
@@ -450,8 +450,6 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  
-
   Widget inputID(Size a, String value) {
     var tx = TextEditingController();
     tx.text = '@' + value;
@@ -460,7 +458,6 @@ class _EditProfileState extends State<EditProfile> {
       height: a.height / 21,
       child: TextFormField(
         keyboardType: TextInputType.emailAddress,
-        readOnly: read,
         controller: tx,
         style: TextStyle(fontSize: a.width / 13, color: Colors.white),
         decoration:
@@ -473,6 +470,28 @@ class _EditProfileState extends State<EditProfile> {
         },
       ),
     );
+  }
+
+  warning(String warn, {Function function}) {
+    return showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text('ขออภัยค่ะ'),
+            content: Container(
+              child: Text(warn),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: function ??
+                      () {
+                        Navigator.pop(context);
+                      },
+                  child: Text('ok'))
+            ],
+          );
+        });
   }
 
   Widget editAccount(bool pass, Size a, String type, String hint, String value,
@@ -494,7 +513,6 @@ class _EditProfileState extends State<EditProfile> {
       ),
       child: TextFormField(
         obscureText: pass,
-        readOnly: readMail,
         controller: tx,
         textAlign: TextAlign.start,
         style: TextStyle(

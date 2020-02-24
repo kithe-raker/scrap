@@ -1,4 +1,5 @@
 import 'dart:io'; //ref from creatProfile
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -38,12 +39,22 @@ class _CreateProfile1State extends State<CreateProfile1> {
     }
   }
 
+  Future<bool> hasAccount(String user) async {
+    final QuerySnapshot users = await Firestore.instance
+        .collection('Users')
+        .where('id', isEqualTo: user)
+        .limit(1)
+        .getDocuments();
+    final List<DocumentSnapshot> doc = users.documents;
+    return doc.length == 1;
+  }
+
   @override
   Widget build(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () =>
-          warnDate('คุณต้องการออกจากหน้านี้ใช่หรือไม่', function: () {
+          warning('คุณต้องการออกจากหน้านี้ใช่หรือไม่', function: () {
         Navigator.pop(context);
         Navigator.pop(context);
       }),
@@ -231,20 +242,23 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                   .validate()) {
                                                 _formKey.currentState.save();
                                                 image != null
-                                                    ? Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                CreateProfile2(
-                                                                  uid: widget
-                                                                      .uid,
-                                                                  pro: {
-                                                                    'img':
-                                                                        image,
-                                                                    'id': id
-                                                                  },
-                                                                )))
-                                                    : warnDate(
+                                                    ? await hasAccount(id)
+                                                        ? warning(
+                                                            'ไอดีนี้ได้ทำการลงทะเบียนไว้แล้ว')
+                                                        : Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    CreateProfile2(
+                                                                        uid: widget
+                                                                            .uid,
+                                                                        pro: {
+                                                                          'img':
+                                                                              image,
+                                                                          'id':
+                                                                              id
+                                                                        })))
+                                                    : warning(
                                                         'กรุณาเลือกรูปโปรไฟล์ของท่าน');
                                               }
                                             },
@@ -281,12 +295,13 @@ class _CreateProfile1State extends State<CreateProfile1> {
     );
   }
 
-  warnDate(String warn, {Function function}) {
+  warning(String warn, {Function function}) {
     return showDialog(
         context: context,
         builder: (builder) {
           return AlertDialog(
             backgroundColor: Colors.white,
+            title: Text('ขออภัยค่ะ'),
             content: Container(
               child: Text(warn),
             ),

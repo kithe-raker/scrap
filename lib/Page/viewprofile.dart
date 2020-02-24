@@ -469,7 +469,7 @@ class _ViewprofileState extends State<Viewprofile> {
                                           Navigator.pop(context);
                                           Navigator.pop(context);
                                           Taoast().toast(
-                                              'ปาใส่"${widget.account['id']}"แ���้ว');
+                                              'ปาใส่"${widget.account['id']}"แล้ว');
                                           throwTo(widget.account['uid']);
                                         } else {
                                           print('nope');
