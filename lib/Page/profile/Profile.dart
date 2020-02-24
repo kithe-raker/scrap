@@ -126,7 +126,7 @@ class _ProfileState extends State<Profile> {
                         Container(
                             margin: EdgeInsets.only(top: a.width / 1000),
                             child: Text(
-                              "Join " +  snapshot.data['createdDay'],
+                              "Join " + snapshot.data['createdDay'],
                               style: TextStyle(
                                   fontSize: a.width / 11,
                                   color: Color(0xff26A4FF)),
@@ -252,7 +252,6 @@ class _ProfileState extends State<Profile> {
                                         .document(widget.doc['uid'])
                                         .collection('scraps')
                                         .document('recently')
-                                        
                                         .snapshots(),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData &&
@@ -520,12 +519,13 @@ class _ProfileState extends State<Profile> {
               backgroundColor: Colors.black,
               body: Container(
                 color: Colors.black,
-                height: a.height / 1.5,
                 margin: EdgeInsets.only(
-                    top: a.height / 4.5,
-                    bottom: a.width / 8,
-                    left: a.width / 20,
-                    right: a.width / 20),
+                  top: a.height / 8,
+                ),
+                padding:
+                    EdgeInsets.only(left: a.width / 20, right: a.width / 20),
+                width: a.width,
+                height: a.height / 1.3,
                 child: Column(
                   children: <Widget>[
                     Stack(
@@ -535,7 +535,7 @@ class _ProfileState extends State<Profile> {
                           child: Image.asset(
                             'assets/paper-readed.png',
                             width: a.width,
-                            height: a.height / 2.1,
+                            height: a.height / 1.6,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -569,27 +569,28 @@ class _ProfileState extends State<Profile> {
                                       child: Text("ปากลับ"),
                                     ),
                                     onTap: () {
-                                      dialogPa(writerID , writer);
+                                      dialogPa(writerID, writer);
                                     },
                                   )
                                 ],
                               ),
                             )),
-                        Positioned(
-                            left: a.width / 16,
-                            top: a.height / 12,
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: a.height / 3.2,
-                              width: a.width / 1.2,
-                              child: Text(
-                                text,
-                                style: TextStyle(fontSize: a.width / 14),
-                              ),
-                            ))
+                        Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.only(left: 25, right: 25),
+                          height: a.height / 1.6,
+                          // width: a.width / 1.2,
+                          child: Text(
+                            text,
+                            style: TextStyle(
+                              fontSize: a.width / 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        )
                       ],
                     ),
-                    SizedBox(height: a.width / 10),
+                    SizedBox(height: a.width / 15),
                     Container(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -599,8 +600,8 @@ class _ProfileState extends State<Profile> {
                             child: Container(
                               margin: EdgeInsets.only(
                                   left: a.width / 55, right: a.width / 55),
-                              width: a.width / 4.5,
-                              height: a.width / 8,
+                              width: a.width / 3.5,
+                              height: a.width / 6.5,
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(a.width)),
@@ -628,8 +629,8 @@ class _ProfileState extends State<Profile> {
                           ),
                           InkWell(
                             child: Container(
-                              width: a.width / 4.5,
-                              height: a.width / 8,
+                              width: a.width / 3.5,
+                              height: a.width / 6.5,
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(a.width)),
@@ -669,96 +670,107 @@ class _ProfileState extends State<Profile> {
                   left: a.width / 100,
                   right: a.width / 100,
                   top: a.width / 100),
-              child: Column(
+              child: Stack(
                 children: <Widget>[
-                  Container(
-                    height: a.width / 8,
-                    decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Colors.grey))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Row(
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        height: a.width / 8,
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Colors.grey[300]))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(
-                              "ปาใส่กลับโดย : ",
-                              style: TextStyle(
-                                  fontSize: a.width / 20, color: Colors.black),
+                            Row(
+                              children: <Widget>[
+                                SizedBox(width : 5),
+                                Text(
+                                  "ปาใส่กลับโดย : ",
+                                  style: TextStyle(
+                                      fontSize: a.width / 20,
+                                      color: Colors.black),
+                                ),
+                                Text(
+                                  "@" + widget.doc['id'],
+                                  style: TextStyle(
+                                      color: Color(0xff26A4FF),
+                                      fontSize: a.width / 20),
+                                )
+                              ],
                             ),
-                            Text(
-                              "@" + widget.doc['id'],
-                              style: TextStyle(
-                                  color: Color(0xff26A4FF),
-                                  fontSize: a.width / 20),
-                            )
                           ],
                         ),
-                        InkWell(
-                          child: Container(
-                              width: a.width / 15,
-                              height: a.width / 15,
-                              decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(a.width)),
-                              child: Icon(Icons.clear, color: Colors.white)),
-                          onTap: () {
-                            Navigator.pop(context);
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(
+                            right: a.width / 40, left: a.width / 40),
+                        height: a.width / 3.4,
+                        child: TextFormField(
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            border: InputBorder.none, //สำหรับใหเส้นใต้หาย
+                            hintText: 'เขียนข้อความบางอย่าง',
+                            hintStyle: TextStyle(
+                              fontSize: a.width / 25,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          validator: (val) {
+                            return val.trim() == null || val.trim() == ""
+                                ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
+                                : null;
                           },
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(
-                        right: a.width / 40, left: a.width / 40),
-                    height: a.width / 3.4,
-                    child: TextFormField(
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        border: InputBorder.none, //สำหรับใหเส้นใต้หาย
-                        hintText: 'เขียนข้อความบางอย่าง',
-                        hintStyle: TextStyle(
-                          fontSize: a.width / 25,
-                          color: Colors.grey,
+                          //เนื้อหาที่กรอกเข้าไปใน text
+                          onChanged: (val) {
+                            text2 = val;
+                          },
                         ),
                       ),
-                      validator: (val) {
-                        return val.trim() == null || val.trim() == ""
-                            ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
-                            : null;
-                      },
-                      //เนื้อหาที่กรอกเข้าไปใน text
-                      onChanged: (val) {
-                        text2 = val;
-                      },
-                    ),
+                      InkWell(
+                        child: Container(
+                          width: a.width,
+                          alignment: Alignment.centerRight,
+                          margin: EdgeInsets.only(
+                              top: a.width / 15, right: a.width / 33),
+                          child: Container(
+                              width: a.width / 5.5,
+                              height: a.width / 11,
+                              decoration: BoxDecoration(
+                                  color: Color(0xff26A4FF),
+                                  borderRadius: BorderRadius.circular(a.width)),
+                              alignment: Alignment.center,
+                              child: Text(
+                                "ปาเลย",
+                                style: TextStyle(color: Colors.white , fontSize: a.width / 15),
+                              )),
+                        ),
+                        onTap: () {
+                          toast(thrown == 'ไม่ระบุตัวตน'
+                              ? 'ปากลับแล้ว'
+                              : 'ปากลับใส่"$thrown"แล้ว');
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          throwTo(id, text2);
+                        },
+                      )
+                    ],
                   ),
-                  InkWell(
-                    child: Container(
-                      width: a.width,
-                      alignment: Alignment.centerRight,
-                      margin: EdgeInsets.only(
-                          top: a.width / 15, right: a.width / 30),
+                  Positioned(
+                    right: 2,
+                    top: 2,
+                    child: InkWell(
                       child: Container(
-                          width: a.width / 5.5,
-                          height: a.width / 11,
+                          width: a.width / 15,
+                          height: a.width / 15,
                           decoration: BoxDecoration(
-                              color: Color(0xff26A4FF),
+                              color: Colors.black,
                               borderRadius: BorderRadius.circular(a.width)),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "ปาเลย",
-                            style: TextStyle(color: Colors.white),
-                          )),
+                          child: Icon(Icons.clear, color: Colors.white)),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      toast(thrown == 'ไม่ระบุตัวตน'
-                          ? 'ปากลับแล้ว'
-                          : 'ปากลับใส่"$thrown"แล้ว');
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      throwTo(id, text2);
-                    },
                   )
                 ],
               ),
