@@ -37,6 +37,7 @@ class _SorryState extends State<Sorry> {
             ),
             SizedBox(height: a.height / 10),
             InkWell(
+              borderRadius: BorderRadius.circular(a.width),
               child: Container(
                 width: a.width / 3.5,
                 height: a.width / 6.5,
@@ -71,8 +72,7 @@ class _SorryState extends State<Sorry> {
                 } else if (check == 6) {
                   Taoast().toast('บอกให้พอไง');
                   check = check + 1;
-                }
-                else if (check >= 7) {
+                } else if (check >= 7) {
                   Taoast().toast('เอาที่สบายใจละกัน');
                   check = check + 1;
                 }

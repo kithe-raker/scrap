@@ -6,8 +6,8 @@ import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:scrap/Page/Auth.dart';
+import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 
 class MainPage extends StatefulWidget {
@@ -18,7 +18,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
-
+  bool close = false;
   initLocalMessage() {
     var android = AndroidInitializationSettings('noti_ic');
     var ios = IOSInitializationSettings();
@@ -67,8 +67,17 @@ class _MainPageState extends State<MainPage> {
             MaterialPageRoute(builder: (context) => Profile(doc: data))));
   }
 
+  serverChecker() {
+    Firestore.instance.collection('App').document('info').get().then((doc) {
+      setState(() {
+        close = doc.data['close'];
+      });
+    });
+  }
+
   @override
   void initState() {
+    serverChecker();
     initFirebaseMessaging();
     initLocalMessage();
     super.initState();
@@ -91,7 +100,7 @@ class _MainPageState extends State<MainPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Authen(),
+                      builder: (context) => close ? Sorry() : Authen(),
                     ));
               },
               loopAnimation: '1',
@@ -103,9 +112,7 @@ class _MainPageState extends State<MainPage> {
               },
             ),
           ),
-));
-
-        
+        ));
   }
 }
 
