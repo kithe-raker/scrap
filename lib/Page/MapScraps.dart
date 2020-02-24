@@ -215,22 +215,9 @@ class _MapScrapsState extends State<MapScraps> {
                           child: Text(
                             text,
                             textAlign: TextAlign.center,
-<<<<<<< HEAD
-<<<<<<< HEAD 
-<<<<<<< HEAD 
-                            style: TextStyle(fontSize: a.width / 10),
-=======
+
                             style: TextStyle(fontSize: a.width / 14),
 
->>>>>>> 965093963bb8e33e7d77748d99556af289789cc5
-=======
-                            style: TextStyle(fontSize: a.width / 14),
-
->>>>>>> 965093963bb8e33e7d77748d99556af289789cc5
-=======
-                            style: TextStyle(fontSize: a.width / 14),
-
->>>>>>> 965093963bb8e33e7d77748d99556af289789cc5
                           ),
                         ))
                   ],
