@@ -51,7 +51,7 @@ class _SorryState extends State<Sorry> {
               ),
               onTap: () async {
                 if (check == 0) {
-                  Taoast().toast('ขอบคุณ');
+                  Taoast().toast('ขอบคุณนะ');
                   check = check + 1;
                 } else if (check == 1) {
                   Taoast().toast('เขินจัง');
