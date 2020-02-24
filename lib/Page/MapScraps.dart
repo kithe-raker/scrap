@@ -36,8 +36,8 @@ class _MapScrapsState extends State<MapScraps> {
   var radius = BehaviorSubject<double>.seeded(0.1);
   StreamSubscription subscription;
   DateTime now = DateTime.now();
-  Map randScrap = {};
   Set scpContent = {};
+  Map randData = {};
   Set picked = {};
 
   @override
@@ -46,6 +46,7 @@ class _MapScrapsState extends State<MapScraps> {
     date = DateFormat('d/M/y').format(now);
     currentLocation = widget.currentLocation;
     loadMap = true;
+    loopRandomMarker(currentLocation);
     super.initState();
   }
 
@@ -129,7 +130,7 @@ class _MapScrapsState extends State<MapScraps> {
                             children: <Widget>[
                               Text(
                                 writer == 'ไม่ระบุ'
-                                    ? 'เขียนโดย : ใครบางคน'
+                                    ? 'เขียนโดย : ไม่ระบุตัวตน'
                                     : 'เขียนโดย : @$writer',
                                 style: TextStyle(fontSize: a.width / 25),
                               ),
@@ -214,7 +215,12 @@ class _MapScrapsState extends State<MapScraps> {
                           child: Text(
                             text,
                             textAlign: TextAlign.center,
+<<<<<<< HEAD
                             style: TextStyle(fontSize: a.width / 10),
+=======
+                            style: TextStyle(fontSize: a.width / 14),
+
+>>>>>>> 965093963bb8e33e7d77748d99556af289789cc5
                           ),
                         ))
                   ],
@@ -312,26 +318,9 @@ class _MapScrapsState extends State<MapScraps> {
     });
   }
 
-  caseRandomMarker(Position location) {
-    if (markers.length < 3) {
-      for (int i = 0; i < 3; i++) {
-        randomScrap(location);
-      }
-    } else if (markers.length < 5) {
-      for (int i = 0; i < 2; i++) {
-        randomScrap(location);
-      }
-    } else if (markers.length < 7) {
+  loopRandomMarker(Position location) {
+    for (int i = scpContent.length; i < 3; i++) {
       randomScrap(location);
-    }
-  }
-
-  addRandScrap() {
-    for (var scrap in scpContent.toList()) {
-      Map data = randScrap[scrap];
-      _addMarker(data['text'], 'scrap.team', 'สุ่มโดยScrap', data['text'],
-          data['time'], data['lat'], data['lng'],
-          official: true);
     }
   }
 
@@ -348,25 +337,26 @@ class _MapScrapsState extends State<MapScraps> {
     Map randLocation = RandomLocation()
         .getLocation(lat: location.latitude, lng: location.longitude);
     Firestore.instance.collection('Contents').getDocuments().then((docs) {
-      type = random.nextInt(docs.documents.length);
-      List randContens = docs.documents[type].data['Contents'];
-      con = random.nextInt(randContens.length);
-      String getContent = randContens[con];
-      scpContent.add(getContent);
-      randScrap[getContent] = {
-        'text': getContent,
-        'lat': randLocation['lat'],
-        'lng': randLocation['lng'],
-        'time': '$time  $date',
-      };
-      // _addMarker(getContent, 'ไม่ระบุตัวตน', 'scrap.team', getContent,
-      //     '$time  $date', randLocation['lat'], randLocation['lng'],
-      //     official: true);
+      if (scpContent.length < 3) {
+        type = random.nextInt(docs.documents.length);
+        List randContens = docs.documents[type].data['Contents'];
+        con = random.nextInt(randContens.length);
+        String getContent = randContens[con];
+        scpContent.add(getContent);
+        randData[getContent] = {
+          'text': getContent,
+          'lat': randLocation['lat'],
+          'lng': randLocation['lng'],
+          'time': '$time  $date',
+        };
+        _addOfficial(getContent, '$time  $date', randLocation['lat'],
+            randLocation['lng']);
+      }
     });
   }
 
   void _updateMarkers(List<DocumentSnapshot> documentList, Position position) {
-    markers.clear();
+    markers.removeWhere((key, value) => !scpContent.contains(key.value));
     userMarker(position.latitude, position.longitude);
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
@@ -388,7 +378,6 @@ class _MapScrapsState extends State<MapScraps> {
         );
       }
     });
-    addRandScrap();
   }
 
   _animateToUser({Position position}) async {
@@ -420,7 +409,6 @@ class _MapScrapsState extends State<MapScraps> {
       return Geoflutterfire().collection(collectionRef: ref).within(
           center: center, radius: rad, field: 'position', strictMode: true);
     }).listen((list) async {
-      scpContent.length < 3 ? caseRandomMarker(position ?? pos) : null;
       _updateMarkers(list, position ?? pos);
     });
   }
@@ -430,9 +418,33 @@ class _MapScrapsState extends State<MapScraps> {
         target: LatLng(lat, lng), zoom: 12, bearing: 0.0, tilt: 90)));
   }
 
+  void _addOfficial(String text, String time, double lat, double lng) {
+    final MarkerId officialId = MarkerId(text);
+    final Marker marker = Marker(
+      markerId: officialId,
+      position: LatLng(lat, lng),
+      icon: scrapIcon,
+      onTap: () {
+        try {
+          markers.remove(officialId);
+          picked.add(text);
+          scpContent.remove(text);
+          setState(() {});
+          dialog(text, 'สุ่มโดย Scrap', time, text);
+        } catch (e) {
+          print(e.toString());
+          error(context,
+              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+        }
+      },
+    );
+    setState(() {
+      markers[officialId] = marker;
+    });
+  }
+
   void _addMarker(String id, String user, String writer, String text,
-      String time, double lat, double lng,
-      {bool official = false}) {
+      String time, double lat, double lng) {
     final MarkerId markerId = MarkerId(id);
     final Marker marker = Marker(
       markerId: markerId,
@@ -442,12 +454,10 @@ class _MapScrapsState extends State<MapScraps> {
         try {
           markers.remove(markerId);
           picked.add(id);
-          official ? scpContent.remove(id) : null;
-          official ? randScrap.remove(id) : null;
           setState(() {});
           dialog(text, writer, time, id);
-          official ? null : addRead(id);
-          official ? null : increaseTransaction(user, 'read');
+          addRead(id);
+          increaseTransaction(user, 'read');
         } catch (e) {
           print(e.toString());
           error(context,

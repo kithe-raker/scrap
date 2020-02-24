@@ -201,7 +201,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                                     TextInputAction.next,
                                                 decoration: InputDecoration(
                                                     helperText:
-                                                        'ทุกคนสามารถเห็น"ชื่อ"ของคุณและปากระดาษหาคุ��ได้',
+                                                        'ทุกคนสามารถเห็น"ชื่อ"ของคุณและปากระดาษหาคุณได้',
                                                     hintText: ' ใส่ชื่อของคุณ'),
                                               ),
                                             ),
