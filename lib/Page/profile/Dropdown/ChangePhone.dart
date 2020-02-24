@@ -225,13 +225,7 @@ class _ChangePhoneState extends State<ChangePhone> {
                                 ],
                               ),
                             ),
-                            Text(
-                              "เราจะส่งเลข 6 หลัก เพื่อยืนยันเบอร์คุณ",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: a.width / 18),
-                            ),
+
                             SizedBox(
                               height: a.width / 7,
                             ),

@@ -120,7 +120,7 @@ class _SearchState extends State<Search> {
                           SizedBox(height: a.height / 12.5),
 
                           Padding(
-                            padding: const EdgeInsets.only(left: 15),
+                            padding: const EdgeInsets.only(left: 0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
