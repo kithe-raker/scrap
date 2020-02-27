@@ -26,6 +26,7 @@ class MapScraps extends StatefulWidget {
 
 class _MapScrapsState extends State<MapScraps> {
   Position currentLocation;
+  int i = 0;
   String date, time;
   bool loadMap = false;
   BitmapDescriptor _curcon, scrapIcon;
@@ -46,6 +47,7 @@ class _MapScrapsState extends State<MapScraps> {
     date = DateFormat('d/M/y').format(now);
     currentLocation = widget.currentLocation;
     loadMap = true;
+    queryManagement();
     loopRandomMarker(currentLocation);
     super.initState();
   }
@@ -216,7 +218,6 @@ class _MapScrapsState extends State<MapScraps> {
                             text,
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: a.width / 14),
-
                           ),
                         ))
                   ],
@@ -272,7 +273,8 @@ class _MapScrapsState extends State<MapScraps> {
                       initialCameraPosition: CameraPosition(
                           target: LatLng(currentLocation?.latitude ?? 0,
                               currentLocation?.longitude ?? 0),
-                          zoom: 18.5 , tilt: 90),
+                          zoom: 18.5,
+                          tilt: 90),
                       markers: Set<Marker>.of(markers.values),
                       circles: Set<Circle>.of(circles.values),
                     )
@@ -358,20 +360,24 @@ class _MapScrapsState extends State<MapScraps> {
       var data = document.data;
       List read = data['read'] ?? [];
       GeoPoint loca = data['position']['geopoint'];
-      if (widget.collection.contains(data['id']) ||
-          data['uid'] == widget.uid ||
-          picked.contains(data['id']) ||
-          read.contains(widget.uid)) {
+      if (markers.length < 8) {
+        if (widget.collection.contains(data['id']) ||
+            data['uid'] == widget.uid ||
+            picked.contains(data['id']) ||
+            read.contains(widget.uid)) {
+        } else {
+          _addMarker(
+            data['id'],
+            data['uid'],
+            data['scrap']['user'],
+            data['scrap']['text'],
+            data['scrap']['time'],
+            loca.latitude,
+            loca.longitude,
+          );
+        }
       } else {
-        _addMarker(
-          data['id'],
-          data['uid'],
-          data['scrap']['user'],
-          data['scrap']['text'],
-          data['scrap']['time'],
-          loca.latitude,
-          loca.longitude,
-        );
+        subscription.pause();
       }
     });
   }
@@ -388,6 +394,14 @@ class _MapScrapsState extends State<MapScraps> {
           zoom: 18.5,
           tilt: 90.0,
         )));
+  }
+
+  queryManagement() {
+    if (subscription?.isPaused != null) {
+      subscription.isPaused && markers.length < 8
+          ? subscription.resume()
+          : subscription.pause();
+    }
   }
 
   _startQuery({Position position}) async {
@@ -441,7 +455,8 @@ class _MapScrapsState extends State<MapScraps> {
 
   void _addMarker(String id, String user, String writer, String text,
       String time, double lat, double lng) {
-    final MarkerId markerId = MarkerId(id);
+    id == null ? ++i : null;
+    final MarkerId markerId = MarkerId(id ?? i.toString());
     final Marker marker = Marker(
       markerId: markerId,
       position: LatLng(lat, lng),

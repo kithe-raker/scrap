@@ -23,7 +23,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     final StorageUploadTask task = ref.putFile(img);
     var picUrl = await (await task.onComplete).ref.getDownloadURL();
     await Firestore.instance
-        .collection('App')
+        .collection('Report')
         .document(refer)
         .updateData({'img': picUrl});
     if (task.isInProgress) {
@@ -208,6 +208,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                       .center, //เพื่อให้ข้อความอยู่ตรงกลาง
                                   style: TextStyle(fontSize: a.width / 15),
                                   maxLines: null,
+                                  keyboardType: TextInputType.text,
                                   decoration: InputDecoration(
                                     border:
                                         InputBorder.none, //สำหรับใหเส้นใต้หาย
@@ -260,19 +261,17 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: <Widget>[
-                                            Icon(
-                                              Icons.image,
-                                              size: a.width / 13,color: Color(0xff26A4FF)
-                                            ),
+                                            Icon(Icons.image,
+                                                size: a.width / 13,
+                                                color: Color(0xff26A4FF)),
                                             SizedBox(
                                               width: 8,
                                             ),
                                             Text(
                                               'แตะเพื่อแนบภาพ',
                                               style: TextStyle(
-                                                fontSize: a.width / 15,
-                                                color: Color(0xff26A4FF)
-                                              ),
+                                                  fontSize: a.width / 15,
+                                                  color: Color(0xff26A4FF)),
                                             )
                                           ],
                                         ),
