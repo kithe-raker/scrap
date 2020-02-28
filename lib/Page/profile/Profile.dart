@@ -195,7 +195,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               Container(
-                                width: a.width / 4.5,
+                                width: a.width / 4,
                                 // color: Colors.blue,
                                 child: Column(
                                   children: <Widget>[
@@ -541,138 +541,154 @@ class _ProfileState extends State<Profile> {
           return StatefulBuilder(builder: (context, StateSetter setState) {
             return Scaffold(
               backgroundColor: Colors.black,
-              body: Container(
-                color: Colors.black,
-                margin: EdgeInsets.only(
-                  top: a.height / 8,
-                ),
-                padding:
-                    EdgeInsets.only(left: a.width / 20, right: a.width / 20),
-                width: a.width,
-                height: a.height / 1.3,
-                child: Column(
+            
+              body: InkWell(
+                onTap: (){Navigator.pop(context);},
+                child: Stack(
                   children: <Widget>[
-                    Stack(
-                      children: <Widget>[
-                        Container(
-                          width: a.width,
-                          child: Image.asset(
-                            'assets/paper-readed.png',
-                            width: a.width,
-                            height: a.height / 1.6,
-                            fit: BoxFit.cover,
-                          ),
+                     Container(
+                        color: Colors.black,
+                        margin: EdgeInsets.only(
+                          top: a.height / 8,
                         ),
-                        Positioned(
-                            top: 12,
-                            left: 12,
-                            child: Container(
-                              width: a.width / 1.2,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                        padding: EdgeInsets.only(
+                            left: a.width / 20, right: a.width / 20),
+                        width: a.width,
+                        height: a.height / 1,
+                        child: Stack(
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                Stack(
+                                  children: <Widget>[
+                                    Container(
+                                      width: a.width,
+                                      child: Image.asset(
+                                        'assets/paper-readed.png',
+                                        width: a.width,
+                                        height: a.height / 1.6,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Positioned(
+                                        top: 12,
+                                        left: 12,
+                                        child: Container(
+                                          width: a.width / 1.2,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text('เขียนโดย : $writer'),
+                                                  Text('เวลา : $time')
+                                                ],
+                                              ),
+                                              InkWell(
+                                                child: Container(
+                                                  width: a.width / 7,
+                                                  height: a.width / 12,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Colors.black),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width / 10)),
+                                                  alignment: Alignment.center,
+                                                  child: Text("ปากลับ"),
+                                                ),
+                                                onTap: () {
+                                                  dialogPa(writerID, writer);
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        )),
+                                    Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.only(left: 25, right: 25),
+                                      height: a.height / 1.6,
+                                      // width: a.width / 1.2,
+                                      child: Text(
+                                        text,
+                                        style: TextStyle(
+                                          fontSize: a.width / 14,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(height: a.width / 15),
+                                Container(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Text('เขียนโดย : $writer'),
-                                      Text('เวลา : $time')
+                                      SizedBox(width: a.width / 20),
+                                      InkWell(
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              left: a.width / 55, right: a.width / 55),
+                                          width: a.width / 3.5,
+                                          height: a.width / 6.5,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(a.width)),
+                                          alignment: Alignment.center,
+                                          child: Text("เก็บไว้",
+                                              style: TextStyle(
+                                                  fontSize: a.width / 15,
+                                                  color: Color(0xff26A4FF))),
+                                        ),
+                                        onTap: () async {
+                                          Navigator.pop(context);
+                                          await Firestore.instance
+                                              .collection('Users')
+                                              .document(widget.doc['uid'])
+                                              .collection('scraps')
+                                              .document('collection')
+                                              .setData({
+                                            'id': FieldValue.arrayUnion([writerID]),
+                                            'scraps': {
+                                              writerID: FieldValue.arrayUnion([scpData])
+                                            }
+                                          }, merge: true);
+                                          await ignore(writerID, scpData);
+                                        },
+                                      ),
+                                      InkWell(
+                                        child: Container(
+                                          width: a.width / 3.5,
+                                          height: a.width / 6.5,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(a.width)),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "ทิ้ง",
+                                            style: TextStyle(fontSize: a.width / 15),
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          Navigator.pop(context);
+                                          await ignore(writerID, scpData);
+                                        },
+                                      ),
+                                      SizedBox(width: a.width / 20),
                                     ],
                                   ),
-                                  InkWell(
-                                    child: Container(
-                                      width: a.width / 7,
-                                      height: a.width / 12,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black),
-                                          borderRadius: BorderRadius.circular(
-                                              a.width / 10)),
-                                      alignment: Alignment.center,
-                                      child: Text("ปากลับ"),
-                                    ),
-                                    onTap: () {
-                                      dialogPa(writerID, writer);
-                                    },
-                                  )
-                                ],
-                              ),
-                            )),
-                        Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.only(left: 25, right: 25),
-                          height: a.height / 1.6,
-                          // width: a.width / 1.2,
-                          child: Text(
-                            text,
-                            style: TextStyle(
-                              fontSize: a.width / 14,
+                                ),
+                              ],
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: a.width / 15),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          SizedBox(width: a.width / 20),
-                          InkWell(
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                  left: a.width / 55, right: a.width / 55),
-                              width: a.width / 3.5,
-                              height: a.width / 6.5,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(a.width)),
-                              alignment: Alignment.center,
-                              child: Text("เก็บไว้",
-                                  style: TextStyle(
-                                      fontSize: a.width / 15,
-                                      color: Color(0xff26A4FF))),
-                            ),
-                            onTap: () async {
-                              Navigator.pop(context);
-                              await Firestore.instance
-                                  .collection('Users')
-                                  .document(widget.doc['uid'])
-                                  .collection('scraps')
-                                  .document('collection')
-                                  .setData({
-                                'id': FieldValue.arrayUnion([writerID]),
-                                'scraps': {
-                                  writerID: FieldValue.arrayUnion([scpData])
-                                }
-                              }, merge: true);
-                              await ignore(writerID, scpData);
-                            },
-                          ),
-                          InkWell(
-                            child: Container(
-                              width: a.width / 3.5,
-                              height: a.width / 6.5,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(a.width)),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "ทิ้ง",
-                                style: TextStyle(fontSize: a.width / 15),
-                              ),
-                            ),
-                            onTap: () async {
-                              Navigator.pop(context);
-                              await ignore(writerID, scpData);
-                            },
-                          ),
-                          SizedBox(width: a.width / 20),
-                        ],
-                      ),
-                    ),
+                          ],
+                        ),
+                      )
+                    
                   ],
                 ),
               ),
