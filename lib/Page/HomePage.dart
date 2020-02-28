@@ -447,23 +447,24 @@ class _HomePageState extends State<HomePage> {
         .collection('Scraps')
         .document('hatyai')
         .collection('scrapsPosition')
-        .add({
-      'uid': widget.doc['uid'],
-      'scrap': {
-        'text': text,
-        'user': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-        'time': time
-      },
-      'position': point.data
-    }).then((value) {
-      Firestore.instance
+        .add({}).then((value) async {
+      await Firestore.instance
           .collection('Scraps')
           .document('hatyai')
           .collection('scrapsPosition')
           .document(value.documentID)
-          .updateData({'id': value.documentID});
+          .updateData({
+        'id': value.documentID,
+        'uid': widget.doc['uid'],
+        'scrap': {
+          'text': text,
+          'user': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+          'time': time
+        },
+        'position': point.data
+      });
     });
-    await increaseTransaction(widget.doc['uid'], 'written');
+     await increaseTransaction(widget.doc['uid'], 'written');
   }
 
   increaseTransaction(String uid, String key) async {

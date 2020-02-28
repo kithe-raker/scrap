@@ -144,7 +144,8 @@ class _NotificationHistoryState extends State<NotificationHistory> {
                                 ? guide(a, 'ขณะนี้คุณยังไม่มีการแจ้งเตือน')
                                 : Column(
                                     children: documents
-                                        .map((doc) => notiBox(a, doc))
+                                        .map((doc) => notiBox(
+                                            a, backward(documents, doc)))
                                         .toList(),
                                   );
                           } else {
@@ -179,7 +180,9 @@ class _NotificationHistoryState extends State<NotificationHistory> {
     );
   }
 
-  
+  dynamic backward(List list, dynamic value) {
+    return list[list.length - 1 - list.indexOf(value)];
+  }
 
   Widget guide(Size a, String text) {
     return Container(
@@ -270,7 +273,8 @@ class _NotificationHistoryState extends State<NotificationHistory> {
               color: Color(0xffA3A3A3),
               iconSize: 30.0,
               onPressed: () {
-                Dg().warnDialog(context,
+                Dg().warnDialog(
+                  context,
                   'คุณต้องการลบการแจ้งเตือนนี้ใช่หรือไม่',
                   () async {
                     Navigator.pop(context);

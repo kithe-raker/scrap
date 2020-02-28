@@ -189,7 +189,7 @@ class _SearchState extends State<Search> {
                         ],
                       ),
                 search
-                    ? id == null || id == ''
+                    ? id == null || id == '' || id.length < 2
                         ? guide(
                             a,
                             'ค้นหาคนที่คุณต้องการปาใส่',
@@ -203,9 +203,12 @@ class _SearchState extends State<Search> {
                               )
                             : StreamBuilder(
                                 stream: Firestore.instance
-                                    .collection('Users')
+                                    .collection('SearchUsers')
+                                    .document(id[1])
+                                    .collection('users')
                                     .where('searchIndex',
                                         arrayContains: id.substring(1))
+                                    .limit(6)
                                     .snapshots(),
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData &&
@@ -221,11 +224,8 @@ class _SearchState extends State<Search> {
                                           )
                                         : Column(
                                             children: docs
-                                                .map((data) => cardStream(
-                                                      a,
-                                                      false,
-                                                      doc: data,
-                                                    ))
+                                                .map((data) =>
+                                                    cardStream(a, data['uid']))
                                                 .toList(),
                                           );
                                   } else {
@@ -273,14 +273,9 @@ class _SearchState extends State<Search> {
                                 : Column(
                                     children: users
                                         .map((data) => cardStream(
-                                              a,
-                                              true,
-                                              uid: users[users.length -
-                                                  1 -
-                                                  users.indexOf(data)],
-                                            ))
-                                        .toList(),
-                                  );
+                                            a, backward(users, data),
+                                            hist: true))
+                                        .toList());
                           } else {
                             return Container(
                               height: a.height / 2.1,
@@ -310,6 +305,10 @@ class _SearchState extends State<Search> {
     );
   }
 
+  dynamic backward(List list, dynamic value) {
+    return list[list.length - 1 - list.indexOf(value)];
+  }
+
   Widget guide(Size a, String text, double heigth) {
     return Container(
       height: heigth,
@@ -335,45 +334,39 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget cardStream(Size a, bool hist, {DocumentSnapshot doc, String uid}) {
+  Widget cardStream(Size a, String searchID, {bool hist = false}) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Users')
-            .document(uid ?? doc.data['uid'])
+            .document(searchID)
             .collection('info')
-            .document(uid ?? doc.data['uid'])
+            .document(searchID)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.active) {
-            return hist
-                ? StreamBuilder(
-                    stream: Firestore.instance
-                        .collection('Users')
-                        .document(uid ?? doc.data['uid'])
-                        .snapshots(),
-                    builder: (context, snap) {
-                      if (snap.hasData &&
-                          snap.connectionState == ConnectionState.active) {
-                        return userCard(
-                            a,
-                            snapshot.data['img'],
-                            uid,
-                            snap.data['id'],
-                            snap.data['uid'],
-                            snapshot.data['createdDay'],
-                            hist,
-                            accDoc: snap.data,
-                            infoDoc: snapshot.data);
-                      } else {
-                        return SizedBox();
-                      }
-                    })
-                : doc.data['id'] != widget.doc['id']
-                    ? userCard(a, snapshot.data['img'], uid, doc.data['id'],
-                        doc.data['uid'], snapshot.data['createdDay'], hist,
-                        accDoc: doc, infoDoc: snapshot.data)
-                    : SizedBox();
+            return StreamBuilder(
+                stream: Firestore.instance
+                    .collection('Users')
+                    .document(searchID)
+                    .snapshots(),
+                builder: (context, snap) {
+                  if (snap.hasData &&
+                      snap.connectionState == ConnectionState.active) {
+                    return userCard(
+                        a,
+                        snapshot.data['img'],
+                        searchID,
+                        snap.data['id'],
+                        snap.data['uid'],
+                        snapshot.data['createdDay'],
+                        hist,
+                        accDoc: snap.data,
+                        infoDoc: snapshot.data);
+                  } else {
+                    return SizedBox();
+                  }
+                });
           } else {
             return SizedBox();
           }

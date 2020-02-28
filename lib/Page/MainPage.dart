@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:scrap/Page/Auth.dart';
 import 'package:scrap/Page/Sorry.dart';
+import 'package:scrap/Page/Update.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/services/provider.dart';
 
@@ -18,7 +19,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
-  bool close = false;
   initLocalMessage() {
     var android = AndroidInitializationSettings('noti_ic');
     var ios = IOSInitializationSettings();
@@ -67,17 +67,32 @@ class _MainPageState extends State<MainPage> {
             MaterialPageRoute(builder: (context) => Profile(doc: data))));
   }
 
-  serverChecker() {
-    Firestore.instance.collection('App').document('info').get().then((doc) {
-      setState(() {
-        close = doc.data['close'];
-      });
+  Future<bool> serverChecker() async {
+    bool close;
+    await Firestore.instance
+        .collection('App')
+        .document('info')
+        .get()
+        .then((doc) {
+      close = doc.data['close'];
     });
+    return close;
+  }
+
+  Future<bool> versionChecker() async {
+    String recent = '1.0.3', incoming;
+    await Firestore.instance
+        .collection('App')
+        .document('info')
+        .get()
+        .then((doc) {
+      incoming = doc.data['version'];
+    });
+    return recent == incoming;
   }
 
   @override
   void initState() {
-    serverChecker();
     initFirebaseMessaging();
     initLocalMessage();
     super.initState();
@@ -95,13 +110,12 @@ class _MainPageState extends State<MainPage> {
             child: SplashScreen.callback(
               name: 'assets/splash.flr',
               startAnimation: 'Untitled',
-              onSuccess: (data) {
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => close ? Sorry() : Authen(),
-                    ));
+              onSuccess: (data) async {
+                await serverChecker()
+                    ? navigator(Sorry())
+                    : await versionChecker()
+                        ? navigator(Authen())
+                        : navigator(Update());
               },
               loopAnimation: '1',
               until: () => Future.delayed(Duration(seconds: 1)),
@@ -112,6 +126,15 @@ class _MainPageState extends State<MainPage> {
               },
             ),
           ),
+        ));
+  }
+
+  navigator(var where) {
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => where,
         ));
   }
 }
