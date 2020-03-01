@@ -4,10 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/Page/Auth.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/warning.dart';
-
-import '../Auth.dart';
 
 class CreateProfile2 extends StatefulWidget {
   final String uid;
@@ -70,9 +69,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
 
   addData(String uid) async {
     List index = [];
-    for (int i = 0; i <= widget.pro['id'].length; i++) {
-      index
-          .add(i == 0 ? widget.pro['id'][0] : widget.pro['id'].substring(0, i));
+    for (int i = 0; i < widget.pro['id'].length; i++) {
+      index.add(widget.pro['id'].substring(0, ++i));
     }
     await Firestore.instance
         .collection('Users')
@@ -80,14 +78,28 @@ class _CreateProfile2State extends State<CreateProfile2> {
         .collection('info')
         .document(uid)
         .setData({'birthDay': bDay, 'genders': genders, 'createdDay': created});
-    await cimg(widget.pro['img'], widget.uid, widget.uid + '_pro');
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .updateData({'id': widget.pro['id'], 'searchIndex': index});
+    await cimg(widget.pro['img'], uid, uid + '_pro');
+    await addID(index, uid);
     setState(() {
       loading = false;
     });
+  }
+
+  addID(List index, String uid) async {
+    await Firestore.instance
+        .collection('SearchUsers')
+        .document(widget.pro['id'][0])
+        .collection('users')
+        .document(uid)
+        .setData({
+      'id': widget.pro['id'],
+      'searchIndex': index,
+      'uid': uid,
+    });
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .updateData({'id': widget.pro['id']});
   }
 
   creatProfile() async {
@@ -102,7 +114,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
       setState(() {
         loading = false;
       });
-      Dg().warnDate(context,'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองอีกครั้ง');
+      Dg().warnDate(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองอีกครั้ง');
     }
   }
 
@@ -313,8 +325,10 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                   await creatProfile();
                                 } else {
                                   bDay == created
-                                      ? Dg().warnDate(context,'อย่าลืมเลือกวันเกิดของคุณ')
-                                      : Dg().warnDate(context,'อย่าลืมเลือกเพศของคุณ');
+                                      ? Dg().warnDate(
+                                          context, 'อย่าลืมเลือกวันเกิดของคุณ')
+                                      : Dg().warnDate(
+                                          context, 'อย่าลืมเลือกเพศของคุณ');
                                 }
                               },
                               color: Color(0xff26A4FF),
@@ -340,6 +354,4 @@ class _CreateProfile2State extends State<CreateProfile2> {
       ),
     );
   }
-
- 
 }
