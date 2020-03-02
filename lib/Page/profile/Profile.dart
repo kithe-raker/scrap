@@ -23,417 +23,508 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   int page;
   String text2;
+  bool loading = false;
+
+  checkReset(List scraps, String lastReset) async {
+    DateTime now = DateTime.now();
+    String date = DateFormat('d/M/y').format(now);
+    lastReset == date
+        ? toast('คุณขอรับกระดาษได้แค่1ครั้งต่อวัน')
+        : resetScrap(date, scraps);
+  }
+
+  resetScrap(String date, List scraps) async {
+    setState(() => loading = true);
+    scraps.forEach((id) async {
+      await deleteScrap(id);
+    });
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document(widget.doc['uid'])
+        .updateData({'lastReset': date, 'scraps': []});
+    setState(() => loading = false);
+    toast('คุณได้รับกระดาษเพิ่มแล้ว');
+  }
+
+  deleteScrap(dynamic scrapID) async {
+    if (scrapID.runtimeType is String) {
+      await Firestore.instance
+          .collection('Scraps')
+          .document('hatyai')
+          .collection('scrapsPosition')
+          .document(scrapID)
+          .delete();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: StreamBuilder(
-          stream: Firestore.instance
-              .collection('Users')
-              .document(widget.doc['uid'])
-              .collection('info')
-              .document(widget.doc['uid'])
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData &&
-                snapshot.connectionState == ConnectionState.active) {
-              return ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: a.width / 20,
-                        right: a.width / 25,
-                        left: a.width / 25,
-                        bottom: a.width / 8.0),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              InkWell(
-                                child: Container(
-                                  width: a.width / 7,
-                                  height: a.width / 10,
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(a.width),
-                                      color: Colors.white),
-                                  child: Icon(Icons.arrow_back,
-                                      color: Colors.black, size: a.width / 15),
-                                ),
-                                onTap: () {
-                                  Navigator.pop(
-                                    context,
-                                  );
-                                },
-                              ),
-                              PopupMenuButton<String>(
-                                //setting menu
-                                onSelected: (val) {
-                                  choiceAction(val, info: snapshot.data);
-                                },
-                                itemBuilder: (BuildContext context) {
-                                  return Constans.choices.map((String choice) {
-                                    return PopupMenuItem(
-                                        value: choice,
-                                        child: Text(
-                                          choice,
-                                          style:
-                                              TextStyle(fontSize: a.width / 15),
-                                        ));
-                                  }).toList();
-                                },
-                                child: Icon(Icons.more_horiz,
-                                    color: Colors.white, size: a.width / 9),
-                              )
-                            ],
-                          ),
-                        ),
-                        // ||
-                        // ||   เป็นส่วนของรูปภาพ Profile
-                        //\  /
-                        // \/
-                        Container(
-                          margin: EdgeInsets.only(top: a.width / 10),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(a.width),
-                              border: Border.all(
-                                  color: Colors.white, width: a.width / 150)),
-                          width: a.width / 3,
-                          height: a.width / 3,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(a.width),
-                            child: snapshot.data['img'] == null
-                                ? Image.asset("assets/userprofile.png")
-                                : Image.network(
-                                    snapshot.data['img'],
-                                    fit: BoxFit.cover,
+      body: Stack(
+        children: <Widget>[
+          StreamBuilder(
+              stream: Firestore.instance
+                  .collection('Users')
+                  .document(widget.doc['uid'])
+                  .collection('info')
+                  .document(widget.doc['uid'])
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData &&
+                    snapshot.connectionState == ConnectionState.active) {
+                  int scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
+                  return ListView(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: a.width / 20,
+                            right: a.width / 25,
+                            left: a.width / 25,
+                            bottom: a.width / 8.0),
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  InkWell(
+                                    child: Container(
+                                      width: a.width / 7,
+                                      height: a.width / 10,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(a.width),
+                                          color: Colors.white),
+                                      child: Icon(Icons.arrow_back,
+                                          color: Colors.black,
+                                          size: a.width / 15),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(
+                                        context,
+                                      );
+                                    },
                                   ),
-                          ),
-                        ),
-                        // ชื่อของ account
-                        Container(
-                            margin: EdgeInsets.only(top: a.width / 15),
-                            child: Text(
-                              "@" + widget.doc['id'],
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: a.width / 12),
-                            )),
-                        // เบอร์โทรของ Account
-                        Container(
-                            margin: EdgeInsets.only(top: a.width / 1000),
-                            child: Text(
-                              "Join " + snapshot.data['createdDay'],
-                              style: TextStyle(
-                                  fontSize: a.width / 11,
-                                  color: Color(0xff26A4FF)),
-                            )),
-                        InkWell(
-                          child: Container(
-                              margin: EdgeInsets.only(top: a.width / 14),
-                              child: SizedBox(
-                                width: a.width / 1.6,
-                                child: Text(
-                                  snapshot?.data['status'] ??
-                                      'แตะเพื่อเพิ่มสเตตัส',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: a.width / 15,
-                                      color: snapshot?.data['status'] == null
-                                          ? Colors.grey
-                                          : Colors.white,
-                                      fontStyle:
-                                          snapshot?.data['status'] == null
-                                              ? null
-                                              : FontStyle.italic),
-                                ),
-                              )),
-                          onTap: () {
-                            editStatus(snapshot?.data['status'], "thrown");
-                          },
-                        ),
-                        // ใส่ Container เพื่อสร้างกรอบ
-                        Container(
-                          margin: EdgeInsets.only(top: a.width / 30),
-                          padding: EdgeInsets.only(top: a.width / 10),
-                          height: a.width / 2.5,
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      width: a.width / 1500,
-                                      color:
-                                          Colors.white))), //ใส่เส้นด้านใต้สุด
-                          child: Row(
-                            // ใส��� Row ��พื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              Container(
-                                //color: Colors.black,
-                                width: a.width / 4.5,
-                                child: Column(
-                                  //เพื่อใช้สำหรับให้ จำนวน และ เขียน
-                                  children: <Widget>[
-                                    Text(
-                                      snapshot.data['written'] == null
-                                          ? '0'
-                                          : snapshot.data['written'].toString(),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: a.width / 10,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "เขียน",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: a.width / 18),
-                                    ),
-                                  ],
-                                ),
+                                  PopupMenuButton<String>(
+                                    onSelected: (val) {
+                                      choiceAction(val, info: snapshot.data);
+                                    },
+                                    itemBuilder: (BuildContext context) {
+                                      return Constans.choices
+                                          .map((String choice) {
+                                        return PopupMenuItem(
+                                            value: choice,
+                                            child: Text(
+                                              choice,
+                                              style: TextStyle(
+                                                  fontSize: a.width / 15),
+                                            ));
+                                      }).toList();
+                                    },
+                                    child: Icon(Icons.more_horiz,
+                                        color: Colors.white, size: a.width / 9),
+                                  )
+                                ],
                               ),
-                              Container(
-                                width: a.width / 4.5,
-                                // color: Colors.blue,
-                                child: Column(
-                                  children: <Widget>[
-                                    Text(
-                                      //เพื่อใช้สำหรับ��ห้ จำนวน และ ผ�����้หยิบอ่าน
-                                      snapshot.data['read'] == null
-                                          ? '0'
-                                          : snapshot.data['read'].toString(),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: a.width / 10,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "ผู้คนหยิบอ่าน",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: a.width / 18),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                width: a.width / 4.5,
-                                //  color: Colors.blue,
-                                child: Column(
-                                  //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
-                                  children: <Widget>[
-                                    Text(
-                                      snapshot.data['threw'] == null
-                                          ? '0'
-                                          : snapshot.data['threw'].toString(),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: a.width / 10,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "โดนปาใส่",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: a.width / 18),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: a.width,
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                            color: Colors.white,
-                            width: a.width / 1500,
-                          ))),
-                          alignment: Alignment.topLeft,
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                width: a.width,
-                                padding: EdgeInsets.only(top: a.width / 20),
-                                child: Text(
-                                  "โดนปาใส่ล่าสุด",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                            ),
+                            // ||
+                            // ||   เป็นส่วนของรูปภาพ Profile
+                            //\  /
+                            // \/
+                            Container(
+                              margin: EdgeInsets.only(top: a.width / 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(a.width),
+                                  border: Border.all(
                                       color: Colors.white,
-                                      fontSize: a.width / 18),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(bottom: 25.0),
-                                width: a.width,
-                                child: StreamBuilder(
-                                    stream: Firestore.instance
-                                        .collection('Users')
-                                        .document(widget.doc['uid'])
-                                        .collection('scraps')
-                                        .document('recently')
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData &&
-                                          snapshot.connectionState ==
-                                              ConnectionState.active) {
-                                        Set mSet = {};
-                                        modiList(
-                                            snapshot?.data['id'],
-                                            snapshot?.data['scraps'],
-                                            mSet,
-                                            'recently');
-                                        return snapshot?.data['id'] == null ||
-                                                mSet.length == 0
-                                            ? Container(
-                                                height: a.height / 12,
-                                                child: Center(
-                                                  child: Text(
-                                                    'ไม่มี',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.white,
-                                                        fontSize: a.width / 18),
-                                                  ),
-                                                ))
-                                            : Container(
-                                                child:
-                                                    wrapScrap(a, mSet.toList()),
-                                              );
-                                      } else {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
-                                    }),
-                              )
-                            ],
-                          ),
-                        ),
-                        StreamBuilder(
-                            stream: Firestore.instance
-                                .collection('Users')
-                                .document(widget.doc['uid'])
-                                .collection('scraps')
-                                .document('collection')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData &&
-                                  snapshot.connectionState ==
-                                      ConnectionState.active) {
-                                Set mSet = {};
-                                modiList(
-                                    snapshot?.data['id'],
-                                    snapshot?.data['scraps'],
-                                    mSet,
-                                    'collection');
-                                return Column(
-                                  children: <Widget>[
-                                    Container(
-                                      margin:
-                                          EdgeInsets.only(top: a.width / 20),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Container(
-                                            child: Text(
-                                              "กระดาษที่เก็บไว้",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: a.width / 18),
-                                            ),
-                                          ),
-                                          Container(
-                                            child: Text(
-                                              mSet?.length == null ||
-                                                      mSet?.length == 0
-                                                  ? '0' + " แผ่น"
-                                                  : mSet.length.toString() +
-                                                      ' แผ่น',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: a.width / 18),
-                                            ),
-                                          )
-                                        ],
+                                      width: a.width / 150)),
+                              width: a.width / 3,
+                              height: a.width / 3,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(a.width),
+                                child: snapshot.data['img'] == null
+                                    ? Image.asset("assets/userprofile.png")
+                                    : Image.network(
+                                        snapshot.data['img'],
+                                        fit: BoxFit.cover,
                                       ),
-                                    ),
-                                    mSet?.length == null || mSet?.length == 0
-                                        ? Center(
-                                            child: Text(
-                                              'ไม่มี',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontSize: a.width / 18),
-                                            ),
-                                          )
-                                        : Container(
-                                            width: a.width,
-                                            height: a.width / 1,
-                                            child: listScrap(a, mSet.toList()))
-                                  ],
-                                );
-                              } else {
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                            }),
+                              ),
+                            ),
 
-                        Container(
-                          margin: EdgeInsets.only(top: 100),
-                          child: InkWell(
-                            child: Container(
-                                width: a.width / 2,
-                                height: a.width / 6,
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
-                                    border: Border.all(
+                            // ชื่อของ account
+                            Container(
+                                margin: EdgeInsets.only(top: a.width / 15),
+                                child: Text(
+                                  "@" + widget.doc['id'],
+                                  style: TextStyle(
                                       color: Colors.white,
-                                      width: a.width / 400,
-                                    )),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(Icons.feedback,
-                                        color: Colors.white,
-                                        size: a.width / 15),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      'Feedback',
-                                      style: TextStyle(
-                                        fontSize: a.width / 12,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
+                                      fontSize: a.width / 12),
                                 )),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          FeedbackPage())); //ไปยังหน้า Profile
-                            },
-                          ),
+                            // เบอร์โทรของ Account
+                            Container(
+                                margin: EdgeInsets.only(top: a.width / 1000),
+                                child: Text(
+                                  "Join " + snapshot.data['createdDay'],
+                                  style: TextStyle(
+                                      fontSize: a.width / 11,
+                                      color: Color(0xff26A4FF)),
+                                )),
+                            InkWell(
+                              child: Container(
+                                  margin: EdgeInsets.only(top: a.width / 14),
+                                  child: SizedBox(
+                                    width: a.width / 1.6,
+                                    child: Text(
+                                      snapshot?.data['status'] ??
+                                          'แตะเพื่อเพิ่มสเตตัส',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: a.width / 15,
+                                          color:
+                                              snapshot?.data['status'] == null
+                                                  ? Colors.grey
+                                                  : Colors.white,
+                                          fontStyle:
+                                              snapshot?.data['status'] == null
+                                                  ? null
+                                                  : FontStyle.italic),
+                                    ),
+                                  )),
+                              onTap: () {
+                                editStatus(snapshot?.data['status'], "thrown");
+                              },
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Image.asset(
+                                  'assets/paper.png',
+                                  width: a.width / 8,
+                                ),
+                                Text(
+                                  '$scraps/15',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: a.width / 12),
+                                ),
+                                IconButton(
+                                    icon: Icon(Icons.refresh,
+                                        size: a.width / 12,
+                                        color: Colors.white),
+                                    onPressed: () {
+                                      scraps == 15
+                                          ? toast('กระดาษของคุณยังเต็มอยู่')
+                                          : checkReset(
+                                              snapshot.data['scraps'],
+                                              snapshot?.data['lastReset'] ??
+                                                  '');
+                                    })
+                              ],
+                            ),
+                            // ใส่ Container เพื่อสร้างกรอบ
+                            Container(
+                              margin: EdgeInsets.only(top: a.width / 30),
+                              padding: EdgeInsets.only(top: a.width / 10),
+                              height: a.width / 2.5,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: a.width / 1500,
+                                          color: Colors
+                                              .white))), //ใส่เส้นด้านใต้สุด
+                              child: Row(
+                                // ใส��� Row ��พื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Container(
+                                    //color: Colors.black,
+                                    width: a.width / 4.5,
+                                    child: Column(
+                                      //เพื่อใช้สำหรับให้ จำนวน และ เขียน
+                                      children: <Widget>[
+                                        Text(
+                                          snapshot.data['written'] == null
+                                              ? '0'
+                                              : snapshot.data['written']
+                                                  .toString(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: a.width / 10,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          "เขียน",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: a.width / 18),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    width: a.width / 4.5,
+                                    // color: Colors.blue,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text(
+                                          //เพื่อใช้สำหรับ��ห้ จำนวน และ ผ�����้หยิบอ่าน
+                                          snapshot.data['read'] == null
+                                              ? '0'
+                                              : snapshot.data['read']
+                                                  .toString(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: a.width / 10,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          "ผู้คนหยิบอ่าน",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: a.width / 18),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    width: a.width / 4.5,
+                                    //  color: Colors.blue,
+                                    child: Column(
+                                      //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
+                                      children: <Widget>[
+                                        Text(
+                                          snapshot.data['threw'] == null
+                                              ? '0'
+                                              : snapshot.data['threw']
+                                                  .toString(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: a.width / 10,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          "โดนปาใส่",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: a.width / 18),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: a.width,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                color: Colors.white,
+                                width: a.width / 1500,
+                              ))),
+                              alignment: Alignment.topLeft,
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    width: a.width,
+                                    padding: EdgeInsets.only(top: a.width / 20),
+                                    child: Text(
+                                      "โดนปาใส่ล่าสุด",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: a.width / 18),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 25.0),
+                                    width: a.width,
+                                    child: StreamBuilder(
+                                        stream: Firestore.instance
+                                            .collection('Users')
+                                            .document(widget.doc['uid'])
+                                            .collection('scraps')
+                                            .document('recently')
+                                            .snapshots(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData &&
+                                              snapshot.connectionState ==
+                                                  ConnectionState.active) {
+                                            Set mSet = {};
+                                            modiList(
+                                                snapshot?.data['id'],
+                                                snapshot?.data['scraps'],
+                                                mSet,
+                                                'recently');
+                                            return snapshot?.data['id'] ==
+                                                        null ||
+                                                    mSet.length == 0
+                                                ? Container(
+                                                    height: a.height / 12,
+                                                    child: Center(
+                                                      child: Text(
+                                                        'ไม่มี',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.white,
+                                                            fontSize:
+                                                                a.width / 18),
+                                                      ),
+                                                    ))
+                                                : Container(
+                                                    child: wrapScrap(
+                                                        a, mSet.toList()),
+                                                  );
+                                          } else {
+                                            return Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          }
+                                        }),
+                                  )
+                                ],
+                              ),
+                            ),
+                            StreamBuilder(
+                                stream: Firestore.instance
+                                    .collection('Users')
+                                    .document(widget.doc['uid'])
+                                    .collection('scraps')
+                                    .document('collection')
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData &&
+                                      snapshot.connectionState ==
+                                          ConnectionState.active) {
+                                    Set mSet = {};
+                                    modiList(
+                                        snapshot?.data['id'],
+                                        snapshot?.data['scraps'],
+                                        mSet,
+                                        'collection');
+                                    return Column(
+                                      children: <Widget>[
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              top: a.width / 20),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Container(
+                                                child: Text(
+                                                  "กระดาษที่เก็บไว้",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: a.width / 18),
+                                                ),
+                                              ),
+                                              Container(
+                                                child: Text(
+                                                  mSet?.length == null ||
+                                                          mSet?.length == 0
+                                                      ? '0' + " แผ่น"
+                                                      : mSet.length.toString() +
+                                                          ' แผ่น',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: a.width / 18),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        mSet?.length == null ||
+                                                mSet?.length == 0
+                                            ? Center(
+                                                child: Text(
+                                                  'ไม่มี',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: a.width / 18),
+                                                ),
+                                              )
+                                            : Container(
+                                                width: a.width,
+                                                height: a.width / 1,
+                                                child:
+                                                    listScrap(a, mSet.toList()))
+                                      ],
+                                    );
+                                  } else {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                }),
+
+                            Container(
+                              margin: EdgeInsets.only(top: 100),
+                              child: InkWell(
+                                child: Container(
+                                    width: a.width / 2,
+                                    height: a.width / 6,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(a.width),
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: a.width / 400,
+                                        )),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(Icons.feedback,
+                                            color: Colors.white,
+                                            size: a.width / 15),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          'Feedback',
+                                          style: TextStyle(
+                                            fontSize: a.width / 12,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              FeedbackPage())); //ไปยังหน้า Profile
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            } else {
-              return Center(child: Loading());
-            }
-          }),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Center(child: Loading());
+                }
+              }),
+          loading ? Loading() : SizedBox()
+        ],
+      ),
     );
   }
 
@@ -742,7 +833,7 @@ class _ProfileState extends State<Profile> {
                                   ? toast('เขียนบางอย่างสิ')
                                   : null;
                             },
-                            //เนื้อหาที่กรอกเข้าไปใน text
+                            //เนื้อหา���ี่กร���กเข้าไปใน text
                             onSaved: (val) {
                               edit = val;
                             },

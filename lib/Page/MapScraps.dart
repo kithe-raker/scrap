@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scrap/function/randomLocation.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class MapScraps extends StatefulWidget {
   final Position currentLocation;
@@ -40,6 +41,7 @@ class _MapScrapsState extends State<MapScraps> {
   Set scpContent = {};
   Map randData = {};
   Set picked = {};
+  final infoKey = GlobalKey();
 
   @override
   void initState() {
@@ -219,7 +221,30 @@ class _MapScrapsState extends State<MapScraps> {
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: a.width / 14),
                           ),
-                        ))
+                        )),
+                    writer != 'สุ่มโดย Scrap'
+                        ? Positioned(
+                            top: 12,
+                            right: 12,
+                            child: Row(
+                              children: <Widget>[
+                                FlatButton(
+                                    child: Icon(Icons.whatshot),
+                                    onPressed: () async {
+                                      await burn(id);
+                                      print(id);
+                                      Navigator.pop(context);
+                                      Taoast()
+                                          .toast('คุณได้เผากระดาษไปแล้ว');
+                                    }),
+                                Tooltip(
+                                  key: infoKey,
+                                  message: 'เผากระดาษ',
+                                  child: Icon(Icons.info_outline),
+                                )
+                              ],
+                            ))
+                        : SizedBox(),
                   ],
                 ),
               ),
@@ -228,6 +253,17 @@ class _MapScrapsState extends State<MapScraps> {
         );
       });
     }));
+  }
+
+  burn(String scrapID) async {
+    await Firestore.instance
+        .collection('Scraps')
+        .document('hatyai')
+        .collection('scrapsPosition')
+        .document(scrapID)
+        .updateData({
+      'burned': FieldValue.arrayUnion([widget.uid])
+    });
   }
 
   pickScrap(String id, String text, String time, String writer) async {
@@ -444,7 +480,7 @@ class _MapScrapsState extends State<MapScraps> {
         } catch (e) {
           print(e.toString());
           error(context,
-              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณ��ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
         }
       },
     );
