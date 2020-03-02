@@ -1,14 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/services/jsonConverter.dart';
 
 class FriendList extends StatefulWidget {
   final DocumentSnapshot doc;
-  final List friend;
   final Map data;
-  FriendList({@required this.doc, @required this.friend, this.data});
+  FriendList({@required this.doc, this.data});
   @override
   _FriendListState createState() => _FriendListState();
 }
@@ -18,43 +20,19 @@ class _FriendListState extends State<FriendList> {
   var _key = GlobalKey<FormState>();
   DocumentSnapshot cache;
   List friends = [];
-  List fID = [];
-  Set searchResault = {};
-
-  getFriends() {
-    friends = widget.friend.take(3).toList();
-    friends.shuffle();
-    getID();
-  }
+  List searchResault = [];
+  bool loading = true;
+  JsonConverter jsonConverter = JsonConverter();
 
   @override
   void initState() {
-    getFriends();
+    initeFriend();
     super.initState();
   }
 
-  //  friends.contains(tID)
-  //       ? Center(
-  //           child: Text('เพื่อน'),
-  //         )
-  //       : Center(
-  //           child: RaisedButton(
-  //               child: Text('add'),
-  //               onPressed: () async {
-  //                 await addFriend(tID);
-
-  //                 Taoast().toast("เพิ่ม $throwID เป็นสหายแล้ว");
-  //               }),
-  //         ),
-
-  getID() async {
-    for (String uid in widget.friend) {
-      await Firestore.instance
-          .collection('Users')
-          .document(uid)
-          .get()
-          .then((doc) => fID.add({'uid': uid, 'id': doc.data['id']}));
-    }
+  initeFriend() async {
+    friends = await jsonConverter.readContents();
+    setState(() {});
   }
 
   @override
@@ -95,9 +73,34 @@ class _FriendListState extends State<FriendList> {
                             Navigator.pop(context);
                           },
                         ),
+                        Container(
+                            height: a.width / 5,
+                            alignment: Alignment.center,
+                            child: InkWell(
+                              child: Container(
+                                width: a.width / 10,
+                                height: a.width / 10,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(a.width),
+                                  border:
+                                      Border.all(width: 2, color: Colors.white),
+                                  color: Color(0xff26A4FF),
+                                ),
+                                child: Icon(Icons.person_add,
+                                    color: Colors.white, size: a.width / 15),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Search(
+                                              doc: widget.doc,
+                                            ))); //ไปยังหน้า Search
+                              },
+                            )),
                       ],
                     ), //back btn
-                    SizedBox(height: a.height / 12.5),
+                    SizedBox(height: a.height / 32),
                     Padding(
                       padding: const EdgeInsets.only(left: 0),
                       child: Column(
@@ -154,10 +157,13 @@ class _FriendListState extends State<FriendList> {
                                 hintStyle: TextStyle(color: Colors.grey[700]),
                               ),
                               onChanged: (val) {
-                                Future.delayed(const Duration(milliseconds: 20),
-                                    () {
+                                Future.delayed(
+                                    const Duration(milliseconds: 200),
+                                    () async {
                                   id = val.trim();
-                                  searchResault.clear();
+                                  // searchResault.clear();
+                                  searchResault = await jsonConverter
+                                      .searchContents(id: id.substring(1));
                                   setState(() {});
                                 });
                               },
@@ -200,10 +206,10 @@ class _FriendListState extends State<FriendList> {
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              listFriend(a, friends),
+                              listFriend(a, friends.take(3).toList()),
                               FlatButton(
                                 child: Text(
-                                  'เพื่อนทั้งหมด ${widget.friend.length}',
+                                  'เพื่อนทั้งหมด ${friends.length}',
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: a.width / 14),
@@ -214,7 +220,7 @@ class _FriendListState extends State<FriendList> {
                                       MaterialPageRoute(
                                           builder: (context) => AllFriends(
                                                 doc: widget.doc,
-                                                friend: widget.friend,
+                                                friend: friends,
                                               )));
                                 },
                               )
@@ -235,20 +241,19 @@ class _FriendListState extends State<FriendList> {
   }
 
   Widget search(Size a) {
-    fID.forEach((dat) => dat['id'].contains(id.substring(1))
-        ? searchResault.add(dat['uid'])
-        : null);
     return searchResault.length == 0
         ? guide(a, 'ไม่พบidนี้ในสหายของคุณ', a.height / 2)
-        : listFriend(a, searchResault.toList());
+        : listFriend(a, searchResault);
   }
 
-  Widget listFriend(Size a, List friend) {
-    return friend == null
+  Widget listFriend(Size a, List resault, {bool recom = false}) {
+    recom ? resault.shuffle() : null;
+    return resault == null
         ? SizedBox()
         : Column(
-            children:
-                friend.map((friendID) => cardStream(a, friendID)).toList(),
+            children: resault
+                .map((friend) => cardStream(a, friend['uid'], friend['id']))
+                .toList(),
           );
   }
 
@@ -281,7 +286,7 @@ class _FriendListState extends State<FriendList> {
     );
   }
 
-  Widget cardStream(Size a, String searchID) {
+  Widget cardStream(Size a, String searchID, String id) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Users')
@@ -300,8 +305,8 @@ class _FriendListState extends State<FriendList> {
                 builder: (context, snap) {
                   if (snap.hasData &&
                       snap.connectionState == ConnectionState.active) {
-                    return userCard(a, snapshot.data['img'], searchID,
-                        snap.data['id'], snapshot.data['createdDay'],
+                    return userCard(a, snapshot.data['img'], searchID, id,
+                        snapshot.data['createdDay'],
                         accDoc: snap.data, infoDoc: snapshot.data);
                   } else {
                     return SizedBox();
@@ -346,8 +351,8 @@ class _FriendListState extends State<FriendList> {
                       width: a.width / 3.3,
                       height: a.width / 3.3,
                       child: ClipRRect(
-                        child: Image.network(
-                          img,
+                        child: CachedNetworkImage(
+                          imageUrl: img,
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.circular(a.width),
@@ -415,7 +420,7 @@ class _FriendListState extends State<FriendList> {
           return AlertDialog(
             backgroundColor: Colors.white,
             content: Container(
-              child: Text('คุณต้องการปาใส่' + user + 'ใช่ห��ือไม่'),
+              child: Text('คุณต้องก��รปาใส่' + user + 'ใช่ห��ือไม่'),
             ),
             actions: <Widget>[
               FlatButton(
@@ -638,12 +643,9 @@ class _AllFriendsState extends State<AllFriends> {
               child: ListView(
                 controller: scrollController,
                 itemExtent: a.height / 4.5,
-                children:
-                    friends.reversed.map((uid) => cardStream(a, uid)).toList(),
-
-                // itemBuilder: (context, index) {
-                //   return cardStream(a, friends.reversed.toList()[index]);
-                // },
+                children: friends.reversed
+                    .map((data) => cardStream(a, data['uid'], data['id']))
+                    .toList(),
               ),
             ),
           ],
@@ -652,7 +654,7 @@ class _AllFriendsState extends State<AllFriends> {
     );
   }
 
-  Widget cardStream(Size a, String searchID) {
+  Widget cardStream(Size a, String searchID, String id) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Users')
@@ -671,8 +673,8 @@ class _AllFriendsState extends State<AllFriends> {
                 builder: (context, snap) {
                   if (snap.hasData &&
                       snap.connectionState == ConnectionState.active) {
-                    return userCard(a, snapshot.data['img'], searchID,
-                        snap.data['id'], snapshot.data['createdDay'],
+                    return userCard(a, snapshot.data['img'], searchID, id,
+                        snapshot.data['createdDay'],
                         accDoc: snap.data, infoDoc: snapshot.data);
                   } else {
                     return SizedBox();
@@ -716,8 +718,8 @@ class _AllFriendsState extends State<AllFriends> {
                       width: a.width / 3.3,
                       height: a.width / 3.3,
                       child: ClipRRect(
-                        child: Image.network(
-                          img,
+                        child: CachedNetworkImage(
+                          imageUrl: img,
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.circular(a.width),

@@ -12,6 +12,7 @@ import 'package:scrap/Page/addPlayer.dart';
 import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/Page/search.dart';
+import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,8 +28,26 @@ class _HomePageState extends State<HomePage> {
   var _key = GlobalKey<FormState>();
   Position currentLocation;
   List friends = [];
+  JsonConverter jsonConverter = JsonConverter();
 
-  getFriends() async {
+  @override
+  void initState() {
+    initFriend();
+    Geolocator().getCurrentPosition().then((curlo) {
+      setState(() {
+        currentLocation = curlo;
+      });
+    });
+
+    super.initState();
+  }
+
+  initFriend() async {
+    await getFriendUID();
+    await getIDtoFile();
+  }
+
+  getFriendUID() async {
     await Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
@@ -37,18 +56,21 @@ class _HomePageState extends State<HomePage> {
         .get()
         .then((doc) {
       friends = doc['friendList'] ?? [];
-      friends?.shuffle();
     });
   }
 
-  @override
-  void initState() {
-    Geolocator().getCurrentPosition().then((curlo) {
-      setState(() {
-        currentLocation = curlo;
+  getIDtoFile() async {
+    List fID = [];
+    for (String uid in friends) {
+      await Firestore.instance
+          .collection('Users')
+          .document(uid)
+          .get()
+          .then((doc) {
+        fID.add({'uid': uid, 'id': doc.data['id']});
       });
-    });
-    super.initState();
+    }
+    await jsonConverter.writeContent(listm: fID);
   }
 
   @override
@@ -220,39 +242,13 @@ class _HomePageState extends State<HomePage> {
                             child: Icon(Icons.people,
                                 color: Colors.black, size: a.width / 15),
                           ),
-                          onTap: () async {
-                            await getFriends();
+                          onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => FriendList(
                                           doc: widget.doc,
-                                          friend: friends,
                                         )));
-                          },
-                        )),
-                    Container(
-                        height: a.width / 5,
-                        alignment: Alignment.center,
-                        child: InkWell(
-                          child: Container(
-                            width: a.width / 10,
-                            height: a.width / 10,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(a.width),
-                              border: Border.all(width: 2, color: Colors.white),
-                              color: Color(0xff26A4FF),
-                            ),
-                            child: Icon(Icons.search,
-                                color: Colors.white, size: a.width / 15),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Search(
-                                          doc: widget.doc,
-                                        ))); //ไปยังหน้า Search
                           },
                         )),
                     Container(

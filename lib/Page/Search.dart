@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class Search extends StatefulWidget {
@@ -18,23 +20,18 @@ class _SearchState extends State<Search> {
   String id;
   var _key = GlobalKey<FormState>();
   DocumentSnapshot cache;
+  JsonConverter jsonConverter = JsonConverter();
   List friends = [];
-//pull
-
-  getFriends() {
-    Firestore.instance
-        .collection('Users')
-        .document(widget.doc['uid'])
-        .collection('info')
-        .document('friends')
-        .get()
-        .then((doc) => friends = doc['friendList'] ?? []);
-  }
 
   @override
   void initState() {
-    getFriends();
+    initeFriend();
     super.initState();
+  }
+
+  initeFriend() async {
+    friends = await jsonConverter.readContents();
+    setState(() {});
   }
 
   @override
@@ -340,8 +337,8 @@ class _SearchState extends State<Search> {
                       width: a.width / 3.3,
                       height: a.width / 3.3,
                       child: ClipRRect(
-                        child: Image.network(
-                          img,
+                        child: CachedNetworkImage(
+                          imageUrl: img,
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.circular(a.width),
@@ -374,7 +371,7 @@ class _SearchState extends State<Search> {
                     ),
                   ]),
             ),
-            friends.contains(tID)
+            friends.where((data) => data['uid'].contains(tID)).length == 1
                 ? Center(
                     child: Text('เพื่อน'),
                   )
@@ -382,7 +379,7 @@ class _SearchState extends State<Search> {
                     child: RaisedButton(
                         child: Text('add'),
                         onPressed: () async {
-                          await addFriend(tID);
+                          await addFriend(tID, throwID);
                           Taoast().toast("เพิ่ม $throwID เป็นสหายแล้ว");
                         }),
                   ),
@@ -444,18 +441,19 @@ class _SearchState extends State<Search> {
         });
   }
 
-    checkBlockList(String uid, String thrownID) async {
+  checkBlockList(String uid, String thrownID) async {
     await Firestore.instance
-    .collection('Users')
-    .document(thrownID)
-    .get()
-    .then((value) {
-      !(value['blockList'].contains(uid)) ?
-      throwTo(widget.data, thrownID) : null ; 
+        .collection('Users')
+        .document(thrownID)
+        .get()
+        .then((value) {
+      !(value['blockList'].contains(uid))
+          ? throwTo(widget.data, thrownID)
+          : null;
     });
   }
 
-  addFriend(String uid) async {
+  addFriend(String uid, String newFriend) async {
     await Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
@@ -464,7 +462,8 @@ class _SearchState extends State<Search> {
         .setData({
       'friendList': FieldValue.arrayUnion([uid])
     }, merge: true);
-    setState(() => friends.add(uid));
+    jsonConverter.addContent(id: newFriend, uid: uid);
+    setState(() => friends.add({'uid': uid, 'id': newFriend}));
   }
 
   toast(String text) {
@@ -547,5 +546,3 @@ class _SearchState extends State<Search> {
                 {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 }
-
-

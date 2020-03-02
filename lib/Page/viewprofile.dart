@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class Viewprofile extends StatefulWidget {
@@ -18,6 +19,43 @@ class Viewprofile extends StatefulWidget {
 class _ViewprofileState extends State<Viewprofile> {
   bool public;
   String text;
+  List friends = [];
+  JsonConverter jsonConverter = JsonConverter();
+  @override
+  void initState() {
+    initFriend();
+    super.initState();
+  }
+
+  initFriend() async {
+    List f = [];
+    f = await jsonConverter.readContents();
+    f.forEach((data) {
+      friends.add(data['uid']);
+    });
+    setState(() {});
+  }
+
+  editFriend(String uid, {bool remove = false, String id}) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.self['uid'])
+        .collection('info')
+        .document('friends')
+        .setData({
+      'friendList':
+          remove ? FieldValue.arrayRemove([uid]) : FieldValue.arrayUnion([uid])
+    }, merge: true);
+    if (remove) {
+      jsonConverter.removeContent(key: 'uid', where: uid);
+      friends.remove(uid);
+    } else {
+      jsonConverter.addContent(id: id, uid: uid);
+      friends.add(uid);
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -43,6 +81,8 @@ class _ViewprofileState extends State<Viewprofile> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     InkWell(
                                       //back btn
@@ -63,6 +103,55 @@ class _ViewprofileState extends State<Viewprofile> {
                                         );
                                       },
                                     ),
+                                    friends.contains(widget.account.data['uid'])
+                                        ? InkWell(
+                                            //back btn
+                                            child: Container(
+                                                alignment: Alignment.center,
+                                                width: a.width / 4,
+                                                height: a.width / 8,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            a.width),
+                                                    color: Colors.white),
+                                                child: Text(
+                                                  'ลบจากสหาย',
+                                                  style: TextStyle(
+                                                      fontSize: a.width / 18,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                )),
+                                            onTap: () async {
+                                              await editFriend(
+                                                  widget.account['uid'],
+                                                  remove: true);
+                                              Taoast().toast(
+                                                  "ลบ ${widget.account.data['id']} จากสหายแล้ว");
+                                            },
+                                          )
+                                        : InkWell(
+                                            child: Container(
+                                              width: a.width / 8,
+                                              height: a.width / 8,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          a.width),
+                                                  color: Colors.white),
+                                              child: Icon(Icons.person_add,
+                                                  color: Colors.black,
+                                                  size: a.width / 15),
+                                            ),
+                                            onTap: () async {
+                                              await editFriend(
+                                                widget.account['uid'],
+                                                id: widget.account.data['id'],
+                                              );
+                                              Taoast().toast(
+                                                  "เพิ่ม ${widget.account.data['id']} เป็นสหายแล้ว");
+                                            },
+                                          ),
                                   ],
                                 ), //back btn
                               ]))),
@@ -392,7 +481,7 @@ class _ViewprofileState extends State<Viewprofile> {
                                                       fontSize: a.width / 22,
                                                       color: Colors.grey),
                                                 ),
-                                          Text("เวลา" + " : " + time,
+                                          Text("เ��ลา" + " : " + time,
                                               style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: a.width / 22))
