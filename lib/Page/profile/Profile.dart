@@ -595,7 +595,25 @@ class _ProfileState extends State<Profile> {
                                     onTap: () {
                                       dialogPa(writerID, writer);
                                     },
+                                  ),
+                                  InkWell(
+                                    child: Container(
+                                      width: a.width / 7,
+                                      height: a.width / 12,
+                                      decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.red[200]),
+                                          borderRadius: BorderRadius.circular(
+                                              a.width / 10)),
+                                      alignment: Alignment.center,
+                                      child: Text("บล็อค"),
+                                    ),
+                                    onTap: () {
+                                      blockAdd(writerID, writer)
+                                      //dialogPa(writerID, writer);
+                                    },
                                   )
+                            
                                 ],
                               ),
                             )),
@@ -930,6 +948,13 @@ class _ProfileState extends State<Profile> {
             ),
           );
         });
+  }
+  blockAdd(String userReceive,String userSent) async {
+    await Firestore.instance
+    .collection("Users")
+    .document(userReceive)
+    .updateData({'blockList': FieldValue.arrayUnion([userSent]) })
+    ;
   }
 
   statusEditer(String status) async {
