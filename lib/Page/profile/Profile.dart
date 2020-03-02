@@ -700,7 +700,7 @@ class _ProfileState extends State<Profile> {
                                       child: Text("บล็อค"),
                                     ),
                                     onTap: () {
-                                      blockDialog(writerID, writer);
+                                      blockDialog(widget.doc['id'], writerID);
                                       
 
                                       //dialogPa(writerID, writer);
