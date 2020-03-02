@@ -750,17 +750,7 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          if (widget.doc['scraps']?.length ==
-                                                  null
-                                              ? true
-                                              : widget.doc['scraps'].length <
-                                                  15) {
-                                            toast('คุณได้ทิ้งกระดาษไว้แล้ว');
-                                            Navigator.pop(context);
-                                            await binScrap('$time $date');
-                                          } else {
-                                            toast('กระดาษคุณหมดแล้ว');
-                                          }
+                                          checkScrap('$time $date');
                                         }
                                       },
                                     ),
@@ -814,6 +804,25 @@ class _HomePageState extends State<HomePage> {
           });
         },
         fullscreenDialog: true));
+  }
+
+  checkScrap(String time) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document(widget.doc['uid'])
+        .get()
+        .then((dat) async {
+      int scraps = dat.data['scraps']?.length ?? 0;
+      if (scraps < 15) {
+        toast('คุณได้ทิ้งกระดาษไว้แล้ว');
+        Navigator.pop(context);
+        await binScrap(time);
+      } else {
+        toast('กระดาษคุณหมดแล้ว');
+      }
+    });
   }
 
   toast(String text) {
