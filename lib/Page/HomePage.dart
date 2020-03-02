@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
         .document('friends')
         .get()
         .then((doc) {
-      setState(() => friends = doc['friendList'] ?? []);
+      friends = doc['friendList'] ?? [];
       friends?.shuffle();
     });
   }
@@ -203,7 +203,6 @@ class _HomePageState extends State<HomePage> {
                           width: a.width / 4,
                         )),
                     //ส่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
-
                     SizedBox(
                       width: a.width / 5,
                     ),
@@ -458,9 +457,7 @@ class _HomePageState extends State<HomePage> {
             });
           },
         ),
-        Text(
-          value,
-        )
+        Text(value)
       ],
     );
   }
@@ -481,12 +478,12 @@ class _HomePageState extends State<HomePage> {
     await Geolocator().getCurrentPosition().then((value) => point =
         Geoflutterfire()
             .point(latitude: value.latitude, longitude: value.longitude));
-    await Firestore.instance
+    Firestore.instance
         .collection('Scraps')
         .document('hatyai')
         .collection('scrapsPosition')
-        .add({}).then((value) async {
-      await Firestore.instance
+        .add({}).then((value) {
+      Firestore.instance
           .collection('Scraps')
           .document('hatyai')
           .collection('scrapsPosition')
@@ -501,8 +498,20 @@ class _HomePageState extends State<HomePage> {
         },
         'position': point.data
       });
+      update(value.documentID);
     });
-    await increaseTransaction(widget.doc['uid'], 'written');
+    increaseTransaction(widget.doc['uid'], 'written');
+  }
+
+  update(id) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document(widget.doc['uid'])
+        .updateData({
+      'scraps': FieldValue.arrayUnion([id])
+    });
   }
 
   increaseTransaction(String uid, String key) async {
@@ -600,7 +609,7 @@ class _HomePageState extends State<HomePage> {
                                         ],
                                       ),
                                     ),
-                                    //ออกจากหน้านี้
+                                    //ออกจาก��น้านี้
                                     InkWell(
                                       child: Icon(
                                         Icons.clear,
@@ -704,7 +713,7 @@ class _HomePageState extends State<HomePage> {
                                                     "ลองเขียนข้อความบางอย่างสิ")
                                                 : null;
                                           },
-                                          //เนื้อหาที่กรอกเข้าไปใน text
+                                          //เนื้อหาท��่กรอกเข้าไปใน text
                                           onChanged: (val) {
                                             text = val;
                                           },
@@ -741,11 +750,7 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          toast('คุณได้ทิ้งกระดาษไว้แล้ว');
-                                          Navigator.pop(context);
-                                          await binScrap('$time $date');
-                                        } else {
-                                          print('nope');
+                                          checkScrap('$time $date');
                                         }
                                       },
                                     ),
@@ -799,6 +804,25 @@ class _HomePageState extends State<HomePage> {
           });
         },
         fullscreenDialog: true));
+  }
+
+  checkScrap(String time) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document(widget.doc['uid'])
+        .get()
+        .then((dat) async {
+      int scraps = dat.data['scraps']?.length ?? 0;
+      if (scraps < 15) {
+        toast('คุณได้ทิ้งกระดาษไว้แล้ว');
+        Navigator.pop(context);
+        await binScrap(time);
+      } else {
+        toast('กระดาษคุณหมดแล้ว');
+      }
+    });
   }
 
   toast(String text) {
