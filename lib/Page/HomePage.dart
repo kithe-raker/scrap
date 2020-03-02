@@ -1,4 +1,3 @@
-//import 'package:circular_check_box/circular_check_box.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +8,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
-import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/addPlayer.dart';
+import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/Page/search.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,6 +26,20 @@ class _HomePageState extends State<HomePage> {
   bool public;
   var _key = GlobalKey<FormState>();
   Position currentLocation;
+  List friends = [];
+
+  getFriends() async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document('friends')
+        .get()
+        .then((doc) {
+      setState(() => friends = doc['friendList'] ?? []);
+      friends?.shuffle();
+    });
+  }
 
   @override
   void initState() {
@@ -203,6 +216,31 @@ class _HomePageState extends State<HomePage> {
                             height: a.width / 10,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(a.width),
+                              color: Colors.white,
+                            ),
+                            child: Icon(Icons.people,
+                                color: Colors.black, size: a.width / 15),
+                          ),
+                          onTap: () async {
+                            await getFriends();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => FriendList(
+                                          doc: widget.doc,
+                                          friend: friends,
+                                        )));
+                          },
+                        )),
+                    Container(
+                        height: a.width / 5,
+                        alignment: Alignment.center,
+                        child: InkWell(
+                          child: Container(
+                            width: a.width / 10,
+                            height: a.width / 10,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(a.width),
                               border: Border.all(width: 2, color: Colors.white),
                               color: Color(0xff26A4FF),
                             ),
@@ -263,7 +301,7 @@ class _HomePageState extends State<HomePage> {
                                           doc: widget.doc,
                                         ))); //ไปยังหน้า Profile
                           },
-                        ))
+                        )),
                   ],
                 ),
               ),
@@ -447,21 +485,22 @@ class _HomePageState extends State<HomePage> {
         .collection('Scraps')
         .document('hatyai')
         .collection('scrapsPosition')
-        .add({
-      'uid': widget.doc['uid'],
-      'scrap': {
-        'text': text,
-        'user': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-        'time': time
-      },
-      'position': point.data
-    }).then((value) {
-      Firestore.instance
+        .add({}).then((value) async {
+      await Firestore.instance
           .collection('Scraps')
           .document('hatyai')
           .collection('scrapsPosition')
           .document(value.documentID)
-          .updateData({'id': value.documentID});
+          .updateData({
+        'id': value.documentID,
+        'uid': widget.doc['uid'],
+        'scrap': {
+          'text': text,
+          'user': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
+          'time': time
+        },
+        'position': point.data
+      });
     });
     await increaseTransaction(widget.doc['uid'], 'written');
   }
@@ -580,7 +619,7 @@ class _HomePageState extends State<HomePage> {
                                 margin: EdgeInsets.only(top: a.width / 150),
                                 width: a.width / 1,
                                 height: a.height / 1.8,
-                                //ทำเป็นชั้นๆ
+                                //ทำเป���น�������ั้นๆ
                                 child: Stack(
                                   children: <Widget>[
                                     //ช���้นที่ 1 ส่วนของก���ะดาษ
@@ -738,10 +777,6 @@ class _HomePageState extends State<HomePage> {
                                               MaterialPageRoute(
                                                 builder: (context) => Search(
                                                   doc: widget.doc,
-                                                  data: {
-                                                    'text': text,
-                                                    'public': public ?? false
-                                                  },
                                                 ),
                                               ));
                                         } else {
@@ -891,7 +926,7 @@ class _HomePageState extends State<HomePage> {
                                           : id[0] != '@'
                                               ? Center(
                                                   child: Text(
-                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ตามด้วยชื่อid'),
+                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ตามด้วย���ื่อid'),
                                                 )
                                               : StreamBuilder(
                                                   stream: Firestore.instance

@@ -6,15 +6,16 @@ import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
 import 'package:scrap/widget/Toast.dart';
 
-class Search extends StatefulWidget {
+class FriendList extends StatefulWidget {
   final DocumentSnapshot doc;
+  final List friend;
   final Map data;
-  Search({@required this.doc, this.data});
+  FriendList({@required this.doc, @required this.friend, this.data});
   @override
-  _SearchState createState() => _SearchState();
+  _FriendListState createState() => _FriendListState();
 }
 
-class _SearchState extends State<Search> {
+class _FriendListState extends State<FriendList> {
   String id;
   var _key = GlobalKey<FormState>();
   DocumentSnapshot cache;
@@ -22,13 +23,8 @@ class _SearchState extends State<Search> {
 //pull
 
   getFriends() {
-    Firestore.instance
-        .collection('Users')
-        .document(widget.doc['uid'])
-        .collection('info')
-        .document('friends')
-        .get()
-        .then((doc) => friends = doc['friendList'] ?? []);
+    friends = widget.friend;
+    friends.shuffle();
   }
 
   @override
@@ -36,6 +32,20 @@ class _SearchState extends State<Search> {
     getFriends();
     super.initState();
   }
+
+  //  friends.contains(tID)
+  //       ? Center(
+  //           child: Text('เพื่อน'),
+  //         )
+  //       : Center(
+  //           child: RaisedButton(
+  //               child: Text('add'),
+  //               onPressed: () async {
+  //                 await addFriend(tID);
+
+  //                 Taoast().toast("เพิ่ม $throwID เป็นสหายแล้ว");
+  //               }),
+  //         ),
 
   @override
   Widget build(BuildContext context) {
@@ -106,144 +116,106 @@ class _SearchState extends State<Search> {
                     SizedBox(
                       height: a.width / 13,
                     ),
-                    Form(
-                      key: _key,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 30),
-                              width: a.width / 1.4,
-                              height: a.width / 6.5,
-                              decoration: BoxDecoration(
-                                color: Color(0xff282828),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(300)),
-                                border: Border.all(
-                                    width: 2, color: Colors.grey[800]),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 30),
+                            width: a.width / 1.4,
+                            height: a.width / 6.5,
+                            decoration: BoxDecoration(
+                              color: Color(0xff282828),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(300)),
+                              border:
+                                  Border.all(width: 2, color: Colors.grey[800]),
+                            ),
+                            child: TextFormField(
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: a.width / 14,
+                                fontWeight: FontWeight.w300,
                               ),
-                              child: TextFormField(
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: a.width / 14,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: '@somename',
-                                  hintStyle: TextStyle(color: Colors.grey[700]),
-                                ),
-                                validator: (val) {
-                                  return val.trim() == ""
-                                      ? Taoast().toast("โปรดใส่ไอดี")
-                                      : val[0] == '@'
-                                          ? null
-                                          : Taoast().toast(
-                                              "ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid");
-                                },
-                                onSaved: (value) {
-                                  id = value.trim();
-                                  setState(() {});
-                                },
-                                textInputAction: TextInputAction.done,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: '@somename',
+                                hintStyle: TextStyle(color: Colors.grey[700]),
                               ),
+                              onChanged: (value) {
+                                id = value.trim();
+                                setState(() {});
+                              },
+                              textInputAction: TextInputAction.done,
                             ),
                           ),
-                          InkWell(
-                            child: Container(
-                                margin: EdgeInsets.only(bottom: 30),
-                                alignment: Alignment.center,
-                                width: a.width / 8,
-                                height: a.width / 8,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(a.width),
-                                  border:
-                                      Border.all(width: 2, color: Colors.white),
-                                  color: Color(0xff26A4FF),
-                                ),
-                                child: Text(
-                                  '@',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: a.width / 11,
-                                      color: Colors.white),
-                                )),
-                            onTap: () {
-                              if (_key.currentState.validate()) {
-                                _key.currentState.save();
-                              }
-                            },
-                          )
-                        ],
-                      ),
+                        ),
+                        InkWell(
+                          child: Container(
+                              margin: EdgeInsets.only(bottom: 30),
+                              alignment: Alignment.center,
+                              width: a.width / 8,
+                              height: a.width / 8,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(a.width),
+                                border:
+                                    Border.all(width: 2, color: Colors.white),
+                                color: Color(0xff26A4FF),
+                              ),
+                              child: Text(
+                                '@',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: a.width / 11,
+                                    color: Colors.white),
+                              )),
+                          onTap: () {
+                            if (_key.currentState.validate()) {
+                              _key.currentState.save();
+                            }
+                          },
+                        )
+                      ],
                     ),
                   ],
                 ),
-                id == null ||
-                        id == '' ||
-                        id.length < 2 ||
-                        id.substring(1) == widget.doc['id']
-                    ? guide(
-                        a,
-                        'ค้นหาคนที่คุณต้องการปาใส่',
-                        a.height / 2.1,
-                      )
-                    : StreamBuilder(
-                        stream: Firestore.instance
-                            .collection('SearchUsers')
-                            .document(id[1])
-                            .collection('users')
-                            .where('id', isEqualTo: id.substring(1))
-                            .limit(1)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData &&
-                              snapshot.connectionState ==
-                                  ConnectionState.active) {
-                            List docs = snapshot.data.documents;
-                            return docs?.length == null || docs?.length == 0
-                                ? guide(
-                                    a,
-                                    'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว',
-                                    a.height / 1.5,
-                                  )
-                                : Column(
-                                    children: docs
-                                        .map((data) =>
-                                            cardStream(a, data['uid']))
-                                        .toList(),
-                                  );
-                          } else {
-                            return Container(
-                              height: a.height / 2.1,
-                              width: a.width,
-                              child: Center(
-                                child: Container(
-                                  width: a.width / 3.6,
-                                  height: a.width / 3.6,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.42),
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: FlareActor(
-                                    'assets/paper_loading.flr',
-                                    animation: 'Untitled',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                        })
+                friends?.length == null || friends.length == 0
+                    ? guide(a, 'คุณไม่มีสหาย', a.height / 2)
+                    : id == null || id == '' || id.length < 2
+                        ? listFriend(a)
+                        : id[0] == '@'
+                            ? searchFriend(a)
+                            : guide(
+                                a,
+                                'ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid',
+                                a.height / 2)
               ],
             ),
           ),
         ),
       ]),
     );
+  }
+
+  Widget searchFriend(Size a) {
+    List searchResault =
+        friends.where((uid) => uid.contains(id.substring(1))).toList();
+    return Column(
+      children:
+          searchResault.map((friendID) => cardStream(a, friendID)).toList(),
+    );
+  }
+
+  Widget listFriend(Size a) {
+    return friends == null
+        ? SizedBox()
+        : Column(
+            children:
+                friends.map((friendID) => cardStream(a, friendID)).toList(),
+          );
   }
 
   dynamic backward(List list, dynamic value) {
@@ -275,7 +247,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget cardStream(Size a, String searchID) {
+  Widget cardStream(Size a, String searchID, {bool hist = false}) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Users')
@@ -295,7 +267,7 @@ class _SearchState extends State<Search> {
                   if (snap.hasData &&
                       snap.connectionState == ConnectionState.active) {
                     return userCard(a, snapshot.data['img'], searchID,
-                        snap.data['id'], snapshot.data['createdDay'],
+                        snap.data['id'], snapshot.data['createdDay'], hist,
                         accDoc: snap.data, infoDoc: snapshot.data);
                   } else {
                     return SizedBox();
@@ -308,7 +280,7 @@ class _SearchState extends State<Search> {
   }
 
   Widget userCard(
-      Size a, String img, String tID, String throwID, String created,
+      Size a, String img, String tID, String throwID, String created, bool hist,
       {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0),
@@ -374,26 +346,24 @@ class _SearchState extends State<Search> {
                     ),
                   ]),
             ),
-            friends.contains(tID)
-                ? Center(
-                    child: Text('เพื่อน'),
-                  )
-                : Center(
-                    child: RaisedButton(
-                        child: Text('add'),
-                        onPressed: () async {
-                          await addFriend(tID);
-                          Taoast().toast("เพิ่ม $throwID เป็นสหายแล้ว");
-                        }),
-                  ),
             Positioned(
               right: 10.0,
               top: 10.0,
-              child: Icon(
-                Icons.arrow_forward,
-                color: Color(0xffA3A3A3),
-                size: 30.0,
-              ),
+              child: hist
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.clear,
+                        color: Color(0xffA3A3A3),
+                        size: 30.0,
+                      ),
+                      onPressed: () {
+                        warnClear(throwID, tID);
+                      })
+                  : Icon(
+                      Icons.arrow_forward,
+                      color: Color(0xffA3A3A3),
+                      size: 30.0,
+                    ),
             )
           ],
         ),
@@ -443,16 +413,43 @@ class _SearchState extends State<Search> {
         });
   }
 
-  addFriend(String uid) async {
+  warnClear(String user, String thrownID) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text('คุ��ต้���งนำ' + user + 'อกกจากปร��วัติใช่หรือไม่'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('ยกเลิก')),
+              FlatButton(
+                child: Text('ok'),
+                onPressed: () async {
+                  toast('ลบ"$user"ออกแล้ว');
+                  Navigator.pop(context);
+                  await clearHist(thrownID);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  clearHist(String thrown) async {
     await Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
         .collection('info')
-        .document('friends')
-        .setData({
-      'friendList': FieldValue.arrayUnion([uid])
-    }, merge: true);
-    setState(() => friends.add(uid));
+        .document('searchHist')
+        .updateData({
+      'history': FieldValue.arrayRemove([thrown])
+    });
   }
 
   toast(String text) {
