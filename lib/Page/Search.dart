@@ -444,15 +444,15 @@ class _SearchState extends State<Search> {
         });
   }
 
-  checkBlockList(String uid, String thrownID) async {
+    checkBlockList(String uid, String thrownID) async {
     await Firestore.instance
     .collection('Users')
     .document(thrownID)
     .get()
-    .then(value) => if(!value['blockList'].contains(uid))
-    {
-      throwTo(widget.data, thrownID);
-    }
+    .then((value) {
+      !(value['blockList'].contains(uid)) ?
+      throwTo(widget.data, thrownID) : null ; 
+    });
   }
 
   addFriend(String uid) async {
