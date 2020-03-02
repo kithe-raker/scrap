@@ -435,12 +435,24 @@ class _SearchState extends State<Search> {
                   toast('ปาใส่"$user"แล้ว');
                   Navigator.pop(context);
                   Navigator.pop(context);
-                  await throwTo(widget.data, thrownID);
+                  //await throwTo(widget.data, thrownID);
+                  await checkBlockList(widget.doc['uid'], thrownID);
                 },
               )
             ],
           );
         });
+  }
+
+  checkBlockList(String uid, String thrownID) async {
+    await Firestore.instance
+    .collection('Users')
+    .document(thrownID)
+    .get()
+    .then(value) => if(!value['blockList'].contains(uid))
+    {
+      throwTo(widget.data, thrownID);
+    }
   }
 
   addFriend(String uid) async {
@@ -535,3 +547,5 @@ class _SearchState extends State<Search> {
                 {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 }
+
+
