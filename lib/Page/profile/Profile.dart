@@ -609,7 +609,9 @@ class _ProfileState extends State<Profile> {
                                       child: Text("บล็อค"),
                                     ),
                                     onTap: () {
-                                      blockAdd(writerID, writer)
+                                      blockDialog(writerID, writer);
+                                      
+
                                       //dialogPa(writerID, writer);
                                     },
                                   )
@@ -948,6 +950,31 @@ class _ProfileState extends State<Profile> {
             ),
           );
         });
+  }
+  blockDialog(String userReceive, String userSent){
+    return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text('คุณต้องการบล็อคผู้ใช้นี้ใช่หรือไม่ (สามารถแก้ไขได้ภายหลัง)'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('ยกเลิก')),
+              FlatButton(
+                child: Text('ตกลง'),
+                onPressed: () async {
+                  toast('ทำการบล็อคแล้ว');
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  //await throwTo(widget.data, thrownID);
+                  await blockAdd(userReceive, userSent);
+                },
+              )
+            ],
+          );
   }
   blockAdd(String userReceive,String userSent) async {
     await Firestore.instance
