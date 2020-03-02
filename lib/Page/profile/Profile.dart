@@ -692,21 +692,19 @@ class _ProfileState extends State<Profile> {
                                       width: a.width / 7,
                                       height: a.width / 12,
                                       decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.red[200]),
+                                          border: Border.all(
+                                              color: Colors.red[200]),
                                           borderRadius: BorderRadius.circular(
                                               a.width / 10)),
                                       alignment: Alignment.center,
                                       child: Text("บล็อค"),
                                     ),
                                     onTap: () {
-                                      blockDialog(widget.doc['id'], writerID);
-                                      
-
+                                      blockDialog(widget.doc['id'], writerID,
+                                          writer, time, text, scpData);
                                       //dialogPa(writerID, writer);
                                     },
                                   )
-                            
                                 ],
                               ),
                             )),
@@ -1042,37 +1040,60 @@ class _ProfileState extends State<Profile> {
           );
         });
   }
-  blockDialog(String userReceive, String userSent){
+
+  blockDialog(String userReceive, String userSent, String writer, String time,
+      String text, Map scpData) {
     return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text('คุณต้องการบล็อคผู้ใช้นี้ใช่หรือไม่ (สามารถแก้ไขได้ภายหลัง)'),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ยกเลิก')),
-              FlatButton(
-                child: Text('ตกลง'),
-                onPressed: () async {
-                  toast('ทำการบล็อคแล้ว');
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  //await throwTo(widget.data, thrownID);
-                  await blockAdd(userReceive, userSent);
-                },
-              )
-            ],
-          );
+      backgroundColor: Colors.white,
+      content: Container(
+        child:
+            Text('คุณต้องการบล็อคผู้ใช้นี้ใช่หรือไม่ (สามารถแก้ไขได้ภายหลัง)'),
+      ),
+      actions: <Widget>[
+        FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('ยกเลิก')),
+        FlatButton(
+          child: Text('ตกลง'),
+          onPressed: () async {
+            toast('ทำการบล็อคแล้ว');
+            Navigator.pop(context);
+            Navigator.pop(context);
+            //await throwTo(widget.data, thrownID);
+            await blockFunction(
+                userReceive, userSent, writer, time, text, scpData);
+          },
+        )
+      ],
+    );
   }
-  blockAdd(String userReceive,String userSent) async {
+
+  blockFunction(String userReceive, String userSent, String writer, String time,
+      String text, Map scpData) async {
+    blockAddUser(userReceive, userSent);
+    blockAddPaper(userReceive, writer, time, text, scpData);
+  }
+
+  blockAddUser(String userReceive, String userSent) async {
     await Firestore.instance
-    .collection("Users")
-    .document(userReceive)
-    .updateData({'blockList': FieldValue.arrayUnion([userSent]) })
-    ;
+        .collection("Users")
+        .document(userReceive)
+        .updateData({
+      'blockList': FieldValue.arrayUnion([userSent])
+    });
+  }
+
+  blockAddPaper(String userReceive, String writer, String time, String text,
+      Map scpData) async {
+    List paperData = [writer, time, text, scpData];
+    await Firestore.instance
+        .collection("Users")
+        .document(userReceive)
+        .updateData({
+      'blockPaperList': FieldValue.arrayUnion([paperData])
+    });
   }
 
   statusEditer(String status) async {
