@@ -52,11 +52,11 @@ class JsonConverter {
     }
   }
 
-  Future<List> addContent({String id, String uid}) async {
+  Future<List> addContent({String id, String imgUrl, String joinD}) async {
     try {
       List<Map> list = await readContents();
-      list.add({'uid': uid, 'id': id});
-      writeContent(listm: list);
+      list.add({'img': imgUrl, 'id': id, 'join': joinD});
+      await writeContent(listm: list);
       return list;
     } catch (e) {
       return [];

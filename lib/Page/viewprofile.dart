@@ -1,42 +1,76 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/function/cacheManage/friendManager.dart';
 import 'package:scrap/services/jsonConverter.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class Viewprofile extends StatefulWidget {
-  final DocumentSnapshot account;
-  final DocumentSnapshot info;
   final DocumentSnapshot self;
-  Viewprofile(
-      {@required this.info, @required this.account, @required this.self});
+  final String id;
+  Viewprofile({@required this.self, @required this.id});
   @override
   _ViewprofileState createState() => _ViewprofileState();
 }
 
 class _ViewprofileState extends State<Viewprofile> {
-  bool public;
+  bool public, loading = true;
   String text;
+  String friendUID;
   List friends = [];
   JsonConverter jsonConverter = JsonConverter();
+  FriendManager friendManager = FriendManager();
+
   @override
   void initState() {
     initFriend();
     super.initState();
   }
 
+  Future<bool> notHaveAccount(String user) async {
+    final QuerySnapshot users = await Firestore.instance
+        .collection('Users')
+        .where('id', isEqualTo: user)
+        .limit(1)
+        .getDocuments();
+    final List<DocumentSnapshot> doc = users.documents;
+    if (doc.length == 1) {
+      friendUID = doc[0].documentID;
+    }
+    return doc.length < 1;
+  }
+
+  updateData() async {
+    List list = await jsonConverter.readContents();
+    if (await notHaveAccount(widget.id)) {
+      Map data = list.firstWhere((dat) => dat['id'] == widget.id);
+      int index = list.indexOf(data);
+      await Firestore.instance
+          .collection('Users')
+          .document(widget.self.data['uid'])
+          .collection('info')
+          .document('friends')
+          .get()
+          .then((doc) async {
+        friendUID = doc.data['friendList'][index];
+        await friendManager.updateData(doc?.data['friendList'] ?? []);
+      });
+    }
+    friends = await jsonConverter.readContents();
+  }
+
   initFriend() async {
-    List f = [];
-    f = await jsonConverter.readContents();
-    f.forEach((data) {
-      friends.add(data['uid']);
-    });
+    await updateData();
+    loading = false;
     setState(() {});
   }
 
-  editFriend(String uid, {bool remove = false, String id}) async {
+  editFriend(String uid, String id,
+      {bool remove = false, String img, String join}) async {
     await Firestore.instance
         .collection('Users')
         .document(widget.self['uid'])
@@ -47,11 +81,11 @@ class _ViewprofileState extends State<Viewprofile> {
           remove ? FieldValue.arrayRemove([uid]) : FieldValue.arrayUnion([uid])
     }, merge: true);
     if (remove) {
-      jsonConverter.removeContent(key: 'uid', where: uid);
-      friends.remove(uid);
+      jsonConverter.removeContent(key: 'id', where: id);
+      friends.removeWhere((dat) => dat['id'] == id);
     } else {
-      jsonConverter.addContent(id: id, uid: uid);
-      friends.add(uid);
+      jsonConverter.addContent(id: id, imgUrl: img, joinD: join);
+      friends.add({'id': id, 'imgUrl': img, 'joinD': join});
     }
     setState(() {});
   }
@@ -59,280 +93,396 @@ class _ViewprofileState extends State<Viewprofile> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-          backgroundColor: Colors.black,
-          body: Stack(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Container(
-                      color: Colors.black,
-                      width: a.width,
-                      height: a.height / 7.2,
-                      child: Padding(
-                          padding: EdgeInsets.only(
-                              top: a.width / 15,
-                              right: a.width / 25,
-                              left: a.width / 25,
-                              bottom: a.width / 30.0),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    InkWell(
-                                      //back btn
-                                      child: Container(
-                                        width: a.width / 7,
-                                        height: a.width / 10,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(a.width),
-                                            color: Colors.white),
-                                        child: Icon(Icons.arrow_back,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, true);
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+            backgroundColor: Colors.black,
+            body: Stack(
+              children: <Widget>[
+                friendUID == null
+                    ? SizedBox()
+                    : StreamBuilder(
+                        stream: Firestore.instance
+                            .collection('Users')
+                            .document(friendUID)
+                            .collection('info')
+                            .document(friendUID)
+                            .snapshots(),
+                        builder: (context, info) {
+                          if (info.hasData &&
+                              info.connectionState == ConnectionState.active) {
+                            return StreamBuilder(
+                                stream: Firestore.instance
+                                    .collection('Users')
+                                    .document(friendUID)
+                                    .snapshots(),
+                                builder: (context, acc) {
+                                  if (acc.hasData &&
+                                      acc.connectionState ==
+                                          ConnectionState.active) {
+                                    return Column(
+                                      children: <Widget>[
+                                        Container(
                                             color: Colors.black,
-                                            size: a.width / 15),
-                                      ),
-                                      onTap: () {
-                                        Navigator.pop(
-                                          context,
-                                        );
-                                      },
-                                    ),
-                                    friends.contains(widget.account.data['uid'])
-                                        ? InkWell(
-                                            //back btn
-                                            child: Container(
-                                                alignment: Alignment.center,
-                                                width: a.width / 4,
-                                                height: a.width / 8,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            a.width),
-                                                    color: Colors.white),
-                                                child: Text(
-                                                  'ลบจากสหาย',
-                                                  style: TextStyle(
-                                                      fontSize: a.width / 18,
-                                                      fontWeight:
-                                                          FontWeight.w500),
+                                            width: a.width,
+                                            height: a.height / 7.2,
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: a.width / 15,
+                                                    right: a.width / 25,
+                                                    left: a.width / 25,
+                                                    bottom: a.width / 30.0),
+                                                child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: <Widget>[
+                                                          InkWell(
+                                                            //back btn
+                                                            child: Container(
+                                                              width:
+                                                                  a.width / 7,
+                                                              height:
+                                                                  a.width / 10,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(a
+                                                                              .width),
+                                                                  color: Colors
+                                                                      .white),
+                                                              child: Icon(
+                                                                  Icons
+                                                                      .arrow_back,
+                                                                  color: Colors
+                                                                      .black,
+                                                                  size:
+                                                                      a.width /
+                                                                          15),
+                                                            ),
+                                                            onTap: () async {
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  true);
+                                                              return false;
+                                                            },
+                                                          ),
+                                                          friends
+                                                                      .where((dat) =>
+                                                                          dat['id'] ==
+                                                                          acc.data[
+                                                                              'id'])
+                                                                      .length ==
+                                                                  1
+                                                              ? InkWell(
+                                                                  //back btn
+                                                                  child: Container(
+                                                                      alignment: Alignment.center,
+                                                                      width: a.width / 4,
+                                                                      height: a.width / 8,
+                                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(a.width), color: Colors.white),
+                                                                      child: Text(
+                                                                        'ลบจากสหาย',
+                                                                        style: TextStyle(
+                                                                            fontSize: a.width /
+                                                                                18,
+                                                                            fontWeight:
+                                                                                FontWeight.w500),
+                                                                      )),
+                                                                  onTap:
+                                                                      () async {
+                                                                    await editFriend(
+                                                                        acc.data[
+                                                                            'uid'],
+                                                                        acc.data[
+                                                                            'id'],
+                                                                        remove:
+                                                                            true);
+                                                                    Taoast().toast(
+                                                                        "ลบ ${acc.data['id']} จากสหายแล้ว");
+                                                                  },
+                                                                )
+                                                              : InkWell(
+                                                                  child:
+                                                                      Container(
+                                                                    width:
+                                                                        a.width /
+                                                                            8,
+                                                                    height:
+                                                                        a.width /
+                                                                            8,
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(a
+                                                                                .width),
+                                                                        color: Colors
+                                                                            .white),
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .person_add,
+                                                                        color: Colors
+                                                                            .black,
+                                                                        size: a.width /
+                                                                            15),
+                                                                  ),
+                                                                  onTap:
+                                                                      () async {
+                                                                    await editFriend(
+                                                                        acc.data[
+                                                                            'uid'],
+                                                                        acc.data[
+                                                                            'id'],
+                                                                        img: info.data[
+                                                                            'img'],
+                                                                        join: info
+                                                                            .data['createdDay']);
+                                                                    Taoast().toast(
+                                                                        "เพิ่ม ${acc.data['id']} เป็นสหายแล้ว");
+                                                                  },
+                                                                ),
+                                                        ],
+                                                      ), //back btn
+                                                    ]))),
+                                        Container(
+                                          color: Colors.black,
+                                          child: Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 20, right: 13),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          a.width),
+                                                  border: Border.all(
+                                                      color: Colors.white,
+                                                      width: a.width / 190)),
+                                              width: a.width / 3.2,
+                                              height: a.width / 3.2,
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          a.width),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: info.data['img'],
+                                                    fit: BoxFit.cover,
+                                                  ))),
+                                        ),
+                                        SizedBox(
+                                          height: a.width / 15,
+                                        ),
+                                        Text(
+                                          "@${acc.data['id']}",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: a.width / 12),
+                                        ),
+                                        Text(
+                                          "Join ${info.data['createdDay']}",
+                                          style: TextStyle(
+                                              color: Color(0xff26A4FF),
+                                              fontSize: a.width / 12),
+                                        ),
+                                        info?.data['status'] == null
+                                            ? SizedBox(
+                                                height: a.width / 12,
+                                              )
+                                            : Container(
+                                                margin: EdgeInsets.only(
+                                                    top: a.width / 21),
+                                                child: SizedBox(
+                                                  width: a.width / 1.6,
+                                                  child: Text(
+                                                    info.data['status'],
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize: a.width / 15,
+                                                        color: Colors.white,
+                                                        fontStyle:
+                                                            FontStyle.italic),
+                                                  ),
                                                 )),
-                                            onTap: () async {
-                                              await editFriend(
-                                                  widget.account['uid'],
-                                                  remove: true);
-                                              Taoast().toast(
-                                                  "ลบ ${widget.account.data['id']} จากสหายแล้ว");
-                                            },
-                                          )
-                                        : InkWell(
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              left: a.width / 15,
+                                              right: a.width / 15),
+                                          padding: EdgeInsets.only(
+                                              top: a.width / 16),
+                                          height: a.height / 5.6,
+                                          //ใส่เส้นด้านใต้สุด
+                                          child: Row(
+                                            // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: <Widget>[
+                                              Container(
+                                                color: Colors.black,
+                                                width: a.width / 4.5,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  //เพื่อใช้สำหรับให้ จำนวน และ เขียน
+                                                  children: <Widget>[
+                                                    Text(
+                                                      info?.data['written'] ==
+                                                              null
+                                                          ? '0'
+                                                          : info.data['written']
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 13,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      "เขียน",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 21),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                color: Colors.black,
+                                                width: a.width / 4.5,
+                                                margin: EdgeInsets.only(
+                                                    left: a.width / 10,
+                                                    right: a.width / 10),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      //เพื่อใช้สำหรับ��ห้ จำนวน และ ผ�����้หยิบอ่าน
+                                                      info?.data['read'] == null
+                                                          ? '0'
+                                                          : info.data['read']
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 13,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      "ผู้คนหยิบอ่าน",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 21),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                color: Colors.black,
+                                                width: a.width / 4.5,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
+                                                  children: <Widget>[
+                                                    Text(
+                                                      info?.data['threw'] ==
+                                                              null
+                                                          ? '0'
+                                                          : info.data['threw']
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 13,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      "โดนปาใส่",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 21),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        InkWell(
+                                          child: Container(
+                                            width: a.width / 3.6,
+                                            height: a.width / 3.6,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        a.width),
+                                                border: Border.all(
+                                                    color: Colors.white38,
+                                                    width: a.width / 500)),
                                             child: Container(
-                                              width: a.width / 8,
-                                              height: a.width / 8,
+                                              margin:
+                                                  EdgeInsets.all(a.width / 35),
+                                              width: a.width / 5,
+                                              height: a.width / 5,
                                               decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           a.width),
-                                                  color: Colors.white),
-                                              child: Icon(Icons.person_add,
+                                                  border: Border.all(
+                                                      color: Colors.white)),
+                                              child: Container(
+                                                margin: EdgeInsets.all(
+                                                    a.width / 35),
+                                                width: a.width / 5,
+                                                height: a.width / 5,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            a.width),
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                        color: Colors.white)),
+                                                child: Icon(
+                                                  Icons.create,
+                                                  size: a.width / 12,
                                                   color: Colors.black,
-                                                  size: a.width / 15),
+                                                ),
+                                              ),
                                             ),
-                                            onTap: () async {
-                                              await editFriend(
-                                                widget.account['uid'],
-                                                id: widget.account.data['id'],
-                                              );
-                                              Taoast().toast(
-                                                  "เพิ่ม ${widget.account.data['id']} เป็นสหายแล้ว");
-                                            },
                                           ),
-                                  ],
-                                ), //back btn
-                              ]))),
-                  Container(
-                    color: Colors.black,
-                    child: Container(
-                        margin: EdgeInsets.only(left: 20, right: 13),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(a.width),
-                            border: Border.all(
-                                color: Colors.white, width: a.width / 190)),
-                        width: a.width / 3.2,
-                        height: a.width / 3.2,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(a.width),
-                          child: Image.network(
-                            widget.info.data['img'],
-                            fit: BoxFit.cover,
-                          ),
-                        )),
-                  ),
-                  SizedBox(
-                    height: a.width / 15,
-                  ),
-                  Text(
-                    "@${widget.account.data['id']}",
-                    style:
-                        TextStyle(color: Colors.white, fontSize: a.width / 12),
-                  ),
-                  Text(
-                    "Join ${widget.info.data['createdDay']}",
-                    style: TextStyle(
-                        color: Color(0xff26A4FF), fontSize: a.width / 12),
-                  ),
-                  widget.info?.data['status'] == null
-                      ? SizedBox(
-                          height: a.width / 12,
-                        )
-                      : Container(
-                          margin: EdgeInsets.only(top: a.width / 21),
-                          child: SizedBox(
-                            width: a.width / 1.6,
-                            child: Text(
-                              widget.info?.data['status'],
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: a.width / 15,
-                                  color: Colors.white,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                          )),
-                  Container(
-                    margin: EdgeInsets.only(
-                        left: a.width / 15, right: a.width / 15),
-                    padding: EdgeInsets.only(top: a.width / 16),
-                    height: a.height / 5.6,
-                    //ใส่เส้นด้านใต้สุด
-                    child: Row(
-                      // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Container(
-                          color: Colors.black,
-                          width: a.width / 4.5,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            //เพื่อใช้สำหรับให้ จำนวน และ เขียน
-                            children: <Widget>[
-                              Text(
-                                widget.info?.data['written'] == null
-                                    ? '0'
-                                    : widget.info.data['written'].toString(),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 13,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "เขียน",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 21),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          color: Colors.black,
-                          width: a.width / 4.5,
-                          margin: EdgeInsets.only(
-                              left: a.width / 10, right: a.width / 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                //เพื่อใช้สำหรับ��ห้ จำนวน และ ผ�����้หยิบอ่าน
-                                widget.info?.data['read'] == null
-                                    ? '0'
-                                    : widget.info.data['read'].toString(),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 13,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "ผู้คนหยิบอ่าน",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 21),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          color: Colors.black,
-                          width: a.width / 4.5,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
-                            children: <Widget>[
-                              Text(
-                                widget.info?.data['threw'] == null
-                                    ? '0'
-                                    : widget.info.data['threw'].toString(),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 13,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "โดนปาใส่",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 21),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    child: Container(
-                      width: a.width / 3.6,
-                      height: a.width / 3.6,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(a.width),
-                          border: Border.all(
-                              color: Colors.white38, width: a.width / 500)),
-                      child: Container(
-                        margin: EdgeInsets.all(a.width / 35),
-                        width: a.width / 5,
-                        height: a.width / 5,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(a.width),
-                            border: Border.all(color: Colors.white)),
-                        child: Container(
-                          margin: EdgeInsets.all(a.width / 35),
-                          width: a.width / 5,
-                          height: a.width / 5,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(a.width),
-                              color: Colors.white,
-                              border: Border.all(color: Colors.white)),
-                          child: Icon(
-                            Icons.create,
-                            size: a.width / 12,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      dialog();
-                    },
-                  ),
-                ],
-              ),
-            ],
-          )),
+                                          onTap: () {
+                                            dialog();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Loading();
+                                  }
+                                });
+                          } else {
+                            return SizedBox();
+                          }
+                        }),
+                loading ? Loading() : SizedBox()
+              ],
+            )),
+      ),
     );
   }
 
@@ -428,12 +578,12 @@ class _ViewprofileState extends State<Viewprofile> {
                                   ],
                                 ),
                               ),
-                              //ส่ว��ของกระดาษที่เขีย���
+                              //���่ว��ของกระดาษ�������่เขี�����
                               Container(
                                 margin: EdgeInsets.only(top: a.width / 50),
                                 width: a.width / 1,
                                 height: a.height / 1.8,
-                                //ทำเป็นชั้นๆ
+                                //ทำเ����นชั้นๆ
                                 child: Stack(
                                   children: <Widget>[
                                     //ช���้นที่ 1 ส่วนของก���ะดาษ
@@ -553,16 +703,16 @@ class _ViewprofileState extends State<Viewprofile> {
                                       ),
                                       //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
                                       onTap: () {
-                                        if (_key.currentState.validate()) {
-                                          _key.currentState.save();
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                          Taoast().toast(
-                                              'ปาใส่"${widget.account['id']}"แล้ว');
-                                          throwTo(widget.account['uid']);
-                                        } else {
-                                          print('nope');
-                                        }
+                                        // if (_key.currentState.validate()) {
+                                        //   _key.currentState.save();
+                                        //   Navigator.pop(context);
+                                        //   Navigator.pop(context);
+                                        //   Taoast().toast(
+                                        //       'ปาใส่"${widget.account['id']}"แล้ว');
+                                        //   throwTo(widget.account['uid']);
+                                        // } else {
+                                        //   print('nope');
+                                        // }
                                       },
                                     )
                                   ],

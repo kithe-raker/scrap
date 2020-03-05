@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:scrap/Page/LoginID.dart';
 
 import 'package:scrap/Page/signup/SignUpMail.dart';
+import 'package:scrap/function/cacheManage/friendManager.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -24,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   bool loading = false;
   var _key = GlobalKey<FormState>();
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  FriendManager friendManager = FriendManager();
 
   login() async {
     try {
@@ -31,11 +33,10 @@ class _LoginPageState extends State<LoginPage> {
           .signInWithEmailAndPassword(email: _email, password: _password)
           .then((value) async {
         await updateToken(value.user.uid);
+        await friendManager.initFriend(value.user.uid);
         setState(() {
           loading = false;
         });
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Authen()));
       });
     } catch (e) {
       setState(() {

@@ -371,7 +371,7 @@ class _SearchState extends State<Search> {
                     ),
                   ]),
             ),
-            friends.where((data) => data['uid'].contains(tID)).length == 1
+            friends.where((data) => data['id'].contains(throwID)).length == 1
                 ? Center(
                     child: Text('เพื่อน'),
                   )
@@ -379,7 +379,7 @@ class _SearchState extends State<Search> {
                     child: RaisedButton(
                         child: Text('add'),
                         onPressed: () async {
-                          await addFriend(tID, throwID);
+                          await addFriend(tID, throwID, img, created);
                           Taoast().toast("เพิ่ม $throwID เป็นสหายแล้ว");
                         }),
                   ),
@@ -400,8 +400,7 @@ class _SearchState extends State<Search> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => Viewprofile(
-                      info: infoDoc,
-                      account: accDoc,
+                      id: throwID,
                       self: widget.doc,
                     ),
                   ))
@@ -453,7 +452,7 @@ class _SearchState extends State<Search> {
     });
   }
 
-  addFriend(String uid, String newFriend) async {
+  addFriend(String uid, String newFriend, String img, String join) async {
     await Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
@@ -462,8 +461,9 @@ class _SearchState extends State<Search> {
         .setData({
       'friendList': FieldValue.arrayUnion([uid])
     }, merge: true);
-    jsonConverter.addContent(id: newFriend, uid: uid);
-    setState(() => friends.add({'uid': uid, 'id': newFriend}));
+    jsonConverter.addContent(id: newFriend, imgUrl: img, joinD: join);
+    setState(
+        () => friends.add({'id': newFriend, 'imgUrl': img, 'joinD': join}));
   }
 
   toast(String text) {

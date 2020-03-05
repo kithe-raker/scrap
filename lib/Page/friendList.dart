@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/viewprofile.dart';
 import 'package:scrap/services/jsonConverter.dart';
+import 'package:scrap/widget/Loading.dart';
 
 class FriendList extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -18,21 +19,61 @@ class FriendList extends StatefulWidget {
 class _FriendListState extends State<FriendList> {
   String id;
   var _key = GlobalKey<FormState>();
-  DocumentSnapshot cache;
   List friends = [];
   List searchResault = [];
   bool loading = true;
+  List updatedFriends = [];
   JsonConverter jsonConverter = JsonConverter();
 
   @override
   void initState() {
-    initeFriend();
+    initFriend();
     super.initState();
   }
 
-  initeFriend() async {
+  initFriend() async {
     friends = await jsonConverter.readContents();
+    loading = false;
     setState(() {});
+  }
+
+  updateFriends() async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document('friends')
+        .get()
+        .then((doc) {
+      updatedFriends = doc['friendList'] ?? [];
+    });
+  }
+
+  updateData() async {
+    List fID = [];
+    for (String uid in updatedFriends) {
+      await Firestore.instance
+          .collection('Users')
+          .document(uid)
+          .get()
+          .then((doc) async {
+        await getInfo(fID, uid, doc.data['id']);
+      });
+    }
+    await jsonConverter.writeContent(listm: fID);
+  }
+
+  getInfo(List list, String uid, String name) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document(uid)
+        .get()
+        .then((doc) async {
+      list.add(
+          {'id': name, 'img': doc.data['img'], 'join': doc.data['createdDay']});
+    });
   }
 
   @override
@@ -40,203 +81,213 @@ class _FriendListState extends State<FriendList> {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: ListView(children: <Widget>[
-        Container(
-          color: Colors.black,
-          width: a.width,
-          child: Padding(
-            padding: EdgeInsets.only(
-                top: a.width / 20,
-                right: a.width / 25,
-                left: a.width / 25,
-                bottom: a.width / 8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Column(
+      body: Stack(
+        children: <Widget>[
+          ListView(children: <Widget>[
+            Container(
+              color: Colors.black,
+              width: a.width,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: a.width / 20,
+                    right: a.width / 25,
+                    left: a.width / 25,
+                    bottom: a.width / 8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
                       children: <Widget>[
-                        InkWell(
-                          child: Container(
-                            width: a.width / 7,
-                            height: a.width / 10,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(a.width),
-                                color: Colors.white),
-                            child: Icon(Icons.arrow_back,
-                                color: Colors.black, size: a.width / 15),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        Container(
-                            height: a.width / 5,
-                            alignment: Alignment.center,
-                            child: InkWell(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            InkWell(
                               child: Container(
-                                width: a.width / 10,
+                                width: a.width / 7,
                                 height: a.width / 10,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(a.width),
-                                  border:
-                                      Border.all(width: 2, color: Colors.white),
-                                  color: Color(0xff26A4FF),
-                                ),
-                                child: Icon(Icons.person_add,
-                                    color: Colors.white, size: a.width / 15),
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    color: Colors.white),
+                                child: Icon(Icons.arrow_back,
+                                    color: Colors.black, size: a.width / 15),
                               ),
                               onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Search(
-                                              doc: widget.doc,
-                                            ))); //ไปยังหน้า Search
+                                Navigator.pop(context);
                               },
-                            )),
-                      ],
-                    ), //back btn
-                    SizedBox(height: a.height / 32),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'ค้นหาผู้ใช้',
-                            style: TextStyle(
-                                fontSize: a.width / 6.5,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w300),
-                          ),
-                          Text(
-                            'ค้นหาคนที่คุณรู้จักแล้วปากระดาษใส่พวกเขากัน',
-                            style: TextStyle(
-                                fontSize: a.width / 16,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w300),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: a.width / 13,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
+                            ),
+                            Container(
+                                height: a.width / 5,
+                                alignment: Alignment.center,
+                                child: InkWell(
+                                  child: Container(
+                                    width: a.width / 10,
+                                    height: a.width / 10,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                      border: Border.all(
+                                          width: 2, color: Colors.white),
+                                      color: Color(0xff26A4FF),
+                                    ),
+                                    child: Icon(Icons.person_add,
+                                        color: Colors.white,
+                                        size: a.width / 15),
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Search(
+                                                  doc: widget.doc,
+                                                ))); //ไปยังหน้า Search
+                                  },
+                                )),
+                          ],
+                        ), //back btn
+                        SizedBox(height: a.height / 32),
                         Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: 30),
-                            width: a.width / 1.4,
-                            height: a.width / 6.5,
-                            decoration: BoxDecoration(
-                              color: Color(0xff282828),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(300)),
-                              border:
-                                  Border.all(width: 2, color: Colors.grey[800]),
-                            ),
-                            child: TextFormField(
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: a.width / 14,
-                                fontWeight: FontWeight.w300,
+                          padding: const EdgeInsets.only(left: 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'ค้นหาผู้ใช้',
+                                style: TextStyle(
+                                    fontSize: a.width / 6.5,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w300),
                               ),
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: '@somename',
-                                hintStyle: TextStyle(color: Colors.grey[700]),
+                              Text(
+                                'ค้นหาคนที่คุณรู้จักแล้วปากระดาษใส่พวกเขากัน',
+                                style: TextStyle(
+                                    fontSize: a.width / 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w300),
                               ),
-                              onChanged: (val) {
-                                Future.delayed(
-                                    const Duration(milliseconds: 200),
-                                    () async {
-                                  id = val.trim();
-                                  // searchResault.clear();
-                                  searchResault = await jsonConverter
-                                      .searchContents(id: id.substring(1));
-                                  setState(() {});
-                                });
-                              },
-                              textInputAction: TextInputAction.done,
-                            ),
+                            ],
                           ),
                         ),
-                        InkWell(
-                          child: Container(
-                              margin: EdgeInsets.only(bottom: 30),
-                              alignment: Alignment.center,
-                              width: a.width / 8,
-                              height: a.width / 8,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(a.width),
-                                border:
-                                    Border.all(width: 2, color: Colors.white),
-                                color: Color(0xff26A4FF),
+                        SizedBox(
+                          height: a.width / 13,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 30),
+                                width: a.width / 1.4,
+                                height: a.width / 6.5,
+                                decoration: BoxDecoration(
+                                  color: Color(0xff282828),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(300)),
+                                  border: Border.all(
+                                      width: 2, color: Colors.grey[800]),
+                                ),
+                                child: TextFormField(
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 14,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: '@somename',
+                                    hintStyle:
+                                        TextStyle(color: Colors.grey[700]),
+                                  ),
+                                  onChanged: (val) {
+                                    Future.delayed(
+                                        const Duration(milliseconds: 200),
+                                        () async {
+                                      id = val.trim();
+                                      if (id?.length != null && id.length > 1) {
+                                        searchResault =
+                                            await jsonConverter.searchContents(
+                                                id: id.substring(1));
+                                      }
+                                      setState(() {});
+                                    });
+                                  },
+                                  textInputAction: TextInputAction.done,
+                                ),
                               ),
-                              child: Text(
-                                '@',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: a.width / 11,
-                                    color: Colors.white),
-                              )),
-                          onTap: () {
-                            if (_key.currentState.validate()) {
-                              _key.currentState.save();
-                            }
-                          },
-                        )
+                            ),
+                            InkWell(
+                              child: Container(
+                                  margin: EdgeInsets.only(bottom: 30),
+                                  alignment: Alignment.center,
+                                  width: a.width / 8,
+                                  height: a.width / 8,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    border: Border.all(
+                                        width: 2, color: Colors.white),
+                                    color: Color(0xff26A4FF),
+                                  ),
+                                  child: Text(
+                                    '@',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: a.width / 11,
+                                        color: Colors.white),
+                                  )),
+                              onTap: () {
+                                if (_key.currentState.validate()) {
+                                  _key.currentState.save();
+                                }
+                              },
+                            )
+                          ],
+                        ),
                       ],
                     ),
+                    friends?.length == null || friends.length == 0
+                        ? guide(a, 'คุณไม่มีสหาย', a.height / 2)
+                        : id == null || id == '' || id.length < 2
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  listFriend(a, friends.take(3).toList(),
+                                      recom: true),
+                                  FlatButton(
+                                    child: Text(
+                                      'เพื่อนทั้งหมด ${friends.length}',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: a.width / 14),
+                                    ),
+                                    onPressed: () async {
+                                      bool resault = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AllFriends(
+                                                    doc: widget.doc,
+                                                  )));
+                                      if (resault) {
+                                        initFriend();
+                                      }
+                                    },
+                                  )
+                                ],
+                              )
+                            : search(a)
                   ],
                 ),
-                friends?.length == null || friends.length == 0
-                    ? guide(a, 'คุณไม่มีสหาย', a.height / 2)
-                    : id == null || id == '' || id.length < 2
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              listFriend(a, friends.take(3).toList()),
-                              FlatButton(
-                                child: Text(
-                                  'เพื่อนทั้งหมด ${friends.length}',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: a.width / 14),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => AllFriends(
-                                                doc: widget.doc,
-                                                friend: friends,
-                                              )));
-                                },
-                              )
-                            ],
-                          )
-                        : id[0] == '@'
-                            ? search(a)
-                            : guide(
-                                a,
-                                'ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid',
-                                a.height / 2)
-              ],
+              ),
             ),
-          ),
-        ),
-      ]),
+          ]),
+          loading ? Loading() : SizedBox()
+        ],
+      ),
     );
   }
 
@@ -251,9 +302,7 @@ class _FriendListState extends State<FriendList> {
     return resault == null
         ? SizedBox()
         : Column(
-            children: resault
-                .map((friend) => cardStream(a, friend['uid'], friend['id']))
-                .toList(),
+            children: resault.map((friend) => cardStream(a, friend)).toList(),
           );
   }
 
@@ -286,40 +335,11 @@ class _FriendListState extends State<FriendList> {
     );
   }
 
-  Widget cardStream(Size a, String searchID, String id) {
-    return StreamBuilder(
-        stream: Firestore.instance
-            .collection('Users')
-            .document(searchID)
-            .collection('info')
-            .document(searchID)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.active) {
-            return StreamBuilder(
-                stream: Firestore.instance
-                    .collection('Users')
-                    .document(searchID)
-                    .snapshots(),
-                builder: (context, snap) {
-                  if (snap.hasData &&
-                      snap.connectionState == ConnectionState.active) {
-                    return userCard(a, snapshot.data['img'], searchID, id,
-                        snapshot.data['createdDay'],
-                        accDoc: snap.data, infoDoc: snapshot.data);
-                  } else {
-                    return SizedBox();
-                  }
-                });
-          } else {
-            return SizedBox();
-          }
-        });
+  Widget cardStream(Size a, Map data) {
+    return userCard(a, data['img'], data['id'], data['join']);
   }
 
-  Widget userCard(
-      Size a, String img, String tID, String throwID, String created,
+  Widget userCard(Size a, String img, String throwID, String created,
       {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0),
@@ -397,17 +417,16 @@ class _FriendListState extends State<FriendList> {
           ],
         ),
         onTap: () {
-          widget.data == null
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Viewprofile(
-                      info: infoDoc,
-                      account: accDoc,
-                      self: widget.doc,
-                    ),
-                  ))
-              : warnDialog(throwID, tID);
+          // widget.data == null
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Viewprofile(
+                  id: throwID,
+                  self: widget.doc,
+                ),
+              ));
+          //     : warnDialog(throwID, tID);
         },
       ),
     );
@@ -420,7 +439,7 @@ class _FriendListState extends State<FriendList> {
           return AlertDialog(
             backgroundColor: Colors.white,
             content: Container(
-              child: Text('คุณต้องก��รปาใส่' + user + 'ใช่ห��ือไม่'),
+              child: Text('คุณต้อ���ก��รป���ใส่' + user + 'ใช่ห��ือไม่'),
             ),
             actions: <Widget>[
               FlatButton(
@@ -564,35 +583,44 @@ class _FriendListState extends State<FriendList> {
 
 class AllFriends extends StatefulWidget {
   final DocumentSnapshot doc;
-  final List friend;
   final Map scrap;
-  AllFriends({@required this.doc, @required this.friend, this.scrap});
+  AllFriends({@required this.doc, this.scrap});
   @override
   _AllFriendsState createState() => _AllFriendsState();
 }
 
 class _AllFriendsState extends State<AllFriends> {
+  List display = [];
+  List sortedList = [];
   List friends = [];
   ScrollController scrollController = ScrollController();
+  JsonConverter jsonConverter = JsonConverter();
 
   @override
   void initState() {
-    friends = widget.friend.take(4).toList();
+    initFriend();
     initScroller();
     super.initState();
+  }
+
+  initFriend() async {
+    friends = await jsonConverter.readContents();
+    display = friends.reversed.take(4).toList();
+    sortedList = friends.reversed.toList();
+    setState(() {});
   }
 
   initScroller() {
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
-        if (friends.length != widget.friend.length) {
-          for (int i = friends.length;
-              widget.friend.length - friends.length < 4
-                  ? i < widget.friend.length
-                  : i < friends.length + 4;
+        if (display.length != sortedList.length) {
+          for (int i = display.length;
+              sortedList.length - display.length < 4
+                  ? i < sortedList.length
+                  : i < display.length + 4;
               i++) {
-            friends.insert(0, widget.friend[i]);
+            display.add(sortedList[i]);
           }
           setState(() {});
           scrollController.animateTo(210,
@@ -606,88 +634,62 @@ class _AllFriendsState extends State<AllFriends> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                InkWell(
-                  child: Container(
-                    width: a.width / 7,
-                    height: a.width / 10,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(a.width),
-                        color: Colors.white),
-                    child: Icon(Icons.arrow_back,
-                        color: Colors.black, size: a.width / 15),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, true);
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Container(
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  InkWell(
+                    child: Container(
+                      width: a.width / 7,
+                      height: a.width / 10,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(a.width),
+                          color: Colors.white),
+                      child: Icon(Icons.arrow_back,
+                          color: Colors.black, size: a.width / 15),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context, true);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(
-                  width: a.width / 2.1,
-                ),
-                Text(
-                  'สหาย ${widget.friend.length.toString()} คน',
-                  style: TextStyle(color: Colors.white),
-                )
-              ],
-            ),
-            Container(
-              width: a.width,
-              height: a.height / 1.1,
-              child: ListView(
-                controller: scrollController,
-                itemExtent: a.height / 4.5,
-                children: friends.reversed
-                    .map((data) => cardStream(a, data['uid'], data['id']))
-                    .toList(),
+                  SizedBox(
+                    width: a.width / 2.1,
+                  ),
+                  Text(
+                    'สหาย ${sortedList.length.toString()} คน',
+                    style: TextStyle(color: Colors.white),
+                  )
+                ],
               ),
-            ),
-          ],
+              Container(
+                  width: a.width,
+                  height: a.height / 1.1,
+                  child: ListView(
+                      controller: scrollController,
+                      itemExtent: a.height / 4.5,
+                      children:
+                          display.map((data) => cardStream(a, data)).toList()))
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget cardStream(Size a, String searchID, String id) {
-    return StreamBuilder(
-        stream: Firestore.instance
-            .collection('Users')
-            .document(searchID)
-            .collection('info')
-            .document(searchID)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.active) {
-            return StreamBuilder(
-                stream: Firestore.instance
-                    .collection('Users')
-                    .document(searchID)
-                    .snapshots(),
-                builder: (context, snap) {
-                  if (snap.hasData &&
-                      snap.connectionState == ConnectionState.active) {
-                    return userCard(a, snapshot.data['img'], searchID, id,
-                        snapshot.data['createdDay'],
-                        accDoc: snap.data, infoDoc: snapshot.data);
-                  } else {
-                    return SizedBox();
-                  }
-                });
-          } else {
-            return SizedBox();
-          }
-        });
+  Widget cardStream(Size a, Map data) {
+    return userCard(a, data['img'], data['id'], data['join']);
   }
 
-  Widget userCard(
-      Size a, String img, String tID, String throwID, String created,
+  Widget userCard(Size a, String img, String id, String created,
       {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0),
@@ -733,7 +735,7 @@ class _AllFriendsState extends State<AllFriends> {
                           width: a.width / 2.2,
                           height: a.width / 10,
                           child: Text(
-                            throwID,
+                            id,
                             style: TextStyle(
                                 fontSize: a.width / 13, color: Colors.white),
                           ),
@@ -763,18 +765,20 @@ class _AllFriendsState extends State<AllFriends> {
             )
           ],
         ),
-        onTap: () {
-          widget.scrap == null
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Viewprofile(
-                      info: infoDoc,
-                      account: accDoc,
-                      self: widget.doc,
-                    ),
-                  ))
-              : warnDialog(throwID, tID);
+        onTap: () async {
+          // widget.scrap == null
+          bool resault = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Viewprofile(
+                  id: id,
+                  self: widget.doc,
+                ),
+              ));
+          if (resault) {
+            initFriend();
+          }
+          //     : warnDialog(id, tID);
         },
       ),
     );

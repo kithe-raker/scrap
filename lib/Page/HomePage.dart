@@ -27,50 +27,16 @@ class _HomePageState extends State<HomePage> {
   bool public;
   var _key = GlobalKey<FormState>();
   Position currentLocation;
-  List friends = [];
   JsonConverter jsonConverter = JsonConverter();
 
   @override
   void initState() {
-    initFriend();
     Geolocator().getCurrentPosition().then((curlo) {
       setState(() {
         currentLocation = curlo;
       });
     });
-
     super.initState();
-  }
-
-  initFriend() async {
-    await getFriendUID();
-    await getIDtoFile();
-  }
-
-  getFriendUID() async {
-    await Firestore.instance
-        .collection('Users')
-        .document(widget.doc['uid'])
-        .collection('info')
-        .document('friends')
-        .get()
-        .then((doc) {
-      friends = doc['friendList'] ?? [];
-    });
-  }
-
-  getIDtoFile() async {
-    List fID = [];
-    for (String uid in friends) {
-      await Firestore.instance
-          .collection('Users')
-          .document(uid)
-          .get()
-          .then((doc) {
-        fID.add({'uid': uid, 'id': doc.data['id']});
-      });
-    }
-    await jsonConverter.writeContent(listm: fID);
   }
 
   @override
@@ -627,7 +593,7 @@ class _HomePageState extends State<HomePage> {
                                 //ทำเป���น�������ั้นๆ
                                 child: Stack(
                                   children: <Widget>[
-                                    //ช���้นที่ 1 ส่วนของก���ะดาษ
+                                    //ช������้นที่ 1 ส่วนของก���ะดาษ
                                     Container(
                                       child: Image.asset(
                                         'assets/paper-readed.png',
