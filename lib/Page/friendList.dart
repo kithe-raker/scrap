@@ -135,13 +135,16 @@ class _FriendListState extends State<FriendList> {
                                         color: Colors.white,
                                         size: a.width / 15),
                                   ),
-                                  onTap: () {
-                                    Navigator.push(
+                                  onTap: () async {
+                                    bool resault = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => Search(
                                                   doc: widget.doc,
                                                 ))); //ไปยังหน้า Search
+                                    if (resault) {
+                                      initFriend();
+                                    }
                                   },
                                 )),
                           ],

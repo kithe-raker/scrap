@@ -12,7 +12,6 @@ import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
 import 'package:scrap/widget/warning.dart';
-import 'Auth.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);

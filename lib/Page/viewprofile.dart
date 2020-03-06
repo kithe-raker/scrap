@@ -22,6 +22,8 @@ class _ViewprofileState extends State<Viewprofile> {
   String text;
   String friendUID;
   List friends = [];
+  int index;
+  bool oldImg = false;
   JsonConverter jsonConverter = JsonConverter();
   FriendManager friendManager = FriendManager();
 
@@ -44,27 +46,31 @@ class _ViewprofileState extends State<Viewprofile> {
     return doc.length < 1;
   }
 
-  updateData() async {
+  checkData() async {
     List list = await jsonConverter.readContents();
+    Map data = list.firstWhere((dat) => dat['id'] == widget.id);
+    index = list.indexOf(data);
     if (await notHaveAccount(widget.id)) {
-      Map data = list.firstWhere((dat) => dat['id'] == widget.id);
-      int index = list.indexOf(data);
-      await Firestore.instance
-          .collection('Users')
-          .document(widget.self.data['uid'])
-          .collection('info')
-          .document('friends')
-          .get()
-          .then((doc) async {
-        friendUID = doc.data['friendList'][index];
-        await friendManager.updateData(doc?.data['friendList'] ?? []);
-      });
+      await updateData(list);
     }
     friends = await jsonConverter.readContents();
   }
 
+  updateData(List list) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.self.data['uid'])
+        .collection('info')
+        .document('friends')
+        .get()
+        .then((doc) async {
+      friendUID = doc.data['friendList'][index];
+      await friendManager.updateData(friendUID, index);
+    });
+  }
+
   initFriend() async {
-    await updateData();
+    await checkData();
     loading = false;
     setState(() {});
   }
@@ -95,6 +101,9 @@ class _ViewprofileState extends State<Viewprofile> {
     Size a = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
+        if (oldImg) {
+          await friendManager.updateData(friendUID, index);
+        }
         Navigator.pop(context, true);
         return false;
       },
@@ -115,6 +124,9 @@ class _ViewprofileState extends State<Viewprofile> {
                         builder: (context, info) {
                           if (info.hasData &&
                               info.connectionState == ConnectionState.active) {
+                            oldImg = friends.singleWhere(
+                                    (dat) => dat['id'] == widget.id)['img'] !=
+                                info.data['img'];
                             return StreamBuilder(
                                 stream: Firestore.instance
                                     .collection('Users')
@@ -172,6 +184,12 @@ class _ViewprofileState extends State<Viewprofile> {
                                                                           15),
                                                             ),
                                                             onTap: () async {
+                                                              if (oldImg) {
+                                                                await friendManager
+                                                                    .updateData(
+                                                                        friendUID,
+                                                                        index);
+                                                              }
                                                               Navigator.pop(
                                                                   context,
                                                                   true);

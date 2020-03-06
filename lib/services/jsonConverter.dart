@@ -22,6 +22,23 @@ class JsonConverter {
     return file.writeAsString(json.encode(listm));
   }
 
+  Future<List> updateContent(
+      {@required String id,
+      @required String imgUrl,
+      @required String joinD,
+      @required int index}) async {
+    try {
+      List<Map> list = await readContents();
+      list.replaceRange(index, ++index, [
+        {'img': imgUrl, 'id': id, 'join': joinD}
+      ]);
+      await writeContent(listm: list);
+      return list;
+    } catch (e) {
+      return [];
+    }
+  }
+
   Future<List> searchContents({@required String id}) async {
     try {
       final file = await _localFile;

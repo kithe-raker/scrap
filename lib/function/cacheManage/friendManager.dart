@@ -12,11 +12,11 @@ class FriendManager {
         .document('friends')
         .get()
         .then((doc) async {
-      await updateData(doc['friendList'] ?? []);
+      await updateDataAll(doc['friendList'] ?? []);
     });
   }
 
-  updateData(List friends) async {
+  updateDataAll(List friends) async {
     List fID = [];
     for (String uid in friends) {
       await Firestore.instance
@@ -28,6 +28,33 @@ class FriendManager {
       });
     }
     await jsonConverter.writeContent(listm: fID);
+  }
+
+  updateData(String uid, int index) async {
+    List fID = [];
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .get()
+        .then((doc) async {
+      await getSingleInfo(fID, uid, doc.data['id'], index);
+    });
+  }
+
+  getSingleInfo(List list, String uid, String name, int index) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document(uid)
+        .get()
+        .then((doc) async {
+      await jsonConverter.updateContent(
+          id: name,
+          imgUrl: doc.data['img'],
+          joinD: doc.data['createdDay'],
+          index: index);
+    });
   }
 
   getInfo(List list, String uid, String name) async {
