@@ -419,16 +419,18 @@ class _FriendListState extends State<FriendList> {
             )
           ],
         ),
-        onTap: () {
-          // widget.data == null
-          Navigator.push(
+        onTap: () async {
+          bool resault = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => Viewprofile(
                   id: throwID,
                   self: widget.doc,
                 ),
-              ));
+              )); //ไปยังหน้า Search
+          if (resault) {
+            initFriend();
+          }
           //     : warnDialog(throwID, tID);
         },
       ),
