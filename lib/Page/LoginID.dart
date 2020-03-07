@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/function/cacheManage/friendManager.dart';
+import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -16,6 +18,8 @@ class _LoginIDState extends State<LoginID> {
   var _key = GlobalKey<FormState>();
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   List acc = [];
+  FriendManager friendManager = FriendManager();
+  JsonConverter jsonConverter = JsonConverter();
 
   Future<bool> hasAccount(String user) async {
     final QuerySnapshot users = await Firestore.instance
@@ -30,7 +34,7 @@ class _LoginIDState extends State<LoginID> {
     return doc.length == 1;
   }
 
-  continueSignUp() async {
+  continueSignIn() async {
     DocumentSnapshot doc = acc[0];
     doc.data['password'] == _password
         ? await signIn(doc.data['email'])
@@ -42,6 +46,7 @@ class _LoginIDState extends State<LoginID> {
         .signInWithEmailAndPassword(email: email, password: _password)
         .then((auth) async {
       await updateToken(auth.user.uid);
+      await friendManager.initFriend(auth.user.uid);
       setState(() {
         loading = false;
       });
@@ -312,7 +317,7 @@ class _LoginIDState extends State<LoginID> {
                                           loading = true;
                                         });
                                         await hasAccount(id)
-                                            ? continueSignUp()
+                                            ? continueSignIn()
                                             : warning(
                                                 context, 'ไม่พบบัญชีดังกล่าว');
                                       }

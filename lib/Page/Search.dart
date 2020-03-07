@@ -1,9 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/services/jsonConverter.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class Search extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -15,293 +18,235 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   String id;
-  bool search = false;
-//pull
+  var _key = GlobalKey<FormState>();
+  DocumentSnapshot cache;
+  JsonConverter jsonConverter = JsonConverter();
+  List friends = [];
+
+  @override
+  void initState() {
+    initeFriend();
+    super.initState();
+  }
+
+  initeFriend() async {
+    friends = await jsonConverter.readContents();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: ListView(children: <Widget>[
-        Container(
-          color: Colors.black,
-          width: a.width,
-          child: Padding(
-            padding: EdgeInsets.only(
-                top: a.width / 20,
-                right: a.width / 25,
-                left: a.width / 25,
-                bottom: a.width / 8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                search
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, true);
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: ListView(children: <Widget>[
+          Container(
+            color: Colors.black,
+            width: a.width,
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: a.width / 20,
+                  right: a.width / 25,
+                  left: a.width / 25,
+                  bottom: a.width / 8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(bottom: 30),
-                            child: IconButton(
-                                icon: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                  size: a.width / 12,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    search = false;
-                                  });
-                                }),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
+                          InkWell(
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 30),
-                              width: a.width * 9 / 12,
-                              height: a.width / 6.5,
+                              width: a.width / 7,
+                              height: a.width / 10,
                               decoration: BoxDecoration(
-                                color: Color(0xff282828),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(300)),
-                                border: Border.all(
-                                    width: 2, color: Colors.grey[800]),
-                              ),
-                              child: TextFormField(
-                                autofocus: true,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: a.width / 14,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: '@somename',
-                                  hintStyle: TextStyle(color: Colors.grey[700]),
-                                ),
-                                onChanged: (value) {
-                                  id = value.trim();
-                                  setState(() {});
-                                },
-                                textInputAction: TextInputAction.done,
-                              ),
+                                  borderRadius: BorderRadius.circular(a.width),
+                                  color: Colors.white),
+                              child: Icon(Icons.arrow_back,
+                                  color: Colors.black, size: a.width / 15),
                             ),
+                            onTap: () {
+                              Navigator.pop(context, true);
+                            },
                           ),
                         ],
-                      )
-                    : Column(
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              InkWell(
-                                //back btn
-                                child: Container(
-                                  width: a.width / 7,
-                                  height: a.width / 10,
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(a.width),
-                                      color: Colors.white),
-                                  child: Icon(Icons.arrow_back,
-                                      color: Colors.black, size: a.width / 15),
-                                ),
-                                onTap: () {
-                                  Navigator.pop(
-                                    context,
-                                  );
-                                },
-                              ),
-                            ],
-                          ), //back btn
-
-                          SizedBox(height: a.height / 12.5),
-
-                          Padding(
-                            padding: const EdgeInsets.only(left: 0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'ค้นหาผู้ใช้',
-                                  style: TextStyle(
-                                      fontSize: a.width / 6.5,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w300),
-                                ),
-                                Text(
-                                  'ค้นหาคนที่คุณรู้จักแล้วปากระดาษใส่พวกเขากัน',
-                                  style: TextStyle(
-                                      fontSize: a.width / 16,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w300),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(
-                            height: a.width / 13,
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 30),
-                              width: a.width,
-                              height: a.width / 6.5,
-                              decoration: BoxDecoration(
-                                color: Color(0xff282828),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(300)),
-                                border: Border.all(
-                                    width: 2, color: Colors.grey[800]),
-                              ),
-                              child: TextFormField(
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
+                      ), //back btn
+                      SizedBox(height: a.height / 12.5),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'ค้นหาผู้ใช้',
+                              style: TextStyle(
+                                  fontSize: a.width / 6.5,
                                   color: Colors.white,
-                                  fontSize: a.width / 14,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: '@somename',
-                                  hintStyle: TextStyle(color: Colors.grey[700]),
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    search = true;
-                                  });
-                                },
-                                // onChanged: (value) {
-                                //   id = value.trim();
-                                //   setState(() {});
-                                // },
-                                //textInputAction: TextInputAction.next,
-                              ),
+                                  fontWeight: FontWeight.w300),
                             ),
-                          ),
-                        ],
+                            Text(
+                              'ค้นหาคนที่คุณรู้จักแล้วปากระดาษใส่พวกเขากัน',
+                              style: TextStyle(
+                                  fontSize: a.width / 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w300),
+                            ),
+                          ],
+                        ),
                       ),
-                search
-                    ? id == null || id == '' || id.length < 2
-                        ? guide(
-                            a,
-                            'ค้นหาคนที่คุณต้องการปาใส่',
-                            a.height / 1.5,
-                          )
-                        : id[0] != '@'
-                            ? guide(
-                                a,
-                                'ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid',
-                                a.height / 1.5,
-                              )
-                            : StreamBuilder(
-                                stream: Firestore.instance
-                                    .collection('SearchUsers')
-                                    .document(id[1])
-                                    .collection('users')
-                                    .where('searchIndex',
-                                        arrayContains: id.substring(1))
-                                    .limit(6)
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData &&
-                                      snapshot.connectionState ==
-                                          ConnectionState.active) {
-                                    List docs = snapshot.data.documents;
-                                    return docs?.length == null ||
-                                            docs?.length == 0
-                                        ? guide(
-                                            a,
-                                            'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว',
-                                            a.height / 1.5,
-                                          )
-                                        : Column(
-                                            children: docs
-                                                .map((data) =>
-                                                    cardStream(a, data['uid']))
-                                                .toList(),
-                                          );
-                                  } else {
-                                    return Container(
-                                      height: a.height / 2.1,
-                                      width: a.width,
-                                      child: Center(
-                                        child: Container(
-                                          width: a.width / 3.6,
-                                          height: a.width / 3.6,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white
-                                                  .withOpacity(0.42),
-                                              borderRadius:
-                                                  BorderRadius.circular(12)),
-                                          child: FlareActor(
-                                            'assets/paper_loading.flr',
-                                            animation: 'Untitled',
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                              )
-                    : StreamBuilder(
-                        stream: Firestore.instance
-                            .collection('Users')
-                            .document(widget.doc['uid'])
-                            .collection('info')
-                            .document('searchHist')
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData &&
-                              snapshot.connectionState ==
-                                  ConnectionState.active) {
-                            List users = snapshot?.data['history'];
-                            return users == null || users.length == null
-                                ? guide(
-                                    a,
-                                    'คุณไม่มีประวัติการปา',
-                                    a.height / 2.4,
-                                  )
-                                : Column(
-                                    children: users
-                                        .map((data) => cardStream(
-                                            a, backward(users, data),
-                                            hist: true))
-                                        .toList());
-                          } else {
-                            return Container(
-                              height: a.height / 2.1,
-                              width: a.width,
-                              child: Center(
-                                child: Container(
-                                  width: a.width / 3.6,
-                                  height: a.width / 3.6,
+                      SizedBox(
+                        height: a.width / 13,
+                      ),
+                      Form(
+                        key: _key,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 30),
+                                width: a.width / 1.4,
+                                height: a.width / 6.5,
+                                decoration: BoxDecoration(
+                                  color: Color(0xff282828),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(300)),
+                                  border: Border.all(
+                                      width: 2, color: Colors.grey[800]),
+                                ),
+                                child: TextFormField(
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 14,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: '@somename',
+                                    hintStyle:
+                                        TextStyle(color: Colors.grey[700]),
+                                  ),
+                                  validator: (val) {
+                                    return val.trim() == ""
+                                        ? Taoast().toast("โปรดใส่ไอดี")
+                                        : val[0] == '@'
+                                            ? null
+                                            : Taoast().toast(
+                                                "ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid");
+                                  },
+                                  onSaved: (value) {
+                                    id = value.trim();
+                                    setState(() {});
+                                  },
+                                  textInputAction: TextInputAction.done,
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              child: Container(
+                                  margin: EdgeInsets.only(bottom: 30),
+                                  alignment: Alignment.center,
+                                  width: a.width / 8,
+                                  height: a.width / 8,
                                   decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.42),
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: FlareActor(
-                                    'assets/paper_loading.flr',
-                                    animation: 'Untitled',
-                                    fit: BoxFit.cover,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    border: Border.all(
+                                        width: 2, color: Colors.white),
+                                    color: Color(0xff26A4FF),
+                                  ),
+                                  child: Text(
+                                    '@',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: a.width / 11,
+                                        color: Colors.white),
+                                  )),
+                              onTap: () {
+                                if (_key.currentState.validate()) {
+                                  _key.currentState.save();
+                                }
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  id == null ||
+                          id == '' ||
+                          id.length < 2 ||
+                          id.substring(1) == widget.doc['id']
+                      ? guide(
+                          a,
+                          'ค้นหาคนที่คุณต้องการปาใส่',
+                          a.height / 2.1,
+                        )
+                      : StreamBuilder(
+                          stream: Firestore.instance
+                              .collection('SearchUsers')
+                              .document(id[1])
+                              .collection('users')
+                              .where('id', isEqualTo: id.substring(1))
+                              .limit(1)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData &&
+                                snapshot.connectionState ==
+                                    ConnectionState.active) {
+                              List docs = snapshot.data.documents;
+                              return docs?.length == null || docs?.length == 0
+                                  ? guide(
+                                      a,
+                                      'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว',
+                                      a.height / 1.5,
+                                    )
+                                  : Column(
+                                      children: docs
+                                          .map((data) =>
+                                              cardStream(a, data['uid']))
+                                          .toList(),
+                                    );
+                            } else {
+                              return Container(
+                                height: a.height / 2.1,
+                                width: a.width,
+                                child: Center(
+                                  child: Container(
+                                    width: a.width / 3.6,
+                                    height: a.width / 3.6,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.42),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    child: FlareActor(
+                                      'assets/paper_loading.flr',
+                                      animation: 'Untitled',
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }
-                        })
-              ],
+                              );
+                            }
+                          })
+                ],
+              ),
             ),
           ),
-        ),
-      ]),
+        ]),
+      ),
     );
   }
 
@@ -334,7 +279,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget cardStream(Size a, String searchID, {bool hist = false}) {
+  Widget cardStream(Size a, String searchID) {
     return StreamBuilder(
         stream: Firestore.instance
             .collection('Users')
@@ -353,16 +298,9 @@ class _SearchState extends State<Search> {
                 builder: (context, snap) {
                   if (snap.hasData &&
                       snap.connectionState == ConnectionState.active) {
-                    return userCard(
-                        a,
-                        snapshot.data['img'],
-                        searchID,
-                        snap.data['id'],
-                        snap.data['uid'],
-                        snapshot.data['createdDay'],
-                        hist,
-                        accDoc: snap.data,
-                        infoDoc: snapshot.data);
+                    return userCard(a, snapshot.data['img'], searchID,
+                        snap.data['id'], snapshot.data['createdDay'],
+                        accDoc: snap.data, infoDoc: snapshot.data);
                   } else {
                     return SizedBox();
                   }
@@ -373,8 +311,8 @@ class _SearchState extends State<Search> {
         });
   }
 
-  Widget userCard(Size a, String img, String uid, String throwID, String tID,
-      String created, bool hist,
+  Widget userCard(
+      Size a, String img, String tID, String throwID, String created,
       {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0),
@@ -406,8 +344,8 @@ class _SearchState extends State<Search> {
                       width: a.width / 3.3,
                       height: a.width / 3.3,
                       child: ClipRRect(
-                        child: Image.network(
-                          img,
+                        child: CachedNetworkImage(
+                          imageUrl: img,
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.circular(a.width),
@@ -440,24 +378,26 @@ class _SearchState extends State<Search> {
                     ),
                   ]),
             ),
+            friends.where((data) => data['id'].contains(throwID)).length == 1
+                ? Center(
+                    child: Text('เพื่อน'),
+                  )
+                : Center(
+                    child: RaisedButton(
+                        child: Text('add'),
+                        onPressed: () async {
+                          await addFriend(tID, throwID, img, created);
+                          Taoast().toast("เพิ่ม $throwID เป็นสหายแล้ว");
+                        }),
+                  ),
             Positioned(
               right: 10.0,
               top: 10.0,
-              child: hist
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.clear,
-                        color: Color(0xffA3A3A3),
-                        size: 30.0,
-                      ),
-                      onPressed: () {
-                        warnClear(throwID, tID);
-                      })
-                  : Icon(
-                      Icons.arrow_forward,
-                      color: Color(0xffA3A3A3),
-                      size: 30.0,
-                    ),
+              child: Icon(
+                Icons.arrow_forward,
+                color: Color(0xffA3A3A3),
+                size: 30.0,
+              ),
             )
           ],
         ),
@@ -467,8 +407,7 @@ class _SearchState extends State<Search> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => Viewprofile(
-                      info: infoDoc,
-                      account: accDoc,
+                      id: throwID,
                       self: widget.doc,
                     ),
                   ))
@@ -499,7 +438,8 @@ class _SearchState extends State<Search> {
                   toast('ปาใส่"$user"แล้ว');
                   Navigator.pop(context);
                   Navigator.pop(context);
-                  await throwTo(widget.data, thrownID);
+                  //await throwTo(widget.data, thrownID);
+                  await checkBlockList(widget.doc['uid'], thrownID);
                 },
               )
             ],
@@ -507,43 +447,30 @@ class _SearchState extends State<Search> {
         });
   }
 
-  warnClear(String user, String thrownID) {
-    showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text('คุณต้องนำ' + user + 'อกกจากประวัติใช่หรือไม่'),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ยกเลิก')),
-              FlatButton(
-                child: Text('ok'),
-                onPressed: () async {
-                  toast('ลบ"$user"ออกแล้ว');
-                  Navigator.pop(context);
-                  await clearHist(thrownID);
-                },
-              )
-            ],
-          );
-        });
+  checkBlockList(String uid, String thrownID) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(thrownID)
+        .get()
+        .then((value) {
+      !(value['blockList'].contains(uid))
+          ? throwTo(widget.data, thrownID)
+          : null;
+    });
   }
 
-  clearHist(String thrown) async {
+  addFriend(String uid, String newFriend, String img, String join) async {
     await Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
         .collection('info')
-        .document('searchHist')
-        .updateData({
-      'history': FieldValue.arrayRemove([thrown])
-    });
+        .document('friends')
+        .setData({
+      'friendList': FieldValue.arrayUnion([uid])
+    }, merge: true);
+    jsonConverter.addContent(id: newFriend, imgUrl: img, joinD: join);
+    setState(
+        () => friends.add({'id': newFriend, 'imgUrl': img, 'joinD': join}));
   }
 
   toast(String text) {

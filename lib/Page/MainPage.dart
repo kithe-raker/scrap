@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ import 'package:scrap/Page/Auth.dart';
 import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/services/ImgCacheManger.dart';
+import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/services/provider.dart';
 
 class MainPage extends StatefulWidget {
@@ -19,6 +22,8 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
+  JsonConverter jsonConverter = JsonConverter();
+  ImgCacheManager imgCacheManager = ImgCacheManager();
   initLocalMessage() {
     var android = AndroidInitializationSettings('noti_ic');
     var ios = IOSInitializationSettings();
@@ -91,6 +96,16 @@ class _MainPageState extends State<MainPage> {
     return recent == incoming;
   }
 
+  checkAuth() async {
+    if (await FirebaseAuth.instance.currentUser() != null) {}
+  }
+
+  // getCache()async {
+  //   List friends = [];
+  //   friends = await jsonConverter.readContents();
+  //   imgCacheManager.getSingleFile(url);
+  // }
+
   @override
   void initState() {
     initFirebaseMessaging();
@@ -131,11 +146,7 @@ class _MainPageState extends State<MainPage> {
 
   navigator(var where) {
     Navigator.pop(context);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => where,
-        ));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => where));
   }
 }
 

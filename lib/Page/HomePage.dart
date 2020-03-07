@@ -1,4 +1,3 @@
-//import 'package:circular_check_box/circular_check_box.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +8,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
-import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/addPlayer.dart';
+import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/Page/search.dart';
+import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   bool public;
   var _key = GlobalKey<FormState>();
   Position currentLocation;
+  JsonConverter jsonConverter = JsonConverter();
 
   @override
   void initState() {
@@ -190,7 +191,6 @@ class _HomePageState extends State<HomePage> {
                           width: a.width / 4,
                         )),
                     //ส่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
-
                     SizedBox(
                       width: a.width / 5,
                     ),
@@ -203,19 +203,18 @@ class _HomePageState extends State<HomePage> {
                             height: a.width / 10,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(a.width),
-                              border: Border.all(width: 2, color: Colors.white),
-                              color: Color(0xff26A4FF),
+                              color: Colors.white,
                             ),
-                            child: Icon(Icons.search,
-                                color: Colors.white, size: a.width / 15),
+                            child: Icon(Icons.people,
+                                color: Colors.black, size: a.width / 15),
                           ),
                           onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Search(
+                                    builder: (context) => FriendList(
                                           doc: widget.doc,
-                                        ))); //ไปยังหน้า Search
+                                        )));
                           },
                         )),
                     Container(
@@ -263,7 +262,7 @@ class _HomePageState extends State<HomePage> {
                                           doc: widget.doc,
                                         ))); //ไปยังหน้า Profile
                           },
-                        ))
+                        )),
                   ],
                 ),
               ),
@@ -420,9 +419,7 @@ class _HomePageState extends State<HomePage> {
             });
           },
         ),
-        Text(
-          value,
-        )
+        Text(value)
       ],
     );
   }
@@ -443,12 +440,12 @@ class _HomePageState extends State<HomePage> {
     await Geolocator().getCurrentPosition().then((value) => point =
         Geoflutterfire()
             .point(latitude: value.latitude, longitude: value.longitude));
-    await Firestore.instance
+    Firestore.instance
         .collection('Scraps')
         .document('hatyai')
         .collection('scrapsPosition')
-        .add({}).then((value) async {
-      await Firestore.instance
+        .add({}).then((value) {
+      Firestore.instance
           .collection('Scraps')
           .document('hatyai')
           .collection('scrapsPosition')
@@ -463,8 +460,20 @@ class _HomePageState extends State<HomePage> {
         },
         'position': point.data
       });
+      update(value.documentID);
     });
-     await increaseTransaction(widget.doc['uid'], 'written');
+    increaseTransaction(widget.doc['uid'], 'written');
+  }
+
+  update(id) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document(widget.doc['uid'])
+        .updateData({
+      'scraps': FieldValue.arrayUnion([id])
+    });
   }
 
   increaseTransaction(String uid, String key) async {
@@ -562,7 +571,7 @@ class _HomePageState extends State<HomePage> {
                                         ],
                                       ),
                                     ),
-                                    //ออกจากหน้านี้
+                                    //ออกจาก��น้านี้
                                     InkWell(
                                       child: Icon(
                                         Icons.clear,
@@ -581,10 +590,10 @@ class _HomePageState extends State<HomePage> {
                                 margin: EdgeInsets.only(top: a.width / 150),
                                 width: a.width / 1,
                                 height: a.height / 1.8,
-                                //ทำเป็นชั้นๆ
+                                //ทำเป���น�������ั้นๆ
                                 child: Stack(
                                   children: <Widget>[
-                                    //ช���้นที่ 1 ส่วนของก���ะดาษ
+                                    //ช������้นที่ 1 ส่วนของก���ะดาษ
                                     Container(
                                       child: Image.asset(
                                         'assets/paper-readed.png',
@@ -666,7 +675,7 @@ class _HomePageState extends State<HomePage> {
                                                     "ลองเขียนข้อความบางอย่างสิ")
                                                 : null;
                                           },
-                                          //เนื้อหาที่กรอกเข้าไปใน text
+                                          //เนื้อหาท��่กรอกเข้าไปใน text
                                           onChanged: (val) {
                                             text = val;
                                           },
@@ -703,11 +712,7 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          toast('คุณได้ทิ้งกระดาษไว้แล้ว');
-                                          Navigator.pop(context);
-                                          await binScrap('$time $date');
-                                        } else {
-                                          print('nope');
+                                          checkScrap('$time $date');
                                         }
                                       },
                                     ),
@@ -739,10 +744,6 @@ class _HomePageState extends State<HomePage> {
                                               MaterialPageRoute(
                                                 builder: (context) => Search(
                                                   doc: widget.doc,
-                                                  data: {
-                                                    'text': text,
-                                                    'public': public ?? false
-                                                  },
                                                 ),
                                               ));
                                         } else {
@@ -765,6 +766,25 @@ class _HomePageState extends State<HomePage> {
           });
         },
         fullscreenDialog: true));
+  }
+
+  checkScrap(String time) async {
+    await Firestore.instance
+        .collection('Users')
+        .document(widget.doc['uid'])
+        .collection('info')
+        .document(widget.doc['uid'])
+        .get()
+        .then((dat) async {
+      int scraps = dat.data['scraps']?.length ?? 0;
+      if (scraps < 15) {
+        toast('คุณได้ทิ้งกระดาษไว้แล้ว');
+        Navigator.pop(context);
+        await binScrap(time);
+      } else {
+        toast('กระดาษคุณหมดแล้ว');
+      }
+    });
   }
 
   toast(String text) {
@@ -892,7 +912,7 @@ class _HomePageState extends State<HomePage> {
                                           : id[0] != '@'
                                               ? Center(
                                                   child: Text(
-                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ตามด้วยชื่อid'),
+                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ตามด้วย���ื่อid'),
                                                 )
                                               : StreamBuilder(
                                                   stream: Firestore.instance

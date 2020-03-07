@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/warning.dart';
 
 import 'ChangePhone.dart';
 
@@ -31,10 +30,44 @@ class _EditProfileState extends State<EditProfile> {
     for (int i = 0; i < id.length; i++) {
       index.add(id.substring(0, ++i));
     }
+    widget.doc['id'][0] == id[0]
+        ? await addUnchangeID(uid, index)
+        : await addChangeID(index, uid);
+  }
+
+  addUnchangeID(String uid, List index) async {
+    await Firestore.instance
+        .collection('SearchUsers')
+        .document(id[0])
+        .collection('users')
+        .document(uid)
+        .updateData({'id': id, 'searchIndex': index});
+    await Firestore.instance.collection('Users').document(uid).updateData({
+      'id': id,
+    });
+  }
+
+  addChangeID(List index, String uid) async {
+    await Firestore.instance
+        .collection('SearchUsers')
+        .document(widget.doc['id'][0])
+        .collection('users')
+        .document(uid)
+        .delete();
+    await Firestore.instance
+        .collection('SearchUsers')
+        .document(index[0])
+        .collection('users')
+        .document(uid)
+        .setData({
+      'id': id,
+      'searchIndex': index,
+      'uid': uid,
+    });
     await Firestore.instance
         .collection('Users')
         .document(uid)
-        .updateData({'id': id, 'searchIndex': index});
+        .updateData({'id': id});
   }
 
   sendCam() async {
