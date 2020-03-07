@@ -11,7 +11,6 @@ import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/addPlayer.dart';
 import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/Page/search.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -78,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(a.width),
                             color: Colors.white),
                         child: IconButton(
-                          icon: Icon(Icons.people),
+                          icon: Icon(Icons.pin_drop),
                           color: Color(0xff26A4FF),
                           iconSize: a.width / 12,
                           onPressed: () {
@@ -742,12 +741,15 @@ class _HomePageState extends State<HomePage> {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => Search(
+                                                builder: (context) =>
+                                                    FriendList(
                                                   doc: widget.doc,
+                                                  data: {
+                                                    'text': text,
+                                                    'public': public
+                                                  },
                                                 ),
                                               ));
-                                        } else {
-                                          print('nope');
                                         }
                                       },
                                     )
@@ -797,19 +799,6 @@ class _HomePageState extends State<HomePage> {
         textColor: Colors.black,
         fontSize: 16.0);
   }
-
-  // throwTo(Map selectedID) async {
-  //   await Firestore.instance
-  //       .collection('Users')
-  //       .document(selectedID['uid'])
-  //       .collection('scraps')
-  //       .document('recently')
-  //       .updateData(
-  //     {
-  //       'scraps': FieldValue.arrayUnion([text])
-  //     },
-  //   );
-  // }
 
   chooseUser() {
     String id;
@@ -907,12 +896,12 @@ class _HomePageState extends State<HomePage> {
                                       id == null || id == ''
                                           ? Center(
                                               child: Text(
-                                                  'ค้นหาคนที่คุณต้องการปาใส่'),
+                                                  'ค้นหาคนที่คุณต้องการป���ใส่'),
                                             )
                                           : id[0] != '@'
                                               ? Center(
                                                   child: Text(
-                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ตามด้วย���ื่อid'),
+                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ตามด้วยid'),
                                                 )
                                               : StreamBuilder(
                                                   stream: Firestore.instance
@@ -1050,7 +1039,6 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                                 onTap: () async {
                                                   Navigator.pop(context);
-                                                  //  await throwTo(selectedID);
                                                 },
                                               ),
                                             ],

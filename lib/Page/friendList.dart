@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
 
@@ -23,6 +24,7 @@ class _FriendListState extends State<FriendList> {
   List searchResault = [];
   bool loading = true;
   List updatedFriends = [];
+  Scraps scraps = Scraps();
   JsonConverter jsonConverter = JsonConverter();
 
   @override
@@ -117,36 +119,65 @@ class _FriendListState extends State<FriendList> {
                                 Navigator.pop(context);
                               },
                             ),
-                            Container(
-                                height: a.width / 5,
-                                alignment: Alignment.center,
-                                child: InkWell(
-                                  child: Container(
-                                    width: a.width / 10,
-                                    height: a.width / 10,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(a.width),
-                                      border: Border.all(
-                                          width: 2, color: Colors.white),
-                                      color: Color(0xff26A4FF),
-                                    ),
-                                    child: Icon(Icons.person_add,
-                                        color: Colors.white,
-                                        size: a.width / 15),
-                                  ),
-                                  onTap: () async {
-                                    bool resault = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Search(
-                                                  doc: widget.doc,
-                                                ))); //ไปยังหน้า Search
-                                    if (resault) {
-                                      initFriend();
-                                    }
-                                  },
-                                )),
+                            widget.data == null
+                                ? Container(
+                                    height: a.width / 5,
+                                    alignment: Alignment.center,
+                                    child: InkWell(
+                                      child: Container(
+                                        width: a.width / 10,
+                                        height: a.width / 10,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(a.width),
+                                          border: Border.all(
+                                              width: 2, color: Colors.white),
+                                          color: Color(0xff26A4FF),
+                                        ),
+                                        child: Icon(Icons.person_add,
+                                            color: Colors.white,
+                                            size: a.width / 15),
+                                      ),
+                                      onTap: () async {
+                                        bool resault = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Search(
+                                                      doc: widget.doc,
+                                                    ))); //ไปยังหน้า Search
+                                        if (resault) {
+                                          initFriend();
+                                        }
+                                      },
+                                    ))
+                                : Container(
+                                    height: a.width / 5,
+                                    alignment: Alignment.center,
+                                    child: InkWell(
+                                      child: Container(
+                                        width: a.width / 10,
+                                        height: a.width / 10,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(a.width),
+                                          border: Border.all(
+                                              width: 2, color: Colors.white),
+                                          color: Color(0xff26A4FF),
+                                        ),
+                                        child: Icon(Icons.people,
+                                            color: Colors.white,
+                                            size: a.width / 15),
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Search(
+                                                      doc: widget.doc,
+                                                      data: widget.data,
+                                                    ))); //ไปยังหน้า Search
+                                      },
+                                    )),
                           ],
                         ), //back btn
                         SizedBox(height: a.height / 32),
@@ -269,14 +300,30 @@ class _FriendListState extends State<FriendList> {
                                           fontSize: a.width / 14),
                                     ),
                                     onPressed: () async {
-                                      bool resault = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => AllFriends(
-                                                    doc: widget.doc,
-                                                  )));
-                                      if (resault) {
-                                        initFriend();
+                                      if (widget.data == null) {
+                                        bool resault = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AllFriends(
+                                                      doc: widget.doc,
+                                                    )));
+                                        if (resault) {
+                                          initFriend();
+                                        }
+                                      } else {
+                                        Navigator.pop(context);
+                                        bool resault = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AllFriends(
+                                                      doc: widget.doc,
+                                                      scrap: widget.data,
+                                                    )));
+                                        if (resault) {
+                                          initFriend();
+                                        }
                                       }
                                     },
                                   )
@@ -296,7 +343,7 @@ class _FriendListState extends State<FriendList> {
 
   Widget search(Size a) {
     return searchResault.length == 0
-        ? guide(a, 'ไม่พบidนี้ในสหายของคุณ', a.height / 2)
+        ? guide(a, 'ไม่พบidน���้ในสหายของคุณ', a.height / 2)
         : listFriend(a, searchResault);
   }
 
@@ -424,46 +471,14 @@ class _FriendListState extends State<FriendList> {
               context,
               MaterialPageRoute(
                 builder: (context) => Viewprofile(
-                  id: throwID,
-                  self: widget.doc,
-                ),
+                    id: throwID, self: widget.doc, data: widget.data),
               )); //ไปยังหน้า Search
           if (resault) {
             initFriend();
           }
-          //     : warnDialog(throwID, tID);
         },
       ),
     );
-  }
-
-  warnDialog(String user, String thrownID) {
-    showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text('คุณต้อ���ก��รป���ใส่' + user + 'ใช่ห��ือไม่'),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ยกเลิก')),
-              FlatButton(
-                child: Text('ตกลง'),
-                onPressed: () async {
-                  toast('ปาใส่"$user"แ��้ว');
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  await throwTo(widget.data, thrownID);
-                },
-              )
-            ],
-          );
-        });
   }
 
   warnClear(String user, String thrownID) {
@@ -473,7 +488,7 @@ class _FriendListState extends State<FriendList> {
           return AlertDialog(
             backgroundColor: Colors.white,
             content: Container(
-              child: Text('คุ��ต้���งนำ' + user + 'อกกจากปร��วัติใช่หรือไม่'),
+              child: Text('คุณต้องนำ' + user + 'อกกจากประวัติใช่หรือไม่'),
             ),
             actions: <Widget>[
               FlatButton(
@@ -515,75 +530,6 @@ class _FriendListState extends State<FriendList> {
         textColor: Colors.black,
         fontSize: 16.0);
   }
-
-  throwTo(Map data, String thrownID) async {
-    DateTime now = DateTime.now();
-    String time = DateFormat('Hm').format(now);
-    String date = DateFormat('d/M/y').format(now);
-    await Firestore.instance
-        .collection('Users')
-        .document(thrownID)
-        .collection('scraps')
-        .document('recently')
-        .setData({
-      'id': FieldValue.arrayUnion([widget.doc['uid']]),
-      'scraps': {
-        widget.doc['uid']: FieldValue.arrayUnion([
-          {
-            'text': data['text'],
-            'writer':
-                data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-            'time': '$time $date'
-          }
-        ])
-      }
-    }, merge: true);
-    await notifaication(thrownID, date, time);
-    await updateHistory(widget.doc['uid'], thrownID);
-    await increaseTransaction(widget.doc['uid'], 'written');
-    await increaseTransaction(thrownID, 'threw');
-  }
-
-  updateHistory(String uid, String thrown) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document('searchHist')
-        .updateData({
-      'history': FieldValue.arrayUnion([thrown])
-    });
-  }
-
-  notifaication(String who, String date, String time) async {
-    await Firestore.instance.collection('Notifications').add({'uid': who});
-    await Firestore.instance
-        .collection('Users')
-        .document(who)
-        .collection('notification')
-        .add({
-      'writer':
-          widget.data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-      'date': date,
-      'time': time
-    });
-  }
-
-  increaseTransaction(String uid, String key) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .get()
-        .then((value) => Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('info')
-            .document(uid)
-            .updateData(
-                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
-  }
 }
 
 class AllFriends extends StatefulWidget {
@@ -603,14 +549,14 @@ class _AllFriendsState extends State<AllFriends> {
 
   @override
   void initState() {
-    initFriend();
+    initFriend(4);
     initScroller();
     super.initState();
   }
 
-  initFriend() async {
+  initFriend(int take) async {
     friends = await jsonConverter.readContents();
-    display = friends.reversed.take(4).toList();
+    display = friends.reversed.take(take).toList();
     sortedList = friends.reversed.toList();
     setState(() {});
   }
@@ -778,43 +724,15 @@ class _AllFriendsState extends State<AllFriends> {
                 builder: (context) => Viewprofile(
                   id: id,
                   self: widget.doc,
+                  data: widget.scrap,
                 ),
               ));
           if (resault) {
-            initFriend();
+            initFriend(display.length);
           }
           //     : warnDialog(id, tID);
         },
       ),
     );
-  }
-
-  warnDialog(String user, String thrownID) {
-    showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text('คุณต้องการปาใส่' + user + 'ใช่หรือไม่'),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ยกเลิก')),
-              FlatButton(
-                child: Text('ตกลง'),
-                onPressed: () async {
-                  // toast('ปาใส่"$user"แล้ว');
-                  // Navigator.pop(context);
-                  // Navigator.pop(context);
-                  // await throwTo(widget.data, thrownID);
-                },
-              )
-            ],
-          );
-        });
   }
 }

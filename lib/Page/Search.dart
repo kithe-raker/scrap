@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -20,6 +21,7 @@ class _SearchState extends State<Search> {
   String id;
   var _key = GlobalKey<FormState>();
   DocumentSnapshot cache;
+  Scraps scraps = Scraps();
   JsonConverter jsonConverter = JsonConverter();
   List friends = [];
 
@@ -435,11 +437,20 @@ class _SearchState extends State<Search> {
               FlatButton(
                 child: Text('ตกลง'),
                 onPressed: () async {
-                  toast('ปาใส่"$user"แล้ว');
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  //await throwTo(widget.data, thrownID);
-                  await checkBlockList(widget.doc['uid'], thrownID);
+                  if (await blocked(widget.doc['uid'], thrownID)) {
+                    toast('คุณไม่สามารถปาไปหา"$user"ได้');
+                  } else {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    await scraps.throwTo(
+                        uid: widget.doc['uid'],
+                        writer: widget.doc['id'],
+                        thrownID: thrownID,
+                        text: widget.data['text'],
+                        public: widget.data['public']);
+                    toast('ปาใส่"$user"แล้ว');
+                  }
                 },
               )
             ],
@@ -447,16 +458,20 @@ class _SearchState extends State<Search> {
         });
   }
 
-  checkBlockList(String uid, String thrownID) async {
+  Future<bool> blocked(String uid, String thrownID) async {
+    List blockList = [];
     await Firestore.instance
         .collection('Users')
         .document(thrownID)
+        .collection('info')
+        .document('blockList')
         .get()
         .then((value) {
-      !(value['blockList'].contains(uid))
-          ? throwTo(widget.data, thrownID)
-          : null;
+      value?.data == null
+          ? blockList = []
+          : blockList = value?.data['blockList'] ?? [];
     });
+    return blockList.contains(uid);
   }
 
   addFriend(String uid, String newFriend, String img, String join) async {
@@ -482,74 +497,5 @@ class _SearchState extends State<Search> {
         backgroundColor: Colors.white60,
         textColor: Colors.black,
         fontSize: 16.0);
-  }
-
-  throwTo(Map data, String thrownID) async {
-    DateTime now = DateTime.now();
-    String time = DateFormat('Hm').format(now);
-    String date = DateFormat('d/M/y').format(now);
-    await Firestore.instance
-        .collection('Users')
-        .document(thrownID)
-        .collection('scraps')
-        .document('recently')
-        .setData({
-      'id': FieldValue.arrayUnion([widget.doc['uid']]),
-      'scraps': {
-        widget.doc['uid']: FieldValue.arrayUnion([
-          {
-            'text': data['text'],
-            'writer':
-                data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-            'time': '$time $date'
-          }
-        ])
-      }
-    }, merge: true);
-    await notifaication(thrownID, date, time);
-    await updateHistory(widget.doc['uid'], thrownID);
-    await increaseTransaction(widget.doc['uid'], 'written');
-    await increaseTransaction(thrownID, 'threw');
-  }
-
-  updateHistory(String uid, String thrown) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document('searchHist')
-        .updateData({
-      'history': FieldValue.arrayUnion([thrown])
-    });
-  }
-
-  notifaication(String who, String date, String time) async {
-    await Firestore.instance.collection('Notifications').add({'uid': who});
-    await Firestore.instance
-        .collection('Users')
-        .document(who)
-        .collection('notification')
-        .add({
-      'writer':
-          widget.data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-      'date': date,
-      'time': time
-    });
-  }
-
-  increaseTransaction(String uid, String key) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .get()
-        .then((value) => Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('info')
-            .document(uid)
-            .updateData(
-                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 }
