@@ -104,7 +104,7 @@ class _AboutState extends State<About> {
                                           style: TextStyle(fontSize: a.width / 20),
                                         ),
                                         Text(
-                                          "1.0.0",
+                                          "1.0.3",
                                           style: TextStyle(fontSize: a.width / 20),
                                         )
                                       ],
