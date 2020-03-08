@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/widget/Arrow_back.dart';
 import 'package:scrap/widget/ProfileCard.dart';
 
-class Suser extends StatefulWidget {
+class AddFriend extends StatefulWidget {
   @override
-  _SuserState createState() => _SuserState();
+  _AddFriendState createState() => _AddFriendState();
 }
 
-class _SuserState extends State<Suser> {
+class _AddFriendState extends State<AddFriend> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;

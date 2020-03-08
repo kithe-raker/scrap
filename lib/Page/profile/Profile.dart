@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -154,14 +155,13 @@ class _ProfileState extends State<Profile> {
                               width: a.width / 3,
                               height: a.width / 3,
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(a.width),
-                                child: snapshot.data['img'] == null
-                                    ? Image.asset("assets/userprofile.png")
-                                    : Image.network(
-                                        snapshot.data['img'],
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
+                                  borderRadius: BorderRadius.circular(a.width),
+                                  child: snapshot.data['img'] == null
+                                      ? Image.asset("assets/userprofile.png")
+                                      : CachedNetworkImage(
+                                          imageUrl: snapshot.data['img'],
+                                          fit: BoxFit.cover,
+                                        )),
                             ),
 
                             // ชื่อของ account

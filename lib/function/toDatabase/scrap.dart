@@ -75,4 +75,8 @@ class Scraps {
             .updateData(
                 {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
+
+  // toHistory(String uid)async{
+  //   await Firestore.instance.collection('Users').document(uid).collection('history').document()
+  // }
 }

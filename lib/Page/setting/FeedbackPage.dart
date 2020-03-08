@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/warning.dart';
 
@@ -39,6 +40,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
   describeApp() async {
     DateTime now = DateTime.now();
     String date = DateFormat('d,M,y').format(now);
+    final uid = await Provider.of(context).auth.currentUser();
     try {
       setState(() {
         loading = true;
@@ -47,7 +49,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
           .collection('App')
           .document('feedBack')
           .collection(date)
-          .add({'text': text, 'time': now}).then((value) =>
+          .add({'text': text, 'time': now, 'uid': uid}).then((value) =>
               image != null ? addData(image, value.documentID) : null);
       setState(() {
         loading = false;

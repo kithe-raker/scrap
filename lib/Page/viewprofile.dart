@@ -22,7 +22,7 @@ class Viewprofile extends StatefulWidget {
 
 class _ViewprofileState extends State<Viewprofile> {
   bool public, loading = true;
-  String text;
+  String text, img;
   String friendUID;
   List friends = [];
   int index;
@@ -128,9 +128,7 @@ class _ViewprofileState extends State<Viewprofile> {
                         builder: (context, info) {
                           if (info.hasData &&
                               info.connectionState == ConnectionState.active) {
-                            oldImg = friends.singleWhere(
-                                    (dat) => dat['id'] == widget.id)['img'] !=
-                                info.data['img'];
+                            oldImg = img != info.data['img'];
                             return StreamBuilder(
                                 stream: Firestore.instance
                                     .collection('Users')
