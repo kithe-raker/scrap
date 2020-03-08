@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scrap/function/randomLocation.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class MapScraps extends StatefulWidget {
@@ -41,6 +42,7 @@ class _MapScrapsState extends State<MapScraps> {
   Set scpContent = {};
   Map randData = {};
   Set picked = {};
+  Scraps scrap = Scraps();
   final infoKey = GlobalKey();
 
   @override
@@ -84,7 +86,7 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   //sssss
-  void dialog(String text, String writer, String time, String id) {
+  void dialog(String text, String writer, String time, String date, String id) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
       Size a = MediaQuery.of(context).size;
@@ -138,7 +140,7 @@ class _MapScrapsState extends State<MapScraps> {
                                     : 'เขียนโดย : @$writer',
                                 style: TextStyle(fontSize: a.width / 25),
                               ),
-                              Text('เวลา : $time',
+                              Text('เวลา : $time $date',
                                   style: TextStyle(fontSize: a.width / 25))
                             ],
                           ),
@@ -234,8 +236,7 @@ class _MapScrapsState extends State<MapScraps> {
                                       await burn(id);
                                       print(id);
                                       Navigator.pop(context);
-                                      Taoast()
-                                          .toast('คุณได้เผากระดาษไปแล้ว');
+                                      Taoast().toast('คุณได้เผากระดาษไปแล้ว');
                                     }),
                                 Tooltip(
                                   key: infoKey,
@@ -383,8 +384,8 @@ class _MapScrapsState extends State<MapScraps> {
           'lng': randLocation['lng'],
           'time': '$time  $date',
         };
-        _addOfficial(getContent, '$time  $date', randLocation['lat'],
-            randLocation['lng']);
+        _addOfficial(
+            getContent, time, date, randLocation['lat'], randLocation['lng']);
       }
     });
   }
@@ -403,14 +404,13 @@ class _MapScrapsState extends State<MapScraps> {
             read.contains(widget.uid)) {
         } else {
           _addMarker(
-            data['id'],
-            data['uid'],
-            data['scrap']['user'],
-            data['scrap']['text'],
-            data['scrap']['time'],
-            loca.latitude,
-            loca.longitude,
-          );
+              data['id'],
+              data['uid'],
+              data['scrap']['user'],
+              data['scrap']['text'],
+              data['scrap']['timeStamp'],
+              loca.latitude,
+              loca.longitude);
         }
       } else {
         subscription.pause();
@@ -464,7 +464,8 @@ class _MapScrapsState extends State<MapScraps> {
         target: LatLng(lat, lng), zoom: 18.5, bearing: 0.0, tilt: 90)));
   }
 
-  void _addOfficial(String text, String time, double lat, double lng) {
+  void _addOfficial(
+      String text, String time, String date, double lat, double lng) {
     final MarkerId officialId = MarkerId(text);
     final Marker marker = Marker(
       markerId: officialId,
@@ -476,7 +477,7 @@ class _MapScrapsState extends State<MapScraps> {
           picked.add(text);
           scpContent.remove(text);
           setState(() {});
-          dialog(text, 'สุ่มโดย Scrap', time, text);
+          dialog(text, 'สุ่มโดย Scrap', time, date, text);
         } catch (e) {
           print(e.toString());
           error(context,
@@ -490,8 +491,9 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   void _addMarker(String id, String user, String writer, String text,
-      String time, double lat, double lng) {
+      Timestamp time, double lat, double lng) {
     id == null ? ++i : null;
+    DateTime convTime = time.toDate();
     final MarkerId markerId = MarkerId(id ?? i.toString());
     final Marker marker = Marker(
       markerId: markerId,
@@ -502,9 +504,12 @@ class _MapScrapsState extends State<MapScraps> {
           markers.remove(markerId);
           picked.add(id);
           setState(() {});
-          dialog(text, writer, time, id);
+          dialog(text, writer, '${convTime.hour}:${convTime.minute}',
+              '${convTime.day}/${convTime.month}/${convTime.year}', id);
           addRead(id);
-          increaseTransaction(user, 'read');
+          scrap.increaseTransaction(user, 'read');
+          increasHistTran(
+              user, '${convTime.year},${convTime.month},${convTime.day}', id);
         } catch (e) {
           print(e.toString());
           error(context,
@@ -586,7 +591,7 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   addRead(String scrapID) async {
-    await Firestore.instance
+    Firestore.instance
         .collection('Scraps')
         .document('hatyai')
         .collection('scrapsPosition')
@@ -596,19 +601,12 @@ class _MapScrapsState extends State<MapScraps> {
     });
   }
 
-  increaseTransaction(String uid, String key) async {
-    await Firestore.instance
+  increasHistTran(String uid, String date, String docID) {
+    Firestore.instance
         .collection('Users')
         .document(uid)
-        .collection('info')
-        .document(uid)
-        .get()
-        .then((value) => Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('info')
-            .document(uid)
-            .updateData(
-                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
+        .collection('history')
+        .document(date)
+        .updateData({docID: FieldValue.increment(1)});
   }
 }

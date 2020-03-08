@@ -1123,7 +1123,7 @@ class _ProfileState extends State<Profile> {
   }
 
   ignore(String writerID, Map scpData) async {
-    await Firestore.instance
+    Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
         .collection('scraps')
@@ -1131,7 +1131,7 @@ class _ProfileState extends State<Profile> {
         .get()
         .then((value) async {
       if (value.data['scraps'][writerID].length == 1) {
-        await Firestore.instance
+        Firestore.instance
             .collection('Users')
             .document(widget.doc['uid'])
             .collection('scraps')
@@ -1139,7 +1139,7 @@ class _ProfileState extends State<Profile> {
             .setData({
           'scraps': {writerID: FieldValue.delete()}
         }, merge: true);
-        await Firestore.instance
+        Firestore.instance
             .collection('Users')
             .document(widget.doc['uid'])
             .collection('scraps')
