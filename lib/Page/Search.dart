@@ -484,7 +484,7 @@ class _SearchState extends State<Search> {
         return false;*/
           
     });
-    return blockList.where((data) => data['uid'].contains(uid)).length > 0 ;
+    return blockList.where((data) => data['uid'] == uid ).length > 0 ;
     
   }
 
