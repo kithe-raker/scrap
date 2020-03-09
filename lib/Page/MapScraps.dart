@@ -180,7 +180,8 @@ class _MapScrapsState extends State<MapScraps> {
                               ),
                               onTap: () async {
                                 Navigator.pop(context);
-                                await pickScrap(id, text, time, writer);
+                                await pickScrap(
+                                    id, text, '$time $date', writer);
                               },
                             ),
                             InkWell(

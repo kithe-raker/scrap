@@ -580,7 +580,7 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          checkScrap(now);
+                                          checkScrap();
                                         }
                                       },
                                     ),
@@ -639,7 +639,7 @@ class _HomePageState extends State<HomePage> {
         fullscreenDialog: true));
   }
 
-  checkScrap(DateTime now) async {
+  checkScrap() async {
     await Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
@@ -651,7 +651,7 @@ class _HomePageState extends State<HomePage> {
       if (scraps < 15) {
         toast('คุณได้ทิ้งกระดาษไว้แล้ว');
         Navigator.pop(context);
-        await scrap.binScrap(now, text, public, widget.doc);
+        await scrap.binScrap(text, public, widget.doc);
       } else {
         toast('กระดาษคุณหมดแล้ว');
       }

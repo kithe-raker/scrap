@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/Page/setting/FeedbackPage.dart';
 import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
+import 'package:scrap/Page/setting/History.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
@@ -1185,12 +1186,10 @@ class _ProfileState extends State<Profile> {
                     )));
         break;
       case Constans.Feedback:
-        print('Feedback');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => FeedbackPage()));
         break;
       case Constans.About:
-        print('About');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => About()));
         break;
@@ -1200,8 +1199,15 @@ class _ProfileState extends State<Profile> {
           Navigator.pop(context);
         });
         break;
+      case Constans.History:
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => History(
+                      uid: widget.doc['uid'],
+                    )));
+        break;
       default:
-        print('About');
         break;
     }
   }
@@ -1212,11 +1218,13 @@ class Constans {
   static const String Feedback = 'ให้คำแนะนำ';
   static const String About = 'เกี่ยวกับแอป';
   static const String SignOut = 'ออกจากระบบ';
+  static const String History = 'ประวัติการทิ้ง';
 
   static const List<String> choices = <String>[
     Account,
     Feedback,
+    History,
     About,
-    SignOut,
+    SignOut
   ];
 }
