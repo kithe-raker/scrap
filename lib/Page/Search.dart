@@ -462,15 +462,30 @@ class _SearchState extends State<Search> {
     await Firestore.instance
         .collection('Users')
         .document(thrownID)
-        .collection('info')
-        .document('blockList')
+        .collection('blockList')
+        .document(thrownID)
         .get()
         .then((value) {
-      value?.data == null
-          ? blockList = []
-          : blockList = value?.data['blockList'] ?? [];
+          blockList = value['blockList'];
+              
+          /*List blockList = value['blockList'];
+          int len = blockList.length;
+          int i = 0;
+          int count = 0;
+          for(i=0;i<len;i++)
+          {
+            String mapUID = blockList[i]['uid'];
+            if(mapUID == uid)
+              count++;
+          }
+      if(count > 0)
+        return true;
+      else
+        return false;*/
+          
     });
-    return blockList.contains(uid);
+    return blockList.where((data) => data['uid'] == uid ).length > 0 ;
+    
   }
 
   addFriend(String uid, String newFriend, String img, String join) async {

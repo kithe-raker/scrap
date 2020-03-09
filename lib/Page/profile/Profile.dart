@@ -1109,9 +1109,11 @@ class _ProfileState extends State<Profile> {
     await Firestore.instance
         .collection("Users")
         .document(userReceive)
-        .updateData({
+        .collection("blockList")
+        .document(userReceive)
+        .setData({
       'blockList': FieldValue.arrayUnion([blocked])
-    });
+    },merge:true);
   }
 
   statusEditer(String status) async {
