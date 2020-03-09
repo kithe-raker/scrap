@@ -114,359 +114,403 @@ class _ViewprofileState extends State<Viewprofile> {
       child: SafeArea(
         child: Scaffold(
             backgroundColor: Colors.black,
-            body: Stack(
-              children: <Widget>[
-                friendUID == null
-                    ? SizedBox()
-                    : StreamBuilder(
-                        stream: Firestore.instance
-                            .collection('Users')
-                            .document(friendUID)
-                            .collection('info')
-                            .document(friendUID)
-                            .snapshots(),
-                        builder: (context, info) {
-                          if (info.hasData &&
-                              info.connectionState == ConnectionState.active) {
-                            oldImg = img != info.data['img'];
-                            return StreamBuilder(
-                                stream: Firestore.instance
-                                    .collection('Users')
-                                    .document(friendUID)
-                                    .snapshots(),
-                                builder: (context, acc) {
-                                  if (acc.hasData &&
-                                      acc.connectionState ==
-                                          ConnectionState.active) {
-                                    return Column(children: <Widget>[
-                                      Container(
-                                          color: Colors.black,
-                                          width: a.width,
-                                          height: a.height / 7.2,
-                                          child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: a.width / 15,
-                                                  right: a.width / 25,
-                                                  left: a.width / 25,
-                                                  bottom: a.width / 30.0),
-                                              child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: <Widget>[
-                                                        InkWell(
-                                                            //back btn
-                                                            child: Container(
-                                                              width:
-                                                                  a.width / 7,
-                                                              height:
-                                                                  a.width / 10,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(a
-                                                                              .width),
-                                                                  color: Colors
-                                                                      .white),
-                                                              child: Icon(
-                                                                  Icons
-                                                                      .arrow_back,
-                                                                  color: Colors
-                                                                      .black,
-                                                                  size:
-                                                                      a.width /
-                                                                          15),
-                                                            ),
-                                                            onTap: () async {
-                                                              if (oldImg) {
-                                                                await friendManager
-                                                                    .updateData(
-                                                                        friendUID,
-                                                                        index);
-                                                              }
-                                                              Navigator.pop(
-                                                                  context,
-                                                                  true);
-                                                              return false;
-                                                            }),
-                                                        friends
-                                                                    .where((dat) =>
-                                                                        dat['id'] ==
-                                                                        acc.data[
-                                                                            'id'])
-                                                                    .length ==
-                                                                1
-                                                            ? InkWell(
-                                                                //back btn
-                                                                child:
-                                                                    Container(
-                                                                        alignment:
-                                                                            Alignment
-                                                                                .center,
-                                                                        width:
-                                                                            a.width /
-                                                                                4,
-                                                                        height:
-                                                                            a.width /
-                                                                                8,
-                                                                        decoration: BoxDecoration(
-                                                                            borderRadius: BorderRadius.circular(a
-                                                                                .width),
-                                                                            color: Colors
-                                                                                .white),
-                                                                        child:
-                                                                            Text(
-                                                                          'ลบจากสหาย',
-                                                                          style: TextStyle(
-                                                                              fontSize: a.width / 18,
-                                                                              fontWeight: FontWeight.w500),
-                                                                        )),
-                                                                onTap:
-                                                                    () async {
-                                                                  await editFriend(
-                                                                      acc.data[
-                                                                          'uid'],
-                                                                      acc.data[
-                                                                          'id'],
-                                                                      remove:
-                                                                          true);
-                                                                  Taoast().toast(
-                                                                      "ลบ ${acc.data['id']} จากสหายแล้ว");
-                                                                },
-                                                              )
-                                                            : InkWell(
-                                                                child:
-                                                                    Container(
-                                                                  width:
-                                                                      a.width /
-                                                                          8,
-                                                                  height:
-                                                                      a.width /
-                                                                          8,
-                                                                  decoration: BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(a
-                                                                              .width),
-                                                                      color: Colors
-                                                                          .white),
-                                                                  child: Icon(
-                                                                      Icons
-                                                                          .person_add,
-                                                                      color: Colors
-                                                                          .black,
-                                                                      size: a.width /
-                                                                          15),
-                                                                ),
-                                                                onTap:
-                                                                    () async {
-                                                                  await editFriend(
-                                                                      acc.data[
-                                                                          'uid'],
-                                                                      acc.data[
-                                                                          'id'],
-                                                                      img: info
-                                                                              .data[
-                                                                          'img'],
-                                                                      join: info
-                                                                              .data[
-                                                                          'createdDay']);
-                                                                  Taoast().toast(
-                                                                      "เพิ่ม ${acc.data['id']} เป็นสหายแล้ว");
-                                                                },
+            // floatingActionButton: InkWell(
+            //   child: Container(
+            //     width: a.width / 3.6,
+            //     height: a.width / 3.6,
+            //     decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(a.width),
+            //         border: Border.all(
+            //             color: Colors.white38, width: a.width / 500)),
+            //     child: Container(
+            //       margin: EdgeInsets.all(a.width / 35),
+            //       width: a.width / 5,
+            //       height: a.width / 5,
+            //       decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(a.width),
+            //           border: Border.all(color: Colors.white)),
+            //       child: Container(
+            //         margin: EdgeInsets.all(a.width / 35),
+            //         width: a.width / 5,
+            //         height: a.width / 5,
+            //         decoration: BoxDecoration(
+            //             borderRadius: BorderRadius.circular(a.width),
+            //             color: Colors.white,
+            //             border: Border.all(color: Colors.white)),
+            //         child: widget.data == null
+            //             ? Icon(
+            //                 Icons.create,
+            //                 size: a.width / 12,
+            //                 color: Colors.black,
+            //               )
+            //             : Icon(
+            //                 Icons.send,
+            //                 size: a.width / 12,
+            //                 color: Colors.black,
+            //               ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            // floatingActionButtonLocation:
+            //     FloatingActionButtonLocation.centerFloat,
+            body: SingleChildScrollView(
+              child: Stack(
+                children: <Widget>[
+                  friendUID == null
+                      ? SizedBox()
+                      : StreamBuilder(
+                          stream: Firestore.instance
+                              .collection('Users')
+                              .document(friendUID)
+                              .collection('info')
+                              .document(friendUID)
+                              .snapshots(),
+                          builder: (context, info) {
+                            if (info.hasData &&
+                                info.connectionState ==
+                                    ConnectionState.active) {
+                              oldImg = img != info.data['img'];
+                              return StreamBuilder(
+                                  stream: Firestore.instance
+                                      .collection('Users')
+                                      .document(friendUID)
+                                      .snapshots(),
+                                  builder: (context, acc) {
+                                    if (acc.hasData &&
+                                        acc.connectionState ==
+                                            ConnectionState.active) {
+                                      return Column(children: <Widget>[
+                                        Container(
+                                            color: Colors.black,
+                                            width: a.width,
+                                            // height: a.height / 7.2,
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: a.width / 15,
+                                                    right: a.width / 25,
+                                                    left: a.width / 25,
+                                                    bottom: a.width / 30.0),
+                                                child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: <Widget>[
+                                                          InkWell(
+                                                              //back btn
+                                                              child: Container(
+                                                                width:
+                                                                    a.width / 7,
+                                                                height:
+                                                                    a.width /
+                                                                        10,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(a
+                                                                            .width),
+                                                                    color: Colors
+                                                                        .white),
+                                                                child: Icon(
+                                                                    Icons
+                                                                        .arrow_back,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    size:
+                                                                        a.width /
+                                                                            15),
                                                               ),
-                                                      ],
-                                                    ), //back btn
-                                                  ]))),
-                                      Container(
-                                        color: Colors.black,
-                                        child: Container(
-                                            margin: EdgeInsets.only(
-                                                left: 20, right: 13),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        a.width),
-                                                border: Border.all(
-                                                    color: Colors.white,
-                                                    width: a.width / 190)),
-                                            width: a.width / 3.2,
-                                            height: a.width / 3.2,
-                                            child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        a.width),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: info.data['img'],
-                                                  fit: BoxFit.cover,
-                                                ))),
-                                      ),
-                                      SizedBox(
-                                        height: a.width / 15,
-                                      ),
-                                      Text(
-                                        "@${acc.data['id']}",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: a.width / 12),
-                                      ),
-                                      Text(
-                                        "Join ${info.data['createdDay']}",
-                                        style: TextStyle(
-                                            color: Color(0xff26A4FF),
-                                            fontSize: a.width / 12),
-                                      ),
-                                      info?.data['status'] == null
-                                          ? SizedBox(
-                                              height: a.width / 12,
-                                            )
-                                          : Container(
-                                              margin: EdgeInsets.only(
-                                                  top: a.width / 21),
-                                              child: SizedBox(
-                                                width: a.width / 1.6,
-                                                child: Text(
-                                                  info.data['status'],
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: a.width / 15,
-                                                      color: Colors.white,
-                                                      fontStyle:
-                                                          FontStyle.italic),
-                                                ),
-                                              )),
-                                      Container(
-                                        margin: EdgeInsets.only(
-                                            left: a.width / 15,
-                                            right: a.width / 15),
-                                        padding:
-                                            EdgeInsets.only(top: a.width / 16),
-                                        height: a.height / 5.6,
-                                        //ใส่เส้นด้านใต้สุด
-                                        child: Row(
-                                          // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: <Widget>[
-                                            Container(
-                                              color: Colors.black,
-                                              width: a.width / 4.5,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                //เพื่อใช้สำหรับให้ จำนวน และ เขียน
-                                                children: <Widget>[
-                                                  Text(
-                                                    info?.data['written'] ==
-                                                            null
-                                                        ? '0'
-                                                        : info.data['written']
-                                                            .toString(),
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: a.width / 13,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  Text(
-                                                    "เขียน",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: a.width / 21),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              color: Colors.black,
-                                              width: a.width / 4.5,
-                                              margin: EdgeInsets.only(
-                                                  left: a.width / 10,
-                                                  right: a.width / 10),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    //เพื่อใช้สำหรับ��ห้ จำนวน และ ผ�����้หยิบอ่าน
-                                                    info?.data['read'] == null
-                                                        ? '0'
-                                                        : info.data['read']
-                                                            .toString(),
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: a.width / 13,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  Text(
-                                                    "ผู้คนหยิบอ่าน",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: a.width / 21),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              color: Colors.black,
-                                              width: a.width / 4.5,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
-                                                children: <Widget>[
-                                                  Text(
-                                                    info?.data['threw'] == null
-                                                        ? '0'
-                                                        : info.data['threw']
-                                                            .toString(),
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: a.width / 13,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  Text(
-                                                    "โดนปาใส่",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: a.width / 21),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      InkWell(
+                                                              onTap: () async {
+                                                                if (oldImg) {
+                                                                  await friendManager
+                                                                      .updateData(
+                                                                          friendUID,
+                                                                          index);
+                                                                }
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    true);
+                                                                return false;
+                                                              }),
+                                                          friends
+                                                                      .where((dat) =>
+                                                                          dat['id'] ==
+                                                                          acc.data[
+                                                                              'id'])
+                                                                      .length ==
+                                                                  1
+                                                              ? InkWell(
+                                                                  //back btn
+                                                                  child: Container(
+                                                                      alignment: Alignment.center,
+                                                                      width: a.width / 4,
+                                                                      height: a.width / 9,
+                                                                      decoration: BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(a.width),
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.grey[600]),
+                                                                        // color:
+                                                                        //     Colors.white,
+                                                                      ),
+                                                                      child: Text(
+                                                                        'ลบจากสหาย',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              Colors.grey[600],
+                                                                          fontSize:
+                                                                              a.width / 18,
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      )),
+                                                                  onTap:
+                                                                      () async {
+                                                                    await editFriend(
+                                                                        acc.data[
+                                                                            'uid'],
+                                                                        acc.data[
+                                                                            'id'],
+                                                                        remove:
+                                                                            true);
+                                                                    Taoast().toast(
+                                                                        "ลบ ${acc.data['id']} จากสหายแล้ว");
+                                                                  },
+                                                                )
+                                                              : InkWell(
+                                                                  child:
+                                                                      Container(
+                                                                    width:
+                                                                        a.width /
+                                                                            8,
+                                                                    height:
+                                                                        a.width /
+                                                                            8,
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(a
+                                                                                .width),
+                                                                        color: Colors
+                                                                            .white),
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .person_add,
+                                                                        color: Colors
+                                                                            .black,
+                                                                        size: a.width /
+                                                                            15),
+                                                                  ),
+                                                                  onTap:
+                                                                      () async {
+                                                                    await editFriend(
+                                                                        acc.data[
+                                                                            'uid'],
+                                                                        acc.data[
+                                                                            'id'],
+                                                                        img: info.data[
+                                                                            'img'],
+                                                                        join: info
+                                                                            .data['createdDay']);
+                                                                    Taoast().toast(
+                                                                        "เพิ่ม ${acc.data['id']} เป็นสหายแล้ว");
+                                                                  },
+                                                                ),
+                                                        ],
+                                                      ), //back btn
+                                                    ]))),
+                                        Container(
+                                          color: Colors.black,
                                           child: Container(
-                                            width: a.width / 3.6,
-                                            height: a.width / 3.6,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        a.width),
-                                                border: Border.all(
-                                                    color: Colors.white38,
-                                                    width: a.width / 500)),
+                                              margin: EdgeInsets.only(
+                                                  left: 20, right: 13),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          a.width),
+                                                  border: Border.all(
+                                                      color: Colors.white,
+                                                      width: a.width / 190)),
+                                              width: a.width / 3.2,
+                                              height: a.width / 3.2,
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          a.width),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: info.data['img'],
+                                                    fit: BoxFit.cover,
+                                                  ))),
+                                        ),
+                                        SizedBox(
+                                          height: a.width / 15,
+                                        ),
+                                        Text(
+                                          "@${acc.data['id']}",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: a.width / 12),
+                                        ),
+                                        Text(
+                                          "Join ${info.data['createdDay']}",
+                                          style: TextStyle(
+                                              color: Color(0xff26A4FF),
+                                              fontSize: a.width / 12),
+                                        ),
+                                        info?.data['status'] == null
+                                            ? SizedBox(
+                                                height: a.width / 12,
+                                              )
+                                            : Container(
+                                                margin: EdgeInsets.only(
+                                                    top: a.width / 21),
+                                                child: SizedBox(
+                                                  width: a.width / 1.6,
+                                                  child: Text(
+                                                    info.data['status'],
+                                                    textAlign: TextAlign.center,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 3,
+                                                    softWrap: false,
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            a.width / 16.5,
+                                                        color: Colors.white,
+                                                        fontStyle:
+                                                            FontStyle.italic),
+                                                  ),
+                                                )),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              left: a.width / 15,
+                                              right: a.width / 15),
+                                          padding: EdgeInsets.only(
+                                              top: a.width / 16),
+                                          height: a.height / 5.6,
+                                          //ใส่เส้นด้านใต้สุด
+                                          child: Row(
+                                            // ใส่ Row เพื่อเรียงแนวนอนของจำนวน ได้แก่ เขียน ผู้หยิบอ่าน ปาใส่
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: <Widget>[
+                                              Container(
+                                                color: Colors.black,
+                                                width: a.width / 4.5,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  //เพื่อใช้สำหรับให้ จำนวน และ เขียน
+                                                  children: <Widget>[
+                                                    Text(
+                                                      info?.data['written'] ==
+                                                              null
+                                                          ? '0'
+                                                          : info.data['written']
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 13,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      "เขียน",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 21),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                color: Colors.black,
+                                                width: a.width / 4.5,
+                                                margin: EdgeInsets.only(
+                                                    left: a.width / 10,
+                                                    right: a.width / 10),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      //เพื่อใช้สำหรับ��ห้ จำนวน และ ผ�����้หยิบอ่าน
+                                                      info?.data['read'] == null
+                                                          ? '0'
+                                                          : info.data['read']
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 13,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      "ผู้คนหยิบอ่าน",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 21),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                color: Colors.black,
+                                                width: a.width / 4.5,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
+                                                  children: <Widget>[
+                                                    Text(
+                                                      info?.data['threw'] ==
+                                                              null
+                                                          ? '0'
+                                                          : info.data['threw']
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 13,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      "โดนปาใส่",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize:
+                                                              a.width / 21),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        InkWell(
                                             child: Container(
-                                              margin:
-                                                  EdgeInsets.all(a.width / 35),
-                                              width: a.width / 5,
-                                              height: a.width / 5,
+                                              width: a.width / 3.6,
+                                              height: a.width / 3.6,
                                               decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           a.width),
                                                   border: Border.all(
-                                                      color: Colors.white)),
+                                                      color: Colors.white38,
+                                                      width: a.width / 500)),
                                               child: Container(
                                                 margin: EdgeInsets.all(
                                                     a.width / 35),
@@ -476,41 +520,53 @@ class _ViewprofileState extends State<Viewprofile> {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             a.width),
-                                                    color: Colors.white,
                                                     border: Border.all(
                                                         color: Colors.white)),
-                                                child: widget.data == null
-                                                    ? Icon(
-                                                        Icons.create,
-                                                        size: a.width / 12,
-                                                        color: Colors.black,
-                                                      )
-                                                    : Icon(
-                                                        Icons.send,
-                                                        size: a.width / 12,
-                                                        color: Colors.black,
-                                                      ),
+                                                child: Container(
+                                                  margin: EdgeInsets.all(
+                                                      a.width / 35),
+                                                  width: a.width / 5,
+                                                  height: a.width / 5,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width),
+                                                      color: Colors.white,
+                                                      border: Border.all(
+                                                          color: Colors.white)),
+                                                  child: widget.data == null
+                                                      ? Icon(
+                                                          Icons.create,
+                                                          size: a.width / 12,
+                                                          color: Colors.black,
+                                                        )
+                                                      : Icon(
+                                                          Icons.send,
+                                                          size: a.width / 12,
+                                                          color: Colors.black,
+                                                        ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          onTap: () {
-                                            widget.data == null
-                                                ? dialog(acc.data['id'],
-                                                    acc.data['uid'])
-                                                : warnDialog(acc.data['id'],
-                                                    acc.data['uid']);
-                                          })
-                                    ]);
-                                  } else {
-                                    return Loading();
-                                  }
-                                });
-                          } else {
-                            return SizedBox();
-                          }
-                        }),
-                loading ? Loading() : SizedBox()
-              ],
+                                            onTap: () {
+                                              widget.data == null
+                                                  ? dialog(acc.data['id'],
+                                                      acc.data['uid'])
+                                                  : warnDialog(acc.data['id'],
+                                                      acc.data['uid']);
+                                            })
+                                      ]);
+                                    } else {
+                                      return Loading();
+                                    }
+                                  });
+                            } else {
+                              return SizedBox();
+                            }
+                          }),
+                  loading ? Loading() : SizedBox()
+                ],
+              ),
             )),
       ),
     );

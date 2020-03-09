@@ -192,8 +192,11 @@ class _ProfileState extends State<Profile> {
                                       snapshot?.data['status'] ??
                                           'แตะเพื่อเพิ่มสเตตัส',
                                       textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 3,
+                                      softWrap: false,
                                       style: TextStyle(
-                                          fontSize: a.width / 15,
+                                          fontSize: a.width / 16.5,
                                           color:
                                               snapshot?.data['status'] == null
                                                   ? Colors.grey
@@ -726,23 +729,39 @@ class _ProfileState extends State<Profile> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  SizedBox(width: a.width / 20),
+                                  // SizedBox(width: a.width / 20),
                                   InkWell(
                                     child: Container(
-                                      margin: EdgeInsets.only(
-                                          left: a.width / 55,
-                                          right: a.width / 55),
+                                      // margin: EdgeInsets.only(
+                                      //     left: a.width / 55,
+                                      //     right: a.width / 55),
                                       width: a.width / 3.5,
                                       height: a.width / 6.5,
                                       decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(a.width)),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(a.width),
+                                            topRight: Radius.circular(a.width),
+                                            bottomRight:
+                                                Radius.circular(a.width),
+                                            bottomLeft:
+                                                Radius.circular(a.width),
+                                          )),
                                       alignment: Alignment.center,
-                                      child: Text("เก็บไว้",
-                                          style: TextStyle(
-                                              fontSize: a.width / 15,
-                                              color: Color(0xff26A4FF))),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.arrow_downward,
+                                            color: Color(0xff26A4FF),
+                                          ),
+                                          Text("เก็บไว้",
+                                              style: TextStyle(
+                                                  fontSize: a.width / 15,
+                                                  color: Color(0xff26A4FF))),
+                                        ],
+                                      ),
                                     ),
                                     onTap: () async {
                                       Navigator.pop(context);
@@ -767,13 +786,29 @@ class _ProfileState extends State<Profile> {
                                       height: a.width / 6.5,
                                       decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(a.width)),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(a.width),
+                                            topRight: Radius.circular(a.width),
+                                            bottomRight:
+                                                Radius.circular(a.width),
+                                            bottomLeft:
+                                                Radius.circular(a.width),
+                                          )
+                                          // borderRadius:
+                                          //     BorderRadius.circular(a.width)
+                                          ),
                                       alignment: Alignment.center,
-                                      child: Text(
-                                        "ทิ้ง",
-                                        style:
-                                            TextStyle(fontSize: a.width / 15),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.clear),
+                                          Text(
+                                            "ทิ้ง",
+                                            style: TextStyle(
+                                                fontSize: a.width / 15),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     onTap: () async {
@@ -781,7 +816,46 @@ class _ProfileState extends State<Profile> {
                                       await ignore(writerID, scpData);
                                     },
                                   ),
-                                  SizedBox(width: a.width / 20),
+                                  InkWell(
+                                    child: Container(
+                                      width: a.width / 3.5,
+                                      height: a.width / 6.5,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(a.width),
+                                            topRight: Radius.circular(a.width),
+                                            bottomRight:
+                                                Radius.circular(a.width),
+                                            bottomLeft:
+                                                Radius.circular(a.width),
+                                          )),
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.not_interested,
+                                            color: Colors.red,
+                                          ),
+                                          Text(
+                                            "บล็อค",
+                                            style: TextStyle(
+                                              fontSize: a.width / 15,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      blockDialog(
+                                          widget.doc['uid'], writerID, scpData);
+                                      //dialogPa(writerID, writer);
+                                    },
+                                  ),
+                                  // SizedBox(width: a.width / 20),
                                 ],
                               ),
                             ),
@@ -790,23 +864,23 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                   ),
-                  Center(
-                    child: InkWell(
-                      child: Container(
-                        width: a.width / 7,
-                        height: a.width / 12,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red[200]),
-                            borderRadius: BorderRadius.circular(a.width / 10)),
-                        alignment: Alignment.center,
-                        child: Text("บล็อค"),
-                      ),
-                      onTap: () {
-                        blockDialog(widget.doc['uid'], writerID, scpData);
-                        //dialogPa(writerID, writer);
-                      },
-                    ),
-                  )
+                  // Center(
+                  //   child: InkWell(
+                  //     child: Container(
+                  //       width: a.width / 7,
+                  //       height: a.width / 12,
+                  //       decoration: BoxDecoration(
+                  //           border: Border.all(color: Colors.red[200]),
+                  //           borderRadius: BorderRadius.circular(a.width / 10)),
+                  //       alignment: Alignment.center,
+                  //       child: Text("บล็อค"),
+                  //     ),
+                  //     onTap: () {
+                  //       blockDialog(widget.doc['uid'], writerID, scpData);
+                  //       //dialogPa(writerID, writer);
+                  //     },
+                  //   ),
+                  // )
                 ],
               ),
             );
@@ -1113,7 +1187,7 @@ class _ProfileState extends State<Profile> {
         .document(userReceive)
         .setData({
       'blockList': FieldValue.arrayUnion([blocked])
-    },merge:true);
+    }, merge: true);
   }
 
   statusEditer(String status) async {
