@@ -311,7 +311,7 @@ class _MapScrapsState extends State<MapScraps> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              writer == 'สุ่มโดย Scrap'
+                              writer != 'สุ่มโดย Scrap'
                                   ? SizedBox()
                                   : SizedBox(
                                       width: a.width / 12,
@@ -370,7 +370,7 @@ class _MapScrapsState extends State<MapScraps> {
                                   Navigator.pop(context);
                                 },
                               ),
-                              writer == 'สุ่มโดย Scrap'
+                              writer != 'สุ่มโดย Scrap'
                                   ? InkWell(
                                       child: Container(
                                         width: a.width / 3.5,
