@@ -3,7 +3,6 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/MapScraps.dart';
@@ -13,6 +12,7 @@ import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class HomePage extends StatefulWidget {
@@ -268,10 +268,151 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            Positioned(
+                // left: a.width/4.8,
+                width: a.width,
+                top: a.height / 7.2,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 1,
+                      ),
+                      scrapLeft(a),
+                      SizedBox(
+                        width: 1,
+                      )
+                    ])),
           ],
         ),
       ),
     );
+  }
+
+  Widget scrapLeft(Size scr) {
+    return StreamBuilder(
+      stream: Firestore.instance
+          .collection('Users')
+          .document(widget.doc['uid'])
+          .collection('info')
+          .document(widget.doc['uid'])
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData &&
+            snapshot.connectionState == ConnectionState.active) {
+          int scraps = 15 - (snapshot.data['scraps']?.length ?? 0);
+          return InkWell(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(scr.width / 24, scr.width / 36,
+                  scr.width / 24, scr.width / 36),
+              decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6.0,
+                      spreadRadius: 3.0,
+                      offset: Offset(
+                        0.0,
+                        3.2,
+                      ),
+                    )
+                  ],
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(scr.width / 14.2)),
+              child: scraps == 0
+                  ? Text(
+                      'กระดาษของคุณหมดแล้ว',
+                      style: TextStyle(
+                        fontSize: scr.width / 18,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Row(
+                      children: <Widget>[
+                        Image.asset('assets/papericon.png',
+                            width: scr.width / 13.2,
+                            height: scr.width / 13.2,
+                            fit: BoxFit.cover),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                                fontSize: scr.width / 18,
+                                color: Colors.white,
+                                fontFamily: 'ThaiSans'),
+                            children: <TextSpan>[
+                              TextSpan(text: ' กระดาษรายวัน '),
+                              TextSpan(
+                                  text: '$scraps',
+                                  style: TextStyle(
+                                      fontSize: scr.width / 16,
+                                      fontWeight: FontWeight.bold)),
+                              TextSpan(
+                                text: ' แผ่น',
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+            ),
+            onTap: () {
+              scraps == 15
+                  ? toast('กระดาษของคุณยังเต็มอยู่')
+                  : scrapReseter(snapshot?.data, snapshot.data['lastReset']);
+            },
+          );
+        } else {
+          return SizedBox();
+        }
+      },
+    );
+  }
+
+  scrapReseter(DocumentSnapshot data, String lastReset) async {
+    DateTime now = DateTime.now();
+    String date = DateFormat('d/M/y').format(now);
+    lastReset == date
+        ? toast('คุณขอรับกระดาษได้แค่1ครั้งต่อวัน')
+        : warnClear(data);
+  }
+
+  warnClear(DocumentSnapshot data) {
+    bool loading = false;
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            return Stack(
+              children: <Widget>[
+                AlertDialog(
+                  backgroundColor: Colors.white,
+                  title: Text('คุณต้องขอกระดาษใหม่ใช่หรือไม่'),
+                  content: Text(
+                      'หลังจากขอกระดาษใหม่กระดาษที่คุณทิ้งไว้จะหายไปทั้งหมด'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('ยกเลิก'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    FlatButton(
+                      child: Text('ขอกระดาษใหม่'),
+                      onPressed: () async {
+                        setState(() => loading = true);
+                        await scrap.resetScrap(
+                            data['scraps'], widget.doc['uid']);
+                        setState(() => loading = false);
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
+                ),
+                loading ? Loading() : SizedBox()
+              ],
+            );
+          });
+        });
   }
 
   // Widget changeScrap(String scraps, Size a) {
@@ -359,7 +500,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-//ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี���ขึ้นมาไว้สร้าง Contents
+//ส่วนเมื่อกดปุ่ม Create จะเด���นกล่องนี���ขึ้นมาไว้สร้าง Contents
   void dialog() {
     DateTime now = DateTime.now();
     Navigator.of(context).push(MaterialPageRoute(
@@ -450,7 +591,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               ),
-                              //ส่ว��ของกระดาษที่เขีย���
+                              //ส่ว��ข���งกระดาษที่เขีย���
                               Container(
                                 margin: EdgeInsets.only(top: a.width / 150),
                                 width: a.width / 1,
@@ -649,11 +790,11 @@ class _HomePageState extends State<HomePage> {
         .then((dat) async {
       int scraps = dat.data['scraps']?.length ?? 0;
       if (scraps < 15) {
-        toast('คุณได้ทิ้งกระดาษไว้แล้ว');
+        toast('คุณได้ทิ้งกระด���ษไว้แล้ว');
         Navigator.pop(context);
         await scrap.binScrap(text, public, widget.doc);
       } else {
-        toast('กระดาษคุณหมดแล้ว');
+        toast('กระดาษคุ��หมดแล้ว');
       }
     });
   }

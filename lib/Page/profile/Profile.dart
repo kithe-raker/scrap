@@ -30,40 +30,6 @@ class _ProfileState extends State<Profile> {
   bool loading = false;
   Scraps scraps = Scraps();
 
-  checkReset(List scraps, String lastReset) async {
-    DateTime now = DateTime.now();
-    String date = DateFormat('d/M/y').format(now);
-    lastReset == date
-        ? toast('คุณขอรับกระดาษได้แค่1ครั้งต่อวัน')
-        : resetScrap(date, scraps);
-  }
-
-  resetScrap(String date, List scraps) async {
-    setState(() => loading = true);
-    scraps.forEach((id) async {
-      await deleteScrap(id);
-    });
-    await Firestore.instance
-        .collection('Users')
-        .document(widget.doc['uid'])
-        .collection('info')
-        .document(widget.doc['uid'])
-        .updateData({'lastReset': date, 'scraps': []});
-    setState(() => loading = false);
-    toast('คุณได้รับกระดาษเพิ่มแล้ว');
-  }
-
-  deleteScrap(dynamic scrapID) async {
-    if (scrapID.runtimeType is String) {
-      await Firestore.instance
-          .collection('Scraps')
-          .document('hatyai')
-          .collection('scrapsPosition')
-          .document(scrapID)
-          .delete();
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -86,7 +52,6 @@ class _ProfileState extends State<Profile> {
               builder: (context, snapshot) {
                 if (snapshot.hasData &&
                     snapshot.connectionState == ConnectionState.active) {
-                  int scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
                   return ListView(
                     children: <Widget>[
                       Padding(
@@ -211,33 +176,6 @@ class _ProfileState extends State<Profile> {
                               onTap: () {
                                 editStatus(snapshot?.data['status'], "thrown");
                               },
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Image.asset(
-                                  'assets/paper.png',
-                                  width: a.width / 8,
-                                ),
-                                Text(
-                                  '$scraps/15',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: a.width / 12),
-                                ),
-                                IconButton(
-                                    icon: Icon(Icons.refresh,
-                                        size: a.width / 12,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      scraps == 15
-                                          ? toast('กระดาษของคุณยังเต็มอยู่')
-                                          : checkReset(
-                                              snapshot.data['scraps'],
-                                              snapshot?.data['lastReset'] ??
-                                                  '');
-                                    })
-                              ],
                             ),
                             // ใส่ Container เพื่อสร้างกรอบ
                             Container(

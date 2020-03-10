@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -131,5 +132,42 @@ class Scraps {
         docID: {'text': text, 'time': now}
       }
     }, merge: true);
+  }
+
+  resetScrap(List scraps, String uid) async {
+    DateTime now = DateTime.now();
+    String date = DateFormat('d/M/y').format(now);
+    scraps.forEach((id) async {
+      await deleteScrap(id);
+    });
+    await Firestore.instance
+        .collection('Users')
+        .document(uid)
+        .collection('info')
+        .document(uid)
+        .updateData({'lastReset': date, 'scraps': []});
+    toast('คุณได้รับกระดาษเพิ่มแล้ว');
+  }
+
+  deleteScrap(dynamic scrapID) async {
+    if (scrapID.runtimeType is String) {
+      await Firestore.instance
+          .collection('Scraps')
+          .document('hatyai')
+          .collection('scrapsPosition')
+          .document(scrapID)
+          .delete();
+    }
+  }
+
+  toast(String text) {
+    return Fluttertoast.showToast(
+        msg: text,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.white60,
+        textColor: Colors.black,
+        fontSize: 16.0);
   }
 }
