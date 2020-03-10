@@ -379,7 +379,7 @@ class _ViewprofileState extends State<Viewprofile> {
                                                     textAlign: TextAlign.center,
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    maxLines: 3,
+                                                    maxLines: 2,
                                                     softWrap: false,
                                                     style: TextStyle(
                                                         fontSize:

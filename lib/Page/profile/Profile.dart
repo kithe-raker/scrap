@@ -193,7 +193,7 @@ class _ProfileState extends State<Profile> {
                                           'แตะเพื่อเพิ่มสเตตัส',
                                       textAlign: TextAlign.center,
                                       overflow: TextOverflow.ellipsis,
-                                      maxLines: 3,
+                                      maxLines: 2,
                                       softWrap: false,
                                       style: TextStyle(
                                           fontSize: a.width / 16.5,
