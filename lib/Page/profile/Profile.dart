@@ -1266,7 +1266,7 @@ class _ProfileState extends State<Profile> {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => FeedbackPage()));
         break;
-      case Constans.Feedback:
+      case Constans.Block:
         print('Block');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => BlockingList(userUID: widget.doc['uid'])));
