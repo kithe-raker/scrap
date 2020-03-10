@@ -1,7 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileCard extends StatefulWidget {
+  final DocumentSnapshot acc;
+  final DocumentSnapshot info;
+  final Function addSahai;
+  final bool isFriend;
+  ProfileCard(
+      {@required this.acc,
+      @required this.info,
+      @required this.addSahai,
+      @required this.isFriend});
   @override
   _ProfileCardState createState() => _ProfileCardState();
 }
@@ -31,18 +41,15 @@ class _ProfileCardState extends State<ProfileCard> {
             width: a.width / 4,
             height: a.width / 4,
             child: ClipRRect(
-                borderRadius: BorderRadius.circular(a.width),
-                child: Image.asset("assets/userprofile.png")
-                // child: snapshot.data['img'] == null
-                //                       ? Image.asset("assets/userprofile.png")
-                //                       : CachedNetworkImage(
-                //                           imageUrl: snapshot.data['img'],
-                //                           fit: BoxFit.cover,
-                //                         ),
-                ),
+              borderRadius: BorderRadius.circular(a.width),
+              child: CachedNetworkImage(
+                imageUrl: widget.info['img'],
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           Text(
-            "@natsatapon23",
+            "@${widget.acc['id']}",
             style: TextStyle(
               color: Colors.white,
               fontSize: a.width / 15,
@@ -50,7 +57,7 @@ class _ProfileCardState extends State<ProfileCard> {
             ),
           ),
           Text(
-            "Join 15/02/2020",
+            widget.info['createdDay'],
             style: TextStyle(color: Color(0xff26A4FF), fontSize: a.width / 18),
           ),
           Container(
@@ -63,7 +70,9 @@ class _ProfileCardState extends State<ProfileCard> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "“ยุบพรรคอนาคตใหม่แต่ยุบคนไทยไม่ได้หรอก ไอตู่หน้าโง่”",
+                  widget.info['status'] == null
+                      ? ''
+                      : '“${widget.info['status']}”',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
@@ -74,21 +83,49 @@ class _ProfileCardState extends State<ProfileCard> {
               ],
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(a.width),
-                border: Border.all(color: Colors.white)),
-            width: a.width / 4,
-            height: a.width / 10,
-            alignment: Alignment.center,
-            child: Text(
-              "+ สหาย",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: a.width / 18,
-              ),
-            ),
-          ),
+          widget.isFriend
+              ? Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(a.width),
+                      border: Border.all(color: Colors.white)),
+                  width: a.width / 4,
+                  height: a.width / 10,
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.check,
+                        size: a.width / 18,
+                      ),
+                      Text(
+                        " สหาย",
+                        style: TextStyle(
+                          fontSize: a.width / 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : InkWell(
+                  onTap: widget.addSahai,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(a.width),
+                        border: Border.all(color: Colors.white)),
+                    width: a.width / 4,
+                    height: a.width / 10,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "+ สหาย",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: a.width / 18,
+                      ),
+                    ),
+                  ),
+                ),
           SizedBox(
             height: a.height / 20,
           ),

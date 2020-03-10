@@ -182,8 +182,10 @@ class _FriendListState extends State<FriendList> {
                         SizedBox(
                           height: a.height / 12.5,
                         ),
-                        Padding(
+                        Container(
+                          width: a.width / 1.17,
                           padding: const EdgeInsets.only(left: 0),
+                          alignment: Alignment.centerLeft,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +207,6 @@ class _FriendListState extends State<FriendList> {
                             ],
                           ),
                         ),
-
                         SizedBox(
                           height: a.width / 13,
                         ),
@@ -673,154 +674,234 @@ class _AllFriendsState extends State<AllFriends> {
         Navigator.pop(context, true);
         return false;
       },
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      InkWell(
-                        child: Container(
-                          width: a.width / 7,
-                          height: a.width / 10,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(a.width),
-                              color: Colors.white),
-                          child: Icon(Icons.arrow_back,
-                              color: Colors.black, size: a.width / 15),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context, true);
-                        },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.topLeft,
+                    margin:
+                        EdgeInsets.only(top: a.width / 24, left: a.width / 24),
+                    child: InkWell(
+                      child: Container(
+                        width: a.width / 7,
+                        height: a.width / 10,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(a.width),
+                            color: Colors.white),
+                        child: Icon(Icons.arrow_back,
+                            color: Colors.black, size: a.width / 15),
                       ),
-                      SizedBox(
-                        width: a.width / 2.1,
-                      ),
-                      Text(
-                        'สหาย ${sortedList.length.toString()} คน',
-                        style: TextStyle(color: Colors.white),
-                      )
-                    ],
+                      onTap: () {
+                        Navigator.pop(context, true);
+                      },
+                    ),
                   ),
-                ),
-                Container(
-                    width: a.width,
-                    height: a.height / 1.1,
-                    child: ListView(
-                        controller: scrollController,
-                        itemExtent: a.height / 4.5,
-                        children: display
-                            .map((data) => cardStream(a, data))
-                            .toList()))
-              ],
-            ),
-          ],
+                  Container(
+                    margin: EdgeInsets.only(right: a.width / 21),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: <Widget>[
+                        Text(
+                          'สหาย',
+                          style: TextStyle(
+                              color: Colors.white, fontSize: a.width / 15),
+                        ),
+                        Text(
+                          ' ${sortedList.length.toString()} คน',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: a.width / 11,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                      width: a.width,
+                      height: a.height / 1.21,
+                      child: ListView(
+                          controller: scrollController,
+                          itemExtent: a.height / 5.6,
+                          children: display
+                              .map((data) => cardStream(a, data))
+                              .toList()))
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget cardStream(Size a, Map data) {
-    return userCard(a, data['img'], data['id'], data['join']);
+    return Center(child: userCard(a, data['img'], data['id'], data['join']));
   }
 
-  Widget userCard(Size a, String img, String id, String created,
+  Widget userCard(Size a, String img, String throwID, String created,
       {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0),
-      child: InkWell(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              width: a.width,
-              decoration: BoxDecoration(
-                  color: Color(0xff282828),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                    bottomRight: Radius.circular(16.0),
-                    bottomLeft: Radius.circular(16.0),
-                  )),
+    return InkWell(
+      focusColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Stack(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: a.width / 21),
+            height: a.height / 5.6,
+            width: a.width / 1.1,
+            decoration: BoxDecoration(
+                color: Color(0xff282828),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.0),
+                  topRight: Radius.circular(16.0),
+                  bottomRight: Radius.circular(16.0),
+                  bottomLeft: Radius.circular(16.0),
+                )),
+            child: Padding(
+              padding:
+                  EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 13),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(a.width),
-                          border: Border.all(
-                              color: Colors.white, width: a.width / 190)),
-                      width: a.width / 5,
-                      height: a.width / 5,
-                      child: ClipRRect(
-                        child: CachedNetworkImage(
-                          imageUrl: img,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(a.width),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: <Widget>[
-                        SizedBox(
-                          width: a.width / 2.2,
-                          height: a.width / 10,
-                          child: Text(
-                            id,
-                            style: TextStyle(
-                                fontSize: a.width / 13, color: Colors.white),
+                        Container(
+                          margin: EdgeInsets.only(
+                            right: 15,
+                          ),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(a.width),
+                              border: Border.all(
+                                  color: Colors.white, width: a.width / 190)),
+                          width: a.width / 4.8,
+                          height: a.width / 4.8,
+                          child: ClipRRect(
+                            child: CachedNetworkImage(
+                              imageUrl: img,
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(a.width),
                           ),
                         ),
-                        Row(
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              'Join $created',
+                              throwID,
                               style: TextStyle(
-                                  fontSize: a.width / 11,
-                                  color: Color(0xff26A4FF)),
+                                  fontSize: a.width / 13, color: Colors.white),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Text(
+                                  'Join $created',
+                                  style: TextStyle(
+                                      fontSize: a.width / 16,
+                                      color: Color(0xff26A4FF)),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ],
                     ),
+                    Container(
+                      width: a.width / 6.4,
+                      height: a.width / 6.4,
+                      decoration: BoxDecoration(
+                          // color: Colors.orange,
+                          borderRadius: BorderRadius.circular(a.width),
+                          border: Border.all(
+                              color: Colors.white24, width: a.width / 500)),
+                      child: Container(
+                        margin: EdgeInsets.all(a.width / 75),
+                        width: a.width / 7.5,
+                        height: a.width / 7.5,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(a.width),
+                            border: Border.all(color: Colors.white70)),
+                        child: Container(
+                          margin: EdgeInsets.all(a.width / 70),
+                          width: a.width / 7.5,
+                          height: a.width / 7.5,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(a.width),
+                              color: Colors.white,
+                              border: Border.all(color: Colors.white)),
+                          child: Icon(
+                            Icons.create,
+                            size: a.width / 26,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
                   ]),
             ),
-            Positioned(
-              right: 10.0,
-              top: 10.0,
-              child: Icon(
-                Icons.arrow_forward,
-                color: Color(0xffA3A3A3),
-                size: 30.0,
-              ),
-            )
-          ],
-        ),
-        onTap: () async {
-          // widget.scrap == null
-          bool resault = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Viewprofile(
-                  id: id,
-                  self: widget.doc,
-                  data: widget.scrap,
-                ),
-              ));
-          if (resault) {
-            initFriend(display.length);
-          }
-          //     : warnDialog(id, tID);
-        },
+          ),
+          // Positioned(
+          //   right: 10.0,
+          //   top: 10.0,
+          //   child: Container(
+          //     width: a.width / 6,
+          //     height: a.width / 6,
+          //     decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(a.width),
+          //         border: Border.all(
+          //             color: Colors.white24, width: a.width / 500)),
+          //     child: Container(
+          //       margin: EdgeInsets.all(a.width / 55),
+          //       width: a.width / 5.5,
+          //       height: a.width / 5.5,
+          //       decoration: BoxDecoration(
+          //           borderRadius: BorderRadius.circular(a.width),
+          //           border: Border.all(color: Colors.white70)),
+          //       child: Container(
+          //         margin: EdgeInsets.all(a.width / 57),
+          //         width: a.width / 6,
+          //         height: a.width / 6,
+          //         decoration: BoxDecoration(
+          //             borderRadius: BorderRadius.circular(a.width),
+          //             color: Colors.white,
+          //             border: Border.all(color: Colors.white)),
+          //         child: Icon(
+          //           Icons.create,
+          //           size: a.width / 23,
+          //           color: Colors.black,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          //   // Icon(
+          //   //   Icons.arrow_forward,
+          //   //   color: Color(0xffA3A3A3),
+          //   //   size: 30.0,
+          //   // ),
+          // )
+        ],
       ),
+      onTap: () async {
+        bool resault = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Viewprofile(
+                  id: throwID, self: widget.doc, data: widget.scrap),
+            )); //ไปยังหน้า Search
+        if (resault) {
+          initFriend(display.length);
+        }
+      },
     );
   }
 }
