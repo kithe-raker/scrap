@@ -679,59 +679,61 @@ class _AllFriendsState extends State<AllFriends> {
           backgroundColor: Colors.black,
           body: Stack(
             children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.topLeft,
-                    margin:
-                        EdgeInsets.only(top: a.width / 24, left: a.width / 24),
-                    child: InkWell(
-                      child: Container(
-                        width: a.width / 7,
-                        height: a.width / 10,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(a.width),
-                            color: Colors.white),
-                        child: Icon(Icons.arrow_back,
-                            color: Colors.black, size: a.width / 15),
-                      ),
-                      onTap: () {
-                        Navigator.pop(context, true);
-                      },
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(right: a.width / 21),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: <Widget>[
-                        Text(
-                          'สหาย',
-                          style: TextStyle(
-                              color: Colors.white, fontSize: a.width / 15),
+              SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(
+                          top: a.width / 24, left: a.width / 24),
+                      child: InkWell(
+                        child: Container(
+                          width: a.width / 7,
+                          height: a.width / 10,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(a.width),
+                              color: Colors.white),
+                          child: Icon(Icons.arrow_back,
+                              color: Colors.black, size: a.width / 15),
                         ),
-                        Text(
-                          ' ${sortedList.length.toString()} คน',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: a.width / 11,
-                          ),
-                        )
-                      ],
+                        onTap: () {
+                          Navigator.pop(context, true);
+                        },
+                      ),
                     ),
-                  ),
-                  Container(
-                      width: a.width,
-                      height: a.height / 1.21,
-                      child: ListView(
-                          controller: scrollController,
-                          itemExtent: a.height / 5.6,
-                          children: display
-                              .map((data) => cardStream(a, data))
-                              .toList()))
-                ],
+                    Container(
+                      margin: EdgeInsets.only(right: a.width / 21),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: <Widget>[
+                          Text(
+                            'สหาย',
+                            style: TextStyle(
+                                color: Colors.white, fontSize: a.width / 15),
+                          ),
+                          Text(
+                            ' ${sortedList.length.toString()} คน',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: a.width / 11,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                        width: a.width,
+                        height: a.height / 1.4,
+                        child: ListView(
+                            // controller: scrollController,
+                            itemExtent: a.height / 5.6,
+                            children: display
+                                .map((data) => cardStream(a, data))
+                                .toList()))
+                  ],
+                ),
               ),
             ],
           ),
