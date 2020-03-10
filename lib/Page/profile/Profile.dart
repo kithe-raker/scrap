@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/Page/setting/FeedbackPage.dart';
 import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
+import 'package:scrap/Page/setting/blockingList.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
@@ -1191,6 +1192,11 @@ class _ProfileState extends State<Profile> {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => FeedbackPage()));
         break;
+      case Constans.Feedback:
+        print('Block');
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => BlockingList(userUID: widget.doc['uid'])));
+        break;
       case Constans.About:
         print('About');
         Navigator.push(
@@ -1212,12 +1218,14 @@ class _ProfileState extends State<Profile> {
 class Constans {
   static const String Account = 'แก้ไขบัญชี';
   static const String Feedback = 'ให้คำแนะนำ';
+  static const String Block = 'การบล็อค';
   static const String About = 'เกี่ยวกับแอป';
   static const String SignOut = 'ออกจากระบบ';
 
   static const List<String> choices = <String>[
     Account,
     Feedback,
+    Block,
     About,
     SignOut,
   ];
