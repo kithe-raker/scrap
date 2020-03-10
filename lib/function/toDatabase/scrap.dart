@@ -31,7 +31,7 @@ class Scraps {
         ])
       }
     }, merge: true);
-    notifaication(thrownID, date, time, public, writer, now);
+    notifaication(thrownID, date, time, public, writer);
     updateHistory(uid, thrownID);
     increaseTransaction(uid, 'written');
     increaseTransaction(thrownID, 'threw');
@@ -48,8 +48,8 @@ class Scraps {
     });
   }
 
-  notifaication(String who, String date, String time, bool public,
-      String writer, DateTime stamp) async {
+  notifaication(
+      String who, String date, String time, bool public, String writer) async {
     Firestore.instance.collection('Notifications').add({'uid': who});
     Firestore.instance
         .collection('Users')
@@ -59,7 +59,7 @@ class Scraps {
       'writer': public ?? false ? writer : 'ไม่ระบุตัวตน',
       'date': date,
       'time': time,
-      'timeStamp': stamp
+      'timeStamp': FieldValue.serverTimestamp()
     });
   }
 
@@ -72,7 +72,7 @@ class Scraps {
         .updateData({key: FieldValue.increment(1)});
   }
 
-  binScrap(DateTime now, String text, bool public, DocumentSnapshot doc) async {
+  binScrap(String text, bool public, DocumentSnapshot doc) async {
     GeoFirePoint point;
     await Geolocator().getCurrentPosition().then((value) => point =
         Geoflutterfire()
@@ -93,7 +93,7 @@ class Scraps {
         'scrap': {
           'text': text,
           'user': public ?? false ? doc['id'] : 'ไม่ระบุตัวตน',
-          'timeStamp': now,
+          'timeStamp': FieldValue.serverTimestamp(),
         },
         'position': point.data
       });
@@ -117,13 +117,16 @@ class Scraps {
   toHistory(String uid, String docID, String text) async {
     DateTime now = DateTime.now();
     String date = DateFormat('y,M,d').format(now);
+    String dateRef = DateFormat('yyyyMMdd').format(now);
     Firestore.instance
         .collection('Users')
         .document(uid)
         .collection('history')
         .document(date)
         .setData({
+      'scrapID': FieldValue.arrayUnion([docID]),
       docID: 0,
+      'date': dateRef,
       'Scraps': {
         docID: {'text': text, 'time': now}
       }

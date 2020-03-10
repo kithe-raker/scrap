@@ -39,7 +39,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   describeApp() async {
     DateTime now = DateTime.now();
-    String date = DateFormat('d,M,y').format(now);
+    String date = DateFormat('y,M,d').format(now);
     final uid = await Provider.of(context).auth.currentUser();
     try {
       setState(() {
