@@ -20,7 +20,7 @@ class _BlockingListState extends State<BlockingList> {
                 .document(widget.userUID)
                 .snapshots(),
         builder: (context ,snapshot){
-          if(!snapshot.hasData)
+          if(!snapshot.hasData || snapshot == null)
           {
             return Text("ไม่มีผู้ใช้ที่โดนบล็อค");
           }
