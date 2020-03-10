@@ -53,6 +53,7 @@ class _ViewprofileState extends State<Viewprofile> {
   checkData() async {
     List list = await jsonConverter.readContents();
     Map data = list.firstWhere((dat) => dat['id'] == widget.id);
+    img = data['img'];
     index = list.indexOf(data);
     if (await notHaveAccount(widget.id)) {
       await updateData(list);
@@ -91,10 +92,10 @@ class _ViewprofileState extends State<Viewprofile> {
           remove ? FieldValue.arrayRemove([uid]) : FieldValue.arrayUnion([uid])
     }, merge: true);
     if (remove) {
-      jsonConverter.removeContent(key: 'id', where: id);
+      await jsonConverter.removeContent(key: 'id', where: id);
       friends.removeWhere((dat) => dat['id'] == id);
     } else {
-      jsonConverter.addContent(id: id, imgUrl: img, joinD: join);
+      await jsonConverter.addContent(id: id, imgUrl: img, joinD: join);
       friends.add({'id': id, 'imgUrl': img, 'joinD': join});
     }
     setState(() {});

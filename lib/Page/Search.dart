@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/viewprofile.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class Search extends StatefulWidget {
@@ -23,6 +24,7 @@ class _SearchState extends State<Search> {
   Scraps scraps = Scraps();
   JsonConverter jsonConverter = JsonConverter();
   List friends = [];
+  bool loading = false;
 
   @override
   void initState() {
@@ -45,208 +47,216 @@ class _SearchState extends State<Search> {
       },
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: ListView(children: <Widget>[
-          Container(
-            color: Colors.black,
-            width: a.width,
-            child: Padding(
-              padding: EdgeInsets.only(
-                  top: a.width / 20,
-                  right: a.width / 25,
-                  left: a.width / 25,
-                  bottom: a.width / 8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Column(
+        body: Stack(
+          children: <Widget>[
+            ListView(children: <Widget>[
+              Container(
+                color: Colors.black,
+                width: a.width,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      top: a.width / 20,
+                      right: a.width / 25,
+                      left: a.width / 25,
+                      bottom: a.width / 8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Column(
                         children: <Widget>[
-                          InkWell(
-                            child: Container(
-                              width: a.width / 7,
-                              height: a.width / 10,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(a.width),
-                                  color: Colors.white),
-                              child: Icon(Icons.arrow_back,
-                                  color: Colors.black, size: a.width / 15),
-                            ),
-                            onTap: () {
-                              Navigator.pop(context, true);
-                            },
-                          ),
-                        ],
-                      ), //back btn
-                      SizedBox(height: a.height / 12.5),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'ค้นหาผู้ใช้',
-                              style: TextStyle(
-                                  fontSize: a.width / 6.5,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                            Text(
-                              'ค้นหาคนที่คุณรู้จักแล้วปากระดาษใส่พวกเขากัน',
-                              style: TextStyle(
-                                  fontSize: a.width / 16,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: a.width / 13,
-                      ),
-                      Form(
-                        key: _key,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Container(
-                                margin: EdgeInsets.only(bottom: 30),
-                                width: a.width / 1.4,
-                                height: a.width / 6.5,
-                                decoration: BoxDecoration(
-                                  color: Color(0xff282828),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(300)),
-                                  border: Border.all(
-                                      width: 2, color: Colors.grey[800]),
-                                ),
-                                child: TextFormField(
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 14,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: '@somename',
-                                    hintStyle:
-                                        TextStyle(color: Colors.grey[700]),
-                                  ),
-                                  validator: (val) {
-                                    return val.trim() == ""
-                                        ? Taoast().toast("โปรดใส่ไอดี")
-                                        : val[0] == '@'
-                                            ? null
-                                            : Taoast().toast(
-                                                "ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid");
-                                  },
-                                  onSaved: (value) {
-                                    id = value.trim();
-                                    setState(() {});
-                                  },
-                                  textInputAction: TextInputAction.done,
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              child: Container(
-                                  margin: EdgeInsets.only(bottom: 30),
-                                  alignment: Alignment.center,
-                                  width: a.width / 8,
-                                  height: a.width / 8,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              InkWell(
+                                child: Container(
+                                  width: a.width / 7,
+                                  height: a.width / 10,
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
-                                    border: Border.all(
-                                        width: 2, color: Colors.white),
-                                    color: Color(0xff26A4FF),
-                                  ),
-                                  child: Text(
-                                    '@',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: a.width / 11,
-                                        color: Colors.white),
-                                  )),
-                              onTap: () {
-                                if (_key.currentState.validate()) {
-                                  _key.currentState.save();
-                                }
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  id == null ||
-                          id == '' ||
-                          id.length < 2 ||
-                          id.substring(1) == widget.doc['id']
-                      ? guide(
-                          a,
-                          'ค้นหาคนที่คุณต้องการปาใส่',
-                          a.height / 2.1,
-                        )
-                      : StreamBuilder(
-                          stream: Firestore.instance
-                              .collection('SearchUsers')
-                              .document(id[1])
-                              .collection('users')
-                              .where('id', isEqualTo: id.substring(1))
-                              .limit(1)
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData &&
-                                snapshot.connectionState ==
-                                    ConnectionState.active) {
-                              List docs = snapshot.data.documents;
-                              return docs?.length == null || docs?.length == 0
-                                  ? guide(
-                                      a,
-                                      'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว',
-                                      a.height / 1.5,
-                                    )
-                                  : Column(
-                                      children: docs
-                                          .map((data) =>
-                                              cardStream(a, data['uid']))
-                                          .toList(),
-                                    );
-                            } else {
-                              return Container(
-                                height: a.height / 2.1,
-                                width: a.width,
-                                child: Center(
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                      color: Colors.white),
+                                  child: Icon(Icons.arrow_back,
+                                      color: Colors.black, size: a.width / 15),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context, true);
+                                },
+                              ),
+                            ],
+                          ), //back btn
+                          SizedBox(height: a.height / 12.5),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  'ค้นหาผู้ใช้',
+                                  style: TextStyle(
+                                      fontSize: a.width / 6.5,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                Text(
+                                  'ค้นหาคนที่คุณรู้จักแล้วปากระดาษใส่พวกเขากัน',
+                                  style: TextStyle(
+                                      fontSize: a.width / 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: a.width / 13,
+                          ),
+                          Form(
+                            key: _key,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
                                   child: Container(
-                                    width: a.width / 3.6,
-                                    height: a.width / 3.6,
+                                    margin: EdgeInsets.only(bottom: 30),
+                                    width: a.width / 1.4,
+                                    height: a.width / 6.5,
                                     decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.42),
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
-                                    child: FlareActor(
-                                      'assets/paper_loading.flr',
-                                      animation: 'Untitled',
-                                      fit: BoxFit.cover,
+                                      color: Color(0xff282828),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(300)),
+                                      border: Border.all(
+                                          width: 2, color: Colors.grey[800]),
+                                    ),
+                                    child: TextFormField(
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: a.width / 14,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                      keyboardType: TextInputType.emailAddress,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: '@somename',
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey[700]),
+                                      ),
+                                      validator: (val) {
+                                        return val.trim() == ""
+                                            ? Taoast().toast("โปรดใส่ไอดี")
+                                            : val[0] == '@'
+                                                ? null
+                                                : Taoast().toast(
+                                                    "ค้นหาคนที่คุณจะปาใส่โดยใส่@ตามด้วยชื่อid");
+                                      },
+                                      onSaved: (value) {
+                                        id = value.trim();
+                                        setState(() {});
+                                      },
+                                      textInputAction: TextInputAction.done,
                                     ),
                                   ),
                                 ),
-                              );
-                            }
-                          })
-                ],
+                                InkWell(
+                                  child: Container(
+                                      margin: EdgeInsets.only(bottom: 30),
+                                      alignment: Alignment.center,
+                                      width: a.width / 8,
+                                      height: a.width / 8,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(a.width),
+                                        border: Border.all(
+                                            width: 2, color: Colors.white),
+                                        color: Color(0xff26A4FF),
+                                      ),
+                                      child: Text(
+                                        '@',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: a.width / 11,
+                                            color: Colors.white),
+                                      )),
+                                  onTap: () {
+                                    if (_key.currentState.validate()) {
+                                      _key.currentState.save();
+                                    }
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      id == null ||
+                              id == '' ||
+                              id.length < 2 ||
+                              id.substring(1) == widget.doc['id']
+                          ? guide(
+                              a,
+                              'ค้นหาคนที่คุณต้องการปาใส่',
+                              a.height / 2.1,
+                            )
+                          : StreamBuilder(
+                              stream: Firestore.instance
+                                  .collection('SearchUsers')
+                                  .document(id[1])
+                                  .collection('users')
+                                  .where('id', isEqualTo: id.substring(1))
+                                  .limit(1)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData &&
+                                    snapshot.connectionState ==
+                                        ConnectionState.active) {
+                                  List docs = snapshot.data.documents;
+                                  return docs?.length == null ||
+                                          docs?.length == 0
+                                      ? guide(
+                                          a,
+                                          'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว',
+                                          a.height / 1.5,
+                                        )
+                                      : Column(
+                                          children: docs
+                                              .map((data) =>
+                                                  cardStream(a, data['uid']))
+                                              .toList(),
+                                        );
+                                } else {
+                                  return Container(
+                                    height: a.height / 2.1,
+                                    width: a.width,
+                                    child: Center(
+                                      child: Container(
+                                        width: a.width / 3.6,
+                                        height: a.width / 3.6,
+                                        decoration: BoxDecoration(
+                                            color:
+                                                Colors.white.withOpacity(0.42),
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        child: FlareActor(
+                                          'assets/paper_loading.flr',
+                                          animation: 'Untitled',
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              })
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-        ]),
+            ]),
+            loading ? Loading() : SizedBox()
+          ],
+        ),
       ),
     );
   }
@@ -466,9 +476,9 @@ class _SearchState extends State<Search> {
         .document(thrownID)
         .get()
         .then((value) {
-          blockList = value['blockList'];
-              
-          /*List blockList = value['blockList'];
+      blockList = value['blockList'];
+
+      /*List blockList = value['blockList'];
           int len = blockList.length;
           int i = 0;
           int count = 0;
@@ -482,13 +492,12 @@ class _SearchState extends State<Search> {
         return true;
       else
         return false;*/
-          
     });
-    return blockList.where((data) => data['uid'] == uid ).length > 0 ;
-    
+    return blockList.where((data) => data['uid'] == uid).length > 0;
   }
 
   addFriend(String uid, String newFriend, String img, String join) async {
+    setState(() => loading = true);
     await Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
@@ -497,7 +506,8 @@ class _SearchState extends State<Search> {
         .setData({
       'friendList': FieldValue.arrayUnion([uid])
     }, merge: true);
-    jsonConverter.addContent(id: newFriend, imgUrl: img, joinD: join);
+    await jsonConverter.addContent(id: newFriend, imgUrl: img, joinD: join);
+    loading = false;
     setState(
         () => friends.add({'id': newFriend, 'imgUrl': img, 'joinD': join}));
   }
