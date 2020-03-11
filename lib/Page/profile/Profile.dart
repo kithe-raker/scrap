@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
+
 import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/Page/setting/FeedbackPage.dart';
 import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
@@ -574,7 +574,7 @@ class _ProfileState extends State<Profile> {
 
   //ส่วนของ กระดาษที่ถูกปาใ��่ เม���่อกด
   dialog(
-      String text, String writer, String time, Map scpData, String writerID) {
+      String text, String writer, String time, Map scpData, String writerUID) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) {
           Size a = MediaQuery.of(context).size;
@@ -591,7 +591,7 @@ class _ProfileState extends State<Profile> {
                     padding: EdgeInsets.only(
                         left: a.width / 20, right: a.width / 20),
                     width: a.width,
-                    height: a.height / 1,
+                    height: a.height,
                     child: Stack(
                       children: <Widget>[
                         Column(
@@ -638,7 +638,7 @@ class _ProfileState extends State<Profile> {
                                               child: Text("ปากลับ"),
                                             ),
                                             onTap: () {
-                                              dialogPa(writerID, writer);
+                                              dialogPa(writerUID, writer);
                                             },
                                           )
                                         ],
@@ -710,13 +710,14 @@ class _ProfileState extends State<Profile> {
                                           .collection('scraps')
                                           .document('collection')
                                           .setData({
-                                        'id': FieldValue.arrayUnion([writerID]),
+                                        'id':
+                                            FieldValue.arrayUnion([writerUID]),
                                         'scraps': {
-                                          writerID:
+                                          writerUID:
                                               FieldValue.arrayUnion([scpData])
                                         }
                                       }, merge: true);
-                                      await ignore(writerID, scpData);
+                                      await ignore(writerUID, scpData);
                                     },
                                   ),
                                   InkWell(
@@ -752,7 +753,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                     onTap: () async {
                                       Navigator.pop(context);
-                                      await ignore(writerID, scpData);
+                                      await ignore(writerUID, scpData);
                                     },
                                   ),
                                   InkWell(
@@ -789,8 +790,8 @@ class _ProfileState extends State<Profile> {
                                       ),
                                     ),
                                     onTap: () {
-                                      blockDialog(
-                                          widget.doc['uid'], writerID, scpData);
+                                      blockDialog(widget.doc['uid'], writerUID,
+                                          scpData);
                                       //dialogPa(writerID, writer);
                                     },
                                   ),
@@ -1024,39 +1025,43 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       InkWell(
-                        child: Container(
-                          width: a.width,
-                          alignment: Alignment.centerRight,
-                          margin: EdgeInsets.only(
-                              top: a.width / 15, right: a.width / 33),
                           child: Container(
-                              width: a.width / 5.5,
-                              height: a.width / 11,
-                              decoration: BoxDecoration(
-                                  color: Color(0xff26A4FF),
-                                  borderRadius: BorderRadius.circular(a.width)),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "ปาเลย",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 15),
-                              )),
-                        ),
-                        onTap: () {
-                          toast(thrown == 'ไม่ระบุตัวตน'
-                              ? 'ปากลับแล้ว'
-                              : 'ปากลับใส่"$thrown"แล้ว');
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          scraps.throwTo(
-                              uid: widget.doc['uid'],
-                              writer: widget.doc['id'],
-                              thrownID: id,
-                              text: text2,
-                              public: true);
-                        },
-                      )
+                            width: a.width,
+                            alignment: Alignment.centerRight,
+                            margin: EdgeInsets.only(
+                                top: a.width / 15, right: a.width / 33),
+                            child: Container(
+                                width: a.width / 5.5,
+                                height: a.width / 11,
+                                decoration: BoxDecoration(
+                                    color: Color(0xff26A4FF),
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "ปาเลย",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: a.width / 15),
+                                )),
+                          ),
+                          onTap: () async {
+                            if (await scraps.blocked(widget.doc['uid'], id)) {
+                              toast('คุณไม่สามารถปาไปหา"$thrown"ได้');
+                            } else {
+                              toast(thrown == 'ไม่ระบุตัวตน'
+                                  ? 'ปากลับแล้ว'
+                                  : 'ปากลับใส่"$thrown"แล้ว');
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              scraps.throwTo(
+                                  uid: widget.doc['uid'],
+                                  writer: widget.doc['id'],
+                                  thrownUID: id,
+                                  text: text2,
+                                  public: true);
+                            }
+                          })
                     ],
                   ),
                   Positioned(
@@ -1101,15 +1106,35 @@ class _ProfileState extends State<Profile> {
               FlatButton(
                 child: Text('ตกลง'),
                 onPressed: () async {
-                  toast('ทำการบล็อคแล้ว');
                   Navigator.pop(context);
                   Navigator.pop(context);
-                  await blockFunction(userReceive, userSent, scpData);
+                  await blockCheck(userReceive, userSent, scpData);
                 },
               )
             ],
           );
         });
+  }
+
+  blockCheck(String userReceive, String userSent, Map scpData) async {
+    List blockList = [];
+    await Firestore.instance
+        .collection("Users")
+        .document(userReceive)
+        .collection("info")
+        .document("blockList")
+        .get()
+        .then((value) {
+      blockList = value['blockList'];
+    });
+    bool check = blockList.where((data) => data['uid'] == userSent).length > 0;
+    if (check)
+      toast('คุณบล็อคอยู่แล้ว');
+    else if (check == false) {
+      blockFunction(userReceive, userSent, scpData);
+      ignore(userSent, scpData);
+      toast('ทำการบล็อคแล้ว');
+    }
   }
 
   blockFunction(String userReceive, String userSent, Map scpData) async {
@@ -1122,8 +1147,8 @@ class _ProfileState extends State<Profile> {
     await Firestore.instance
         .collection("Users")
         .document(userReceive)
-        .collection("blockList")
-        .document(userReceive)
+        .collection('info')
+        .document('blockList')
         .setData({
       'blockList': FieldValue.arrayUnion([blocked])
     }, merge: true);
@@ -1205,9 +1230,10 @@ class _ProfileState extends State<Profile> {
             context, MaterialPageRoute(builder: (context) => FeedbackPage()));
         break;
       case Constans.Block:
-        print('Block');
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => BlockingList(userUID: widget.doc['uid'])));
+            context,
+            MaterialPageRoute(
+                builder: (context) => BlockingList(uid: widget.doc['uid'])));
         break;
       case Constans.About:
         Navigator.push(
@@ -1236,17 +1262,17 @@ class _ProfileState extends State<Profile> {
 class Constans {
   static const String Account = 'แก้ไขบัญชี';
   static const String Feedback = 'ให้คำแนะนำ';
+  static const String History = 'ประวัติการทิ้ง';
   static const String Block = 'การบล็อค';
   static const String About = 'เกี่ยวกับแอป';
   static const String SignOut = 'ออกจากระบบ';
-  static const String History = 'ประวัติการทิ้ง';
 
   static const List<String> choices = <String>[
     Account,
     Feedback,
+    History,
     Block,
     About,
     SignOut,
-    History
   ];
 }

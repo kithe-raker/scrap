@@ -15,7 +15,6 @@ class _HistoryState extends State<History> {
   List scrapsID = [];
   Set firstScrap = Set();
   QuerySnapshot cache;
-  ScrollController scrollController = ScrollController();
   @override
   void initState() {
     initializeDateFormatting();
@@ -83,27 +82,29 @@ class _HistoryState extends State<History> {
 
   Widget gridRebuild(List docs, Size scr) {
     modify = {};
+    Map trans = {};
     scrapsID = [];
     for (DocumentSnapshot data in docs) {
       for (String id in data['scrapID']) {
         data['scrapID'].indexOf(id) == 0 ? firstScrap.add(id) : null;
         scrapsID.add(id);
         modify[id] = data['Scraps'][id];
+        trans[id] = data[id];
       }
     }
     return GridView(
-        controller: scrollController,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             childAspectRatio: 0.7383,
-            crossAxisSpacing: 5.6,
-            mainAxisSpacing: 1.2),
+            crossAxisSpacing: 3.6,
+            mainAxisSpacing: 3.6),
         children: scrapsID
-            .map((id) => scrap(modify[id], scr, firstScrap.contains(id)))
+            .map((id) =>
+                scrap(modify[id], trans[id], scr, firstScrap.contains(id)))
             .toList());
   }
 
-  Widget scrap(Map data, Size scr, bool first) {
+  Widget scrap(Map data, int transac, Size scr, bool first) {
     DateTime dateTime = data['time'].toDate();
     String time = DateFormat('Hm').format(dateTime);
     return Container(
@@ -198,7 +199,7 @@ class _HistoryState extends State<History> {
             ],
           ),
           onTap: () {
-            dialog(data['text'], 'คุณ',
+            dialog(data['text'], transac,
                 DateFormat('HH:mm dd/MM/yyyy').format(data['time'].toDate()));
           },
         ),
@@ -212,7 +213,7 @@ class _HistoryState extends State<History> {
     return date;
   }
 
-  dialog(String text, String writer, String time) {
+  dialog(String text, int transac, String time) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) {
           Size a = MediaQuery.of(context).size;
@@ -258,7 +259,7 @@ class _HistoryState extends State<History> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
-                                              Text('เขียนโดย : $writer'),
+                                              Text('เขียนโดย : คุณ'),
                                               Text('เวลา : $time')
                                             ],
                                           ),
@@ -281,6 +282,21 @@ class _HistoryState extends State<History> {
                                   //   dialogPa(writerID, writer);
                                   // },
                                 ),
+                                Positioned(
+                                    bottom: a.width / 21,
+                                    right: a.width / 21,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(Icons.remove_red_eye,
+                                            size: a.width / 18),
+                                        Text(
+                                            transac == 0
+                                                ? ' ไม่มีคนหยิบอ่าน'
+                                                : ' ผุ้คนหยิบอ่าน $transac คน',
+                                            style: TextStyle(
+                                                fontSize: a.width / 18))
+                                      ],
+                                    ))
                               ],
                             ),
                             SizedBox(height: a.width / 15),
@@ -300,12 +316,12 @@ class _HistoryState extends State<History> {
                                               BorderRadius.circular(a.width)),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        "ทิ้ง",
+                                        "ปิด",
                                         style:
                                             TextStyle(fontSize: a.width / 15),
                                       ),
                                     ),
-                                    onTap: () async {
+                                    onTap: () {
                                       Navigator.pop(context);
                                     },
                                   ),

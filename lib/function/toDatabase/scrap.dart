@@ -9,7 +9,7 @@ class Scraps {
   throwTo(
       {@required String uid,
       @required String writer,
-      @required String thrownID,
+      @required String thrownUID,
       @required String text,
       @required bool public}) async {
     DateTime now = DateTime.now();
@@ -17,7 +17,7 @@ class Scraps {
     String date = DateFormat('d/M/y').format(now);
     await Firestore.instance
         .collection('Users')
-        .document(thrownID)
+        .document(thrownUID)
         .collection('scraps')
         .document('recently')
         .setData({
@@ -32,10 +32,10 @@ class Scraps {
         ])
       }
     }, merge: true);
-    notifaication(thrownID, date, time, public, writer);
-    updateHistory(uid, thrownID);
+    notifaication(thrownUID, date, time, public, writer);
+    updateHistory(uid, thrownUID);
     increaseTransaction(uid, 'written');
-    increaseTransaction(thrownID, 'threw');
+    increaseTransaction(thrownUID, 'threw');
   }
 
   updateHistory(String uid, String thrown) async {
@@ -158,6 +158,20 @@ class Scraps {
           .document(scrapID)
           .delete();
     }
+  }
+
+  Future<bool> blocked(String uid, String thrownUID) async {
+    List blockList = [];
+    await Firestore.instance
+        .collection('Users')
+        .document(thrownUID)
+        .collection('info')
+        .document('blockList')
+        .get()
+        .then((value) {
+      blockList = value?.data['blockList'] ?? [];
+    });
+    return blockList.where((data) => data['uid'] == uid).length > 0;
   }
 
   toast(String text) {

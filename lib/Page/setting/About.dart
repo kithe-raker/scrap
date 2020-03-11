@@ -28,8 +28,8 @@ class _AboutState extends State<About> {
                       child: ArrowBack(),
                     ),
                     Container(
-                      padding:
-                          EdgeInsets.only(left: a.width / 15, top: a.height / 56),
+                      padding: EdgeInsets.only(
+                          left: a.width / 15, top: a.height / 56),
                       width: a.width,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,11 +101,13 @@ class _AboutState extends State<About> {
                                       children: <Widget>[
                                         Text(
                                           "เวอร์ชัน : ",
-                                          style: TextStyle(fontSize: a.width / 20),
+                                          style:
+                                              TextStyle(fontSize: a.width / 20),
                                         ),
                                         Text(
                                           "1.0.3",
-                                          style: TextStyle(fontSize: a.width / 20),
+                                          style:
+                                              TextStyle(fontSize: a.width / 20),
                                         )
                                       ],
                                     ),
@@ -113,14 +115,16 @@ class _AboutState extends State<About> {
                                       children: <Widget>[
                                         Text(
                                           "ผู้พัฒนา : ",
-                                          style: TextStyle(fontSize: a.width / 20),
+                                          style:
+                                              TextStyle(fontSize: a.width / 20),
                                         ),
                                         Text(
                                           "Bualoitech.co.th",
                                           style: TextStyle(
                                             color: Color(0xff26A4FF),
                                             fontSize: a.width / 20,
-                                            decoration: TextDecoration.underline,
+                                            decoration:
+                                                TextDecoration.underline,
                                           ),
                                         )
                                       ],
@@ -149,7 +153,8 @@ class _AboutState extends State<About> {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => Servicedoc(),
+                                              builder: (context) =>
+                                                  Servicedoc(),
                                             ));
                                       },
                                     ),

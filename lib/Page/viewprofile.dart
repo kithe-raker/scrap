@@ -545,7 +545,7 @@ class _ViewprofileState extends State<Viewprofile> {
     );
   }
 
-  warnDialog(String user, String thrownID) {
+  warnDialog(String user, String thrownUID) {
     showDialog(
         context: context,
         builder: (builder) {
@@ -563,16 +563,20 @@ class _ViewprofileState extends State<Viewprofile> {
               FlatButton(
                 child: Text('ตกลง'),
                 onPressed: () async {
-                  toast('ปาใส่"$user"แล้ว');
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context, true);
-                  await scraps.throwTo(
-                      uid: widget.self['uid'],
-                      thrownID: thrownID,
-                      text: widget.data['text'],
-                      public: widget.data['public'],
-                      writer: widget.self['id']);
+                  if (await scraps.blocked(widget.self['uid'], thrownUID)) {
+                    toast('คุณไม่สามารถปาไปหา"$user"ได้');
+                  } else {
+                    toast('ปาใส่"$user"แล้ว');
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.pop(context, true);
+                    await scraps.throwTo(
+                        uid: widget.self['uid'],
+                        thrownUID: thrownUID,
+                        text: widget.data['text'],
+                        public: widget.data['public'],
+                        writer: widget.self['id']);
+                  }
                 },
               )
             ],
@@ -809,17 +813,20 @@ class _ViewprofileState extends State<Viewprofile> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          Navigator.pop(context);
-                                          Navigator.pop(context, true);
-                                          await scraps.throwTo(
-                                              uid: widget.self['uid'],
-                                              thrownID: uid,
-                                              text: text,
-                                              public: public,
-                                              writer: widget.self['id']);
-                                          Taoast().toast('ปาใส่"$id"แล้ว');
-                                        } else {
-                                          print('nope');
+                                          if (await scraps.blocked(
+                                              widget.self['uid'], uid)) {
+                                            toast('คุณไม่สามารถปาไปหา"$id"ได้');
+                                          } else {
+                                            Navigator.pop(context);
+                                            Navigator.pop(context, true);
+                                            await scraps.throwTo(
+                                                uid: widget.self['uid'],
+                                                thrownUID: uid,
+                                                text: text,
+                                                public: public,
+                                                writer: widget.self['id']);
+                                            Taoast().toast('ปาใส่"$id"แล้ว');
+                                          }
                                         }
                                       },
                                     )
