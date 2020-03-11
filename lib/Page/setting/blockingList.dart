@@ -286,7 +286,7 @@ class _BlockingListState extends State<BlockingList> {
                                               BorderRadius.circular(a.width)),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        "ทิ้ง",
+                                        "ปิด",
                                         style:
                                             TextStyle(fontSize: a.width / 15),
                                       ),
