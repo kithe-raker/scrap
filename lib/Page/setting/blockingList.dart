@@ -98,12 +98,13 @@ class _BlockingListState extends State<BlockingList> {
                   return Container(
                     child: Column(
                       children: <Widget>[
-                        
-                        Text(writer),
-                        Text(time),
-
-                        //unblock btn
-                        InkWell(
+                        //paper-top
+                        Row(
+                          children: <Widget>[
+                            Text(writer),
+                            Text(time),
+                            //unblock btn
+                            InkWell(
                                     child: Container(
                                       width: a.width / 3.5,
                                       height: a.width / 6.5,
@@ -124,7 +125,7 @@ class _BlockingListState extends State<BlockingList> {
                                         children: <Widget>[
                                           Icon(
                                             Icons.not_interested,
-                                            color: Colors.red,
+                                            color: Colors.blue[800],
                                           ),
                                           Text(
                                             "ปลดบล็อค",
@@ -141,7 +142,9 @@ class _BlockingListState extends State<BlockingList> {
                                       //dialogPa(writerID, writer);
                                     },
                                   ),
-                      
+                          ],
+                        ),
+                        //paper-content
                         Text(text),
                         Text(writerUID),
                       ],
