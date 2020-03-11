@@ -70,9 +70,7 @@ class _ProfileCardState extends State<ProfileCard> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  widget.info['status'] == null
-                      ? ''
-                      : '“${widget.info['status']}”',
+                  widget.info['status'] == null ? '' : widget.info['status'],
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
