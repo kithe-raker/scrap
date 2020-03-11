@@ -184,7 +184,7 @@ class _FriendListState extends State<FriendList> {
                         ),
                         Container(
                           width: a.width / 1.17,
-                          padding: const EdgeInsets.only(left: 0),
+                          margin: EdgeInsets.only(left: a.width / 15),
                           alignment: Alignment.centerLeft,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,

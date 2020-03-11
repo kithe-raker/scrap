@@ -100,24 +100,24 @@ class _SearchState extends State<Search> {
                                   Text(
                                     "ค้นหาไอดี",
                                     style: TextStyle(
-                                        fontSize: a.width / 8,
+                                        fontSize: a.width / 6.5,
                                         color: Colors.white),
                                   ),
                                   Text("ค้นหาไอดีแล้วปากระดาษใส่พวกเขากัน",
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: a.width / 18)),
+                                          fontSize: a.width / 16)),
                                 ],
                               ),
                             ),
                             Container(
                               margin: EdgeInsets.only(
                                 top: a.width / 10,
-                                right: a.width / 25,
-                                left: a.width / 25,
+                                right: a.width / 30,
+                                left: a.width / 30,
                               ),
                               height: a.width / 7.5,
-                              width: a.width / 1.2,
+                              width: a.width,
                               decoration: BoxDecoration(
                                   color: Color(0xff282828),
                                   borderRadius: BorderRadius.circular(a.width)),
@@ -509,8 +509,8 @@ class _SearchState extends State<Search> {
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(
-            right: a.width / 25,
-            left: a.width / 25,
+            right: a.width / 30,
+            left: a.width / 30,
           ),
           child: ProfileCard(
               acc: acc,
@@ -527,8 +527,8 @@ class _SearchState extends State<Search> {
           margin: EdgeInsets.only(
             top: a.width / 17,
             bottom: a.width / 17,
-            right: a.width / 25,
-            left: a.width / 25,
+            right: a.width / 30,
+            left: a.width / 30,
           ),
           width: a.width,
           child: Row(
