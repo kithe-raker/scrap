@@ -338,7 +338,6 @@ class _MapScrapsState extends State<MapScraps> {
                                       ),
                                       onTap: () async {
                                         await burn(id);
-                                        print(id);
                                         Navigator.pop(context);
                                         Taoast().toast('คุณได้เผากระดาษไปแล้ว');
                                       },

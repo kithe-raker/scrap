@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -45,7 +46,8 @@ class _HistoryState extends State<History> {
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.active) {
+                  snapshot.connectionState == ConnectionState.active &&
+                  snapshot.data.documents != null) {
                 cache = snapshot.data;
                 List docs = snapshot.data.documents;
                 docs.sort((a, b) => DateTime.parse(a['date'])
@@ -55,7 +57,24 @@ class _HistoryState extends State<History> {
                     : gridRebuild(docs.reversed.toList(), scr);
                 // Center(child: scrapGroup(docs.reversed.toList(), scr));
               } else {
-                return SizedBox();
+                return Container(
+                  height: scr.height,
+                  width: scr.width,
+                  child: Center(
+                    child: Container(
+                      width: scr.width / 3.6,
+                      height: scr.width / 3.6,
+                      decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.42),
+                          borderRadius: BorderRadius.circular(12)),
+                      child: FlareActor(
+                        'assets/paper_loading.flr',
+                        animation: 'Untitled',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
               }
             }),
       ),
