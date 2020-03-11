@@ -57,7 +57,7 @@ class _ProfileCardState extends State<ProfileCard> {
             ),
           ),
           Text(
-            widget.info['createdDay'],
+            'Join ' + widget.info['createdDay'],
             style: TextStyle(color: Color(0xff26A4FF), fontSize: a.width / 18),
           ),
           Container(

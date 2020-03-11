@@ -581,6 +581,7 @@ class _ProfileState extends State<Profile> {
           return StatefulBuilder(builder: (context, StateSetter setState) {
             return Scaffold(
               backgroundColor: Colors.black,
+              resizeToAvoidBottomPadding: false,
               body: Stack(
                 children: <Widget>[
                   Container(
@@ -664,43 +665,86 @@ class _ProfileState extends State<Profile> {
                             ),
                             SizedBox(height: a.width / 15),
                             Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(a.width)),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  // SizedBox(width: a.width / 20),
                                   InkWell(
                                     child: Container(
-                                      // margin: EdgeInsets.only(
-                                      //     left: a.width / 55,
-                                      //     right: a.width / 55),
-                                      width: a.width / 3.5,
+                                      margin:
+                                          EdgeInsets.only(right: a.width / 40),
+                                      width: a.width / 6.5,
                                       height: a.width / 6.5,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(a.width),
-                                            topRight: Radius.circular(a.width),
-                                            bottomRight:
-                                                Radius.circular(a.width),
-                                            bottomLeft:
-                                                Radius.circular(a.width),
-                                          )),
-                                      alignment: Alignment.center,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.arrow_downward,
-                                            color: Color(0xff26A4FF),
-                                          ),
-                                          Text("เก็บไว้",
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.block,
+                                              color: Colors.red,
+                                              size: a.width / 15,
+                                            ),
+                                            Text(
+                                              "บล็อค",
                                               style: TextStyle(
-                                                  fontSize: a.width / 15,
-                                                  color: Color(0xff26A4FF))),
-                                        ],
-                                      ),
+                                                  color: Colors.red,
+                                                  fontSize: a.width / 25),
+                                            )
+                                          ]),
+                                    ),
+                                    onTap: () {
+                                      blockDialog(widget.doc['uid'], writerUID,
+                                          scpData);
+                                    },
+                                  ),
+                                  InkWell(
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.only(right: a.width / 40),
+                                      width: a.width / 6.5,
+                                      height: a.width / 6.5,
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.clear,
+                                              size: a.width / 15,
+                                            ),
+                                            Text(
+                                              "ทิ้ง",
+                                              style: TextStyle(
+                                                  color: Colors.grey[700],
+                                                  fontSize: a.width / 25),
+                                            )
+                                          ]),
+                                    ),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      await ignore(writerUID, scpData);
+                                    },
+                                  ),
+                                  InkWell(
+                                    child: Container(
+                                      width: a.width / 6.5,
+                                      height: a.width / 6.5,
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.save_alt,
+                                              size: a.width / 15,
+                                            ),
+                                            Text(
+                                              "เก็บไว้",
+                                              style: TextStyle(
+                                                  color: Colors.grey[700],
+                                                  fontSize: a.width / 25),
+                                            )
+                                          ]),
                                     ),
                                     onTap: () async {
                                       Navigator.pop(context);
@@ -720,82 +764,6 @@ class _ProfileState extends State<Profile> {
                                       await ignore(writerUID, scpData);
                                     },
                                   ),
-                                  InkWell(
-                                    child: Container(
-                                      width: a.width / 3.5,
-                                      height: a.width / 6.5,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(a.width),
-                                            topRight: Radius.circular(a.width),
-                                            bottomRight:
-                                                Radius.circular(a.width),
-                                            bottomLeft:
-                                                Radius.circular(a.width),
-                                          )
-                                          // borderRadius:
-                                          //     BorderRadius.circular(a.width)
-                                          ),
-                                      alignment: Alignment.center,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(Icons.clear),
-                                          Text(
-                                            "ทิ้ง",
-                                            style: TextStyle(
-                                                fontSize: a.width / 15),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    onTap: () async {
-                                      Navigator.pop(context);
-                                      await ignore(writerUID, scpData);
-                                    },
-                                  ),
-                                  InkWell(
-                                    child: Container(
-                                      width: a.width / 3.5,
-                                      height: a.width / 6.5,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(a.width),
-                                            topRight: Radius.circular(a.width),
-                                            bottomRight:
-                                                Radius.circular(a.width),
-                                            bottomLeft:
-                                                Radius.circular(a.width),
-                                          )),
-                                      alignment: Alignment.center,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.not_interested,
-                                            color: Colors.red,
-                                          ),
-                                          Text(
-                                            "บล็อค",
-                                            style: TextStyle(
-                                              fontSize: a.width / 15,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      blockDialog(widget.doc['uid'], writerUID,
-                                          scpData);
-                                      //dialogPa(writerID, writer);
-                                    },
-                                  ),
-                                  // SizedBox(width: a.width / 20),
                                 ],
                               ),
                             ),
