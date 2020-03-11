@@ -66,6 +66,7 @@ class _LongPaperState extends State<LongPaper> {
                 child: Text(
                   widget.scrap['scap']['text'],
                   style: TextStyle(fontSize: a.width / 15),
+                  textAlign: TextAlign.center,
                 ),
               )
             ],
