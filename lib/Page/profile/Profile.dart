@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
+
 import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/Page/setting/FeedbackPage.dart';
 import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
@@ -1109,12 +1109,32 @@ class _ProfileState extends State<Profile> {
                   toast('ทำการบล็อคแล้ว');
                   Navigator.pop(context);
                   Navigator.pop(context);
-                  await blockFunction(userReceive, userSent, scpData);
+                  await blockCheck(userReceive, userSent, scpData);
                 },
               )
             ],
           );
         });
+  }
+  blockCheck(String userReceive, String userSent, Map scpData) async {
+    List blockList = [];
+    await Firestore.instance
+    .collection("Users")
+    .document(userReceive)
+    .collection("info")
+    .document("blockList")
+    .get()
+    .then((value){
+      blockList = value['blockList'];
+
+    });
+    bool check = blockList.where((data) => data['uid'] == userSent).length > 0;
+    if(check == true)
+      return toast('ทำการบล็อคแล้ว');
+    else if(check == false)
+    {
+      return blockFunction(userReceive, userSent, scpData);
+    }
   }
 
   blockFunction(String userReceive, String userSent, Map scpData) async {
