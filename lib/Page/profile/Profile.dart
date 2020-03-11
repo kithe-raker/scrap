@@ -591,7 +591,7 @@ class _ProfileState extends State<Profile> {
                     padding: EdgeInsets.only(
                         left: a.width / 20, right: a.width / 20),
                     width: a.width,
-                    height: a.height / 1,
+                    height: a.height,
                     child: Stack(
                       children: <Widget>[
                         Column(
@@ -1106,7 +1106,6 @@ class _ProfileState extends State<Profile> {
               FlatButton(
                 child: Text('ตกลง'),
                 onPressed: () async {
-                  toast('ทำการบล็อคแล้ว');
                   Navigator.pop(context);
                   Navigator.pop(context);
                   await blockCheck(userReceive, userSent, scpData);
@@ -1116,24 +1115,25 @@ class _ProfileState extends State<Profile> {
           );
         });
   }
+
   blockCheck(String userReceive, String userSent, Map scpData) async {
     List blockList = [];
     await Firestore.instance
-    .collection("Users")
-    .document(userReceive)
-    .collection("info")
-    .document("blockList")
-    .get()
-    .then((value){
+        .collection("Users")
+        .document(userReceive)
+        .collection("info")
+        .document("blockList")
+        .get()
+        .then((value) {
       blockList = value['blockList'];
-
     });
     bool check = blockList.where((data) => data['uid'] == userSent).length > 0;
-    if(check == true)
-      return toast('ทำการบล็อคแล้ว');
-    else if(check == false)
-    {
-      return blockFunction(userReceive, userSent, scpData);
+    if (check)
+      toast('คุณบล็อคอยู่แล้ว');
+    else if (check == false) {
+      blockFunction(userReceive, userSent, scpData);
+      ignore(userSent, scpData);
+      toast('ทำการบล็อคแล้ว');
     }
   }
 
