@@ -111,20 +111,20 @@ class _BlockingListState extends State<BlockingList> {
             children: <Widget>[
               Image.asset(
                 'assets/paper-readed.png',
-                width: scr.width / 3.2,
-                height: scr.height / 4.2,
+                width: scr.width / 2.1,
+                height: scr.height,
                 fit: BoxFit.cover,
               ),
               Container(
-                width: scr.width / 3.2,
-                height: scr.height / 4.2,
+                width: scr.width / 2.1,
+                height: scr.height,
                 alignment: Alignment.center,
                 child: SizedBox(
                     height: scr.height / 6,
                     child: Center(
                         child: Text(
                       data['text'],
-                      style: TextStyle(fontSize: scr.width / 21),
+                      style: TextStyle(fontSize: scr.width / 18),
                       textAlign: TextAlign.center,
                     ))),
               ),
