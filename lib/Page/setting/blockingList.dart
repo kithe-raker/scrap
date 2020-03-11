@@ -278,18 +278,23 @@ class _BlockingListState extends State<BlockingList> {
                                   SizedBox(width: a.width / 20),
                                   InkWell(
                                     child: Container(
-                                      width: a.width / 3.5,
+                                      width: a.width / 6.5,
                                       height: a.width / 6.5,
                                       decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: Colors.grey[800],
                                           borderRadius:
                                               BorderRadius.circular(a.width)),
                                       alignment: Alignment.center,
-                                      child: Text(
-                                        "ปิด",
-                                        style:
-                                            TextStyle(fontSize: a.width / 15),
+                                      child: Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                        size: a.width / 15,
                                       ),
+                                      // Text(
+                                      //   "ปิด",
+                                      //   style:
+                                      //       TextStyle(fontSize: a.width / 15),
+                                      // ),
                                     ),
                                     onTap: () async {
                                       Navigator.pop(context);

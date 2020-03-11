@@ -675,21 +675,21 @@ class _ProfileState extends State<Profile> {
                                     child: Container(
                                       margin:
                                           EdgeInsets.only(right: a.width / 40),
-                                      width: a.width / 6.5,
-                                      height: a.width / 6.5,
+                                      width: a.width / 6,
+                                      height: a.width / 6,
                                       child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: <Widget>[
                                             Icon(
                                               Icons.block,
-                                              color: Colors.red,
-                                              size: a.width / 15,
+                                              color: Colors.grey[600],
+                                              size: a.width / 14,
                                             ),
                                             Text(
                                               "บล็อค",
                                               style: TextStyle(
-                                                  color: Colors.red,
+                                                  color: Colors.grey[600],
                                                   fontSize: a.width / 25),
                                             )
                                           ]),
@@ -703,20 +703,26 @@ class _ProfileState extends State<Profile> {
                                     child: Container(
                                       margin:
                                           EdgeInsets.only(right: a.width / 40),
-                                      width: a.width / 6.5,
-                                      height: a.width / 6.5,
+                                      width: a.width / 6,
+                                      height: a.width / 6,
                                       child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: <Widget>[
-                                            Icon(
-                                              Icons.clear,
-                                              size: a.width / 15,
-                                            ),
+                                            // Icon(
+                                            //   Icons.delete_outline,
+                                            //   color: Colors.grey[600],
+                                            //   size: a.width / 15,
+                                            // ),
+                                            Image.asset(
+                                                'assets/garbage_grey.png',
+                                                width: a.width / 14,
+                                                height: a.width / 14,
+                                                fit: BoxFit.cover),
                                             Text(
                                               "ทิ้ง",
                                               style: TextStyle(
-                                                  color: Colors.grey[700],
+                                                  color: Colors.grey[600],
                                                   fontSize: a.width / 25),
                                             )
                                           ]),
@@ -728,20 +734,21 @@ class _ProfileState extends State<Profile> {
                                   ),
                                   InkWell(
                                     child: Container(
-                                      width: a.width / 6.5,
-                                      height: a.width / 6.5,
+                                      width: a.width / 6,
+                                      height: a.width / 6,
                                       child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: <Widget>[
                                             Icon(
                                               Icons.save_alt,
-                                              size: a.width / 15,
+                                              color: Colors.grey[600],
+                                              size: a.width / 14,
                                             ),
                                             Text(
                                               "เก็บไว้",
                                               style: TextStyle(
-                                                  color: Colors.grey[700],
+                                                  color: Colors.grey[600],
                                                   fontSize: a.width / 25),
                                             )
                                           ]),

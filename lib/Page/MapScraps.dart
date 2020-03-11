@@ -317,21 +317,21 @@ class _MapScrapsState extends State<MapScraps> {
                                       child: Container(
                                         margin: EdgeInsets.only(
                                             right: a.width / 42),
-                                        width: a.width / 6.5,
-                                        height: a.width / 6.5,
+                                        width: a.width / 6,
+                                        height: a.width / 6,
                                         child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: <Widget>[
                                               Icon(
                                                 Icons.whatshot,
-                                                color: Colors.orange,
-                                                size: a.width / 15,
+                                                color: Colors.grey[600],
+                                                size: a.width / 14,
                                               ),
                                               Text(
                                                 "เผา",
                                                 style: TextStyle(
-                                                    color: Colors.orange,
+                                                    color: Colors.grey[600],
                                                     fontSize: a.width / 25),
                                               )
                                             ]),
@@ -346,20 +346,25 @@ class _MapScrapsState extends State<MapScraps> {
                               InkWell(
                                 child: Container(
                                   margin: EdgeInsets.only(right: a.width / 40),
-                                  width: a.width / 6.5,
-                                  height: a.width / 6.5,
+                                  width: a.width / 6,
+                                  height: a.width / 6,
                                   child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: <Widget>[
-                                        Icon(
-                                          Icons.clear,
-                                          size: a.width / 15,
-                                        ),
+                                        // Icon(
+                                        //   Icons.delete_outline,
+                                        //   color: Colors.grey[600],
+                                        //   size: a.width / 14,
+                                        // ),
+                                        Image.asset('assets/garbage_grey.png',
+                                            width: a.width / 14,
+                                            height: a.width / 14,
+                                            fit: BoxFit.cover),
                                         Text(
                                           "ทิ้งไว้",
                                           style: TextStyle(
-                                              color: Colors.grey[700],
+                                              color: Colors.grey[600],
                                               fontSize: a.width / 25),
                                         )
                                       ]),
@@ -370,20 +375,21 @@ class _MapScrapsState extends State<MapScraps> {
                               ),
                               InkWell(
                                 child: Container(
-                                  width: a.width / 6.5,
-                                  height: a.width / 6.5,
+                                  width: a.width / 6,
+                                  height: a.width / 6,
                                   child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: <Widget>[
                                         Icon(
                                           Icons.save_alt,
-                                          size: a.width / 15,
+                                          color: Colors.grey[600],
+                                          size: a.width / 14,
                                         ),
                                         Text(
                                           "เก็บไว้",
                                           style: TextStyle(
-                                              color: Colors.grey[700],
+                                              color: Colors.grey[600],
                                               fontSize: a.width / 25),
                                         )
                                       ]),
