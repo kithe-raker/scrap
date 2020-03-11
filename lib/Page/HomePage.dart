@@ -789,11 +789,11 @@ class _HomePageState extends State<HomePage> {
         .then((dat) async {
       int scraps = dat.data['scraps']?.length ?? 0;
       if (scraps < 15) {
-        toast('คุณได้ทิ้งกระด���ษไว้แล้ว');
+        toast('คุณได้ทิ้งกระดาษไว้แล้ว');
         Navigator.pop(context);
         await scrap.binScrap(text, public, widget.doc);
       } else {
-        toast('กระดาษคุ��หมดแล้ว');
+        toast('กระดาษคุณหมดแล้ว');
       }
     });
   }

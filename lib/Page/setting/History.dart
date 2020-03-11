@@ -189,31 +189,32 @@ class _HistoryState extends State<History> {
                             ],
                           )),
                     )
-                  : Container(
-                      margin: EdgeInsets.only(left: 3.6, top: 3.6),
-                      padding: EdgeInsets.all(2.8),
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 1.6,
-                              spreadRadius: 0.1,
-                              offset: Offset(
-                                0.0,
-                                1.0,
-                              ),
-                            )
-                          ],
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(6)),
-                      child: Text(
-                        time,
-                        style: TextStyle(
-                            fontSize: scr.width / 24,
-                            color: Color(0xff26A4FF),
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.center,
-                      )),
+                  : SizedBox()
+              // Container(
+              //     margin: EdgeInsets.only(left: 3.6, top: 3.6),
+              //     padding: EdgeInsets.all(2.8),
+              //     decoration: BoxDecoration(
+              //         boxShadow: [
+              //           BoxShadow(
+              //             color: Colors.black12,
+              //             blurRadius: 1.6,
+              //             spreadRadius: 0.1,
+              //             offset: Offset(
+              //               0.0,
+              //               1.0,
+              //             ),
+              //           )
+              //         ],
+              //         color: Colors.white,
+              //         borderRadius: BorderRadius.circular(6)),
+              //     child: Text(
+              //       time,
+              //       style: TextStyle(
+              //           fontSize: scr.width / 24,
+              //           color: Color(0xff26A4FF),
+              //           fontWeight: FontWeight.w500),
+              //       textAlign: TextAlign.center,
+              //     )),
             ],
           ),
           onTap: () {

@@ -634,7 +634,7 @@ class _SearchState extends State<Search> {
                     child: IconButton(
                       icon: Icon(
                           widget.data == null ? Icons.create : Icons.send,
-                          size: a.width / 16,
+                          size: a.width / 18,
                           color: Colors.black),
                       onPressed: () {
                         widget.data == null

@@ -219,7 +219,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                   Container(
-                                    width: a.width / 4.5,
+                                    width: a.width / 4,
                                     // color: Colors.blue,
                                     child: Column(
                                       children: <Widget>[
@@ -924,6 +924,7 @@ class _ProfileState extends State<Profile> {
   }
 
   dialogPa(String id, String thrown) {
+    var _key = GlobalKey<FormState>();
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -937,100 +938,106 @@ class _ProfileState extends State<Profile> {
                   top: a.width / 100),
               child: Stack(
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Container(
-                        height: a.width / 8,
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(color: Colors.grey[300]))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                SizedBox(width: 5),
-                                Text(
-                                  "ปาใส่กลับโดย : ",
-                                  style: TextStyle(
-                                      fontSize: a.width / 20,
-                                      color: Colors.black),
-                                ),
-                                Text(
-                                  "@" + widget.doc['id'],
-                                  style: TextStyle(
-                                      color: Color(0xff26A4FF),
-                                      fontSize: a.width / 20),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(
-                            right: a.width / 40, left: a.width / 40),
-                        height: a.width / 3.4,
-                        child: TextFormField(
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border: InputBorder.none, //สำหรับใหเส้นใต้หาย
-                            hintText: 'เขียนข้อความบางอย่าง',
-                            hintStyle: TextStyle(
-                              fontSize: a.width / 25,
-                              color: Colors.grey,
-                            ),
+                  Form(
+                    key: _key,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: a.width / 8,
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey[300]))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "ปาใส่กลับโดย : ",
+                                    style: TextStyle(
+                                        fontSize: a.width / 20,
+                                        color: Colors.black),
+                                  ),
+                                  Text(
+                                    "@" + widget.doc['id'],
+                                    style: TextStyle(
+                                        color: Color(0xff26A4FF),
+                                        fontSize: a.width / 20),
+                                  )
+                                ],
+                              ),
+                            ],
                           ),
-                          validator: (val) {
-                            return val.trim() == null || val.trim() == ""
-                                ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
-                                : null;
-                          },
-                          //เนื้อหาที่กรอกเข้าไปใน text
-                          onChanged: (val) {
-                            text2 = val;
-                          },
                         ),
-                      ),
-                      InkWell(
-                          child: Container(
-                            width: a.width,
-                            alignment: Alignment.centerRight,
-                            margin: EdgeInsets.only(
-                                top: a.width / 15, right: a.width / 33),
+                        Container(
+                          padding: EdgeInsets.only(
+                              right: a.width / 40, left: a.width / 40),
+                          height: a.width / 3.4,
+                          child: TextFormField(
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              border: InputBorder.none, //สำหรับใหเส้นใต้หาย
+                              hintText: 'เขียนข้อความบางอย่าง',
+                              hintStyle: TextStyle(
+                                fontSize: a.width / 25,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            validator: (val) {
+                              return val.trim() == null || val.trim() == ""
+                                  ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
+                                  : null;
+                            },
+                            //เนื้อหาที่กรอกเข้าไปใน text
+                            onChanged: (val) {
+                              text2 = val;
+                            },
+                          ),
+                        ),
+                        InkWell(
                             child: Container(
-                                width: a.width / 5.5,
-                                height: a.width / 11,
-                                decoration: BoxDecoration(
-                                    color: Color(0xff26A4FF),
-                                    borderRadius:
-                                        BorderRadius.circular(a.width)),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "ปาเลย",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: a.width / 15),
-                                )),
-                          ),
-                          onTap: () async {
-                            if (await scraps.blocked(widget.doc['uid'], id)) {
-                              toast('คุณไม่สามารถปาไปหา"$thrown"ได้');
-                            } else {
-                              toast(thrown == 'ไม่ระบุตัวตน'
-                                  ? 'ปากลับแล้ว'
-                                  : 'ปากลับใส่"$thrown"แล้ว');
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              scraps.throwTo(
-                                  uid: widget.doc['uid'],
-                                  writer: widget.doc['id'],
-                                  thrownUID: id,
-                                  text: text2,
-                                  public: true);
-                            }
-                          })
-                    ],
+                              width: a.width,
+                              alignment: Alignment.centerRight,
+                              margin: EdgeInsets.only(
+                                  top: a.width / 15, right: a.width / 33),
+                              child: Container(
+                                  width: a.width / 5.5,
+                                  height: a.width / 11,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff26A4FF),
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "ปาเลย",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: a.width / 15),
+                                  )),
+                            ),
+                            onTap: () async {
+                              if (_key.currentState.validate()) {
+                                if (await scraps.blocked(
+                                    widget.doc['uid'], id)) {
+                                  toast('คุณไม่สามารถปาไปหา"$thrown"ได้');
+                                } else {
+                                  toast(thrown == 'ไม่ระบุตัวตน'
+                                      ? 'ปากลับแล้ว'
+                                      : 'ปากลับใส่"$thrown"แล้ว');
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  scraps.throwTo(
+                                      uid: widget.doc['uid'],
+                                      writer: widget.doc['id'],
+                                      thrownUID: id,
+                                      text: text2,
+                                      public: true);
+                                }
+                              }
+                            })
+                      ],
+                    ),
                   ),
                   Positioned(
                     right: 2,

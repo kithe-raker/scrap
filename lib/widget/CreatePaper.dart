@@ -271,8 +271,9 @@ class _WriteScrapState extends State<WriteScrap> {
                                     _key.currentState.save();
                                     if (await scraps.blocked(
                                         widget.uid, widget.thrownUID)) {
+                                      Navigator.pop(context);
                                       scraps.toast(
-                                          'คุณไม่สามารถปาไปหา"${'widget.tID'}"ได้');
+                                          'คุณไม่สามารถปาไปหา"${widget.tID}"ได้');
                                     } else {
                                       Navigator.pop(context);
                                       await scraps.throwTo(

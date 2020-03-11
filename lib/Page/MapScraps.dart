@@ -316,7 +316,7 @@ class _MapScrapsState extends State<MapScraps> {
                                   ? InkWell(
                                       child: Container(
                                         margin: EdgeInsets.only(
-                                            right: a.width / 40),
+                                            right: a.width / 42),
                                         width: a.width / 6.5,
                                         height: a.width / 6.5,
                                         child: Column(

@@ -325,7 +325,7 @@ class _FriendListState extends State<FriendList> {
 
   Widget search(Size a) {
     return searchResault.length == 0
-        ? guide(a, 'ไม่พบidน���้ในสหายของคุณ', a.height / 2)
+        ? guide(a, 'ไม่พบidนี้ในสหายของคุณ', a.height / 2)
         : listFriend(a, searchResault);
   }
 
