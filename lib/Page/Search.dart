@@ -163,8 +163,8 @@ class _SearchState extends State<Search> {
                                           )),
                                       Container(
                                         alignment: Alignment.center,
-                                        width: a.width / 10.5,
-                                        height: a.width / 10.5,
+                                        width: a.width / 9.6,
+                                        height: a.width / 9.6,
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(a.width),

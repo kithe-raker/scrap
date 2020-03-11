@@ -1093,12 +1093,12 @@ class _ProfileState extends State<Profile> {
         .document("blockList")
         .get()
         .then((value) {
-      blockList = value['blockList'];
+      blockList = value?.data['blockList'] ?? [];
     });
     bool check = blockList.where((data) => data['uid'] == userSent).length > 0;
-    if (check)
+    if (check) {
       toast('คุณบล็อคอยู่แล้ว');
-    else if (check == false) {
+    } else {
       blockFunction(userReceive, userSent, scpData);
       ignore(userSent, scpData);
       toast('ทำการบล็อคแล้ว');
