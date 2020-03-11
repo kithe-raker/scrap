@@ -569,7 +569,7 @@ class _ViewprofileState extends State<Viewprofile> {
                   Navigator.pop(context, true);
                   await scraps.throwTo(
                       uid: widget.self['uid'],
-                      thrownID: thrownID,
+                      thrownUID: thrownID,
                       text: widget.data['text'],
                       public: widget.data['public'],
                       writer: widget.self['id']);
@@ -813,7 +813,7 @@ class _ViewprofileState extends State<Viewprofile> {
                                           Navigator.pop(context, true);
                                           await scraps.throwTo(
                                               uid: widget.self['uid'],
-                                              thrownID: uid,
+                                              thrownUID: uid,
                                               text: text,
                                               public: public,
                                               writer: widget.self['id']);

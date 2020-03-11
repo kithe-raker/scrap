@@ -115,13 +115,19 @@ class _EditProfileState extends State<EditProfile> {
 
   newAccount() async {
     var user = await FirebaseAuth.instance.currentUser();
+    AuthCredential credential = EmailAuthProvider.getCredential(
+        email: user.email, password: widget.doc['password']);
     if (user.email != account['email']) {
-      user.updateEmail(account['email']);
-      await updateAccount('email', account['email']);
+      user.reauthenticateWithCredential(credential).then((auth) async {
+        user.updateEmail(account['email']);
+        await updateAccount('email', account['email']);
+      });
     }
     if (widget.doc['password'] != account['password']) {
-      user.updatePassword(account['password']);
-      await updateAccount('password', account['password']);
+      user.reauthenticateWithCredential(credential).then((auth) async {
+        user.updatePassword(account['password']);
+        await updateAccount('password', account['password']);
+      });
     }
   }
 
@@ -137,7 +143,7 @@ class _EditProfileState extends State<EditProfile> {
 
   updateAccount(String key, String value) async {
     await Firestore.instance
-        .collection('User')
+        .collection('Users')
         .document(widget.doc['uid'])
         .updateData({key: value});
   }
@@ -157,6 +163,7 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         loading = false;
       });
+      Taoast().toast('แก้ไขข้อมูลเสร็จสิ้น');
       Navigator.pop(context);
       Navigator.pop(context);
     } catch (e) {
@@ -506,6 +513,9 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   warning(String warn, {Function function}) {
+    setState(() {
+      loading = false;
+    });
     return showDialog(
         context: context,
         builder: (builder) {

@@ -251,33 +251,6 @@ class _FriendListState extends State<FriendList> {
                             textInputAction: TextInputAction.done,
                           ),
                         ),
-
-                        // InkWell(
-                        //   child: Container(
-                        //       margin: EdgeInsets.only(bottom: 30),
-                        //       alignment: Alignment.center,
-                        //       width: a.width / 8,
-                        //       height: a.width / 8,
-                        //       decoration: BoxDecoration(
-                        //         borderRadius:
-                        //             BorderRadius.circular(a.width),
-                        //         border: Border.all(
-                        //             width: 2, color: Colors.white),
-                        //         color: Color(0xff26A4FF),
-                        //       ),
-                        //       child: Text(
-                        //         '@',
-                        //         textAlign: TextAlign.center,
-                        //         style: TextStyle(
-                        //             fontSize: a.width / 11,
-                        //             color: Colors.white),
-                        //       )),
-                        //   onTap: () {
-                        //     if (_key.currentState.validate()) {
-                        //       _key.currentState.save();
-                        //     }
-                        //   },
-                        // )
                       ],
                     ),
                     friends?.length == null || friends.length == 0
@@ -456,7 +429,7 @@ class _FriendListState extends State<FriendList> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                throwID,
+                                '@$throwID',
                                 style: TextStyle(
                                     fontSize: a.width / 13,
                                     color: Colors.white),
@@ -476,8 +449,8 @@ class _FriendListState extends State<FriendList> {
                         ],
                       ),
                       Container(
-                        width: a.width / 7.5,
-                        height: a.width / 7.5,
+                        width: a.width / 7.2,
+                        height: a.width / 7.2,
                         decoration: BoxDecoration(
                             // color: Colors.orange,
                             borderRadius: BorderRadius.circular(a.width),
@@ -791,7 +764,7 @@ class _AllFriendsState extends State<AllFriends> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              throwID,
+                              '@$throwID',
                               style: TextStyle(
                                   fontSize: a.width / 13, color: Colors.white),
                             ),
@@ -832,56 +805,18 @@ class _AllFriendsState extends State<AllFriends> {
                               borderRadius: BorderRadius.circular(a.width),
                               color: Colors.white,
                               border: Border.all(color: Colors.white)),
-                          child: Icon(
-                            Icons.create,
-                            size: a.width / 26,
-                            color: Colors.black,
-                          ),
+                          child: IconButton(
+                              icon: Icon(Icons.create,
+                                  size: a.width / 21, color: Colors.black),
+                              onPressed: () {
+                                
+                              }),
                         ),
                       ),
                     ),
                   ]),
             ),
           ),
-          // Positioned(
-          //   right: 10.0,
-          //   top: 10.0,
-          //   child: Container(
-          //     width: a.width / 6,
-          //     height: a.width / 6,
-          //     decoration: BoxDecoration(
-          //         borderRadius: BorderRadius.circular(a.width),
-          //         border: Border.all(
-          //             color: Colors.white24, width: a.width / 500)),
-          //     child: Container(
-          //       margin: EdgeInsets.all(a.width / 55),
-          //       width: a.width / 5.5,
-          //       height: a.width / 5.5,
-          //       decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(a.width),
-          //           border: Border.all(color: Colors.white70)),
-          //       child: Container(
-          //         margin: EdgeInsets.all(a.width / 57),
-          //         width: a.width / 6,
-          //         height: a.width / 6,
-          //         decoration: BoxDecoration(
-          //             borderRadius: BorderRadius.circular(a.width),
-          //             color: Colors.white,
-          //             border: Border.all(color: Colors.white)),
-          //         child: Icon(
-          //           Icons.create,
-          //           size: a.width / 23,
-          //           color: Colors.black,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          //   // Icon(
-          //   //   Icons.arrow_forward,
-          //   //   color: Color(0xffA3A3A3),
-          //   //   size: 30.0,
-          //   // ),
-          // )
         ],
       ),
       onTap: () async {

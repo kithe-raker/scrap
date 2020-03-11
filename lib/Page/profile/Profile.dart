@@ -1052,7 +1052,7 @@ class _ProfileState extends State<Profile> {
                           scraps.throwTo(
                               uid: widget.doc['uid'],
                               writer: widget.doc['id'],
-                              thrownID: id,
+                              thrownUID: id,
                               text: text2,
                               public: true);
                         },

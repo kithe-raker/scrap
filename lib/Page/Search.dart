@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/viewprofile.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
+import 'package:scrap/widget/CreatePaper.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ProfileCard.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -630,10 +631,17 @@ class _SearchState extends State<Search> {
                         borderRadius: BorderRadius.circular(a.width),
                         color: Colors.white,
                         border: Border.all(color: Colors.white)),
-                    child: Icon(
-                      Icons.create,
-                      size: a.width / 16,
-                      color: Colors.black,
+                    child: IconButton(
+                      icon: Icon(
+                          widget.data == null ? Icons.create : Icons.send,
+                          size: a.width / 16,
+                          color: Colors.black),
+                      onPressed: () {
+                        widget.data == null
+                            ? dialogWrite(
+                                id, widget.doc['uid'], acc['uid'], acc['id'])
+                            : warnDialog(acc['id'], acc['uid']);
+                      },
                     ),
                   ),
                 ),
@@ -643,6 +651,17 @@ class _SearchState extends State<Search> {
         ),
       ],
     );
+  }
+
+  dialogWrite(String id, String uid, String thrownUID, String tID) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => WriteScrap(
+              id: id,
+              thrownUID: thrownUID,
+              uid: uid,
+              tID: tID,
+            ),
+        fullscreenDialog: true));
   }
 
   Widget guide(Size a, String text, double heigth) {
@@ -772,7 +791,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  warnDialog(String user, String thrownID) {
+  warnDialog(String user, String thrownUID) {
     showDialog(
         context: context,
         builder: (builder) {
@@ -790,7 +809,7 @@ class _SearchState extends State<Search> {
               FlatButton(
                 child: Text('ตกลง'),
                 onPressed: () async {
-                  if (await blocked(widget.doc['uid'], thrownID)) {
+                  if (await blocked(widget.doc['uid'], thrownUID)) {
                     toast('คุณไม่สามารถปาไปหา"$user"ได้');
                   } else {
                     Navigator.pop(context);
@@ -799,7 +818,7 @@ class _SearchState extends State<Search> {
                     await scraps.throwTo(
                         uid: widget.doc['uid'],
                         writer: widget.doc['id'],
-                        thrownID: thrownID,
+                        thrownUID: thrownUID,
                         text: widget.data['text'],
                         public: widget.data['public']);
                     toast('ปาใส่"$user"แล้ว');
@@ -820,22 +839,7 @@ class _SearchState extends State<Search> {
         .document(thrownID)
         .get()
         .then((value) {
-      blockList = value['blockList'];
-
-      /*List blockList = value['blockList'];
-          int len = blockList.length;
-          int i = 0;
-          int count = 0;
-          for(i=0;i<len;i++)
-          {
-            String mapUID = blockList[i]['uid'];
-            if(mapUID == uid)
-              count++;
-          }
-      if(count > 0)
-        return true;
-      else
-        return false;*/
+      blockList = value?.data['blockList'] ?? [];
     });
     return blockList.where((data) => data['uid'] == uid).length > 0;
   }

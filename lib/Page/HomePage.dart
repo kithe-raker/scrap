@@ -500,7 +500,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-//ส่วนเมื่อกดปุ่ม Create จะเด���นกล่องนี���ขึ้นมาไว้สร้าง Contents
   void dialog() {
     DateTime now = DateTime.now();
     Navigator.of(context).push(MaterialPageRoute(
