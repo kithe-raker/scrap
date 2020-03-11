@@ -1,10 +1,11 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class BlockingList extends StatefulWidget {
-  @override
   final String userUID;
   BlockingList({@required this.userUID});
+    @override
   _BlockingListState createState() => _BlockingListState();
 }
 
@@ -20,14 +21,24 @@ class _BlockingListState extends State<BlockingList> {
                 .document(widget.userUID)
                 .snapshots(),
         builder: (context ,snapshot){
-          if(!snapshot.hasData || snapshot == null)
+          if(snapshot.hasData)
           {
-            return Text("ไม่มีผู้ใช้ที่โดนบล็อค");
+          List blockList = snapshot.data['blockList'];
+          return blockList == null || snapshot.data == null || snapshot.data.length > 0 ?
+          nullReturn() : dataReturn(blockList);
           }
           else
-          {
-            List blockList = snapshot.data['blockList'];
-            return Container(
+            return nullReturn();
+        }
+      )
+    );
+  }
+  Widget nullReturn(){
+    return Text("ไม่มีผู้ใช้ที่โดนบล็อค");
+  }
+
+    Widget dataReturn(List blockList){
+     return Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 2,              
               child: ListView.builder(
@@ -47,16 +58,8 @@ class _BlockingListState extends State<BlockingList> {
                       ],
                     ),
                   );
-                },
-                
-              ),
-            );
-          }
-        },
-
-
-        )
-      
-    );
+                }
+              )
+     );
   }
 }
