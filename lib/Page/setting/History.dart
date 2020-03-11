@@ -311,7 +311,7 @@ class _HistoryState extends State<History> {
                                         Text(
                                             transac == 0
                                                 ? ' ไม่มีคนหยิบอ่าน'
-                                                : ' ผุ้คนหยิบอ่าน $transac คน',
+                                                : ' ผู้คนหยิบอ่าน $transac คน',
                                             style: TextStyle(
                                                 fontSize: a.width / 18))
                                       ],
