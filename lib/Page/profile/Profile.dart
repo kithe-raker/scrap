@@ -1230,10 +1230,25 @@ class _ProfileState extends State<Profile> {
             context, MaterialPageRoute(builder: (context) => FeedbackPage()));
         break;
       case Constans.Block:
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => BlockingList(uid: widget.doc['uid'])));
+        Firestore.instance
+            .collection('Users')
+            .document(widget.doc['uid'])
+            .collection('info')
+            .document('blockList')
+            .get()
+            .then((value) {
+          value.exists
+              ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          BlockingList(uid: widget.doc['uid'])))
+              : value.reference.setData({}).then((value) => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          BlockingList(uid: widget.doc['uid']))));
+        });
         break;
       case Constans.About:
         Navigator.push(

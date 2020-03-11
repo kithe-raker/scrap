@@ -564,6 +564,8 @@ class _ViewprofileState extends State<Viewprofile> {
                 child: Text('ตกลง'),
                 onPressed: () async {
                   if (await scraps.blocked(widget.self['uid'], thrownUID)) {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
                     toast('คุณไม่สามารถปาไปหา"$user"ได้');
                   } else {
                     toast('ปาใส่"$user"แล้ว');
@@ -815,6 +817,8 @@ class _ViewprofileState extends State<Viewprofile> {
                                           _key.currentState.save();
                                           if (await scraps.blocked(
                                               widget.self['uid'], uid)) {
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
                                             toast('คุณไม่สามารถปาไปหา"$id"ได้');
                                           } else {
                                             Navigator.pop(context);

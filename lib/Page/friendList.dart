@@ -449,8 +449,8 @@ class _FriendListState extends State<FriendList> {
                         ],
                       ),
                       Container(
-                        width: a.width / 7.2,
-                        height: a.width / 7.2,
+                        width: a.width / 6.4,
+                        height: a.width / 6.4,
                         decoration: BoxDecoration(
                             // color: Colors.orange,
                             borderRadius: BorderRadius.circular(a.width),
@@ -471,10 +471,24 @@ class _FriendListState extends State<FriendList> {
                                 borderRadius: BorderRadius.circular(a.width),
                                 color: Colors.white,
                                 border: Border.all(color: Colors.white)),
-                            child: Icon(
-                              Icons.create,
-                              size: a.width / 26,
-                              color: Colors.black,
+                            child: IconButton(
+                              alignment: Alignment.center,
+                              icon: Icon(
+                                  widget.data == null
+                                      ? Icons.create
+                                      : Icons.send,
+                                  size: a.width / 21,
+                                  color: Colors.black),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Viewprofile(
+                                          id: throwID,
+                                          self: widget.doc,
+                                          data: widget.data),
+                                    ));
+                              },
                             ),
                           ),
                         ),
@@ -497,6 +511,38 @@ class _FriendListState extends State<FriendList> {
         },
       ),
     );
+  }
+
+  warnDialog(String user, DocumentSnapshot accDoc) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text('คุณต้องการปาใส่' + user + 'ใช่หรือไม่'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('ยกเลิก')),
+              FlatButton(
+                child: Text('ตกลง'),
+                onPressed: () async {
+                  scraps.throwTo(
+                      uid: widget.doc['uid'],
+                      writer: widget.doc['id'],
+                      thrownUID: accDoc['uid'],
+                      text: widget.data['text'],
+                      public: widget.data['public']);
+                  toast('ปาใส่${accDoc['id']}แล้ว');
+                },
+              )
+            ],
+          );
+        });
   }
 
   toast(String text) {
@@ -728,9 +774,22 @@ class _AllFriendsState extends State<AllFriends> {
                               color: Colors.white,
                               border: Border.all(color: Colors.white)),
                           child: IconButton(
-                              icon: Icon(Icons.create,
-                                  size: a.width / 21, color: Colors.black),
-                              onPressed: () {}),
+                              icon: Icon(
+                                  widget.scrap == null
+                                      ? Icons.create
+                                      : Icons.send,
+                                  size: a.width / 21,
+                                  color: Colors.black),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Viewprofile(
+                                          id: throwID,
+                                          self: widget.doc,
+                                          data: widget.scrap),
+                                    ));
+                              }),
                         ),
                       ),
                     ),

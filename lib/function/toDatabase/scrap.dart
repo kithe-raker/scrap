@@ -169,7 +169,9 @@ class Scraps {
         .document('blockList')
         .get()
         .then((value) {
-      blockList = value?.data['blockList'] ?? [];
+      value?.data == null
+          ? blockList = []
+          : blockList = value?.data['blockList'] ?? [];
     });
     return blockList.where((data) => data['uid'] == uid).length > 0;
   }
