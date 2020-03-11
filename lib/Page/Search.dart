@@ -215,7 +215,7 @@ class _SearchState extends State<Search> {
                                             ? guide(
                                                 a,
                                                 'ขออภัยค่ะเราไม่พบผู้ใช้ดังกล่าว',
-                                                a.height / 1.5,
+                                                a.height / 2.5,
                                               )
                                             : Column(
                                                 children: docs
