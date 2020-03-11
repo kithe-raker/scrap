@@ -46,8 +46,7 @@ class _HistoryState extends State<History> {
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.active &&
-                  snapshot.data.documents != null) {
+                  snapshot.connectionState == ConnectionState.active) {
                 cache = snapshot.data;
                 List docs = snapshot.data.documents;
                 docs.sort((a, b) => DateTime.parse(a['date'])
