@@ -1122,8 +1122,8 @@ class _ProfileState extends State<Profile> {
     await Firestore.instance
         .collection("Users")
         .document(userReceive)
-        .collection("blockList")
-        .document(userReceive)
+        .collection("info")
+        .document("blockList")
         .setData({
       'blockList': FieldValue.arrayUnion([blocked])
     }, merge: true);

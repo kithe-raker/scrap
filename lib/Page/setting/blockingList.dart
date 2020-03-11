@@ -17,8 +17,8 @@ class _BlockingListState extends State<BlockingList> {
         stream: Firestore.instance
                 .collection("Users")
                 .document(widget.userUID)
-                .collection("blockList")
-                .document(widget.userUID)
+                .collection("info")
+                .document("blockList")
                 .snapshots(),
         builder: (context ,snapshot){
           if(snapshot.hasData)

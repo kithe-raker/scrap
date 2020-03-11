@@ -816,8 +816,8 @@ class _SearchState extends State<Search> {
     await Firestore.instance
         .collection('Users')
         .document(thrownID)
-        .collection('blockList')
-        .document(thrownID)
+        .collection('info')
+        .document("blockList")
         .get()
         .then((value) {
       blockList = value['blockList'];
