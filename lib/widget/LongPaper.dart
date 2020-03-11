@@ -88,64 +88,101 @@ class _LongPaperState extends State<LongPaper> {
             },
             child: Container(
               width: a.width,
-              height: a.height,
+              // height: a.height,
               alignment: Alignment.center,
               color: Colors.black,
-              child: Container(
-                  margin: EdgeInsets.only(
-                      right: a.width / 15,
-                      left: a.width / 15,
-                      top: a.width / 20),
-                  width: a.width / 1,
-                  height: a.height / 1.8,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/paper-readed.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.all(a.width / 40),
-                        width: a.width,
-                        height: a.width / 5,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                      margin: EdgeInsets.only(
+                          right: a.width / 15,
+                          left: a.width / 15,
+                          top: a.width / 20),
+                      width: a.width / 1,
+                      height: a.height / 1.8,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/paper-readed.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.all(a.width / 40),
+                            width: a.width,
+                            height: a.width / 5,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(
-                                    "เขียนโดย : ${widget.scrap['scap']['writer']}",
-                                    style: TextStyle(
-                                        fontSize: a.width / 22,
-                                        color: Colors.grey)),
-                                Text(
-                                  "เวลา : ${widget.scrap['scap']['time']}",
-                                  style: TextStyle(
-                                      fontSize: a.width / 22,
-                                      color: Colors.grey),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                        "เขียนโดย : ${widget.scrap['scap']['writer']}",
+                                        style: TextStyle(
+                                            fontSize: a.width / 22,
+                                            color: Colors.grey)),
+                                    Text(
+                                      "เวลา : ${widget.scrap['scap']['time']}",
+                                      style: TextStyle(
+                                          fontSize: a.width / 22,
+                                          color: Colors.grey),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                            
-                          ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(24),
+                            width: a.width,
+                            height: a.width,
+                            alignment: Alignment.center,
+                            child: Text(
+                              widget.scrap['scap']['text'],
+                              style: TextStyle(fontSize: a.width / 15),
+                            ),
+                          )
+                        ],
+                      )),
+                  SizedBox(height: a.width / 15),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        SizedBox(width: a.width / 20),
+                        InkWell(
+                          child: Container(
+                            width: a.width / 6.5,
+                            height: a.width / 6.5,
+                            decoration: BoxDecoration(
+                                color: Colors.grey[800],
+                                borderRadius: BorderRadius.circular(a.width)),
+                            alignment: Alignment.center,
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: a.width / 15,
+                            ),
+                            // Text(
+                            //   "ปิด",
+                            //   style:
+                            //       TextStyle(fontSize: a.width / 15),
+                            // ),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(24),
-                        width: a.width,
-                        height: a.width,
-                        alignment: Alignment.center,
-                        child: Text(
-                          widget.scrap['scap']['text'],
-                          style: TextStyle(fontSize: a.width / 15),
-                        ),
-                      )
-                    ],
-                  )),
+                        SizedBox(width: a.width / 20),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
