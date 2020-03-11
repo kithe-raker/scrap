@@ -1,6 +1,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class BlockingList extends StatefulWidget {
   final String userUID;
@@ -63,7 +65,18 @@ class _BlockingListState extends State<BlockingList> {
         });
   }
 
-  unblock(String writer, String time , String text, writerUID) {
+toast(String text) {
+    return Fluttertoast.showToast(
+        msg: text,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.white60,
+        textColor: Colors.black,
+        fontSize: 16.0);
+  }
+  
+  unblock(String writer, String time , String text, writerUID) async {
     Map unblock = {
       'uid': writerUID,
       'id': writer,
@@ -76,7 +89,7 @@ class _BlockingListState extends State<BlockingList> {
         .collection("info")
         .document("blockList")
         .setData({
-      'blockList': FieldValue.arrayRemove([unblocked])
+      'blockList': FieldValue.arrayRemove([unblock])
     }, merge: true);
 
   }
@@ -85,6 +98,7 @@ class _BlockingListState extends State<BlockingList> {
   }
 
     Widget dataReturn(List blockList){
+      Size a = MediaQuery.of(context).size;
      return Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 2,              
@@ -125,7 +139,7 @@ class _BlockingListState extends State<BlockingList> {
                                         children: <Widget>[
                                           Icon(
                                             Icons.not_interested,
-                                            color: Colors.blue[800],
+                                            color: Colors.blue[800]
                                           ),
                                           Text(
                                             "ปลดบล็อค",
