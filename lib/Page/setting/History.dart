@@ -15,7 +15,6 @@ class _HistoryState extends State<History> {
   List scrapsID = [];
   Set firstScrap = Set();
   QuerySnapshot cache;
-  ScrollController scrollController = ScrollController();
   @override
   void initState() {
     initializeDateFormatting();
@@ -94,7 +93,6 @@ class _HistoryState extends State<History> {
       }
     }
     return GridView(
-        controller: scrollController,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             childAspectRatio: 0.7383,

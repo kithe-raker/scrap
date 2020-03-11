@@ -482,45 +482,6 @@ class _FriendListState extends State<FriendList> {
                     ]),
               ),
             ),
-            // Positioned(
-            //   right: 10.0,
-            //   top: 10.0,
-            //   child: Container(
-            //     width: a.width / 6,
-            //     height: a.width / 6,
-            //     decoration: BoxDecoration(
-            //         borderRadius: BorderRadius.circular(a.width),
-            //         border: Border.all(
-            //             color: Colors.white24, width: a.width / 500)),
-            //     child: Container(
-            //       margin: EdgeInsets.all(a.width / 55),
-            //       width: a.width / 5.5,
-            //       height: a.width / 5.5,
-            //       decoration: BoxDecoration(
-            //           borderRadius: BorderRadius.circular(a.width),
-            //           border: Border.all(color: Colors.white70)),
-            //       child: Container(
-            //         margin: EdgeInsets.all(a.width / 57),
-            //         width: a.width / 6,
-            //         height: a.width / 6,
-            //         decoration: BoxDecoration(
-            //             borderRadius: BorderRadius.circular(a.width),
-            //             color: Colors.white,
-            //             border: Border.all(color: Colors.white)),
-            //         child: Icon(
-            //           Icons.create,
-            //           size: a.width / 23,
-            //           color: Colors.black,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            //   // Icon(
-            //   //   Icons.arrow_forward,
-            //   //   color: Color(0xffA3A3A3),
-            //   //   size: 30.0,
-            //   // ),
-            // )
           ],
         ),
         onTap: () async {
@@ -536,45 +497,6 @@ class _FriendListState extends State<FriendList> {
         },
       ),
     );
-  }
-
-  warnClear(String user, String thrownID) {
-    showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text('คุณต้องนำ' + user + 'อกกจากประวัติใช่หรือไม่'),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ยกเลิก')),
-              FlatButton(
-                child: Text('ok'),
-                onPressed: () async {
-                  toast('ลบ"$user"ออกแล้ว');
-                  Navigator.pop(context);
-                  await clearHist(thrownID);
-                },
-              )
-            ],
-          );
-        });
-  }
-
-  clearHist(String thrown) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(widget.doc['uid'])
-        .collection('info')
-        .document('searchHist')
-        .updateData({
-      'history': FieldValue.arrayRemove([thrown])
-    });
   }
 
   toast(String text) {
@@ -808,9 +730,7 @@ class _AllFriendsState extends State<AllFriends> {
                           child: IconButton(
                               icon: Icon(Icons.create,
                                   size: a.width / 21, color: Colors.black),
-                              onPressed: () {
-                                
-                              }),
+                              onPressed: () {}),
                         ),
                       ),
                     ),

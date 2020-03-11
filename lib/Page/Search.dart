@@ -809,7 +809,7 @@ class _SearchState extends State<Search> {
               FlatButton(
                 child: Text('ตกลง'),
                 onPressed: () async {
-                  if (await blocked(widget.doc['uid'], thrownUID)) {
+                  if (await scraps.blocked(widget.doc['uid'], thrownUID)) {
                     toast('คุณไม่สามารถปาไปหา"$user"ได้');
                   } else {
                     Navigator.pop(context);
@@ -828,20 +828,6 @@ class _SearchState extends State<Search> {
             ],
           );
         });
-  }
-
-  Future<bool> blocked(String uid, String thrownID) async {
-    List blockList = [];
-    await Firestore.instance
-        .collection('Users')
-        .document(thrownID)
-        .collection('blockList')
-        .document(thrownID)
-        .get()
-        .then((value) {
-      blockList = value?.data['blockList'] ?? [];
-    });
-    return blockList.where((data) => data['uid'] == uid).length > 0;
   }
 
   addFriend(String uid, String newFriend, String img, String join) async {

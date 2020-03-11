@@ -160,6 +160,20 @@ class Scraps {
     }
   }
 
+  Future<bool> blocked(String uid, String thrownUID) async {
+    List blockList = [];
+    await Firestore.instance
+        .collection('Users')
+        .document(thrownUID)
+        .collection('info')
+        .document('blockList')
+        .get()
+        .then((value) {
+      blockList = value?.data['blockList'] ?? [];
+    });
+    return blockList.where((data) => data['uid'] == uid).length > 0;
+  }
+
   toast(String text) {
     return Fluttertoast.showToast(
         msg: text,

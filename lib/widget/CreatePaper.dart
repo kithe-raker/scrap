@@ -269,14 +269,20 @@ class _WriteScrapState extends State<WriteScrap> {
                                 onTap: () async {
                                   if (_key.currentState.validate()) {
                                     _key.currentState.save();
-                                    Navigator.pop(context);
-                                    await scraps.throwTo(
-                                        uid: widget.uid,
-                                        writer: widget.id,
-                                        thrownUID: widget.thrownUID,
-                                        text: text,
-                                        public: public);
-                                    Taoast().toast('ปาใส่"${widget.tID}"แล้ว');
+                                    if (await scraps.blocked(
+                                        widget.uid, widget.thrownUID)) {
+                                      scraps.toast(
+                                          'คุณไม่สามารถปาไปหา"${'widget.tID'}"ได้');
+                                    } else {
+                                      Navigator.pop(context);
+                                      await scraps.throwTo(
+                                          uid: widget.uid,
+                                          writer: widget.id,
+                                          thrownUID: widget.thrownUID,
+                                          text: text,
+                                          public: public);
+                                      scraps.toast('ปาใส่"${widget.tID}"แล้ว');
+                                    }
                                   }
                                 },
                               )
