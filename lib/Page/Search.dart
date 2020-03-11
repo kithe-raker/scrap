@@ -195,7 +195,7 @@ class _SearchState extends State<Search> {
                                 ? guide(
                                     a,
                                     'ค้นหาคนที่คุณต้องการปาใส่',
-                                    a.height / 2.1,
+                                    a.height / 2.5,
                                   )
                                 : StreamBuilder(
                                     stream: Firestore.instance

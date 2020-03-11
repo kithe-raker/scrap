@@ -254,7 +254,7 @@ class _FriendListState extends State<FriendList> {
                       ],
                     ),
                     friends?.length == null || friends.length == 0
-                        ? guide(a, 'คุณไม่มีสหาย', a.height / 2)
+                        ? guide(a, 'คุณไม่มีสหาย', a.height / 2.5)
                         : id == null || id == '' || id.length < 2
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -325,7 +325,7 @@ class _FriendListState extends State<FriendList> {
 
   Widget search(Size a) {
     return searchResault.length == 0
-        ? guide(a, 'ไม่พบไอดีนี้ในสหายของคุณ', a.height / 2)
+        ? guide(a, 'ไม่พบไอดีนี้ในสหายของคุณ', a.height / 2.5)
         : listFriend(a, searchResault);
   }
 
