@@ -37,7 +37,7 @@ class _BlockingListState extends State<BlockingList> {
                 return blockList?.length == null || blockList?.length == 0
                     ? Center(
                         child: nullReturn(
-                            scr, 'ไม่มีผู้ใช้คุณโดนบล็อค', scr.height / 2))
+                            scr, 'ไม่มีผู้ใช้ที่คุณบล็อค', scr.height / 2))
                     : dataReturn(blockList.reversed.toList(), scr);
               } else
                 return Container(
