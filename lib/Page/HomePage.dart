@@ -660,13 +660,15 @@ class _HomePageState extends State<HomePage> {
                                       child: SizedBox(
                                         width: a.width / 1.5,
                                         child: TextFormField(
-                                          textAlign: TextAlign
-                                              .center, //เพื่อให้ข้อความอยู่ตรงกลาง
+                                          maxLength: 225,
+                                          textAlign: TextAlign.center,
                                           style:
                                               TextStyle(fontSize: a.width / 15),
                                           maxLines: null,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
+                                            counterStyle: TextStyle(
+                                                color: Colors.transparent),
                                             border: InputBorder
                                                 .none, //สำหรับใหเส้นใต้หาย
                                             hintText: 'เขียนข้อความบางอย่าง',

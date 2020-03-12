@@ -767,6 +767,7 @@ class _MapScrapsState extends State<MapScraps> {
               '${convTime.day}/${convTime.month}/${convTime.year}', id);
           addRead(id);
           scrap.increaseTransaction(user, 'read');
+          print('${convTime.year},${convTime.month},${convTime.day}');
           increasHistTran(
               user, '${convTime.year},${convTime.month},${convTime.day}', id);
         } catch (e) {
