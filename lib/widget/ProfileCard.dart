@@ -26,7 +26,7 @@ class _ProfileCardState extends State<ProfileCard> {
       decoration: BoxDecoration(
           color: Color(0xff282828),
           borderRadius: BorderRadius.circular(a.width / 20)),
-      width: a.width / 1.2,
+      width: a.width,
       child: Column(
         children: <Widget>[
           Container(
@@ -70,9 +70,7 @@ class _ProfileCardState extends State<ProfileCard> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  widget.info['status'] == null
-                      ? ''
-                      : '“${widget.info['status']}”',
+                  widget.info['status'] == null ? '' : widget.info['status'],
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,

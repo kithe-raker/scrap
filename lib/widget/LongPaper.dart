@@ -17,15 +17,24 @@ class _LongPaperState extends State<LongPaper> {
       child: Container(
           margin: EdgeInsets.only(right: a.width / 15, top: a.width / 20),
           width: a.width / 1.3,
-          height: a.width / 3,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/paper-readed.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
+          height: a.width / 1.3,
+          // decoration: BoxDecoration(
+          //   image: DecorationImage(
+          //     image: AssetImage('assets/paper-readed.png'),
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           child: Stack(
             children: <Widget>[
+              Container(
+                width: a.width,
+                child: Image.asset(
+                  'assets/paper-readed.png',
+                  width: a.width / 1.3,
+                  height: a.width,
+                  fit: BoxFit.cover,
+                ),
+              ),
               Container(
                 padding: EdgeInsets.all(a.width / 40),
                 width: a.width,
@@ -60,12 +69,13 @@ class _LongPaperState extends State<LongPaper> {
               ),
               Container(
                 padding: EdgeInsets.all(24),
-                width: a.width,
+                width: a.width / 1.3,
                 height: a.width,
                 alignment: Alignment.center,
                 child: Text(
                   widget.scrap['scap']['text'],
-                  style: TextStyle(fontSize: a.width / 15),
+                  style: TextStyle(fontSize: a.width / 17),
+                  textAlign: TextAlign.center,
                 ),
               )
             ],
@@ -91,21 +101,21 @@ class _LongPaperState extends State<LongPaper> {
               height: a.height,
               alignment: Alignment.center,
               color: Colors.black,
-              child: Container(
-                  margin: EdgeInsets.only(
-                      right: a.width / 15,
-                      left: a.width / 15,
-                      top: a.width / 20),
-                  width: a.width / 1,
-                  height: a.height / 1.8,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/paper-readed.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Stack(
+              padding: EdgeInsets.only(left: a.width / 20, right: a.width / 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Stack(
                     children: <Widget>[
+                      Container(
+                        width: a.width,
+                        child: Image.asset(
+                          'assets/paper-readed.png',
+                          width: a.width,
+                          height: a.height / 1.6,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                       Container(
                         padding: EdgeInsets.all(a.width / 40),
                         width: a.width,
@@ -130,22 +140,57 @@ class _LongPaperState extends State<LongPaper> {
                                 ),
                               ],
                             ),
-                            
                           ],
                         ),
                       ),
                       Container(
                         padding: EdgeInsets.all(24),
                         width: a.width,
-                        height: a.width,
+                        height: a.height / 1.6,
                         alignment: Alignment.center,
                         child: Text(
                           widget.scrap['scap']['text'],
                           style: TextStyle(fontSize: a.width / 15),
+                          textAlign: TextAlign.center,
                         ),
                       )
                     ],
-                  )),
+                  ),
+                  SizedBox(height: a.width / 15),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        SizedBox(width: a.width / 20),
+                        InkWell(
+                          child: Container(
+                            width: a.width / 6.5,
+                            height: a.width / 6.5,
+                            decoration: BoxDecoration(
+                                color: Colors.grey[800],
+                                borderRadius: BorderRadius.circular(a.width)),
+                            alignment: Alignment.center,
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: a.width / 15,
+                            ),
+                            // Text(
+                            //   "ปิด",
+                            //   style:
+                            //       TextStyle(fontSize: a.width / 15),
+                            // ),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        SizedBox(width: a.width / 20),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
