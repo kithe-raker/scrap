@@ -837,13 +837,18 @@ class _ProfileState extends State<Profile> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey[300]))),
-                          child: Text(
-                            "แก้ไขสเตตัส",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              fontSize: a.width / 15,
-                              color: Colors.black,
-                            ),
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(width: 5),
+                              Text(
+                                "แก้ไขสเตตัส",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: a.width / 15,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         Container(
@@ -855,6 +860,8 @@ class _ProfileState extends State<Profile> {
                               fontSize: a.width / 17,
                             ),
                             controller: tx,
+                            maxLines: null,
+                            maxLength: 60,
                             decoration: InputDecoration(
                               border: InputBorder.none, //สำหรับใหเส้นใต้หาย
                               hintText: 'เขียนข้อความของคุณ',
@@ -987,6 +994,7 @@ class _ProfileState extends State<Profile> {
                           height: a.width / 3.4,
                           child: TextFormField(
                             maxLines: null,
+                            maxLength: 250,
                             decoration: InputDecoration(
                               border: InputBorder.none, //สำหรับใหเส้นใต้หาย
                               hintText: 'เขียนข้อความบางอย่าง',

@@ -217,8 +217,10 @@ class _WriteScrapState extends State<WriteScrap> {
                                         .center, //เพื่อให้ข้อความอยู่ตรงกลาง
                                     style: TextStyle(fontSize: a.width / 15),
                                     maxLines: null,
+                                    maxLength: 250,
                                     keyboardType: TextInputType.text,
                                     decoration: InputDecoration(
+                                      counterText: "",
                                       border:
                                           InputBorder.none, //สำหรับใหเส้นใต้หาย
                                       hintText: 'เขียนข้อความบางอย่าง',

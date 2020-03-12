@@ -665,8 +665,10 @@ class _HomePageState extends State<HomePage> {
                                           style:
                                               TextStyle(fontSize: a.width / 15),
                                           maxLines: null,
+                                          maxLength: 250,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
+                                            counterText: "",
                                             border: InputBorder
                                                 .none, //สำหรับใหเส้นใต้หาย
                                             hintText: 'เขียนข้อความบางอย่าง',
