@@ -754,13 +754,15 @@ class _ViewprofileState extends State<Viewprofile> {
                                       width: a.width,
                                       height: a.height,
                                       alignment: Alignment.center,
-                                      child: SizedBox(
-                                        width: a.width / 1.5,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 25, right: 25),
+                                        width: a.width,
                                         child: TextFormField(
                                           textAlign: TextAlign
                                               .center, //เพื่อให้ข้อความอยู่ตรงกลาง
                                           style:
-                                              TextStyle(fontSize: a.width / 15),
+                                              TextStyle(fontSize: a.width / 14),
                                           maxLines: null,
                                           maxLength: 250,
                                           keyboardType: TextInputType.text,

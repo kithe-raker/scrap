@@ -657,14 +657,16 @@ class _HomePageState extends State<HomePage> {
                                       width: a.width,
                                       height: a.height,
                                       alignment: Alignment.center,
-                                      child: SizedBox(
-                                        width: a.width / 1.5,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 25, right: 25),
+                                        width: a.width,
                                         child: TextFormField(
                                           maxLength: 250,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               height: 1.35,
-                                              fontSize: a.width / 15),
+                                              fontSize: a.width / 14),
                                           maxLines: null,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
