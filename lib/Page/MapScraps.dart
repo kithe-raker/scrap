@@ -118,6 +118,7 @@ class _MapScrapsState extends State<MapScraps> {
                 child: Stack(
                   children: <Widget>[
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Stack(
                           children: <Widget>[
@@ -152,19 +153,22 @@ class _MapScrapsState extends State<MapScraps> {
                                     ],
                                   ),
                                 )),
-                            Positioned(
-                                left: a.width / 16,
-                                top: a.height / 6.6,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  height: a.height / 3.2,
-                                  width: a.width / 1.3,
-                                  child: Text(
-                                    text,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: a.width / 14),
-                                  ),
-                                )),
+                            Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.only(left: 25, right: 25),
+                              height: a.height / 1.6,
+                              width: a.width,
+                              child: Text(
+                                text,
+                                style: TextStyle(
+                                  fontSize: a.width / 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              // onTap: () {
+                              //   dialogPa(writerID, writer);
+                              // },
+                            ),
                             // Positioned(
                             //   bottom: 0,
                             //   left: 12,

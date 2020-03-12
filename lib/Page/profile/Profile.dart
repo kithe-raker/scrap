@@ -63,48 +63,51 @@ class _ProfileState extends State<Profile> {
                         child: Column(
                           children: <Widget>[
                             Container(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  InkWell(
-                                    child: Container(
-                                      width: a.width / 7,
-                                      height: a.width / 10,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(a.width),
-                                          color: Colors.white),
-                                      child: Icon(Icons.arrow_back,
-                                          color: Colors.black,
-                                          size: a.width / 15),
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    InkWell(
+                                      child: Container(
+                                        width: a.width / 7,
+                                        height: a.width / 10,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(a.width),
+                                            color: Colors.white),
+                                        child: Icon(Icons.arrow_back,
+                                            color: Colors.black,
+                                            size: a.width / 15),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(
+                                          context,
+                                        );
+                                      },
                                     ),
-                                    onTap: () {
-                                      Navigator.pop(
-                                        context,
-                                      );
-                                    },
-                                  ),
-                                  PopupMenuButton<String>(
-                                    onSelected: (val) {
-                                      choiceAction(val, info: snapshot.data);
-                                    },
-                                    itemBuilder: (BuildContext context) {
-                                      return Constans.choices
-                                          .map((String choice) {
-                                        return PopupMenuItem(
-                                            value: choice,
-                                            child: Text(
-                                              choice,
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15),
-                                            ));
-                                      }).toList();
-                                    },
-                                    child: Icon(Icons.more_horiz,
-                                        color: Colors.white, size: a.width / 9),
-                                  )
-                                ],
+                                    PopupMenuButton<String>(
+                                      onSelected: (val) {
+                                        choiceAction(val, info: snapshot.data);
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        return Constans.choices
+                                            .map((String choice) {
+                                          return PopupMenuItem(
+                                              value: choice,
+                                              child: Text(
+                                                choice,
+                                                style: TextStyle(
+                                                    fontSize: a.width / 15),
+                                              ));
+                                        }).toList();
+                                      },
+                                      child: Icon(Icons.more_horiz,
+                                          color: Colors.white,
+                                          size: a.width / 9),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             // ||
@@ -586,9 +589,9 @@ class _ProfileState extends State<Profile> {
                 children: <Widget>[
                   Container(
                     color: Colors.black,
-                    margin: EdgeInsets.only(
-                      top: a.height / 8,
-                    ),
+                    // margin: EdgeInsets.only(
+                    //   top: a.height / 8,
+                    // ),
                     padding: EdgeInsets.only(
                         left: a.width / 20, right: a.width / 20),
                     width: a.width,
@@ -596,6 +599,7 @@ class _ProfileState extends State<Profile> {
                     child: Stack(
                       children: <Widget>[
                         Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Stack(
                               children: <Widget>[
@@ -649,7 +653,7 @@ class _ProfileState extends State<Profile> {
                                   alignment: Alignment.center,
                                   padding: EdgeInsets.only(left: 25, right: 25),
                                   height: a.height / 1.6,
-                                  // width: a.width / 1.2,
+                                  width: a.width,
                                   child: Text(
                                     text,
                                     style: TextStyle(

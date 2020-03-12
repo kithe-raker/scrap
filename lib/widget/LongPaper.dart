@@ -17,15 +17,24 @@ class _LongPaperState extends State<LongPaper> {
       child: Container(
           margin: EdgeInsets.only(right: a.width / 15, top: a.width / 20),
           width: a.width / 1.3,
-          height: a.width / 3,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/paper-readed.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
+          height: a.width / 1.3,
+          // decoration: BoxDecoration(
+          //   image: DecorationImage(
+          //     image: AssetImage('assets/paper-readed.png'),
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           child: Stack(
             children: <Widget>[
+              Container(
+                width: a.width,
+                child: Image.asset(
+                  'assets/paper-readed.png',
+                  width: a.width / 1.3,
+                  height: a.width,
+                  fit: BoxFit.cover,
+                ),
+              ),
               Container(
                 padding: EdgeInsets.all(a.width / 40),
                 width: a.width,
@@ -60,12 +69,12 @@ class _LongPaperState extends State<LongPaper> {
               ),
               Container(
                 padding: EdgeInsets.all(24),
-                width: a.width,
+                width: a.width / 1.3,
                 height: a.width,
                 alignment: Alignment.center,
                 child: Text(
                   widget.scrap['scap']['text'],
-                  style: TextStyle(fontSize: a.width / 15),
+                  style: TextStyle(fontSize: a.width / 17),
                   textAlign: TextAlign.center,
                 ),
               )
@@ -89,66 +98,64 @@ class _LongPaperState extends State<LongPaper> {
             },
             child: Container(
               width: a.width,
-              // height: a.height,
+              height: a.height,
               alignment: Alignment.center,
               color: Colors.black,
+              padding: EdgeInsets.only(left: a.width / 20, right: a.width / 20),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                      margin: EdgeInsets.only(
-                          right: a.width / 15,
-                          left: a.width / 15,
-                          top: a.width / 20),
-                      width: a.width / 1,
-                      height: a.height / 1.8,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/paper-readed.png'),
+                  Stack(
+                    children: <Widget>[
+                      Container(
+                        width: a.width,
+                        child: Image.asset(
+                          'assets/paper-readed.png',
+                          width: a.width,
+                          height: a.height / 1.6,
                           fit: BoxFit.cover,
                         ),
                       ),
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.all(a.width / 40),
-                            width: a.width,
-                            height: a.width / 5,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Container(
+                        padding: EdgeInsets.all(a.width / 40),
+                        width: a.width,
+                        height: a.width / 5,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                        "เขียนโดย : ${widget.scrap['scap']['writer']}",
-                                        style: TextStyle(
-                                            fontSize: a.width / 22,
-                                            color: Colors.grey)),
-                                    Text(
-                                      "เวลา : ${widget.scrap['scap']['time']}",
-                                      style: TextStyle(
-                                          fontSize: a.width / 22,
-                                          color: Colors.grey),
-                                    ),
-                                  ],
+                                Text(
+                                    "เขียนโดย : ${widget.scrap['scap']['writer']}",
+                                    style: TextStyle(
+                                        fontSize: a.width / 22,
+                                        color: Colors.grey)),
+                                Text(
+                                  "เวลา : ${widget.scrap['scap']['time']}",
+                                  style: TextStyle(
+                                      fontSize: a.width / 22,
+                                      color: Colors.grey),
                                 ),
                               ],
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(24),
-                            width: a.width,
-                            height: a.width,
-                            alignment: Alignment.center,
-                            child: Text(
-                              widget.scrap['scap']['text'],
-                              style: TextStyle(fontSize: a.width / 15),
-                            ),
-                          )
-                        ],
-                      )),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(24),
+                        width: a.width,
+                        height: a.height / 1.6,
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.scrap['scap']['text'],
+                          style: TextStyle(fontSize: a.width / 15),
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
                   SizedBox(height: a.width / 15),
                   Container(
                     child: Row(
