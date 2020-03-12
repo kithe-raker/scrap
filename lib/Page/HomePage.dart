@@ -662,8 +662,9 @@ class _HomePageState extends State<HomePage> {
                                         child: TextFormField(
                                           maxLength: 250,
                                           textAlign: TextAlign.center,
-                                          style:
-                                              TextStyle(fontSize: a.width / 15),
+                                          style: TextStyle(
+                                              height: 1.35,
+                                              fontSize: a.width / 15),
                                           maxLines: null,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(

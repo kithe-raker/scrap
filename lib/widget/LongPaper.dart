@@ -74,7 +74,7 @@ class _LongPaperState extends State<LongPaper> {
                 alignment: Alignment.center,
                 child: Text(
                   widget.scrap['scap']['text'],
-                  style: TextStyle(fontSize: a.width / 17),
+                  style: TextStyle(height: 1.35, fontSize: a.width / 17),
                   textAlign: TextAlign.center,
                 ),
               )
@@ -150,7 +150,8 @@ class _LongPaperState extends State<LongPaper> {
                         alignment: Alignment.center,
                         child: Text(
                           widget.scrap['scap']['text'],
-                          style: TextStyle(fontSize: a.width / 15),
+                          style:
+                              TextStyle(height: 1.35, fontSize: a.width / 15),
                           textAlign: TextAlign.center,
                         ),
                       )

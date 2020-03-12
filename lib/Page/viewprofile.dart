@@ -770,6 +770,7 @@ class _ViewprofileState extends State<Viewprofile> {
                                                 .none, //สำหรับใหเส้นใต้หาย
                                             hintText: 'เขียนข้อความบางอย่าง',
                                             hintStyle: TextStyle(
+                                              height: 1.35,
                                               fontSize: a.width / 18,
                                               color: Colors.grey,
                                             ),

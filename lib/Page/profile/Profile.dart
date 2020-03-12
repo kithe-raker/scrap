@@ -657,6 +657,7 @@ class _ProfileState extends State<Profile> {
                                   child: Text(
                                     text,
                                     style: TextStyle(
+                                      height: 1.35,
                                       fontSize: a.width / 14,
                                     ),
                                     textAlign: TextAlign.center,
