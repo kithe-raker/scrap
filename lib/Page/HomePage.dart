@@ -372,7 +372,7 @@ class _HomePageState extends State<HomePage> {
     DateTime now = DateTime.now();
     String date = DateFormat('d/M/y').format(now);
     lastReset == date
-        ? toast('คุณขอรับกระดาษได้แค่1ครั้งต่อวัน')
+        ? toast('คุณขอรับกระดาษได้แค่ 1 ครั้ง ต่อวัน')
         : warnClear(data);
   }
 
@@ -458,7 +458,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return currentLocation == null
-                ? gpsCheck(a, 'กรุณาตรวจสอบGPSของคุณ')
+                ? gpsCheck(a, 'กรุณาตรวจสอบ GPS ของคุณ')
                 : MapScraps(
                     collection: snap?.data['id'] ?? [],
                     currentLocation: currentLocation,
@@ -657,16 +657,20 @@ class _HomePageState extends State<HomePage> {
                                       width: a.width,
                                       height: a.height,
                                       alignment: Alignment.center,
-                                      child: SizedBox(
-                                        width: a.width / 1.5,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 25, right: 25),
+                                        width: a.width,
                                         child: TextFormField(
-                                          maxLength: 225,
+                                          maxLength: 250,
                                           textAlign: TextAlign.center,
-                                          style:
-                                              TextStyle(fontSize: a.width / 15),
+                                          style: TextStyle(
+                                              height: 1.35,
+                                              fontSize: a.width / 14),
                                           maxLines: null,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
+                                            counterText: "",
                                             counterStyle: TextStyle(
                                                 color: Colors.transparent),
                                             border: InputBorder
