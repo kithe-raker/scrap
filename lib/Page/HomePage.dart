@@ -372,7 +372,7 @@ class _HomePageState extends State<HomePage> {
     DateTime now = DateTime.now();
     String date = DateFormat('d/M/y').format(now);
     lastReset == date
-        ? toast('คุณขอรับกระดาษได้แค่1ครั้งต่อวัน')
+        ? toast('คุณขอรับกระดาษได้แค่ 1 ครั้ง ต่อวัน')
         : warnClear(data);
   }
 
