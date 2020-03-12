@@ -16,11 +16,53 @@ class _BlockingListState extends State<BlockingList> {
     Size scr = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: Text(
-            'การบล็อค',
-            style: TextStyle(color: Colors.white, fontSize: scr.width / 14),
+        appBar:
+            // AppBar(
+            //   backgroundColor: Colors.black,
+            //   title: Text(
+            //     'การบล็อค',
+            //     style: TextStyle(color: Colors.white, fontSize: scr.width / 14),
+            //   ),
+            // ),
+            PreferredSize(
+          preferredSize: Size(double.infinity, scr.width / 4),
+          child: Container(
+            margin: MediaQuery.of(context).padding,
+            width: scr.width,
+            color: Colors.black,
+            padding: EdgeInsets.only(
+                top: scr.width / 18,
+                right: scr.width / 25,
+                left: scr.width / 25,
+                bottom: scr.width / 18),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  child: Container(
+                    width: scr.width / 7,
+                    height: scr.width / 10,
+                    margin: EdgeInsets.only(right: scr.width / 15),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(scr.width),
+                        color: Colors.white),
+                    child: Icon(Icons.arrow_back,
+                        color: Colors.black, size: scr.width / 15),
+                  ),
+                  onTap: () {
+                    Navigator.pop(
+                      context,
+                    );
+                  },
+                ),
+                Text('การบล็อค',
+                    style: TextStyle(
+                      fontSize: scr.width / 14,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center),
+              ],
+            ),
           ),
         ),
         body: StreamBuilder(
@@ -124,7 +166,7 @@ class _BlockingListState extends State<BlockingList> {
                     child: Center(
                         child: Text(
                       data['text'],
-                      style: TextStyle(fontSize: scr.width / 18),
+                      style: TextStyle(fontSize: scr.width / 22),
                       textAlign: TextAlign.center,
                     ))),
               ),
@@ -180,7 +222,7 @@ class _BlockingListState extends State<BlockingList> {
                     padding: EdgeInsets.only(
                         left: a.width / 20, right: a.width / 20),
                     width: a.width,
-                    height: a.height / 1,
+                    height: a.height,
                     child: Stack(
                       children: <Widget>[
                         Column(
