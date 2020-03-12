@@ -458,7 +458,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return currentLocation == null
-                ? gpsCheck(a, 'กรุณาตรวจสอบGPSของคุณ')
+                ? gpsCheck(a, 'กรุณาตรวจสอบ GPS ของคุณ')
                 : MapScraps(
                     collection: snap?.data['id'] ?? [],
                     currentLocation: currentLocation,
