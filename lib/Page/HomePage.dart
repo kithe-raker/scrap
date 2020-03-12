@@ -300,7 +300,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapshot) {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.active) {
-          int scraps = 15 - (snapshot.data['scraps']?.length ?? 0);
+          int scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
           return InkWell(
             child: Container(
               padding: EdgeInsets.fromLTRB(scr.width / 24, scr.width / 36,
@@ -319,7 +319,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(scr.width / 14.2)),
-              child: scraps == 0
+              child: scraps < 1
                   ? Text(
                       'กระดาษของคุณหมดแล้ว',
                       style: TextStyle(

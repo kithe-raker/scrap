@@ -47,12 +47,17 @@ class _AboutState extends State<About> {
                       margin: EdgeInsets.only(
                           right: a.width / 18,
                           left: a.width / 18,
-                          top: a.width / 10,
+                          top: a.width / 21,
                           bottom: a.width / 20),
                       child: Stack(
                         children: <Widget>[
                           Container(
-                            child: Image.asset("assets/paper-readed.png"),
+                            child: Image.asset(
+                              "assets/paper-readed.png",
+                              width: a.width / 1.1,
+                              height: a.height / 1.72,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                           Container(
                             padding: EdgeInsets.all(a.width / 20),
@@ -105,7 +110,7 @@ class _AboutState extends State<About> {
                                               TextStyle(fontSize: a.width / 20),
                                         ),
                                         Text(
-                                          "1.0.3",
+                                          "1.1.0",
                                           style:
                                               TextStyle(fontSize: a.width / 20),
                                         )

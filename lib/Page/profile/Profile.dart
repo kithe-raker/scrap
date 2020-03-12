@@ -1006,12 +1006,12 @@ class _ProfileState extends State<Profile> {
                             },
                           ),
                         ),
-                        InkWell(
-                            child: Container(
-                              width: a.width,
-                              alignment: Alignment.centerRight,
-                              margin: EdgeInsets.only(
-                                  top: a.width / 15, right: a.width / 33),
+                        Container(
+                          width: a.width,
+                          alignment: Alignment.centerRight,
+                          margin: EdgeInsets.only(
+                              top: a.width / 15, right: a.width / 33),
+                          child: InkWell(
                               child: Container(
                                   width: a.width / 5.5,
                                   height: a.width / 11,
@@ -1026,27 +1026,27 @@ class _ProfileState extends State<Profile> {
                                         color: Colors.white,
                                         fontSize: a.width / 15),
                                   )),
-                            ),
-                            onTap: () async {
-                              if (_key.currentState.validate()) {
-                                if (await scraps.blocked(
-                                    widget.doc['uid'], id)) {
-                                  toast('คุณไม่สามารถปาไปหา"$thrown"ได้');
-                                } else {
-                                  toast(thrown == 'ไม่ระบุตัวตน'
-                                      ? 'ปากลับแล้ว'
-                                      : 'ปากลับใส่"$thrown"แล้ว');
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                  scraps.throwTo(
-                                      uid: widget.doc['uid'],
-                                      writer: widget.doc['id'],
-                                      thrownUID: id,
-                                      text: text2,
-                                      public: true);
+                              onTap: () async {
+                                if (_key.currentState.validate()) {
+                                  if (await scraps.blocked(
+                                      widget.doc['uid'], id)) {
+                                    toast('คุณไม่สามารถปาไปหา"$thrown"ได้');
+                                  } else {
+                                    toast(thrown == 'ไม่ระบุตัวตน'
+                                        ? 'ปากลับแล้ว'
+                                        : 'ปากลับใส่"$thrown"แล้ว');
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    scraps.throwTo(
+                                        uid: widget.doc['uid'],
+                                        writer: widget.doc['id'],
+                                        thrownUID: id,
+                                        text: text2,
+                                        public: true);
+                                  }
                                 }
-                              }
-                            })
+                              }),
+                        ),
                       ],
                     ),
                   ),

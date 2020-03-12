@@ -85,7 +85,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<bool> versionChecker() async {
-    String recent = '1.0.3', incoming;
+    String recent = '1.1.0', incoming;
     await Firestore.instance
         .collection('App')
         .document('info')

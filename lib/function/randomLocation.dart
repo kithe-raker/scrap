@@ -2,7 +2,7 @@ import 'dart:math';
 
 class RandomLocation {
   final random = Random();
-  var r = 64 / 111300; // = 100 meters
+  var r = 72 / 111300; // = 64 meters
   Map getLocation({double lat, double lng}) {
     double u = random.nextDouble();
     double v = random.nextDouble();

@@ -76,6 +76,7 @@ class _ProfileCardState extends State<ProfileCard> {
                     color: Colors.white,
                     fontSize: a.width / 20,
                     fontWeight: FontWeight.w500,
+                    fontStyle: FontStyle.italic
                   ),
                 ),
               ],

@@ -428,11 +428,15 @@ class _FriendListState extends State<FriendList> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                '@$throwID',
-                                style: TextStyle(
-                                    fontSize: a.width / 13,
-                                    color: Colors.white),
+                              SizedBox(
+                                width: a.width / 2.8,
+                                height: a.height / 18,
+                                child: Text(
+                                  '@$throwID',
+                                  style: TextStyle(
+                                      fontSize: a.width / 13,
+                                      color: Colors.white),
+                                ),
                               ),
                               Row(
                                 children: <Widget>[
@@ -731,10 +735,15 @@ class _AllFriendsState extends State<AllFriends> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              '@$throwID',
-                              style: TextStyle(
-                                  fontSize: a.width / 13, color: Colors.white),
+                            SizedBox(
+                              width: a.width / 2.8,
+                              height: a.height / 18,
+                              child: Text(
+                                '@$throwID',
+                                style: TextStyle(
+                                    fontSize: a.width / 13,
+                                    color: Colors.white),
+                              ),
                             ),
                             Row(
                               children: <Widget>[
