@@ -660,7 +660,7 @@ class _HomePageState extends State<HomePage> {
                                       child: SizedBox(
                                         width: a.width / 1.5,
                                         child: TextFormField(
-                                          maxLength: 225,
+                                          maxLength: 250,
                                           textAlign: TextAlign.center,
                                           style:
                                               TextStyle(fontSize: a.width / 15),
