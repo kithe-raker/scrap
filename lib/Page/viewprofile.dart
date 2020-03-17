@@ -96,7 +96,7 @@ class _ViewprofileState extends State<Viewprofile> {
       friends.removeWhere((dat) => dat['id'] == id);
     } else {
       await jsonConverter.addContent(id: id, imgUrl: img, joinD: join);
-      friends.add({'id': id, 'imgUrl': img, 'joinD': join});
+      friends.add({'id': id, 'imgUrl': img, 'join': join});
     }
     setState(() {});
   }
@@ -322,7 +322,10 @@ class _ViewprofileState extends State<Viewprofile> {
                                                 fontSize: a.width / 12),
                                           ),
                                           Text(
-                                            "Join ${info.data['createdDay']}",
+                                            info.data['createdDay'].runtimeType
+                                                    == String
+                                                ? "Join ${info.data['createdDay']}"
+                                                : "Join ${DateFormat('d/M/y').format(info.data['createdDay'].toDate())}",
                                             style: TextStyle(
                                                 color: Color(0xff26A4FF),
                                                 fontSize: a.width / 12),
@@ -754,20 +757,25 @@ class _ViewprofileState extends State<Viewprofile> {
                                       width: a.width,
                                       height: a.height,
                                       alignment: Alignment.center,
-                                      child: SizedBox(
-                                        width: a.width / 1.5,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 25, right: 25),
+                                        width: a.width,
                                         child: TextFormField(
                                           textAlign: TextAlign
                                               .center, //เพื่อให้ข้อความอยู่ตรงกลาง
                                           style:
-                                              TextStyle(fontSize: a.width / 15),
+                                              TextStyle(fontSize: a.width / 14),
                                           maxLines: null,
+                                          maxLength: 250,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
+                                            counterText: "",
                                             border: InputBorder
                                                 .none, //สำหรับใหเส้นใต้หาย
                                             hintText: 'เขียนข้อความบางอย่าง',
                                             hintStyle: TextStyle(
+                                              height: 1.35,
                                               fontSize: a.width / 18,
                                               color: Colors.grey,
                                             ),

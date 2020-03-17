@@ -33,9 +33,6 @@ class _LoginPageState extends State<LoginPage> {
           .then((value) async {
         await updateToken(value.user.uid);
         await friendManager.initFriend(value.user.uid);
-        setState(() {
-          loading = false;
-        });
       });
     } catch (e) {
       setState(() {

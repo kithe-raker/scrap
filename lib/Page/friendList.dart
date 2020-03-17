@@ -184,7 +184,7 @@ class _FriendListState extends State<FriendList> {
                         ),
                         Container(
                           width: a.width / 1.17,
-                          padding: const EdgeInsets.only(left: 0),
+                          margin: EdgeInsets.only(left: a.width / 15),
                           alignment: Alignment.centerLeft,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -254,7 +254,7 @@ class _FriendListState extends State<FriendList> {
                       ],
                     ),
                     friends?.length == null || friends.length == 0
-                        ? guide(a, 'คุณไม่มีสหาย', a.height / 2)
+                        ? guide(a, 'คุณไม่มีสหาย', a.height / 2.5)
                         : id == null || id == '' || id.length < 2
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -325,7 +325,7 @@ class _FriendListState extends State<FriendList> {
 
   Widget search(Size a) {
     return searchResault.length == 0
-        ? guide(a, 'ไม่พบidน���้ในสหายของคุณ', a.height / 2)
+        ? guide(a, 'ไม่พบไอดีนี้ในสหายของคุณ', a.height / 2.5)
         : listFriend(a, searchResault);
   }
 
@@ -428,11 +428,15 @@ class _FriendListState extends State<FriendList> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                '@$throwID',
-                                style: TextStyle(
-                                    fontSize: a.width / 13,
-                                    color: Colors.white),
+                              SizedBox(
+                                width: a.width / 2.8,
+                                height: a.height / 18,
+                                child: Text(
+                                  '@$throwID',
+                                  style: TextStyle(
+                                      fontSize: a.width / 13,
+                                      color: Colors.white),
+                                ),
                               ),
                               Row(
                                 children: <Widget>[
@@ -731,10 +735,15 @@ class _AllFriendsState extends State<AllFriends> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              '@$throwID',
-                              style: TextStyle(
-                                  fontSize: a.width / 13, color: Colors.white),
+                            SizedBox(
+                              width: a.width / 2.8,
+                              height: a.height / 18,
+                              child: Text(
+                                '@$throwID',
+                                style: TextStyle(
+                                    fontSize: a.width / 13,
+                                    color: Colors.white),
+                              ),
                             ),
                             Row(
                               children: <Widget>[

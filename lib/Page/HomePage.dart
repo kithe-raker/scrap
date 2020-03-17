@@ -300,7 +300,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapshot) {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.active) {
-          int scraps = 15 - (snapshot.data['scraps']?.length ?? 0);
+          int scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
           return InkWell(
             child: Container(
               padding: EdgeInsets.fromLTRB(scr.width / 24, scr.width / 36,
@@ -319,7 +319,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(scr.width / 14.2)),
-              child: scraps == 0
+              child: scraps < 1
                   ? Text(
                       'กระดาษของคุณหมดแล้ว',
                       style: TextStyle(
@@ -372,7 +372,7 @@ class _HomePageState extends State<HomePage> {
     DateTime now = DateTime.now();
     String date = DateFormat('d/M/y').format(now);
     lastReset == date
-        ? toast('คุณขอรับกระดาษได้แค่1ครั้งต่อวัน')
+        ? toast('คุณขอรับกระดาษได้แค่ 1 ครั้ง ต่อวัน')
         : warnClear(data);
   }
 
@@ -458,7 +458,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return currentLocation == null
-                ? gpsCheck(a, 'กรุณาตรวจสอบGPSของคุณ')
+                ? gpsCheck(a, 'กรุณาตรวจสอบ GPS ของคุณ')
                 : MapScraps(
                     collection: snap?.data['id'] ?? [],
                     currentLocation: currentLocation,
@@ -657,16 +657,22 @@ class _HomePageState extends State<HomePage> {
                                       width: a.width,
                                       height: a.height,
                                       alignment: Alignment.center,
-                                      child: SizedBox(
-                                        width: a.width / 1.5,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 25, right: 25),
+                                        width: a.width,
                                         child: TextFormField(
-                                          textAlign: TextAlign
-                                              .center, //เพื่อให้ข้อความอยู่ตรงกลาง
-                                          style:
-                                              TextStyle(fontSize: a.width / 15),
+                                          maxLength: 250,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              height: 1.35,
+                                              fontSize: a.width / 14),
                                           maxLines: null,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
+                                            counterText: "",
+                                            counterStyle: TextStyle(
+                                                color: Colors.transparent),
                                             border: InputBorder
                                                 .none, //สำหรับใหเส้นใต้หาย
                                             hintText: 'เขียนข้อความบางอย่าง',
@@ -789,11 +795,11 @@ class _HomePageState extends State<HomePage> {
         .then((dat) async {
       int scraps = dat.data['scraps']?.length ?? 0;
       if (scraps < 15) {
-        toast('คุณได้ทิ้งกระด���ษไว้แล้ว');
+        toast('คุณได้ทิ้งกระดาษไว้แล้ว');
         Navigator.pop(context);
         await scrap.binScrap(text, public, widget.doc);
       } else {
-        toast('กระดาษคุ��หมดแล้ว');
+        toast('กระดาษคุณหมดแล้ว');
       }
     });
   }

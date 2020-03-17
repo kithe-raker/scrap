@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
-import 'package:scrap/Page/setting/servicedoc.dart';
 import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 
@@ -12,7 +11,6 @@ class MainStream extends StatefulWidget {
 }
 
 class _MainStreamState extends State<MainStream> {
-  
   Stream<DocumentSnapshot> userStream(BuildContext context) async* {
     try {
       final uid = await Provider.of(context).auth.currentUser();
@@ -32,13 +30,9 @@ class _MainStreamState extends State<MainStream> {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return snap.data['id'] == null
                 ? CreateProfile1(uid: snap.data['uid'])
-                : snap?.data['accept'] ?? false
-                    ? HomePage(
-                        doc: snap.data,
-                      )
-                    : Servicedoc(
-                        regis: true,
-                      );
+                : HomePage(
+                    doc: snap.data,
+                  );
           } else {
             return Loading();
           }

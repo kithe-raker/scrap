@@ -68,8 +68,6 @@ class _CreateProfileState extends State<CreateProfile> {
       setState(() {
         loading = true;
       });
-    } else {
-      print('complet');
     }
   }
 
@@ -85,10 +83,6 @@ class _CreateProfileState extends State<CreateProfile> {
   }
 
   addData(String uid) async {
-    List index = [];
-    for (int i = 0; i < id.length; i++) {
-      index.add(id.substring(0, ++i));
-    }
     await Firestore.instance
         .collection('Users')
         .document(uid)
@@ -104,7 +98,7 @@ class _CreateProfileState extends State<CreateProfile> {
     await Firestore.instance
         .collection('Users')
         .document(uid)
-        .updateData({'id': id, 'searchIndex': index});
+        .updateData({'id': id});
   }
 
   creatProfile() async {

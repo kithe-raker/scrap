@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class BlockingList extends StatefulWidget {
@@ -16,11 +17,53 @@ class _BlockingListState extends State<BlockingList> {
     Size scr = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: Text(
-            'การบล็อค',
-            style: TextStyle(color: Colors.white, fontSize: scr.width / 14),
+        appBar:
+            // AppBar(
+            //   backgroundColor: Colors.black,
+            //   title: Text(
+            //     'การบล็อค',
+            //     style: TextStyle(color: Colors.white, fontSize: scr.width / 14),
+            //   ),
+            // ),
+            PreferredSize(
+          preferredSize: Size(double.infinity, scr.width / 4),
+          child: Container(
+            margin: MediaQuery.of(context).padding,
+            width: scr.width,
+            color: Colors.black,
+            padding: EdgeInsets.only(
+                top: scr.width / 18,
+                right: scr.width / 25,
+                left: scr.width / 25,
+                bottom: scr.width / 18),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  child: Container(
+                    width: scr.width / 7,
+                    height: scr.width / 10,
+                    margin: EdgeInsets.only(right: scr.width / 15),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(scr.width),
+                        color: Colors.white),
+                    child: Icon(Icons.arrow_back,
+                        color: Colors.black, size: scr.width / 15),
+                  ),
+                  onTap: () {
+                    Navigator.pop(
+                      context,
+                    );
+                  },
+                ),
+                Text('การบล็อค',
+                    style: TextStyle(
+                      fontSize: scr.width / 14,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center),
+              ],
+            ),
           ),
         ),
         body: StreamBuilder(
@@ -38,7 +81,7 @@ class _BlockingListState extends State<BlockingList> {
                     ? Center(
                         child: nullReturn(
                             scr, 'ไม่มีผู้ใช้ที่คุณบล็อค', scr.height / 2))
-                    : dataReturn(blockList, scr);
+                    : dataReturn(blockList.reversed.toList(), scr);
               } else
                 return Container(
                   height: scr.height,
@@ -124,7 +167,7 @@ class _BlockingListState extends State<BlockingList> {
                     child: Center(
                         child: Text(
                       data['text'],
-                      style: TextStyle(fontSize: scr.width / 18),
+                      style: TextStyle(fontSize: scr.width / 22),
                       textAlign: TextAlign.center,
                     ))),
               ),
@@ -180,7 +223,7 @@ class _BlockingListState extends State<BlockingList> {
                     padding: EdgeInsets.only(
                         left: a.width / 20, right: a.width / 20),
                     width: a.width,
-                    height: a.height / 1,
+                    height: a.height,
                     child: Stack(
                       children: <Widget>[
                         Column(
@@ -212,6 +255,28 @@ class _BlockingListState extends State<BlockingList> {
                                               Text('เขียนโดย : $writer'),
                                               Text('เวลา : $time')
                                             ],
+                                          ),
+                                          InkWell(
+                                            child: Container(
+                                                width: a.width / 12,
+                                                height: a.width / 12,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color:
+                                                            Color(0xff26A4FF)),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            a.width)),
+                                                alignment: Alignment.center,
+                                                child: Icon(
+                                                  Icons.flag,
+                                                  color: Color(0xff26A4FF),
+                                                  size: a.width / 16,
+                                                )),
+                                            onTap: () {
+                                              reportDialog(
+                                                  a, writer, uid, text);
+                                            },
                                           ),
                                         ],
                                       ),
@@ -278,18 +343,23 @@ class _BlockingListState extends State<BlockingList> {
                                   SizedBox(width: a.width / 20),
                                   InkWell(
                                     child: Container(
-                                      width: a.width / 3.5,
+                                      width: a.width / 6.5,
                                       height: a.width / 6.5,
                                       decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: Colors.grey[800],
                                           borderRadius:
                                               BorderRadius.circular(a.width)),
                                       alignment: Alignment.center,
-                                      child: Text(
-                                        "ทิ้ง",
-                                        style:
-                                            TextStyle(fontSize: a.width / 15),
+                                      child: Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                        size: a.width / 15,
                                       ),
+                                      // Text(
+                                      //   "ปิด",
+                                      //   style:
+                                      //       TextStyle(fontSize: a.width / 15),
+                                      // ),
                                     ),
                                     onTap: () async {
                                       Navigator.pop(context);
@@ -310,6 +380,143 @@ class _BlockingListState extends State<BlockingList> {
           });
         },
         fullscreenDialog: true));
+  }
+
+  reportDialog(Size a, String id, String reportedUID, String text) {
+    String describe;
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            return Dialog(
+              child: Container(
+                height: a.height / 2.8,
+                padding: EdgeInsets.all(a.width / 56),
+                child: Stack(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          height: a.width / 8.1,
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey[300]))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "รายงาน : ",
+                                    style: TextStyle(
+                                        fontSize: a.width / 20,
+                                        color: Colors.black),
+                                  ),
+                                  Text(
+                                    "@$id",
+                                    style: TextStyle(
+                                        color: Color(0xff26A4FF),
+                                        fontSize: a.width / 18),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(
+                              right: a.width / 40, left: a.width / 40),
+                          height: a.width / 3.4,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              border: InputBorder.none, //สำหรับใหเส้���ใต้หาย
+                              hintText:
+                                  'เขียนข้อความให้เราทราบพฤติกรรมของผู้ใช้รายนี้..',
+                              hintStyle: TextStyle(
+                                fontSize: a.width / 21,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            validator: (val) {
+                              return val.trim() == null || val.trim() == ""
+                                  ? Taoast().toast("เขียนข้อความด้วยอย่างสิ")
+                                  : null;
+                            },
+                            //เนื้อหาที่กรอกเข้าไปใน text
+                            onChanged: (val) {
+                              describe = val;
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: a.width,
+                          alignment: Alignment.centerRight,
+                          margin: EdgeInsets.only(
+                              top: a.width / 15, right: a.width / 33),
+                          child: InkWell(
+                              child: Container(
+                                  width: a.width / 5.5,
+                                  height: a.width / 11,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff26A4FF),
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "ราบงาน",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: a.width / 15),
+                                  )),
+                              onTap: () async {
+                                report(reportedUID, widget.uid, text, describe);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Taoast().toast('รายงานเรียบร้อยแล้ว');
+                              }),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      right: 2,
+                      top: 2,
+                      child: InkWell(
+                        child: Container(
+                            width: a.width / 15,
+                            height: a.width / 15,
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(a.width)),
+                            child: Icon(Icons.clear, color: Colors.white)),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          });
+        });
+  }
+
+  report(String reportedUID, String reporterUID, String text,
+      String describe) async {
+    DateTime now = DateTime.now();
+    String date = DateFormat('y-M-d').format(now);
+    Firestore.instance
+        .collection('Report')
+        .document('reportUser')
+        .collection(date)
+        .add({
+      'reported': reportedUID,
+      'reporter': reporterUID,
+      'text': text,
+      'describe': describe,
+      'timeStamp': FieldValue.serverTimestamp()
+    });
   }
 
   warnDialog(Map map) {

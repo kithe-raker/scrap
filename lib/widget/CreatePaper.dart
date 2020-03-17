@@ -183,7 +183,7 @@ class _WriteScrapState extends State<WriteScrap> {
                                                     fontSize: a.width / 22,
                                                     color: Colors.grey),
                                               ),
-                                              Text("@${widget.id}",
+                                              Text("${widget.id}",
                                                   style: TextStyle(
                                                       fontSize: a.width / 22,
                                                       color: Color(0xff26A4FF)))
@@ -210,19 +210,23 @@ class _WriteScrapState extends State<WriteScrap> {
                                 width: a.width,
                                 height: a.height,
                                 alignment: Alignment.center,
-                                child: SizedBox(
-                                  width: a.width / 1.5,
+                                child: Container(
+                                  padding: EdgeInsets.only(left: 25, right: 25),
+                                  width: a.width,
                                   child: TextFormField(
                                     textAlign: TextAlign
                                         .center, //เพื่อให้ข้อความอยู่ตรงกลาง
-                                    style: TextStyle(fontSize: a.width / 15),
+                                    style: TextStyle(fontSize: a.width / 14),
                                     maxLines: null,
+                                    maxLength: 250,
                                     keyboardType: TextInputType.text,
                                     decoration: InputDecoration(
+                                      counterText: "",
                                       border:
                                           InputBorder.none, //สำหรับใหเส้นใต้หาย
                                       hintText: 'เขียนข้อความบางอย่าง',
                                       hintStyle: TextStyle(
+                                        height: 1.35,
                                         fontSize: a.width / 18,
                                         color: Colors.grey,
                                       ),
@@ -271,8 +275,9 @@ class _WriteScrapState extends State<WriteScrap> {
                                     _key.currentState.save();
                                     if (await scraps.blocked(
                                         widget.uid, widget.thrownUID)) {
+                                      Navigator.pop(context);
                                       scraps.toast(
-                                          'คุณไม่สามารถปาไปหา"${'widget.tID'}"ได้');
+                                          'คุณไม่สามารถปาไปหา"${widget.tID}"ได้');
                                     } else {
                                       Navigator.pop(context);
                                       await scraps.throwTo(
