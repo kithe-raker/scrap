@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 
 import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/Page/setting/FeedbackPage.dart';
@@ -147,7 +148,10 @@ class _ProfileState extends State<Profile> {
                             Container(
                                 margin: EdgeInsets.only(top: a.width / 1000),
                                 child: Text(
-                                  "Join " + snapshot.data['createdDay'],
+                                  snapshot.data['createdDay'].runtimeType ==
+                                          String
+                                      ? "Join ${snapshot.data['createdDay']}"
+                                      : "Join ${DateFormat('d/M/y').format(snapshot.data['createdDay'].toDate())}",
                                   style: TextStyle(
                                       fontSize: a.width / 11,
                                       color: Color(0xff26A4FF)),
@@ -589,9 +593,6 @@ class _ProfileState extends State<Profile> {
                 children: <Widget>[
                   Container(
                     color: Colors.black,
-                    // margin: EdgeInsets.only(
-                    //   top: a.height / 8,
-                    // ),
                     padding: EdgeInsets.only(
                         left: a.width / 20, right: a.width / 20),
                     width: a.width,
@@ -629,22 +630,56 @@ class _ProfileState extends State<Profile> {
                                               Text('เวลา : $time')
                                             ],
                                           ),
-                                          InkWell(
-                                            child: Container(
-                                              width: a.width / 7,
-                                              height: a.width / 12,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: Colors.black),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          a.width / 10)),
-                                              alignment: Alignment.center,
-                                              child: Text("ปากลับ"),
-                                            ),
-                                            onTap: () {
-                                              dialogPa(writerUID, writer);
-                                            },
+                                          Row(
+                                            children: <Widget>[
+                                              InkWell(
+                                                child: Container(
+                                                    width: a.width / 12,
+                                                    height: a.width / 12,
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color: Color(
+                                                                0xff26A4FF)),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    a.width)),
+                                                    alignment: Alignment.center,
+                                                    child: Icon(
+                                                      Icons.flag,
+                                                      color: Color(0xff26A4FF),
+                                                      size: a.width / 16,
+                                                    )),
+                                                onTap: () {
+                                                  reportDialog(a, writer,
+                                                      writerUID, text, scpData);
+                                                },
+                                              ),
+                                              SizedBox(
+                                                width: a.width/32,
+                                              ),
+                                              InkWell(
+                                                child: Container(
+                                                  width: a.width / 7,
+                                                  height: a.width / 12,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Colors.black),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width / 10)),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    "ปากลับ",
+                                                    style: TextStyle(
+                                                        fontSize: a.width / 21),
+                                                  ),
+                                                ),
+                                                onTap: () {
+                                                  dialogPa(writerUID, writer);
+                                                },
+                                              )
+                                            ],
                                           )
                                         ],
                                       ),
@@ -662,9 +697,6 @@ class _ProfileState extends State<Profile> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  // onTap: () {
-                                  //   dialogPa(writerID, writer);
-                                  // },
                                 ),
                               ],
                             ),
@@ -784,29 +816,164 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                   ),
-                  // Center(
-                  //   child: InkWell(
-                  //     child: Container(
-                  //       width: a.width / 7,
-                  //       height: a.width / 12,
-                  //       decoration: BoxDecoration(
-                  //           border: Border.all(color: Colors.red[200]),
-                  //           borderRadius: BorderRadius.circular(a.width / 10)),
-                  //       alignment: Alignment.center,
-                  //       child: Text("บล็อค"),
-                  //     ),
-                  //     onTap: () {
-                  //       blockDialog(widget.doc['uid'], writerID, scpData);
-                  //       //dialogPa(writerID, writer);
-                  //     },
-                  //   ),
-                  // )
+                  Positioned(
+                      top: a.height / 21,
+                      right: a.width / 21,
+                      child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: a.width / 12,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }))
                 ],
               ),
             );
           });
         },
         fullscreenDialog: true));
+  }
+
+  reportDialog(
+      Size a, String id, String reportedUID, String text, Map scpData) {
+    String describe;
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            return Dialog(
+              child: Container(
+                height: a.height / 2.8,
+                padding: EdgeInsets.all(a.width / 56),
+                child: Stack(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          height: a.width / 8.1,
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey[300]))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "รายงาน : ",
+                                    style: TextStyle(
+                                        fontSize: a.width / 20,
+                                        color: Colors.black),
+                                  ),
+                                  Text(
+                                    "@$id",
+                                    style: TextStyle(
+                                        color: Color(0xff26A4FF),
+                                        fontSize: a.width / 18),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(
+                              right: a.width / 40, left: a.width / 40),
+                          height: a.width / 3.4,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              border: InputBorder.none, //สำหรับใหเส้���ใต้หาย
+                              hintText:
+                                  'เขียนข้อความให้เราทราบพฤติกรรมของผู้ใช้รายนี้..',
+                              hintStyle: TextStyle(
+                                fontSize: a.width / 21,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            validator: (val) {
+                              return val.trim() == null || val.trim() == ""
+                                  ? Taoast().toast("เขียนข้อความด้วยอย่างสิ")
+                                  : null;
+                            },
+                            //เนื้อหาที่กรอกเข้าไปใน text
+                            onChanged: (val) {
+                              describe = val;
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: a.width,
+                          alignment: Alignment.centerRight,
+                          margin: EdgeInsets.only(
+                              top: a.width / 15, right: a.width / 33),
+                          child: InkWell(
+                              child: Container(
+                                  width: a.width / 5.5,
+                                  height: a.width / 11,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff26A4FF),
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "ราบงาน",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: a.width / 15),
+                                  )),
+                              onTap: () async {
+                                report(reportedUID, widget.doc['uid'], text,
+                                    describe);
+                                await ignore(reportedUID, scpData);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                toast('รายงานเรียบร้อยแล้ว');
+                              }),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      right: 2,
+                      top: 2,
+                      child: InkWell(
+                        child: Container(
+                            width: a.width / 15,
+                            height: a.width / 15,
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(a.width)),
+                            child: Icon(Icons.clear, color: Colors.white)),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          });
+        });
+  }
+
+  report(String reportedUID, String reporterUID, String text,
+      String describe) async {
+    DateTime now = DateTime.now();
+    String date = DateFormat('y-M-d').format(now);
+    Firestore.instance
+        .collection('Report')
+        .document('reportUser')
+        .collection(date)
+        .add({
+      'reported': reportedUID,
+      'reporter': reporterUID,
+      'text': text,
+      'describe': describe,
+      'timeStamp': FieldValue.serverTimestamp()
+    });
   }
 
   editStatus(String status, String thrown) {
@@ -997,7 +1164,7 @@ class _ProfileState extends State<Profile> {
                             maxLines: null,
                             maxLength: 250,
                             decoration: InputDecoration(
-                              border: InputBorder.none, //สำหรับใหเส้นใต้หาย
+                              border: InputBorder.none, //สำหรับใหเส้���ใต้��าย
                               hintText: 'เขียนข้อความบางอย่าง',
                               hintStyle: TextStyle(
                                 fontSize: a.width / 25,

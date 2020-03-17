@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/services/jsonConverter.dart';
 
 class FriendManager {
@@ -65,8 +66,13 @@ class FriendManager {
         .document(uid)
         .get()
         .then((doc) async {
-      list.add(
-          {'id': name, 'img': doc.data['img'], 'join': doc.data['createdDay']});
+      list.add({
+        'id': name,
+        'img': doc.data['img'],
+        'join': doc.data['createdDay'].runtimeType == String
+            ? doc.data['createdDay']
+            : DateFormat('d/M/y').format(doc.data['createdDay'].toDate())
+      });
     });
   }
 }

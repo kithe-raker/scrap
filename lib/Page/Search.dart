@@ -1,9 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:scrap/Page/viewprofile.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/CreatePaper.dart';
@@ -638,8 +637,8 @@ class _SearchState extends State<Search> {
                           color: Colors.black),
                       onPressed: () {
                         widget.data == null
-                            ? dialogWrite(
-                                id, widget.doc['uid'], acc['uid'], acc['id'])
+                            ? dialogWrite(widget.doc['id'], widget.doc['uid'],
+                                acc['uid'], acc['id'])
                             : warnDialog(acc['id'], acc['uid']);
                       },
                     ),
@@ -689,108 +688,6 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget userCard(
-      Size a, String img, String tID, String throwID, String created,
-      {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0),
-      child: InkWell(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              height: a.height / 4.5,
-              width: a.width,
-              decoration: BoxDecoration(
-                  color: Color(0xff282828),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                    bottomRight: Radius.circular(16.0),
-                    bottomLeft: Radius.circular(16.0),
-                  )),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 13),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(a.width),
-                          border: Border.all(
-                              color: Colors.white, width: a.width / 190)),
-                      width: a.width / 3.3,
-                      height: a.width / 3.3,
-                      child: ClipRRect(
-                        child: CachedNetworkImage(
-                          imageUrl: img,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(a.width),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          width: a.width / 2.2,
-                          height: a.width / 10,
-                          child: Text(
-                            throwID,
-                            style: TextStyle(
-                                fontSize: a.width / 13, color: Colors.white),
-                          ),
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              'Join $created',
-                              style: TextStyle(
-                                  fontSize: a.width / 11,
-                                  color: Color(0xff26A4FF)),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ]),
-            ),
-            friends.where((data) => data['id'].contains(throwID)).length == 1
-                ? Center(
-                    child: Text('เพื่อน'),
-                  )
-                : Center(
-                    child: RaisedButton(
-                        child: Text('add'), onPressed: () async {}),
-                  ),
-            Positioned(
-              right: 10.0,
-              top: 10.0,
-              child: Icon(
-                Icons.arrow_forward,
-                color: Color(0xffA3A3A3),
-                size: 30.0,
-              ),
-            )
-          ],
-        ),
-        onTap: () {
-          widget.data == null
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Viewprofile(
-                      id: throwID,
-                      self: widget.doc,
-                    ),
-                  ))
-              : warnDialog(throwID, tID);
-        },
-      ),
-    );
-  }
-
   warnDialog(String user, String thrownUID) {
     showDialog(
         context: context,
@@ -830,7 +727,7 @@ class _SearchState extends State<Search> {
         });
   }
 
-  addFriend(String uid, String newFriend, String img, String join) async {
+  addFriend(String uid, String newFriend, String img, dynamic join) async {
     setState(() => loading = true);
     await Firestore.instance
         .collection('Users')
@@ -840,10 +737,14 @@ class _SearchState extends State<Search> {
         .setData({
       'friendList': FieldValue.arrayUnion([uid])
     }, merge: true);
-    await jsonConverter.addContent(id: newFriend, imgUrl: img, joinD: join);
+    await jsonConverter.addContent(
+        id: newFriend,
+        imgUrl: img,
+        joinD: join.runtimeType == String
+            ? join
+            : DateFormat('d/M/y').format(join.toDate()));
     loading = false;
-    setState(
-        () => friends.add({'id': newFriend, 'imgUrl': img, 'joinD': join}));
+    setState(() => friends.add({'id': newFriend, 'imgUrl': img, 'join': join}));
   }
 
   toast(String text) {

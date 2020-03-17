@@ -96,7 +96,7 @@ class _ViewprofileState extends State<Viewprofile> {
       friends.removeWhere((dat) => dat['id'] == id);
     } else {
       await jsonConverter.addContent(id: id, imgUrl: img, joinD: join);
-      friends.add({'id': id, 'imgUrl': img, 'joinD': join});
+      friends.add({'id': id, 'imgUrl': img, 'join': join});
     }
     setState(() {});
   }
@@ -322,7 +322,10 @@ class _ViewprofileState extends State<Viewprofile> {
                                                 fontSize: a.width / 12),
                                           ),
                                           Text(
-                                            "Join ${info.data['createdDay']}",
+                                            info.data['createdDay'].runtimeType
+                                                    == String
+                                                ? "Join ${info.data['createdDay']}"
+                                                : "Join ${DateFormat('d/M/y').format(info.data['createdDay'].toDate())}",
                                             style: TextStyle(
                                                 color: Color(0xff26A4FF),
                                                 fontSize: a.width / 12),

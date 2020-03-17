@@ -2,10 +2,16 @@ import 'dart:math';
 
 class RandomLocation {
   final random = Random();
-  var r = 72 / 111300; // = 64 meters
+
+  ///declear varieble [r] radius
+  var r = 42 / 111300; // = 64 meters
   Map getLocation({double lat, double lng}) {
+    ///random 2 double then init varieble [u] and [v]
     double u = random.nextDouble();
     double v = random.nextDouble();
+
+    ///calurate latitude and longitude within [r]
+    ///by get current location + random double
     var w = r * sqrt(u);
     var t = 2 * pi * v;
     var x = w * cos(t);
@@ -19,6 +25,7 @@ class RandomLocation {
       return lng + inLng;
     }
 
+    ///return as map
     return {'lat': ranLat(), 'lng': ranLng()};
   }
 }

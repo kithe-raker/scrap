@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
 
 class ProfileCard extends StatefulWidget {
   final DocumentSnapshot acc;
@@ -57,7 +58,9 @@ class _ProfileCardState extends State<ProfileCard> {
             ),
           ),
           Text(
-            'Join ' + widget.info['createdDay'],
+            widget.info['createdDay'].runtimeType == String
+                ? "Join ${widget.info['createdDay']}"
+                : "Join ${DateFormat('d/M/y').format(widget.info['createdDay'].toDate())}",
             style: TextStyle(color: Color(0xff26A4FF), fontSize: a.width / 18),
           ),
           Container(
@@ -73,11 +76,10 @@ class _ProfileCardState extends State<ProfileCard> {
                   widget.info['status'] == null ? '' : widget.info['status'],
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: a.width / 20,
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.italic
-                  ),
+                      color: Colors.white,
+                      fontSize: a.width / 20,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.italic),
                 ),
               ],
             ),

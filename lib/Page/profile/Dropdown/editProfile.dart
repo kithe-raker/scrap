@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -26,28 +27,24 @@ class _EditProfileState extends State<EditProfile> {
   Map account = {};
 
   summitNewID(String uid) async {
-    List index = [];
-    for (int i = 0; i < id.length; i++) {
-      index.add(id.substring(0, ++i));
-    }
     widget.doc['id'][0] == id[0]
-        ? await addUnchangeID(uid, index)
-        : await addChangeID(index, uid);
+        ? await addUnchangeID(uid)
+        : await addChangeID(uid);
   }
 
-  addUnchangeID(String uid, List index) async {
+  addUnchangeID(String uid) async {
     await Firestore.instance
         .collection('SearchUsers')
         .document(id[0])
         .collection('users')
         .document(uid)
-        .updateData({'id': id, 'searchIndex': index});
+        .updateData({'id': id});
     await Firestore.instance.collection('Users').document(uid).updateData({
       'id': id,
     });
   }
 
-  addChangeID(List index, String uid) async {
+  addChangeID(String uid) async {
     await Firestore.instance
         .collection('SearchUsers')
         .document(widget.doc['id'][0])
@@ -56,12 +53,11 @@ class _EditProfileState extends State<EditProfile> {
         .delete();
     await Firestore.instance
         .collection('SearchUsers')
-        .document(index[0])
+        .document(id[0])
         .collection('users')
         .document(uid)
         .setData({
       'id': id,
-      'searchIndex': index,
       'uid': uid,
     });
     await Firestore.instance
@@ -315,7 +311,10 @@ class _EditProfileState extends State<EditProfile> {
                                       children: <Widget>[
                                         inputID(a, widget.doc['id']),
                                         Text(
-                                          'Join ${widget.info['createdDay']}',
+                                          widget.info['createdDay'].runtimeType
+                                                  == String
+                                              ? "Join ${widget.info['createdDay']}"
+                                              : "Join ${DateFormat('d/M/y').format(widget.info['createdDay'].toDate())}",
                                           style: TextStyle(
                                               fontSize: a.width / 11,
                                               color: Color(0xff26A4FF)),
@@ -443,7 +442,7 @@ class _EditProfileState extends State<EditProfile> {
                                     color: Color(0xff5F5F5F)),
                               ),
                               Text(
-                                "${widget.doc['phone'].substring(0, 3)}-${widget.doc['phone'].substring(3, 6)}-${widget.doc['phone'].substring(6, 10)}",
+                              widget.doc['phone'] == ''? 'ไม่มี': "${widget.doc['phone'].substring(0, 3)}-${widget.doc['phone'].substring(3, 6)}-${widget.doc['phone'].substring(6, 10)}",
                                 style: TextStyle(
                                     fontSize: a.width / 12,
                                     color: Color(0xff5F5F5F)),

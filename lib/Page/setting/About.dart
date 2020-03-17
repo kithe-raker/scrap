@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scrap/Page/setting/servicedoc.dart';
 import 'package:scrap/Page/setting/sqUserdoc.dart';
 import 'package:scrap/widget/Arrow_back.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class About extends StatefulWidget {
   @override
@@ -9,6 +10,15 @@ class About extends StatefulWidget {
 }
 
 class _AboutState extends State<About> {
+  _launchURL() async {
+    String url = 'https://www.instagram.com/scrap.app/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -131,6 +141,27 @@ class _AboutState extends State<About> {
                                             decoration:
                                                 TextDecoration.underline,
                                           ),
+                                        )
+                                      ],
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Instagram : ",
+                                          style:
+                                              TextStyle(fontSize: a.width / 20),
+                                        ),
+                                        InkWell(
+                                          child: Text(
+                                            "scrap.app",
+                                            style: TextStyle(
+                                              color: Color(0xff26A4FF),
+                                              fontSize: a.width / 20,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                          onTap: _launchURL,
                                         )
                                       ],
                                     )

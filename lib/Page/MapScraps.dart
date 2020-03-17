@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scrap/function/randomLocation.dart';
+import 'package:scrap/function/scrapFilter.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -44,6 +45,7 @@ class _MapScrapsState extends State<MapScraps> {
   Set picked = {};
   Scraps scrap = Scraps();
   final infoKey = GlobalKey();
+  ScrapFilter filter = ScrapFilter();
 
   @override
   void initState() {
@@ -159,154 +161,14 @@ class _MapScrapsState extends State<MapScraps> {
                               height: a.height / 1.6,
                               width: a.width,
                               child: Text(
-                                text,
+                                filter.censorString(text),
                                 style: TextStyle(
                                   height: 1.35,
                                   fontSize: a.width / 14,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              // onTap: () {
-                              //   dialogPa(writerID, writer);
-                              // },
                             ),
-                            // Positioned(
-                            //   bottom: 0,
-                            //   left: 12,
-                            //   right: 12,
-                            //   child: Container(
-                            //     width: a.width,
-                            //     alignment: Alignment.center,
-                            //     child: Row(
-                            //       mainAxisAlignment:
-                            //           MainAxisAlignment.spaceBetween,
-                            //       children: <Widget>[
-                            //         InkWell(
-                            //           child: Container(
-                            //             width: a.width / 3.5,
-                            //             height: a.width / 6.5,
-                            //             decoration: BoxDecoration(
-                            //                 color: Colors.white,
-                            //                 borderRadius:
-                            //                     BorderRadius.circular(a.width)),
-                            //             alignment: Alignment.center,
-                            //             child: Row(
-                            //               mainAxisAlignment:
-                            //                   MainAxisAlignment.center,
-                            //               children: <Widget>[
-                            //                 Icon(
-                            //                   Icons.arrow_downward,
-                            //                   color: Color(0xff26A4FF),
-                            //                 ),
-                            //                 Text("เก็บไว้",
-                            //                     style: TextStyle(
-                            //                         fontSize: a.width / 15,
-                            //                         color: Color(0xff26A4FF))),
-                            //               ],
-                            //             ),
-                            //           ),
-                            //           onTap: () async {
-                            //             Navigator.pop(context);
-                            //             await pickScrap(
-                            //                 id, text, '$time $date', writer);
-                            //           },
-                            //         ),
-                            //         InkWell(
-                            //           child: Container(
-                            //             width: a.width / 3.5,
-                            //             height: a.width / 6.5,
-                            //             decoration: BoxDecoration(
-                            //                 color: Colors.white,
-                            //                 borderRadius:
-                            //                     BorderRadius.circular(a.width)),
-                            //             alignment: Alignment.center,
-                            //             child: Row(
-                            //               mainAxisAlignment:
-                            //                   MainAxisAlignment.center,
-                            //               children: <Widget>[
-                            //                 Icon(Icons.clear),
-                            //                 Text(
-                            //                   "ทิ้งไว้",
-                            //                   style: TextStyle(
-                            //                       fontSize: a.width / 15),
-                            //                 ),
-                            //               ],
-                            //             ),
-                            //           ),
-                            //           onTap: () {
-                            //             Navigator.pop(context);
-                            //           },
-                            //         ),
-                            //         InkWell(
-                            //           child: Container(
-                            //             width: a.width / 3.5,
-                            //             height: a.width / 6.5,
-                            //             decoration: BoxDecoration(
-                            //                 color: Colors.white,
-                            //                 borderRadius:
-                            //                     BorderRadius.circular(a.width)),
-                            //             alignment: Alignment.center,
-                            //             child: Row(
-                            //               mainAxisAlignment:
-                            //                   MainAxisAlignment.center,
-                            //               children: <Widget>[
-                            //                 Icon(
-                            //                   Icons.whatshot,
-                            //                   color: Colors.red,
-                            //                 ),
-                            //                 Text(
-                            //                   "เผา",
-                            //                   style: TextStyle(
-                            //                     fontSize: a.width / 15,
-                            //                     color: Colors.red,
-                            //                   ),
-                            //                 ),
-                            //               ],
-                            //             ),
-                            //           ),
-                            //           onTap: () {
-                            //             Navigator.pop(context);
-                            //           },
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
-                            // Positioned(
-                            //     left: a.width / 16,
-                            //     top: a.height / 6.6,
-                            //     child: Container(
-                            //       alignment: Alignment.center,
-                            //       height: a.height / 3.2,
-                            //       width: a.width / 1.3,
-                            //       child: Text(
-                            //         text,
-                            //         textAlign: TextAlign.center,
-                            //         style: TextStyle(fontSize: a.width / 14),
-                            //       ),
-                            //     )),
-                            // writer == 'สุ่มโดย Scrap'
-                            //     ? Positioned(
-                            //         top: 12,
-                            //         right: 12,
-                            //         child: Row(
-                            //           children: <Widget>[
-                            //             FlatButton(
-                            //                 child: Icon(Icons.whatshot),
-                            //                 onPressed: () async {
-                            //                   await burn(id);
-                            //                   print(id);
-                            //                   Navigator.pop(context);
-                            //                   Taoast().toast('คุณได้เผากระดาษไปแล้ว');
-                            //                 }),
-                            //             Tooltip(
-                            //               key: infoKey,
-                            //               message: 'เผากระดาษ',
-                            //               child: Icon(Icons.info_outline),
-                            //             )
-                            //           ],
-                            //         ))
-                            //     : SizedBox(),
                           ],
                         ),
                         SizedBox(height: a.width / 15),
@@ -357,11 +219,6 @@ class _MapScrapsState extends State<MapScraps> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: <Widget>[
-                                        // Icon(
-                                        //   Icons.delete_outline,
-                                        //   color: Colors.grey[600],
-                                        //   size: a.width / 14,
-                                        // ),
                                         Image.asset('assets/garbage_grey.png',
                                             width: a.width / 14,
                                             height: a.width / 14,
@@ -408,112 +265,6 @@ class _MapScrapsState extends State<MapScraps> {
                             ],
                           ),
                         ),
-                        // Container(
-                        //   width: a.width,
-                        //   alignment: Alignment.center,
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //     children: <Widget>[
-                        //       writer != 'สุ่มโดย Scrap'
-                        //           ? SizedBox()
-                        //           : SizedBox(
-                        //               width: a.width / 12,
-                        //             ),
-                        //       InkWell(
-                        //         child: Container(
-                        //           width: a.width / 3.5,
-                        //           height: a.width / 6.5,
-                        //           decoration: BoxDecoration(
-                        //               color: Colors.white,
-                        //               borderRadius:
-                        //                   BorderRadius.circular(a.width)),
-                        //           alignment: Alignment.center,
-                        //           child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: <Widget>[
-                        //               Icon(
-                        //                 Icons.arrow_downward,
-                        //                 color: Color(0xff26A4FF),
-                        //               ),
-                        //               Text("เก็บไว้",
-                        //                   style: TextStyle(
-                        //                       fontSize: a.width / 15,
-                        //                       color: Color(0xff26A4FF))),
-                        //             ],
-                        //           ),
-                        //         ),
-                        //         onTap: () async {
-                        //           Navigator.pop(context);
-                        //           await pickScrap(
-                        //               id, text, '$time $date', writer);
-                        //         },
-                        //       ),
-                        //       InkWell(
-                        //         child: Container(
-                        //           width: a.width / 3.5,
-                        //           height: a.width / 6.5,
-                        //           decoration: BoxDecoration(
-                        //               color: Colors.white,
-                        //               borderRadius:
-                        //                   BorderRadius.circular(a.width)),
-                        //           alignment: Alignment.center,
-                        //           child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: <Widget>[
-                        //               Icon(Icons.clear),
-                        //               Text(
-                        //                 "ทิ้งไว้",
-                        //                 style:
-                        //                     TextStyle(fontSize: a.width / 15),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         ),
-                        //         onTap: () {
-                        //           Navigator.pop(context);
-                        //         },
-                        //       ),
-                        //       writer != 'สุ่มโดย Scrap'
-                        //           ? InkWell(
-                        //               child: Container(
-                        //                 width: a.width / 3.5,
-                        //                 height: a.width / 6.5,
-                        //                 decoration: BoxDecoration(
-                        //                     color: Colors.white,
-                        //                     borderRadius:
-                        //                         BorderRadius.circular(a.width)),
-                        //                 alignment: Alignment.center,
-                        //                 child: Row(
-                        //                   mainAxisAlignment:
-                        //                       MainAxisAlignment.center,
-                        //                   children: <Widget>[
-                        //                     Icon(
-                        //                       Icons.whatshot,
-                        //                       color: Colors.red,
-                        //                     ),
-                        //                     Text(
-                        //                       "เผา",
-                        //                       style: TextStyle(
-                        //                         fontSize: a.width / 15,
-                        //                         color: Colors.red,
-                        //                       ),
-                        //                     ),
-                        //                   ],
-                        //                 ),
-                        //               ),
-                        //               onTap: () async {
-                        //                 await burn(id);
-                        //                 print(id);
-                        //                 Navigator.pop(context);
-                        //                 Taoast().toast('คุณได้เผากระดาษไปแล้ว');
-                        //               },
-                        //             )
-                        //           : SizedBox(
-                        //               width: a.width / 12,
-                        //             ),
-                        //     ],
-                        //   ),
-                        // ),
                       ],
                     ),
                   ],
