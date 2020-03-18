@@ -81,11 +81,12 @@ class _MainPageState extends State<MainPage> {
         .then((doc) {
       close = doc.data['close'];
     });
-    return close;
+    final uid = await Provider.of(context).auth?.currentUser() ?? '';
+    return close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }
 
   Future<bool> versionChecker() async {
-    String recent = '1.0.3', incoming;
+    String recent = '1.1.0', incoming;
     await Firestore.instance
         .collection('App')
         .document('info')

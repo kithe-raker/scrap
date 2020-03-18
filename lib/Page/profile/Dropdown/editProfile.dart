@@ -6,15 +6,23 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/Page/profile/Dropdown/ChangePhone.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
-import 'ChangePhone.dart';
 
 class EditProfile extends StatefulWidget {
   final DocumentSnapshot doc;
   final DocumentSnapshot info;
-  EditProfile({@required this.doc, @required this.info});
+  final String email;
+  final String password;
+  final String id;
+  EditProfile(
+      {@required this.doc,
+      @required this.info,
+      @required this.id,
+      @required this.email,
+      @required this.password});
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -22,14 +30,15 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   var _key = GlobalKey<FormState>();
   bool loading = false;
+  var _email = TextEditingController();
+  var _password = TextEditingController();
+  var txID = TextEditingController();
   File image;
   String id;
   Map account = {};
 
   summitNewID(String uid) async {
-    widget.doc['id'][0] == id[0]
-        ? await addUnchangeID(uid)
-        : await addChangeID(uid);
+    widget.id[0] == id[0] ? await addUnchangeID(uid) : await addChangeID(uid);
   }
 
   addUnchangeID(String uid) async {
@@ -47,7 +56,7 @@ class _EditProfileState extends State<EditProfile> {
   addChangeID(String uid) async {
     await Firestore.instance
         .collection('SearchUsers')
-        .document(widget.doc['id'][0])
+        .document(widget.id[0])
         .collection('users')
         .document(uid)
         .delete();
@@ -112,14 +121,14 @@ class _EditProfileState extends State<EditProfile> {
   newAccount() async {
     var user = await FirebaseAuth.instance.currentUser();
     AuthCredential credential = EmailAuthProvider.getCredential(
-        email: user.email, password: widget.doc['password']);
+        email: user.email, password: widget.password);
     if (user.email != account['email']) {
       user.reauthenticateWithCredential(credential).then((auth) async {
         user.updateEmail(account['email']);
         await updateAccount('email', account['email']);
       });
     }
-    if (widget.doc['password'] != account['password']) {
+    if (widget.password != account['password']) {
       user.reauthenticateWithCredential(credential).then((auth) async {
         user.updatePassword(account['password']);
         await updateAccount('password', account['password']);
@@ -149,7 +158,7 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         loading = true;
       });
-      if (id != widget.doc['id']) {
+      if (id != widget.id) {
         await summitNewID(widget.doc['uid']);
       }
       if (image != null) {
@@ -169,6 +178,9 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void initState() {
+    txID.text = '@' + widget.id;
+    _email.text = widget.email;
+    _password.text = widget.password;
     super.initState();
   }
 
@@ -220,7 +232,7 @@ class _EditProfileState extends State<EditProfile> {
                             onPressed: () async {
                               if (_key.currentState.validate()) {
                                 _key.currentState.save();
-                                if (id != widget.doc['id']) {
+                                if (id != widget.id) {
                                   await hasAccount(id)
                                       ? warning(
                                           'ไอดีนี้ได้ทำการลงทะเบียนไว้แล้ว')
@@ -309,10 +321,11 @@ class _EditProfileState extends State<EditProfile> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
-                                        inputID(a, widget.doc['id']),
+                                        inputID(a),
                                         Text(
-                                          widget.info['createdDay'].runtimeType
-                                                  == String
+                                          widget.info['createdDay']
+                                                      .runtimeType ==
+                                                  String
                                               ? "Join ${widget.info['createdDay']}"
                                               : "Join ${DateFormat('d/M/y').format(widget.info['createdDay'].toDate())}",
                                           style: TextStyle(
@@ -368,15 +381,16 @@ class _EditProfileState extends State<EditProfile> {
                                         ),
                                       ],
                                     ),
-                                    editAccount(false, a, 'email',
-                                        'name@mail.com', widget.doc['email'],
+                                    editAccount(_email, false, a, 'email',
+                                        'name@mail.com',
                                         validator: (val) => val.trim() == ""
                                             ? Taoast().toast("put Address")
                                             : val.contains('@') &&
                                                     val.contains(
                                                         '.com', val.length - 4)
                                                 ? null
-                                                : Taoast().toast("format pls")),
+                                                : Taoast().toast(
+                                                    "กรุณาตรวจสอบอีเมลของท่าน")),
                                     SizedBox(height: a.height / 30),
                                     Row(
                                       children: <Widget>[
@@ -396,8 +410,8 @@ class _EditProfileState extends State<EditProfile> {
                                         ),
                                       ],
                                     ),
-                                    editAccount(true, a, 'password', '••••••••',
-                                        widget.doc['password'],
+                                    editAccount(_password, true, a, 'password',
+                                        '••••••••',
                                         validator: (val) => val.trim() == ""
                                             ? Taoast()
                                                 .toast("กรุณากรอกข้อมูลให้ครบ")
@@ -442,7 +456,9 @@ class _EditProfileState extends State<EditProfile> {
                                     color: Color(0xff5F5F5F)),
                               ),
                               Text(
-                              widget.doc['phone'] == ''? 'ไม่มี': "${widget.doc['phone'].substring(0, 3)}-${widget.doc['phone'].substring(3, 6)}-${widget.doc['phone'].substring(6, 10)}",
+                                widget.doc['phone'] == ''
+                                    ? 'ไม่มี'
+                                    : "${widget.doc['phone'].substring(0, 3)}-${widget.doc['phone'].substring(3, 6)}-${widget.doc['phone'].substring(6, 10)}",
                                 style: TextStyle(
                                     fontSize: a.width / 12,
                                     color: Color(0xff5F5F5F)),
@@ -489,15 +505,13 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget inputID(Size a, String value) {
-    var tx = TextEditingController();
-    tx.text = '@' + value;
+  Widget inputID(Size a) {
     return Container(
       width: a.width / 2,
       height: a.height / 21,
       child: TextFormField(
         keyboardType: TextInputType.emailAddress,
-        controller: tx,
+        controller: txID,
         style: TextStyle(fontSize: a.width / 13, color: Colors.white),
         decoration:
             InputDecoration(border: InputBorder.none, hintText: 'ใส่@ของคุณ'),
@@ -536,10 +550,9 @@ class _EditProfileState extends State<EditProfile> {
         });
   }
 
-  Widget editAccount(bool pass, Size a, String type, String hint, String value,
+  Widget editAccount(
+      TextEditingController tx, bool pass, Size a, String type, String hint,
       {String validator(String val)}) {
-    var tx = TextEditingController();
-    tx.text = value;
     return Container(
       margin: EdgeInsets.only(top: a.width / 30),
       padding: EdgeInsets.only(left: 15),
@@ -570,7 +583,7 @@ class _EditProfileState extends State<EditProfile> {
         ),
         validator: validator,
         onSaved: (gId) => account[type] = gId.trim(),
-        textInputAction: TextInputAction.next,
+        textInputAction: TextInputAction.done,
       ),
     );
   }
