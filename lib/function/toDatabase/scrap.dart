@@ -15,7 +15,7 @@ class Scraps {
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
     String date = DateFormat('d/M/y').format(now);
-    await Firestore.instance
+    Firestore.instance
         .collection('Users')
         .document(thrownUID)
         .collection('scraps')
@@ -27,7 +27,7 @@ class Scraps {
           {
             'text': text,
             'writer': public ?? false ? writer : 'ไม่ระบุตัวตน',
-            'time': '$time $date'
+            'time': now
           }
         ])
       }

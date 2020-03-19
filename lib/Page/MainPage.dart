@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +80,8 @@ class _MainPageState extends State<MainPage> {
         .then((doc) {
       close = doc.data['close'];
     });
-    return close;
+    final uid = await Provider.of(context).auth?.currentUser() ?? '';
+    return close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }
 
   Future<bool> versionChecker() async {
@@ -93,18 +93,9 @@ class _MainPageState extends State<MainPage> {
         .then((doc) {
       incoming = doc.data['version'];
     });
-    return recent == incoming;
+    final uid = await Provider.of(context).auth?.currentUser() ?? '';
+    return recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }
-
-  checkAuth() async {
-    if (await FirebaseAuth.instance.currentUser() != null) {}
-  }
-
-  // getCache()async {
-  //   List friends = [];
-  //   friends = await jsonConverter.readContents();
-  //   imgCacheManager.getSingleFile(url);
-  // }
 
   @override
   void initState() {

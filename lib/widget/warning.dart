@@ -87,7 +87,7 @@ class Dg {
                     Navigator.pop(context);
                   },
                   child: Text('ยกเลิก')),
-              FlatButton(onPressed: function, child: Text('ok'))
+              FlatButton(onPressed: function, child: Text('ตกลง'))
             ],
           );
         });

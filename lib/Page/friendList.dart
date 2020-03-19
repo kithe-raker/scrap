@@ -453,8 +453,9 @@ class _FriendListState extends State<FriendList> {
                         ],
                       ),
                       Container(
-                        width: a.width / 6.4,
-                        height: a.width / 6.4,
+                        margin: EdgeInsets.only(right: 2),
+                        width: a.width / 6.2,
+                        height: a.width / 6.2,
                         decoration: BoxDecoration(
                             // color: Colors.orange,
                             borderRadius: BorderRadius.circular(a.width),

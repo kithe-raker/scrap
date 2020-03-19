@@ -49,13 +49,15 @@ class _MapScrapsState extends State<MapScraps> {
 
   @override
   void initState() {
-    time = DateFormat('Hm').format(now);
-    date = DateFormat('d/M/y').format(now);
-    currentLocation = widget.currentLocation;
-    loadMap = true;
-    queryManagement();
-    loopRandomMarker(currentLocation);
-    super.initState();
+    if (this.mounted) {
+      time = DateFormat('Hm').format(now);
+      date = DateFormat('d/M/y').format(now);
+      currentLocation = widget.currentLocation;
+      loadMap = true;
+      queryManagement();
+      loopRandomMarker(currentLocation);
+      super.initState();
+    }
   }
 
   error(BuildContext context, String sub) {
@@ -310,6 +312,8 @@ class _MapScrapsState extends State<MapScraps> {
     super.dispose();
   }
 
+  double zoom;
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -340,8 +344,33 @@ class _MapScrapsState extends State<MapScraps> {
                       child: CircularProgressIndicator(),
                     ),
             ),
+            Positioned(left: -56, bottom: a.height / 3.6, child: slider())
           ],
         ));
+  }
+
+  Widget slider() {
+    return Transform.rotate(
+        angle: -(pi / 2),
+        child: Slider(
+            value: zoom ?? 18.5,
+            onChanged: (value) {
+              setState(() => zoom = value);
+              cameraAnime2(mapController, value);
+              print(value);
+            },
+            divisions: 4,
+            max: 18.5,
+            min: 0));
+  }
+
+  cameraAnime2(GoogleMapController controller, double howClose) {
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(
+            currentLocation?.latitude ?? 0, currentLocation?.longitude ?? 0),
+        zoom: howClose,
+        bearing: 0.0,
+        tilt: 90)));
   }
   /*
          Set id = {};
@@ -368,9 +397,13 @@ class _MapScrapsState extends State<MapScraps> {
   void onMapCreated(GoogleMapController controller) {
     this.mapController = controller;
     changeMapMode();
-    updateMap(currentLocation);
+    if (this.mounted) {
+      updateMap(currentLocation);
+    }
     Geolocator().getPositionStream().listen((location) {
-      updateMap(location);
+      if (this.mounted) {
+        updateMap(location);
+      }
     });
   }
 
@@ -553,9 +586,11 @@ class _MapScrapsState extends State<MapScraps> {
       icon: _curcon,
       draggable: false,
     );
-    setState(() {
-      markers[markerId] = marker;
-    });
+    if (this.mounted) {
+      setState(() {
+        markers[markerId] = marker;
+      });
+    }
   }
 
   void _addCircle(double radius, double lat, double lng) {
@@ -569,9 +604,11 @@ class _MapScrapsState extends State<MapScraps> {
       center: LatLng(lat, lng),
       radius: radius,
     );
-    setState(() {
-      circles[circleId] = circle;
-    });
+    if (this.mounted) {
+      setState(() {
+        circles[circleId] = circle;
+      });
+    }
   }
 
   Future<void> _createMarkerImageFromAsset(BuildContext context) async {

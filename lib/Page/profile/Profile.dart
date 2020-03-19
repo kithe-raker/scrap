@@ -315,7 +315,7 @@ class _ProfileState extends State<Profile> {
                                               snapshot.connectionState ==
                                                   ConnectionState.active) {
                                             Set mSet = {};
-                                            modiList(
+                                            modiForScrap(
                                                 snapshot?.data['id'],
                                                 snapshot?.data['scraps'],
                                                 mSet,
@@ -494,6 +494,42 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  modiForScrap(List users, Map data, Set mSet, String key) {
+    if (users != null || data != null) {
+      for (var id in users) {
+        if (data[id] == null || data[id].length == 0) {
+          clearScrap(data[id] == null, id, key);
+        } else {
+          for (var scraps in data[id]) {
+            if (scraps['time'].runtimeType == String) {
+              scraps['time'] = Timestamp.fromDate(DateTime.parse(datDate(
+                  scraps['time'].substring(6),
+                  scraps['time'].substring(0, 5))));
+              mSet.add({'scap': scraps, 'id': id});
+            } else {
+              mSet.add({'scap': scraps, 'id': id});
+            }
+          }
+        }
+      }
+    }
+  }
+
+  String datDate(String date, String time) {
+    date.length == 10
+        ? date =
+            "${date[6]}${date[7]}${date[8]}${date[9]}-${date[3]}${date[4]}-${date[0]}${date[1]}"
+        : date.length == 9
+            ? date[1] == '/'
+                ? date =
+                    "${date[5]}${date[6]}${date[7]}${date[8]}-${date[2]}${date[3]}-0${date[0]}"
+                : date =
+                    "${date[5]}${date[6]}${date[7]}${date[8]}-0${date[3]}-${date[0]}${date[1]}"
+            : date =
+                "${date[4]}${date[5]}${date[6]}${date[7]}-0${date[2]}-0${date[0]}";
+    return date + ' $time' + ':00';
+  }
+
   clearScrap(bool onlyID, String id, String key) {
     Firestore.instance
         .collection('Users')
@@ -538,11 +574,13 @@ class _ProfileState extends State<Profile> {
 
   //data[data.length - 1 -data.indexOf(userID)]
   Widget wrapScrap(Size a, List scraps) {
+    scraps.sort((a, b) =>
+        a['scap']['time'].toDate().compareTo(b['scap']['time'].toDate()));
     return Wrap(
-      children: scraps
-          .map((scrapData) => scrap(a, backward(scraps, scrapData)))
-          .toList(),
-    );
+        children: scraps.reversed
+            .toList()
+            .map((scrapData) => scrap(a, scrapData))
+            .toList());
   }
 
   dynamic backward(List list, dynamic value) {
@@ -562,6 +600,8 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget scrap(Size a, Map scrap) {
+    DateTime convTime = scrap['scap']['time'].toDate();
+    String time = DateFormat('HH:mm d/M/y').format(convTime);
     return Container(
       padding: EdgeInsets.all(a.width / 32),
       child: InkWell(
@@ -572,8 +612,8 @@ class _ProfileState extends State<Profile> {
           fit: BoxFit.cover,
         ),
         onTap: () {
-          dialog(scrap['scap']['text'], scrap['scap']['writer'],
-              scrap['scap']['time'], scrap['scap'], scrap['id']);
+          dialog(scrap['scap']['text'], scrap['scap']['writer'], time,
+              scrap['scap'], scrap['id']);
         },
       ),
     );
@@ -632,31 +672,19 @@ class _ProfileState extends State<Profile> {
                                           ),
                                           Row(
                                             children: <Widget>[
-                                              InkWell(
-                                                child: Container(
-                                                    width: a.width / 12,
-                                                    height: a.width / 12,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: Color(
-                                                                0xff26A4FF)),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                    a.width)),
-                                                    alignment: Alignment.center,
-                                                    child: Icon(
-                                                      Icons.flag,
-                                                      color: Color(0xff26A4FF),
-                                                      size: a.width / 16,
-                                                    )),
-                                                onTap: () {
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.error,
+                                                  color: Colors.black,
+                                                  size: a.width / 11.2,
+                                                ),
+                                                onPressed: () {
                                                   reportDialog(a, writer,
                                                       writerUID, text, scpData);
                                                 },
                                               ),
                                               SizedBox(
-                                                width: a.width/32,
+                                                width: a.width / 56,
                                               ),
                                               InkWell(
                                                 child: Container(
@@ -1383,9 +1411,11 @@ class _ProfileState extends State<Profile> {
             context,
             MaterialPageRoute(
                 builder: (context) => EditProfile(
-                      doc: widget.doc,
-                      info: info,
-                    )));
+                    doc: widget.doc,
+                    info: info,
+                    id: widget.doc['id'],
+                    email: widget.doc['email'],
+                    password: widget.doc['password'])));
         break;
       case Constans.Feedback:
         Navigator.push(

@@ -14,6 +14,7 @@ import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/warning.dart';
 
 class HomePage extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -44,7 +45,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     return WillPopScope(
-      onWillPop: () => null,
+      onWillPop: () async {
+        Dg().warnDialog(context, 'คุณต้องการออกจากScrapใช่หรือไม่', () {
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        });
+        return null;
+      },
       child: Scaffold(
         backgroundColor: Colors.grey[900],
         body: Stack(
@@ -388,7 +394,7 @@ class _HomePageState extends State<HomePage> {
                   backgroundColor: Colors.white,
                   title: Text('คุณต้องขอกระดาษใหม่ใช่หรือไม่'),
                   content: Text(
-                      'หลังจากขอกระดาษใหม่กระดาษที่คุณทิ้งไว้จะหายไปทั้งหมด'),
+                      'หลังจากขอกระดาษใหม่กระดาษที่��ุณทิ้งไว้จะหายไปทั้งหมด'),
                   actions: <Widget>[
                     FlatButton(
                       child: Text('ยกเลิก'),
