@@ -45,13 +45,13 @@ class _LoginIDState extends State<LoginID> {
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: _password)
         .then((auth) async {
-      await updateToken(auth.user.uid);
-      await friendManager.initFriend(auth.user.uid);
-      setState(() {
-        loading = false;
-      });
-      Navigator.pop(context);
+      updateToken(auth.user.uid);
+      friendManager.initFriend(auth.user.uid);
     });
+    setState(() {
+      loading = false;
+    });
+    Navigator.pop(context);
   }
 
   updateToken(String uid) async {
@@ -63,13 +63,13 @@ class _LoginIDState extends State<LoginID> {
         .then((docs) async {
       List data = docs.documents;
       if (data[0].documentID != token) {
-        await Firestore.instance
+        Firestore.instance
             .collection('Users')
             .document(uid)
             .collection('token')
             .document(data[0].documentID)
             .delete();
-        await Firestore.instance
+        Firestore.instance
             .collection('Users')
             .document(uid)
             .collection('token')
@@ -357,7 +357,7 @@ class _LoginIDState extends State<LoginID> {
         actions: <Widget>[
           FlatButton(
             child: Text(
-              'ตกลง',
+              'ตกล��',
               style: TextStyle(fontSize: 16),
             ),
             onPressed: () {
