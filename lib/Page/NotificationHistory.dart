@@ -143,9 +143,9 @@ class _NotificationHistoryState extends State<NotificationHistory> {
                                     documents?.length == 0
                                 ? guide(a, 'ขณะนี้คุณยังไม่มีการแจ้งเตือน')
                                 : Column(
-                                    children: documents
-                                        .map((doc) => notiBox(
-                                            a, backward(documents, doc)))
+                                    children: documents.reversed
+                                        .toList()
+                                        .map((doc) => notiBox(a, doc))
                                         .toList(),
                                   );
                           } else {
@@ -178,10 +178,6 @@ class _NotificationHistoryState extends State<NotificationHistory> {
         ],
       ),
     );
-  }
-
-  dynamic backward(List list, dynamic value) {
-    return list[list.length - 1 - list.indexOf(value)];
   }
 
   Widget guide(Size a, String text) {

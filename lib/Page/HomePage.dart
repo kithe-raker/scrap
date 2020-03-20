@@ -3,7 +3,6 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/MapScraps.dart';
@@ -11,9 +10,11 @@ import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/addPlayer.dart';
 import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/Page/search.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/warning.dart';
 
 class HomePage extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -27,6 +28,7 @@ class _HomePageState extends State<HomePage> {
   bool public;
   var _key = GlobalKey<FormState>();
   Position currentLocation;
+  Scraps scrap = Scraps();
   JsonConverter jsonConverter = JsonConverter();
 
   @override
@@ -43,7 +45,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     return WillPopScope(
-      onWillPop: () => null,
+      onWillPop: () async {
+        Dg().warnDialog(context, 'คุณต้องการออกจากScrapใช่หรือไม่', () {
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        });
+        return null;
+      },
       child: Scaffold(
         backgroundColor: Colors.grey[900],
         body: Stack(
@@ -78,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(a.width),
                             color: Colors.white),
                         child: IconButton(
-                          icon: Icon(Icons.people),
+                          icon: Icon(Icons.pin_drop),
                           color: Color(0xff26A4FF),
                           iconSize: a.width / 12,
                           onPressed: () {
@@ -190,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                           'assets/SCRAP.png',
                           width: a.width / 4,
                         )),
-                    //ส่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
+                    //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
                     SizedBox(
                       width: a.width / 5,
                     ),
@@ -267,10 +274,151 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            Positioned(
+                // left: a.width/4.8,
+                width: a.width,
+                top: a.height / 7.2,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 1,
+                      ),
+                      scrapLeft(a),
+                      SizedBox(
+                        width: 1,
+                      )
+                    ])),
           ],
         ),
       ),
     );
+  }
+
+  Widget scrapLeft(Size scr) {
+    return StreamBuilder(
+      stream: Firestore.instance
+          .collection('Users')
+          .document(widget.doc['uid'])
+          .collection('info')
+          .document(widget.doc['uid'])
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData &&
+            snapshot.connectionState == ConnectionState.active) {
+          int scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
+          return InkWell(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(scr.width / 24, scr.width / 36,
+                  scr.width / 24, scr.width / 36),
+              decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6.0,
+                      spreadRadius: 3.0,
+                      offset: Offset(
+                        0.0,
+                        3.2,
+                      ),
+                    )
+                  ],
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(scr.width / 14.2)),
+              child: scraps < 1
+                  ? Text(
+                      'กระดาษของคุณหมดแล้ว',
+                      style: TextStyle(
+                        fontSize: scr.width / 18,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Row(
+                      children: <Widget>[
+                        Image.asset('assets/papericon.png',
+                            width: scr.width / 13.2,
+                            height: scr.width / 13.2,
+                            fit: BoxFit.cover),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                                fontSize: scr.width / 18,
+                                color: Colors.white,
+                                fontFamily: 'ThaiSans'),
+                            children: <TextSpan>[
+                              TextSpan(text: ' กระดาษรายวัน '),
+                              TextSpan(
+                                  text: '$scraps',
+                                  style: TextStyle(
+                                      fontSize: scr.width / 16,
+                                      fontWeight: FontWeight.bold)),
+                              TextSpan(
+                                text: ' แผ่น',
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+            ),
+            onTap: () {
+              scraps == 15
+                  ? toast('กระดาษของคุณยังเต็มอยู่')
+                  : scrapReseter(snapshot?.data, snapshot.data['lastReset']);
+            },
+          );
+        } else {
+          return SizedBox();
+        }
+      },
+    );
+  }
+
+  scrapReseter(DocumentSnapshot data, String lastReset) async {
+    DateTime now = DateTime.now();
+    String date = DateFormat('d/M/y').format(now);
+    lastReset == date
+        ? toast('คุณขอรับกระดาษได้แค่ 1 ครั้ง ต่อวัน')
+        : warnClear(data);
+  }
+
+  warnClear(DocumentSnapshot data) {
+    bool loading = false;
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            return Stack(
+              children: <Widget>[
+                AlertDialog(
+                  backgroundColor: Colors.white,
+                  title: Text('คุณต้องขอกระดาษ���หม่ใช่หรือไม่'),
+                  content: Text(
+                      'หลังจากขอกระดาษใหม่กระดาษที�������ุณทิ้งไว้จะหายไปทั้งหมด'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('ยกเลิก'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    FlatButton(
+                      child: Text('ขอกระดาษใหม่'),
+                      onPressed: () async {
+                        setState(() => loading = true);
+                        await scrap.resetScrap(
+                            data['scraps'], widget.doc['uid']);
+                        setState(() => loading = false);
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
+                ),
+                loading ? Loading() : SizedBox()
+              ],
+            );
+          });
+        });
   }
 
   // Widget changeScrap(String scraps, Size a) {
@@ -316,7 +464,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snap) {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return currentLocation == null
-                ? gpsCheck(a, 'กรุณาตรวจสอบGPSของคุณ')
+                ? gpsCheck(a, 'กรุณาตรวจสอบ GPS ของคุณ')
                 : MapScraps(
                     collection: snap?.data['id'] ?? [],
                     currentLocation: currentLocation,
@@ -358,145 +506,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  selectDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-              contentPadding: EdgeInsets.all(0),
-              content: StreamBuilder(
-                  stream: Firestore.instance.collection('Contents').snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData &&
-                        snapshot.connectionState == ConnectionState.active) {
-                      Set head = {};
-                      QuerySnapshot title = snapshot.data;
-                      for (var item in title.documents) {
-                        head.add(item.documentID);
-                      }
-                      return StatefulBuilder(
-                        builder: (context, setState) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height / 2,
-                            width: MediaQuery.of(context).size.width / 1.1,
-                            child: Column(
-                              children: <Widget>[
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.height / 1.5,
-                                  height:
-                                      MediaQuery.of(context).size.width / 1.5,
-                                  child: ListView(
-                                      children: head
-                                          .map((e) => choice(e, setState))
-                                          .toList()),
-                                ),
-                                butt()
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }));
-        });
-  }
-
-  Widget choice(String value, StateSetter setState) {
-    return Row(
-      children: <Widget>[
-        Radio(
-          activeColor: Color(0xffEF7D36),
-          value: value,
-          groupValue: select,
-          onChanged: (val) {
-            setState(() {
-              select = val;
-            });
-          },
-        ),
-        Text(value)
-      ],
-    );
-  }
-
-  Widget butt() {
-    return RaisedButton(
-        child: Text('ok'),
-        onPressed: () {
-          setState(() {
-            type = select;
-          });
-          Navigator.pop(context);
-        });
-  }
-
-  binScrap(String time) async {
-    GeoFirePoint point;
-    await Geolocator().getCurrentPosition().then((value) => point =
-        Geoflutterfire()
-            .point(latitude: value.latitude, longitude: value.longitude));
-    Firestore.instance
-        .collection('Scraps')
-        .document('hatyai')
-        .collection('scrapsPosition')
-        .add({}).then((value) {
-      Firestore.instance
-          .collection('Scraps')
-          .document('hatyai')
-          .collection('scrapsPosition')
-          .document(value.documentID)
-          .updateData({
-        'id': value.documentID,
-        'uid': widget.doc['uid'],
-        'scrap': {
-          'text': text,
-          'user': public ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-          'time': time
-        },
-        'position': point.data
-      });
-      update(value.documentID);
-    });
-    increaseTransaction(widget.doc['uid'], 'written');
-  }
-
-  update(id) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(widget.doc['uid'])
-        .collection('info')
-        .document(widget.doc['uid'])
-        .updateData({
-      'scraps': FieldValue.arrayUnion([id])
-    });
-  }
-
-  increaseTransaction(String uid, String key) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .get()
-        .then((value) => Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('info')
-            .document(uid)
-            .updateData(
-                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
-  }
-
-//ส่วนเมื่อกดปุ่ม Create จะเด้นกล่องนี���ขึ้นมาไว้สร้าง Contents
   void dialog() {
     DateTime now = DateTime.now();
-    String time = DateFormat('Hm').format(now);
-    String date = DateFormat('d/M/y').format(now);
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) {
           Size a = MediaQuery.of(context).size;
@@ -585,7 +596,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               ),
-                              //ส่ว��ของกระดาษที่เขีย���
+                              //ส่ว��ข���งกระดาษที่เขีย���
                               Container(
                                 margin: EdgeInsets.only(top: a.width / 150),
                                 width: a.width / 1,
@@ -637,7 +648,10 @@ class _HomePageState extends State<HomePage> {
                                                       fontSize: a.width / 22,
                                                       color: Colors.grey),
                                                 ),
-                                          Text("เวลา" + " : $time $date",
+                                          Text(
+                                              now.minute < 10
+                                                  ? 'เวลา: ${now.hour}:0${now.minute}'
+                                                  : 'เวลา: ${now.hour}:${now.minute}',
                                               style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: a.width / 22))
@@ -649,16 +663,22 @@ class _HomePageState extends State<HomePage> {
                                       width: a.width,
                                       height: a.height,
                                       alignment: Alignment.center,
-                                      child: SizedBox(
-                                        width: a.width / 1.5,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 25, right: 25),
+                                        width: a.width,
                                         child: TextFormField(
-                                          textAlign: TextAlign
-                                              .center, //เพื่อให้ข้อความอยู่ตรงกลาง
-                                          style:
-                                              TextStyle(fontSize: a.width / 15),
+                                          maxLength: 250,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              height: 1.35,
+                                              fontSize: a.width / 14),
                                           maxLines: null,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
+                                            counterText: "",
+                                            counterStyle: TextStyle(
+                                                color: Colors.transparent),
                                             border: InputBorder
                                                 .none, //สำหรับใหเส้นใต้หาย
                                             hintText: 'เขียนข้อความบางอย่าง',
@@ -712,7 +732,7 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          checkScrap('$time $date');
+                                          checkScrap();
                                         }
                                       },
                                     ),
@@ -742,12 +762,15 @@ class _HomePageState extends State<HomePage> {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => Search(
+                                                builder: (context) =>
+                                                    FriendList(
                                                   doc: widget.doc,
+                                                  data: {
+                                                    'text': text,
+                                                    'public': public
+                                                  },
                                                 ),
                                               ));
-                                        } else {
-                                          print('nope');
                                         }
                                       },
                                     )
@@ -768,7 +791,7 @@ class _HomePageState extends State<HomePage> {
         fullscreenDialog: true));
   }
 
-  checkScrap(String time) async {
+  checkScrap() async {
     await Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
@@ -780,7 +803,7 @@ class _HomePageState extends State<HomePage> {
       if (scraps < 15) {
         toast('คุณได้ทิ้งกระดาษไว้แล้ว');
         Navigator.pop(context);
-        await binScrap(time);
+        await scrap.binScrap(text, public, widget.doc);
       } else {
         toast('กระดาษคุณหมดแล้ว');
       }
@@ -796,274 +819,5 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white60,
         textColor: Colors.black,
         fontSize: 16.0);
-  }
-
-  // throwTo(Map selectedID) async {
-  //   await Firestore.instance
-  //       .collection('Users')
-  //       .document(selectedID['uid'])
-  //       .collection('scraps')
-  //       .document('recently')
-  //       .updateData(
-  //     {
-  //       'scraps': FieldValue.arrayUnion([text])
-  //     },
-  //   );
-  // }
-
-  chooseUser() {
-    String id;
-    Map selectedID = {};
-    return showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-              backgroundColor: Colors.transparent,
-              content:
-                  StatefulBuilder(builder: (context, StateSetter setState) {
-                Size a = MediaQuery.of(context).size;
-                return Container(
-                  width: a.width / 1.2,
-                  height: a.height / 1.2,
-                  child: ListView(
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                InkWell(
-                                    child: Icon(Icons.arrow_back,
-                                        size: a.width / 15,
-                                        color: Colors.white),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      dialog();
-                                    }),
-                                // InkWell(
-                                //   child: Icon(Icons.arrow_back,
-                                //       size: a.width / 15, color: Colors.white),
-                                //   onTap: () {
-                                //     Navigator.pop(context);
-                                //     dialog();
-                                //   },
-                                // ),
-                                InkWell(
-                                  child: Icon(Icons.clear,
-                                      size: a.width / 15, color: Colors.white),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
-                          selectedID == null || selectedID['id'] == null
-                              ? Container(
-                                  margin: EdgeInsets.only(top: a.width / 20),
-                                  width: a.width / 1.1,
-                                  height: a.height / 1.5,
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius:
-                                          BorderRadius.circular(a.width / 10)),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        margin:
-                                            EdgeInsets.only(top: a.width / 20),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              a.width / 10),
-                                          color: Colors.black,
-                                        ),
-                                        width: a.width / 1.7,
-                                        height: a.width / 7,
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                              left: a.width / 20),
-                                          child: TextFormField(
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: a.width / 15),
-                                            keyboardType: TextInputType.text,
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              hintText: '@someoneuserid',
-                                              hintStyle: TextStyle(
-                                                fontSize: a.width / 15,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            onChanged: (val) {
-                                              setState(() {
-                                                id = val;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      id == null || id == ''
-                                          ? Center(
-                                              child: Text(
-                                                  'ค้นหาคนที่คุณต้องการปาใส่'),
-                                            )
-                                          : id[0] != '@'
-                                              ? Center(
-                                                  child: Text(
-                                                      'ค้นหาคนที่คุณจะปาใส่โดยใส่ @ตามด้วย���ื่อid'),
-                                                )
-                                              : StreamBuilder(
-                                                  stream: Firestore.instance
-                                                      .collection('Users')
-                                                      .where('searchIndex',
-                                                          arrayContains:
-                                                              id.substring(1))
-                                                      .snapshots(),
-                                                  builder: (context, snapshot) {
-                                                    if (snapshot.hasData &&
-                                                        snapshot.connectionState ==
-                                                            ConnectionState
-                                                                .active) {
-                                                      return snapshot.data
-                                                                      ?.documents ==
-                                                                  null ||
-                                                              snapshot
-                                                                      .data
-                                                                      .documents
-                                                                      .length ==
-                                                                  0
-                                                          ? Center(
-                                                              child: Text(
-                                                                  'ไม่พบ id ดังกล่าว'),
-                                                            )
-                                                          : Container(
-                                                              width:
-                                                                  a.width / 1.1,
-                                                              height:
-                                                                  a.height / 2,
-                                                              child: ListView
-                                                                  .builder(
-                                                                      itemCount: snapshot
-                                                                          .data
-                                                                          .documents
-                                                                          .length,
-                                                                      itemBuilder:
-                                                                          (context,
-                                                                              index) {
-                                                                        DocumentSnapshot
-                                                                            doc =
-                                                                            snapshot.data.documents[index];
-                                                                        return
-                                                                            // doc['id'] !=
-                                                                            //         widget.doc['id']
-                                                                            //     ?
-                                                                            InkWell(
-                                                                          child: Container(
-                                                                              padding: EdgeInsets.all(a.width / 21),
-                                                                              width: a.width / 1.1,
-                                                                              height: a.height / 10,
-                                                                              alignment: Alignment.center,
-                                                                              child: Text(
-                                                                                '@' + doc['id'],
-                                                                                style: TextStyle(fontSize: a.width / 12, color: Colors.white),
-                                                                              )),
-                                                                          onTap:
-                                                                              () {
-                                                                            selectedID['id'] =
-                                                                                doc['id'];
-                                                                            selectedID['uid'] =
-                                                                                doc['uid'];
-                                                                            setState(() {});
-                                                                          },
-                                                                        );
-                                                                        //: SizedBox();
-                                                                      }),
-                                                            );
-                                                    } else {
-                                                      return Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      );
-                                                    }
-                                                  })
-                                    ],
-                                  ),
-                                )
-                              : Container(
-                                  color: Colors.grey,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                          child: Text(
-                                        'ปาใส่' + selectedID['id'],
-                                        style:
-                                            TextStyle(fontSize: a.width / 12),
-                                      )),
-                                      Image.asset(
-                                        './assets/paper.png',
-                                        width: a.width / 6.4,
-                                        height: a.width / 6.4,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      Container(
-                                          margin: EdgeInsets.only(
-                                              top: a.width / 10),
-                                          child: Row(
-                                            children: <Widget>[
-                                              InkWell(
-                                                child: Container(
-                                                  width: a.width / 4.5,
-                                                  height: a.width / 8,
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              a.width)),
-                                                  alignment: Alignment.center,
-                                                  child: Text("เปลี่ยนคน",
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                              a.width / 15)),
-                                                ),
-                                                onTap: () {
-                                                  id = '';
-                                                  selectedID.clear();
-                                                  setState(() {});
-                                                },
-                                              ),
-                                              InkWell(
-                                                child: Container(
-                                                  width: a.width / 4.5,
-                                                  height: a.width / 8,
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              a.width)),
-                                                  alignment: Alignment.center,
-                                                  child: Text("ปาเลย",
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                              a.width / 15)),
-                                                ),
-                                                onTap: () async {
-                                                  Navigator.pop(context);
-                                                  //  await throwTo(selectedID);
-                                                },
-                                              ),
-                                            ],
-                                          ))
-                                    ],
-                                  ),
-                                ),
-                        ],
-                      )
-                    ],
-                  ),
-                );
-              }));
-        });
   }
 }

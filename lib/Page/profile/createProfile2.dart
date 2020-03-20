@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/Auth.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/warning.dart';
 
 class CreateProfile2 extends StatefulWidget {
@@ -18,15 +19,14 @@ class CreateProfile2 extends StatefulWidget {
 
 class _CreateProfile2State extends State<CreateProfile2> {
   var _formKey = GlobalKey<FormState>();
-  DateTime selectedDate = DateTime.now();
-  String bDay, genders, created, selectYear;
+  DateTime now = DateTime.now(), bDay;
+  String genders, selectYear;
   bool loading = false;
 
   @override
   void initState() {
-    bDay = DateFormat('d/M/y').format(selectedDate);
-    created = DateFormat('d/M/y').format(selectedDate);
-    selectYear = DateFormat('y').format(selectedDate);
+    bDay = now;
+    selectYear = DateFormat('y').format(now);
     super.initState();
   }
 
@@ -35,10 +35,10 @@ class _CreateProfile2State extends State<CreateProfile2> {
         context: context,
         initialDate: DateTime(1990, 1, 1),
         firstDate: DateTime(1950, 1),
-        lastDate: DateTime(int.parse(selectYear), 1));
-    if (picked != null && picked != selectedDate)
+        lastDate: DateTime(int.parse(selectYear) - 17, 1));
+    if (picked != null && picked != now)
       setState(() {
-        bDay = DateFormat('d/M/y').format(picked);
+        bDay = picked;
       });
   }
 
@@ -68,24 +68,24 @@ class _CreateProfile2State extends State<CreateProfile2> {
   }
 
   addData(String uid) async {
-    List index = [];
-    for (int i = 0; i < widget.pro['id'].length; i++) {
-      index.add(widget.pro['id'].substring(0, ++i));
-    }
     await Firestore.instance
         .collection('Users')
         .document(uid)
         .collection('info')
         .document(uid)
-        .setData({'birthDay': bDay, 'genders': genders, 'createdDay': created});
+        .setData({
+      'birthDay': bDay,
+      'genders': genders ?? '',
+      'createdDay': FieldValue.serverTimestamp()
+    });
     await cimg(widget.pro['img'], uid, uid + '_pro');
-    await addID(index, uid);
+    await addID(uid);
     setState(() {
       loading = false;
     });
   }
 
-  addID(List index, String uid) async {
+  addID(String uid) async {
     await Firestore.instance
         .collection('SearchUsers')
         .document(widget.pro['id'][0])
@@ -93,7 +93,6 @@ class _CreateProfile2State extends State<CreateProfile2> {
         .document(uid)
         .setData({
       'id': widget.pro['id'],
-      'searchIndex': index,
       'uid': uid,
     });
     await Firestore.instance
@@ -205,7 +204,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                   ),
                                   FlatButton(
                                     child: Text(
-                                      bDay,
+                                      DateFormat('d/M/y').format(bDay),
                                       style: TextStyle(
                                         fontSize: scr.width / 10,
                                         color: Color(0xff26A4FF),
@@ -285,11 +284,6 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                           style: TextStyle(
                                               fontSize: scr.width / 12,
                                               color: Colors.white),
-                                          validator: ((val) {
-                                            return val.trim() == ''
-                                                ? 'กรุณาระบุเพศ'
-                                                : null;
-                                          }),
                                           onSaved: (gen) =>
                                               genders = gen.trim(),
                                           textInputAction: TextInputAction.next,
@@ -315,20 +309,17 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                     fontWeight: FontWeight.w800,
                                   )),
                               onPressed: () async {
-                                _formKey.currentState.save();
-                                if (_formKey.currentState.validate() &&
-                                    genders != null &&
-                                    bDay != created) {
+                                if (bDay != now) {
+                                  _formKey.currentState.save();
                                   setState(() {
                                     loading = true;
                                   });
                                   await creatProfile();
                                 } else {
-                                  bDay == created
-                                      ? Dg().warnDate(
-                                          context, 'อย่าลืมเลือกวันเกิดของคุณ')
-                                      : Dg().warnDate(
-                                          context, 'อย่าลืมเลือกเพศของคุณ');
+                                  bDay == now
+                                      ? Taoast()
+                                          .toast('อย่าลืมเลือกวันเกิดของคุณ')
+                                      : null;
                                 }
                               },
                               color: Color(0xff26A4FF),

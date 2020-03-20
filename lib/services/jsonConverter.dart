@@ -84,7 +84,7 @@ class JsonConverter {
     try {
       List<Map> list = await readContents();
       list.removeWhere((data) => data[key] == where);
-      writeContent(listm: list);
+      await writeContent(listm: list);
       return list;
     } catch (e) {
       return [];

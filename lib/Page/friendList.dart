@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:scrap/Page/Search.dart';
 import 'package:scrap/Page/viewprofile.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
 
@@ -23,6 +23,7 @@ class _FriendListState extends State<FriendList> {
   List searchResault = [];
   bool loading = true;
   List updatedFriends = [];
+  Scraps scraps = Scraps();
   JsonConverter jsonConverter = JsonConverter();
 
   @override
@@ -92,7 +93,7 @@ class _FriendListState extends State<FriendList> {
                     top: a.width / 20,
                     right: a.width / 25,
                     left: a.width / 25,
-                    bottom: a.width / 8.0),
+                    bottom: a.width / 12),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,54 +118,87 @@ class _FriendListState extends State<FriendList> {
                                 Navigator.pop(context);
                               },
                             ),
-                            Container(
-                                height: a.width / 5,
-                                alignment: Alignment.center,
-                                child: InkWell(
-                                  child: Container(
-                                    width: a.width / 10,
+                            widget.data == null
+                                ? Container(
                                     height: a.width / 10,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(a.width),
-                                      border: Border.all(
-                                          width: 2, color: Colors.white),
-                                      color: Color(0xff26A4FF),
-                                    ),
-                                    child: Icon(Icons.person_add,
-                                        color: Colors.white,
-                                        size: a.width / 15),
-                                  ),
-                                  onTap: () async {
-                                    bool resault = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Search(
-                                                  doc: widget.doc,
-                                                ))); //ไปยังหน้า Search
-                                    if (resault) {
-                                      initFriend();
-                                    }
-                                  },
-                                )),
+                                    alignment: Alignment.center,
+                                    child: InkWell(
+                                      child: Container(
+                                        width: a.width / 10,
+                                        height: a.width / 10,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(a.width),
+                                          border: Border.all(
+                                              width: 2, color: Colors.white),
+                                          color: Color(0xff26A4FF),
+                                        ),
+                                        child: Icon(Icons.person_add,
+                                            color: Colors.white,
+                                            size: a.width / 15),
+                                      ),
+                                      onTap: () async {
+                                        bool resault = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Search(
+                                                      doc: widget.doc,
+                                                    ))); //ไปยังหน้า Search
+                                        if (resault) {
+                                          initFriend();
+                                        }
+                                      },
+                                    ))
+                                : Container(
+                                    height: a.width / 10,
+                                    alignment: Alignment.center,
+                                    child: InkWell(
+                                      child: Container(
+                                        width: a.width / 10,
+                                        height: a.width / 10,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(a.width),
+                                          border: Border.all(
+                                              width: 2, color: Colors.white),
+                                          color: Color(0xff26A4FF),
+                                        ),
+                                        child: Icon(Icons.people,
+                                            color: Colors.white,
+                                            size: a.width / 15),
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Search(
+                                                      doc: widget.doc,
+                                                      data: widget.data,
+                                                    ))); //ไปยังหน้า Search
+                                      },
+                                    )),
                           ],
                         ), //back btn
-                        SizedBox(height: a.height / 32),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 0),
+                        SizedBox(
+                          height: a.height / 12.5,
+                        ),
+                        Container(
+                          width: a.width / 1.17,
+                          margin: EdgeInsets.only(left: a.width / 15),
+                          alignment: Alignment.centerLeft,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                'ค้นหาผู้ใช้',
+                                'มิตรสหาย',
                                 style: TextStyle(
                                     fontSize: a.width / 6.5,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w300),
                               ),
                               Text(
-                                'ค้นหาคนที่คุณรู้จักแล้วปากระดาษใส่พวกเขากัน',
+                                'ค้นหาสหายแล้วปากระดาษใส่พวกเขากัน',
                                 style: TextStyle(
                                     fontSize: a.width / 16,
                                     color: Colors.white,
@@ -176,109 +210,104 @@ class _FriendListState extends State<FriendList> {
                         SizedBox(
                           height: a.width / 13,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Container(
-                                margin: EdgeInsets.only(bottom: 30),
-                                width: a.width / 1.4,
-                                height: a.width / 6.5,
-                                decoration: BoxDecoration(
-                                  color: Color(0xff282828),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(300)),
-                                  border: Border.all(
-                                      width: 2, color: Colors.grey[800]),
-                                ),
-                                child: TextFormField(
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 14,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: '@somename',
-                                    hintStyle:
-                                        TextStyle(color: Colors.grey[700]),
-                                  ),
-                                  onChanged: (val) {
-                                    Future.delayed(
-                                        const Duration(milliseconds: 200),
-                                        () async {
-                                      id = val.trim();
-                                      if (id?.length != null && id.length > 1) {
-                                        searchResault =
-                                            await jsonConverter.searchContents(
-                                                id: id.substring(1));
-                                      }
-                                      setState(() {});
-                                    });
-                                  },
-                                  textInputAction: TextInputAction.done,
-                                ),
-                              ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 5,
+                            bottom: 30,
+                          ),
+                          width: a.width / 1.17,
+                          height: a.width / 6.5,
+                          decoration: BoxDecoration(
+                            color: Color(0xff282828),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(300)),
+                            border:
+                                Border.all(width: 2, color: Colors.grey[800]),
+                          ),
+                          child: TextFormField(
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: a.width / 14,
+                              fontWeight: FontWeight.w300,
                             ),
-                            InkWell(
-                              child: Container(
-                                  margin: EdgeInsets.only(bottom: 30),
-                                  alignment: Alignment.center,
-                                  width: a.width / 8,
-                                  height: a.width / 8,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
-                                    border: Border.all(
-                                        width: 2, color: Colors.white),
-                                    color: Color(0xff26A4FF),
-                                  ),
-                                  child: Text(
-                                    '@',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: a.width / 11,
-                                        color: Colors.white),
-                                  )),
-                              onTap: () {
-                                if (_key.currentState.validate()) {
-                                  _key.currentState.save();
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: '@สหาย',
+                              hintStyle: TextStyle(color: Colors.grey[700]),
+                            ),
+                            onChanged: (val) {
+                              Future.delayed(const Duration(milliseconds: 200),
+                                  () async {
+                                id = val.trim();
+                                if (id?.length != null && id.length > 1) {
+                                  searchResault = await jsonConverter
+                                      .searchContents(id: id.substring(1));
                                 }
-                              },
-                            )
-                          ],
+                                setState(() {});
+                              });
+                            },
+                            textInputAction: TextInputAction.done,
+                          ),
                         ),
                       ],
                     ),
                     friends?.length == null || friends.length == 0
-                        ? guide(a, 'คุณไม่มีสหาย', a.height / 2)
+                        ? guide(a, 'คุณไม่มีสหาย', a.height / 2.5)
                         : id == null || id == '' || id.length < 2
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  listFriend(a, friends.take(3).toList(),
-                                      recom: true),
-                                  FlatButton(
-                                    child: Text(
-                                      'เพื่อนทั้งหมด ${friends.length}',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: a.width / 14),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      right: a.width / 55,
+                                      left: a.width / 55,
                                     ),
-                                    onPressed: () async {
-                                      bool resault = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => AllFriends(
-                                                    doc: widget.doc,
-                                                  )));
-                                      if (resault) {
-                                        initFriend();
-                                      }
-                                    },
+                                    child: listFriend(
+                                        a, friends.take(3).toList(),
+                                        recom: true),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                      top: a.width / 15,
+                                      // bottom: a.width / 15,
+                                    ),
+                                    child: FlatButton(
+                                      child: Text(
+                                        'สหายทั้งหมด ${friends.length} คน',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: a.width / 14),
+                                      ),
+                                      onPressed: () async {
+                                        if (widget.data == null) {
+                                          bool resault = await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AllFriends(
+                                                        doc: widget.doc,
+                                                      )));
+                                          if (resault) {
+                                            initFriend();
+                                          }
+                                        } else {
+                                          Navigator.pop(context);
+                                          bool resault = await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AllFriends(
+                                                        doc: widget.doc,
+                                                        scrap: widget.data,
+                                                      )));
+                                          if (resault) {
+                                            initFriend();
+                                          }
+                                        }
+                                      },
+                                    ),
                                   )
                                 ],
                               )
@@ -296,7 +325,7 @@ class _FriendListState extends State<FriendList> {
 
   Widget search(Size a) {
     return searchResault.length == 0
-        ? guide(a, 'ไม่พบidนี้ในสหายของคุณ', a.height / 2)
+        ? guide(a, 'ไม่พบไอดีนี้ในสหายของคุณ', a.height / 2.5)
         : listFriend(a, searchResault);
   }
 
@@ -345,78 +374,128 @@ class _FriendListState extends State<FriendList> {
   Widget userCard(Size a, String img, String throwID, String created,
       {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0),
+      padding: const EdgeInsets.only(top: 3.5, left: 5.0, right: 5.0),
       child: InkWell(
         child: Stack(
           children: <Widget>[
             Container(
-              height: a.height / 4.5,
+              margin: EdgeInsets.only(
+                bottom: a.width / 30,
+              ),
+              height: a.height / 5.5,
               width: a.width,
               decoration: BoxDecoration(
                   color: Color(0xff282828),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                    bottomRight: Radius.circular(16.0),
-                    bottomLeft: Radius.circular(16.0),
-                  )),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 13),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(a.width),
-                          border: Border.all(
-                              color: Colors.white, width: a.width / 190)),
-                      width: a.width / 3.3,
-                      height: a.width / 3.3,
-                      child: ClipRRect(
-                        child: CachedNetworkImage(
-                          imageUrl: img,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(a.width),
+                  borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: 10,
+                  left: 20,
+                  right: 20,
+                  bottom: 10,
+                ),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(
+                              right: 15,
+                            ),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(a.width),
+                                border: Border.all(
+                                    color: Colors.white, width: a.width / 190)),
+                            width: a.width / 5,
+                            height: a.width / 5,
+                            child: ClipRRect(
+                              child: CachedNetworkImage(
+                                imageUrl: img,
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.circular(a.width),
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                width: a.width / 2.8,
+                                height: a.height / 18,
+                                child: Text(
+                                  '@$throwID',
+                                  style: TextStyle(
+                                      fontSize: a.width / 13,
+                                      color: Colors.white),
+                                ),
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    'Join $created',
+                                    style: TextStyle(
+                                        fontSize: a.width / 16,
+                                        color: Color(0xff26A4FF)),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          width: a.width / 2.2,
-                          height: a.width / 10,
-                          child: Text(
-                            throwID,
-                            style: TextStyle(
-                                fontSize: a.width / 13, color: Colors.white),
+                      Container(
+                        margin: EdgeInsets.only(right: 2),
+                        width: a.width / 6.2,
+                        height: a.width / 6.2,
+                        decoration: BoxDecoration(
+                            // color: Colors.orange,
+                            borderRadius: BorderRadius.circular(a.width),
+                            border: Border.all(
+                                color: Colors.white24, width: a.width / 500)),
+                        child: Container(
+                          margin: EdgeInsets.all(a.width / 75),
+                          width: a.width / 7.5,
+                          height: a.width / 7.5,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(a.width),
+                              border: Border.all(color: Colors.white70)),
+                          child: Container(
+                            margin: EdgeInsets.all(a.width / 70),
+                            width: a.width / 7.5,
+                            height: a.width / 7.5,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(a.width),
+                                color: Colors.white,
+                                border: Border.all(color: Colors.white)),
+                            child: IconButton(
+                              alignment: Alignment.center,
+                              icon: Icon(
+                                  widget.data == null
+                                      ? Icons.create
+                                      : Icons.send,
+                                  size: a.width / 21,
+                                  color: Colors.black),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Viewprofile(
+                                          id: throwID,
+                                          self: widget.doc,
+                                          data: widget.data),
+                                    ));
+                              },
+                            ),
                           ),
                         ),
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              'Join $created',
-                              style: TextStyle(
-                                  fontSize: a.width / 11,
-                                  color: Color(0xff26A4FF)),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ]),
-            ),
-            Positioned(
-              right: 10.0,
-              top: 10.0,
-              child: Icon(
-                Icons.arrow_forward,
-                color: Color(0xffA3A3A3),
-                size: 30.0,
+                      ),
+                    ]),
               ),
-            )
+            ),
           ],
         ),
         onTap: () async {
@@ -424,27 +503,24 @@ class _FriendListState extends State<FriendList> {
               context,
               MaterialPageRoute(
                 builder: (context) => Viewprofile(
-                  id: throwID,
-                  self: widget.doc,
-                ),
+                    id: throwID, self: widget.doc, data: widget.data),
               )); //ไปยังหน้า Search
           if (resault) {
             initFriend();
           }
-          //     : warnDialog(throwID, tID);
         },
       ),
     );
   }
 
-  warnDialog(String user, String thrownID) {
+  warnDialog(String user, DocumentSnapshot accDoc) {
     showDialog(
         context: context,
         builder: (builder) {
           return AlertDialog(
             backgroundColor: Colors.white,
             content: Container(
-              child: Text('คุณต้อ���ก��รป���ใส่' + user + 'ใช่ห��ือไม่'),
+              child: Text('คุณต้องการปาใส่' + user + 'ใช่หรือไม่'),
             ),
             actions: <Widget>[
               FlatButton(
@@ -455,54 +531,18 @@ class _FriendListState extends State<FriendList> {
               FlatButton(
                 child: Text('ตกลง'),
                 onPressed: () async {
-                  toast('ปาใส่"$user"แ��้ว');
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  await throwTo(widget.data, thrownID);
+                  scraps.throwTo(
+                      uid: widget.doc['uid'],
+                      writer: widget.doc['id'],
+                      thrownUID: accDoc['uid'],
+                      text: widget.data['text'],
+                      public: widget.data['public']);
+                  toast('ปาใส่${accDoc['id']}แล้ว');
                 },
               )
             ],
           );
         });
-  }
-
-  warnClear(String user, String thrownID) {
-    showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text('คุ��ต้���งนำ' + user + 'อกกจากปร��วัติใช่หรือไม่'),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ยกเลิก')),
-              FlatButton(
-                child: Text('ok'),
-                onPressed: () async {
-                  toast('ลบ"$user"ออกแล้ว');
-                  Navigator.pop(context);
-                  await clearHist(thrownID);
-                },
-              )
-            ],
-          );
-        });
-  }
-
-  clearHist(String thrown) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(widget.doc['uid'])
-        .collection('info')
-        .document('searchHist')
-        .updateData({
-      'history': FieldValue.arrayRemove([thrown])
-    });
   }
 
   toast(String text) {
@@ -514,75 +554,6 @@ class _FriendListState extends State<FriendList> {
         backgroundColor: Colors.white60,
         textColor: Colors.black,
         fontSize: 16.0);
-  }
-
-  throwTo(Map data, String thrownID) async {
-    DateTime now = DateTime.now();
-    String time = DateFormat('Hm').format(now);
-    String date = DateFormat('d/M/y').format(now);
-    await Firestore.instance
-        .collection('Users')
-        .document(thrownID)
-        .collection('scraps')
-        .document('recently')
-        .setData({
-      'id': FieldValue.arrayUnion([widget.doc['uid']]),
-      'scraps': {
-        widget.doc['uid']: FieldValue.arrayUnion([
-          {
-            'text': data['text'],
-            'writer':
-                data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-            'time': '$time $date'
-          }
-        ])
-      }
-    }, merge: true);
-    await notifaication(thrownID, date, time);
-    await updateHistory(widget.doc['uid'], thrownID);
-    await increaseTransaction(widget.doc['uid'], 'written');
-    await increaseTransaction(thrownID, 'threw');
-  }
-
-  updateHistory(String uid, String thrown) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document('searchHist')
-        .updateData({
-      'history': FieldValue.arrayUnion([thrown])
-    });
-  }
-
-  notifaication(String who, String date, String time) async {
-    await Firestore.instance.collection('Notifications').add({'uid': who});
-    await Firestore.instance
-        .collection('Users')
-        .document(who)
-        .collection('notification')
-        .add({
-      'writer':
-          widget.data['public'] ?? false ? widget.doc['id'] : 'ไม่ระบุตัวตน',
-      'date': date,
-      'time': time
-    });
-  }
-
-  increaseTransaction(String uid, String key) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .get()
-        .then((value) => Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('info')
-            .document(uid)
-            .updateData(
-                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
   }
 }
 
@@ -603,14 +574,14 @@ class _AllFriendsState extends State<AllFriends> {
 
   @override
   void initState() {
-    initFriend();
+    initFriend(5);
     initScroller();
     super.initState();
   }
 
-  initFriend() async {
+  initFriend(int take) async {
     friends = await jsonConverter.readContents();
-    display = friends.reversed.take(4).toList();
+    display = friends.reversed.take(take).toList();
     sortedList = friends.reversed.toList();
     setState(() {});
   }
@@ -621,9 +592,9 @@ class _AllFriendsState extends State<AllFriends> {
           scrollController.position.maxScrollExtent) {
         if (display.length != sortedList.length) {
           for (int i = display.length;
-              sortedList.length - display.length < 4
+              sortedList.length - display.length < 6
                   ? i < sortedList.length
-                  : i < display.length + 4;
+                  : i < display.length + 6;
               i++) {
             display.add(sortedList[i]);
           }
@@ -644,43 +615,56 @@ class _AllFriendsState extends State<AllFriends> {
         Navigator.pop(context, true);
         return false;
       },
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Container(
-          child: Column(
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: Column(
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  InkWell(
-                    child: Container(
-                      width: a.width / 7,
-                      height: a.width / 10,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Colors.white),
-                      child: Icon(Icons.arrow_back,
-                          color: Colors.black, size: a.width / 15),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context, true);
-                    },
+              Container(
+                alignment: Alignment.topLeft,
+                margin: EdgeInsets.only(top: a.width / 24, left: a.width / 24),
+                child: InkWell(
+                  child: Container(
+                    width: a.width / 7,
+                    height: a.width / 10,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(a.width),
+                        color: Colors.white),
+                    child: Icon(Icons.arrow_back,
+                        color: Colors.black, size: a.width / 15),
                   ),
-                  SizedBox(
-                    width: a.width / 2.1,
-                  ),
-                  Text(
-                    'สหาย ${sortedList.length.toString()} คน',
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
+                  onTap: () {
+                    Navigator.pop(context, true);
+                  },
+                ),
               ),
               Container(
-                  width: a.width,
-                  height: a.height / 1.1,
+                margin: EdgeInsets.only(right: a.width / 21),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: <Widget>[
+                    Text(
+                      'สหาย',
+                      style: TextStyle(
+                          color: Colors.white, fontSize: a.width / 15),
+                    ),
+                    Text(
+                      ' ${sortedList.length.toString()} คน',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: a.width / 11,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
                   child: ListView(
                       controller: scrollController,
-                      itemExtent: a.height / 4.5,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemExtent: a.height / 5.6,
                       children:
                           display.map((data) => cardStream(a, data)).toList()))
             ],
@@ -691,130 +675,145 @@ class _AllFriendsState extends State<AllFriends> {
   }
 
   Widget cardStream(Size a, Map data) {
-    return userCard(a, data['img'], data['id'], data['join']);
+    return Center(child: userCard(a, data['img'], data['id'], data['join']));
   }
 
-  Widget userCard(Size a, String img, String id, String created,
+  Widget userCard(Size a, String img, String throwID, String created,
       {DocumentSnapshot infoDoc, DocumentSnapshot accDoc}) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0),
-      child: InkWell(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              width: a.width,
-              decoration: BoxDecoration(
-                  color: Color(0xff282828),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                    bottomRight: Radius.circular(16.0),
-                    bottomLeft: Radius.circular(16.0),
-                  )),
+    return InkWell(
+      focusColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Stack(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: a.width / 21),
+            height: a.height / 5.6,
+            width: a.width / 1.1,
+            decoration: BoxDecoration(
+                color: Color(0xff282828),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.0),
+                  topRight: Radius.circular(16.0),
+                  bottomRight: Radius.circular(16.0),
+                  bottomLeft: Radius.circular(16.0),
+                )),
+            child: Padding(
+              padding:
+                  EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 13),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(a.width),
-                          border: Border.all(
-                              color: Colors.white, width: a.width / 190)),
-                      width: a.width / 3.3,
-                      height: a.width / 3.3,
-                      child: ClipRRect(
-                        child: CachedNetworkImage(
-                          imageUrl: img,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(a.width),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: <Widget>[
-                        SizedBox(
-                          width: a.width / 2.2,
-                          height: a.width / 10,
-                          child: Text(
-                            id,
-                            style: TextStyle(
-                                fontSize: a.width / 13, color: Colors.white),
+                        Container(
+                          margin: EdgeInsets.only(
+                            right: 15,
+                          ),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(a.width),
+                              border: Border.all(
+                                  color: Colors.white, width: a.width / 190)),
+                          width: a.width / 4.8,
+                          height: a.width / 4.8,
+                          child: ClipRRect(
+                            child: CachedNetworkImage(
+                              imageUrl: img,
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(a.width),
                           ),
                         ),
-                        Row(
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              'Join $created',
-                              style: TextStyle(
-                                  fontSize: a.width / 11,
-                                  color: Color(0xff26A4FF)),
+                            SizedBox(
+                              width: a.width / 2.8,
+                              height: a.height / 18,
+                              child: Text(
+                                '@$throwID',
+                                style: TextStyle(
+                                    fontSize: a.width / 13,
+                                    color: Colors.white),
+                              ),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Text(
+                                  'Join $created',
+                                  style: TextStyle(
+                                      fontSize: a.width / 16,
+                                      color: Color(0xff26A4FF)),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ],
                     ),
+                    Container(
+                      width: a.width / 6.4,
+                      height: a.width / 6.4,
+                      decoration: BoxDecoration(
+                          // color: Colors.orange,
+                          borderRadius: BorderRadius.circular(a.width),
+                          border: Border.all(
+                              color: Colors.white24, width: a.width / 500)),
+                      child: Container(
+                        margin: EdgeInsets.all(a.width / 75),
+                        width: a.width / 7.5,
+                        height: a.width / 7.5,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(a.width),
+                            border: Border.all(color: Colors.white70)),
+                        child: Container(
+                          margin: EdgeInsets.all(a.width / 70),
+                          width: a.width / 7.5,
+                          height: a.width / 7.5,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(a.width),
+                              color: Colors.white,
+                              border: Border.all(color: Colors.white)),
+                          child: IconButton(
+                              icon: Icon(
+                                  widget.scrap == null
+                                      ? Icons.create
+                                      : Icons.send,
+                                  size: a.width / 21,
+                                  color: Colors.black),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Viewprofile(
+                                          id: throwID,
+                                          self: widget.doc,
+                                          data: widget.scrap),
+                                    ));
+                              }),
+                        ),
+                      ),
+                    ),
                   ]),
             ),
-            Positioned(
-              right: 10.0,
-              top: 10.0,
-              child: Icon(
-                Icons.arrow_forward,
-                color: Color(0xffA3A3A3),
-                size: 30.0,
-              ),
-            )
-          ],
-        ),
-        onTap: () async {
-          // widget.scrap == null
-          bool resault = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Viewprofile(
-                  id: id,
-                  self: widget.doc,
-                ),
-              ));
-          if (resault) {
-            initFriend();
-          }
-          //     : warnDialog(id, tID);
-        },
+          ),
+        ],
       ),
+      onTap: () async {
+        bool resault = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Viewprofile(
+                  id: throwID, self: widget.doc, data: widget.scrap),
+            )); //ไปยังหน้า Search
+        if (resault) {
+          initFriend(display.length);
+        }
+      },
     );
-  }
-
-  warnDialog(String user, String thrownID) {
-    showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            content: Container(
-              child: Text('คุณต้องการปาใส่' + user + 'ใช่หรือไม่'),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ยกเลิก')),
-              FlatButton(
-                child: Text('ตกลง'),
-                onPressed: () async {
-                  // toast('ปาใส่"$user"แล้ว');
-                  // Navigator.pop(context);
-                  // Navigator.pop(context);
-                  // await throwTo(widget.data, thrownID);
-                },
-              )
-            ],
-          );
-        });
   }
 }

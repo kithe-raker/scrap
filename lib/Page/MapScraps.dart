@@ -11,6 +11,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scrap/function/randomLocation.dart';
+import 'package:scrap/function/scrapFilter.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class MapScraps extends StatefulWidget {
@@ -41,17 +43,21 @@ class _MapScrapsState extends State<MapScraps> {
   Set scpContent = {};
   Map randData = {};
   Set picked = {};
+  Scraps scrap = Scraps();
   final infoKey = GlobalKey();
+  ScrapFilter filter = ScrapFilter();
 
   @override
   void initState() {
-    time = DateFormat('Hm').format(now);
-    date = DateFormat('d/M/y').format(now);
-    currentLocation = widget.currentLocation;
-    loadMap = true;
-    queryManagement();
-    loopRandomMarker(currentLocation);
-    super.initState();
+    if (this.mounted) {
+      time = DateFormat('Hm').format(now);
+      date = DateFormat('d/M/y').format(now);
+      currentLocation = widget.currentLocation;
+      loadMap = true;
+      queryManagement();
+      loopRandomMarker(currentLocation);
+      super.initState();
+    }
   }
 
   error(BuildContext context, String sub) {
@@ -84,7 +90,7 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   //sssss
-  void dialog(String text, String writer, String time, String id) {
+  void dialog(String text, String writer, String time, String date, String id) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
       Size a = MediaQuery.of(context).size;
@@ -115,136 +121,154 @@ class _MapScrapsState extends State<MapScraps> {
                 height: a.height / 1.3,
                 child: Stack(
                   children: <Widget>[
-                    Container(
-                      width: a.width,
-                      child: Image.asset(
-                        'assets/paper-readed.png',
-                        width: a.width,
-                        height: a.height / 1.6,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                        top: 12,
-                        left: 12,
-                        right: 12,
-                        child: Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                writer == 'ไม่ระบุตัวตน'
-                                    ? 'เขียนโดย : ใครบางคน'
-                                    : 'เขียนโดย : @$writer',
-                                style: TextStyle(fontSize: a.width / 25),
-                              ),
-                              Text('เวลา : $time',
-                                  style: TextStyle(fontSize: a.width / 25))
-                            ],
-                          ),
-                        )),
-                    Positioned(
-                      bottom: 0,
-                      left: 12,
-                      right: 12,
-                      child: Container(
-                        width: a.width,
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Stack(
                           children: <Widget>[
-                            InkWell(
-                              child: Container(
-                                width: a.width / 3.5,
-                                height: a.width / 6.5,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.circular(a.width)),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.arrow_downward,
-                                      color: Color(0xff26A4FF),
-                                    ),
-                                    Text("เก็บไว้",
-                                        style: TextStyle(
-                                            fontSize: a.width / 15,
-                                            color: Color(0xff26A4FF))),
-                                  ],
-                                ),
+                            Container(
+                              width: a.width,
+                              child: Image.asset(
+                                'assets/paper-readed.png',
+                                width: a.width,
+                                height: a.height / 1.6,
+                                fit: BoxFit.cover,
                               ),
-                              onTap: () async {
-                                Navigator.pop(context);
-                                await pickScrap(id, text, time, writer);
-                              },
                             ),
-                            InkWell(
-                              child: Container(
-                                width: a.width / 3.5,
-                                height: a.width / 6.5,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.circular(a.width)),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(Icons.clear),
-                                    Text(
-                                      "ทิ้งไว้",
-                                      style: TextStyle(fontSize: a.width / 15),
-                                    ),
-                                  ],
+                            Positioned(
+                                top: 12,
+                                left: 12,
+                                right: 12,
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        writer == 'ไม่ระบุตัวตน'
+                                            ? 'เขียนโดย : ใครบางคน'
+                                            : 'เขียนโดย : @$writer',
+                                        style:
+                                            TextStyle(fontSize: a.width / 25),
+                                      ),
+                                      Text('เวลา : $time $date',
+                                          style:
+                                              TextStyle(fontSize: a.width / 25))
+                                    ],
+                                  ),
+                                )),
+                            Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.only(left: 25, right: 25),
+                              height: a.height / 1.6,
+                              width: a.width,
+                              child: Text(
+                                filter.censorString(text),
+                                style: TextStyle(
+                                  height: 1.35,
+                                  fontSize: a.width / 14,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                    Positioned(
-                        left: a.width / 16,
-                        top: a.height / 6.6,
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: a.height / 3.2,
-                          width: a.width / 1.3,
-                          child: Text(
-                            text,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: a.width / 14),
+                        SizedBox(height: a.width / 15),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(a.width)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              writer != 'สุ่มโดย Scrap'
+                                  ? InkWell(
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            right: a.width / 42),
+                                        width: a.width / 6,
+                                        height: a.width / 6,
+                                        child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.whatshot,
+                                                color: Colors.grey[600],
+                                                size: a.width / 14,
+                                              ),
+                                              Text(
+                                                "เผา",
+                                                style: TextStyle(
+                                                    color: Colors.grey[600],
+                                                    fontSize: a.width / 25),
+                                              )
+                                            ]),
+                                      ),
+                                      onTap: () async {
+                                        await burn(id);
+                                        Navigator.pop(context);
+                                        Taoast().toast('คุณได้เผากระดาษไปแล้ว');
+                                      },
+                                    )
+                                  : SizedBox(),
+                              InkWell(
+                                child: Container(
+                                  margin: EdgeInsets.only(right: a.width / 40),
+                                  width: a.width / 6,
+                                  height: a.width / 6,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Image.asset('assets/garbage_grey.png',
+                                            width: a.width / 14,
+                                            height: a.width / 14,
+                                            fit: BoxFit.cover),
+                                        Text(
+                                          "ทิ้งไว้",
+                                          style: TextStyle(
+                                              color: Colors.grey[600],
+                                              fontSize: a.width / 25),
+                                        )
+                                      ]),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              InkWell(
+                                child: Container(
+                                  width: a.width / 6,
+                                  height: a.width / 6,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.save_alt,
+                                          color: Colors.grey[600],
+                                          size: a.width / 14,
+                                        ),
+                                        Text(
+                                          "เก็บไว้",
+                                          style: TextStyle(
+                                              color: Colors.grey[600],
+                                              fontSize: a.width / 25),
+                                        )
+                                      ]),
+                                ),
+                                onTap: () async {
+                                  Navigator.pop(context);
+                                  await pickScrap(
+                                      id, text, '$time $date', writer);
+                                },
+                              ),
+                            ],
                           ),
-                        )),
-                    writer != 'สุ่มโดย Scrap'
-                        ? Positioned(
-                            top: 12,
-                            right: 12,
-                            child: Row(
-                              children: <Widget>[
-                                FlatButton(
-                                    child: Icon(Icons.whatshot),
-                                    onPressed: () async {
-                                      await burn(id);
-                                      print(id);
-                                      Navigator.pop(context);
-                                      Taoast()
-                                          .toast('คุณได้เผากระดาษไปแล้ว');
-                                    }),
-                                Tooltip(
-                                  key: infoKey,
-                                  message: 'เผากระดาษ',
-                                  child: Icon(Icons.info_outline),
-                                )
-                              ],
-                            ))
-                        : SizedBox(),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -288,6 +312,8 @@ class _MapScrapsState extends State<MapScraps> {
     super.dispose();
   }
 
+  double zoom;
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -318,8 +344,33 @@ class _MapScrapsState extends State<MapScraps> {
                       child: CircularProgressIndicator(),
                     ),
             ),
+          //  Positioned(left: -56, bottom: a.height / 3.6, child: slider())
           ],
         ));
+  }
+
+  Widget slider() {
+    return Transform.rotate(
+        angle: -(pi / 2),
+        child: Slider(
+            value: zoom ?? 18.5,
+            onChanged: (value) {
+              setState(() => zoom = value);
+              cameraAnime2(mapController, value);
+              print(value);
+            },
+            divisions: 4,
+            max: 18.5,
+            min: 0));
+  }
+
+  cameraAnime2(GoogleMapController controller, double howClose) {
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(
+            currentLocation?.latitude ?? 0, currentLocation?.longitude ?? 0),
+        zoom: howClose,
+        bearing: 0.0,
+        tilt: 90)));
   }
   /*
          Set id = {};
@@ -346,9 +397,13 @@ class _MapScrapsState extends State<MapScraps> {
   void onMapCreated(GoogleMapController controller) {
     this.mapController = controller;
     changeMapMode();
-    updateMap(currentLocation);
+    if (this.mounted) {
+      updateMap(currentLocation);
+    }
     Geolocator().getPositionStream().listen((location) {
-      updateMap(location);
+      if (this.mounted) {
+        updateMap(location);
+      }
     });
   }
 
@@ -383,8 +438,8 @@ class _MapScrapsState extends State<MapScraps> {
           'lng': randLocation['lng'],
           'time': '$time  $date',
         };
-        _addOfficial(getContent, '$time  $date', randLocation['lat'],
-            randLocation['lng']);
+        _addOfficial(
+            getContent, time, date, randLocation['lat'], randLocation['lng']);
       }
     });
   }
@@ -403,14 +458,13 @@ class _MapScrapsState extends State<MapScraps> {
             read.contains(widget.uid)) {
         } else {
           _addMarker(
-            data['id'],
-            data['uid'],
-            data['scrap']['user'],
-            data['scrap']['text'],
-            data['scrap']['time'],
-            loca.latitude,
-            loca.longitude,
-          );
+              data['id'],
+              data['uid'],
+              data['scrap']['user'],
+              data['scrap']['text'],
+              data['scrap']['timeStamp'],
+              loca.latitude,
+              loca.longitude);
         }
       } else {
         subscription.pause();
@@ -464,7 +518,8 @@ class _MapScrapsState extends State<MapScraps> {
         target: LatLng(lat, lng), zoom: 18.5, bearing: 0.0, tilt: 90)));
   }
 
-  void _addOfficial(String text, String time, double lat, double lng) {
+  void _addOfficial(
+      String text, String time, String date, double lat, double lng) {
     final MarkerId officialId = MarkerId(text);
     final Marker marker = Marker(
       markerId: officialId,
@@ -476,11 +531,11 @@ class _MapScrapsState extends State<MapScraps> {
           picked.add(text);
           scpContent.remove(text);
           setState(() {});
-          dialog(text, 'สุ่มโดย Scrap', time, text);
+          dialog(text, 'สุ่มโดย Scrap', time, date, text);
         } catch (e) {
           print(e.toString());
           error(context,
-              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณ��ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
         }
       },
     );
@@ -490,8 +545,9 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   void _addMarker(String id, String user, String writer, String text,
-      String time, double lat, double lng) {
+      Timestamp time, double lat, double lng) {
     id == null ? ++i : null;
+    DateTime convTime = time.toDate();
     final MarkerId markerId = MarkerId(id ?? i.toString());
     final Marker marker = Marker(
       markerId: markerId,
@@ -502,9 +558,12 @@ class _MapScrapsState extends State<MapScraps> {
           markers.remove(markerId);
           picked.add(id);
           setState(() {});
-          dialog(text, writer, time, id);
+          dialog(text, writer, '${convTime.hour}:${convTime.minute}',
+              '${convTime.day}/${convTime.month}/${convTime.year}', id);
           addRead(id);
-          increaseTransaction(user, 'read');
+          scrap.increaseTransaction(user, 'read');
+          increasHistTran(
+              user, '${convTime.year},${convTime.month},${convTime.day}', id);
         } catch (e) {
           print(e.toString());
           error(context,
@@ -526,9 +585,11 @@ class _MapScrapsState extends State<MapScraps> {
       icon: _curcon,
       draggable: false,
     );
-    setState(() {
-      markers[markerId] = marker;
-    });
+    if (this.mounted) {
+      setState(() {
+        markers[markerId] = marker;
+      });
+    }
   }
 
   void _addCircle(double radius, double lat, double lng) {
@@ -542,9 +603,11 @@ class _MapScrapsState extends State<MapScraps> {
       center: LatLng(lat, lng),
       radius: radius,
     );
-    setState(() {
-      circles[circleId] = circle;
-    });
+    if (this.mounted) {
+      setState(() {
+        circles[circleId] = circle;
+      });
+    }
   }
 
   Future<void> _createMarkerImageFromAsset(BuildContext context) async {
@@ -552,10 +615,7 @@ class _MapScrapsState extends State<MapScraps> {
       final ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context);
       BitmapDescriptor.fromAssetImage(
-              imageConfiguration,
-              checkPlatform
-                  ? 'assets/yourlocation-icon-l.png'
-                  : 'assets/yourlocation-icon-l.png')
+              imageConfiguration, 'assets/yourlocation-icon-l.png')
           .then(_updateBitmap);
     }
   }
@@ -586,7 +646,7 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   addRead(String scrapID) async {
-    await Firestore.instance
+    Firestore.instance
         .collection('Scraps')
         .document('hatyai')
         .collection('scrapsPosition')
@@ -596,19 +656,12 @@ class _MapScrapsState extends State<MapScraps> {
     });
   }
 
-  increaseTransaction(String uid, String key) async {
-    await Firestore.instance
+  increasHistTran(String uid, String date, String docID) {
+    Firestore.instance
         .collection('Users')
         .document(uid)
-        .collection('info')
-        .document(uid)
-        .get()
-        .then((value) => Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('info')
-            .document(uid)
-            .updateData(
-                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
+        .collection('history')
+        .document(date)
+        .updateData({docID: FieldValue.increment(1)});
   }
 }

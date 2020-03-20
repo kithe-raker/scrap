@@ -1,17 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+
 import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/Page/setting/FeedbackPage.dart';
 import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
+import 'package:scrap/Page/setting/blockingList.dart';
+import 'package:scrap/Page/setting/History.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/LongPaper.dart';
 import 'package:scrap/widget/Toast.dart';
-import '../Suser.dart';
 
 class Profile extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -25,40 +29,7 @@ class _ProfileState extends State<Profile> {
   int page;
   String text2;
   bool loading = false;
-
-  checkReset(List scraps, String lastReset) async {
-    DateTime now = DateTime.now();
-    String date = DateFormat('d/M/y').format(now);
-    lastReset == date
-        ? toast('คุณขอรับกระดาษได้แค่1ครั้งต่อวัน')
-        : resetScrap(date, scraps);
-  }
-
-  resetScrap(String date, List scraps) async {
-    setState(() => loading = true);
-    scraps.forEach((id) async {
-      await deleteScrap(id);
-    });
-    await Firestore.instance
-        .collection('Users')
-        .document(widget.doc['uid'])
-        .collection('info')
-        .document(widget.doc['uid'])
-        .updateData({'lastReset': date, 'scraps': []});
-    setState(() => loading = false);
-    toast('คุณได้รับกระดาษเพิ่มแล้ว');
-  }
-
-  deleteScrap(dynamic scrapID) async {
-    if (scrapID.runtimeType is String) {
-      await Firestore.instance
-          .collection('Scraps')
-          .document('hatyai')
-          .collection('scrapsPosition')
-          .document(scrapID)
-          .delete();
-    }
-  }
+  Scraps scraps = Scraps();
 
   @override
   void initState() {
@@ -82,7 +53,6 @@ class _ProfileState extends State<Profile> {
               builder: (context, snapshot) {
                 if (snapshot.hasData &&
                     snapshot.connectionState == ConnectionState.active) {
-                  int scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
                   return ListView(
                     children: <Widget>[
                       Padding(
@@ -94,49 +64,51 @@ class _ProfileState extends State<Profile> {
                         child: Column(
                           children: <Widget>[
                             Container(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  InkWell(
-                                    child: Container(
-                                      width: a.width / 7,
-                                      height: a.width / 10,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(a.width),
-                                          color: Colors.white),
-                                      child: Icon(Icons.arrow_back,
-                                          color: Colors.black,
-                                          size: a.width / 15),
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    InkWell(
+                                      child: Container(
+                                        width: a.width / 7,
+                                        height: a.width / 10,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(a.width),
+                                            color: Colors.white),
+                                        child: Icon(Icons.arrow_back,
+                                            color: Colors.black,
+                                            size: a.width / 15),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(
+                                          context,
+                                        );
+                                      },
                                     ),
-                                    onTap: () {
-                                      // Navigator.pop(
-                                      //   context,
-                                      // );
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Suser(),));
-                                    },
-                                  ),
-                                  PopupMenuButton<String>(
-                                    onSelected: (val) {
-                                      choiceAction(val, info: snapshot.data);
-                                    },
-                                    itemBuilder: (BuildContext context) {
-                                      return Constans.choices
-                                          .map((String choice) {
-                                        return PopupMenuItem(
-                                            value: choice,
-                                            child: Text(
-                                              choice,
-                                              style: TextStyle(
-                                                  fontSize: a.width / 15),
-                                            ));
-                                      }).toList();
-                                    },
-                                    child: Icon(Icons.more_horiz,
-                                        color: Colors.white, size: a.width / 9),
-                                  )
-                                ],
+                                    PopupMenuButton<String>(
+                                      onSelected: (val) {
+                                        choiceAction(val, info: snapshot.data);
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        return Constans.choices
+                                            .map((String choice) {
+                                          return PopupMenuItem(
+                                              value: choice,
+                                              child: Text(
+                                                choice,
+                                                style: TextStyle(
+                                                    fontSize: a.width / 15),
+                                              ));
+                                        }).toList();
+                                      },
+                                      child: Icon(Icons.more_horiz,
+                                          color: Colors.white,
+                                          size: a.width / 9),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             // ||
@@ -154,14 +126,13 @@ class _ProfileState extends State<Profile> {
                               width: a.width / 3,
                               height: a.width / 3,
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(a.width),
-                                child: snapshot.data['img'] == null
-                                    ? Image.asset("assets/userprofile.png")
-                                    : Image.network(
-                                        snapshot.data['img'],
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
+                                  borderRadius: BorderRadius.circular(a.width),
+                                  child: snapshot.data['img'] == null
+                                      ? Image.asset("assets/userprofile.png")
+                                      : CachedNetworkImage(
+                                          imageUrl: snapshot.data['img'],
+                                          fit: BoxFit.cover,
+                                        )),
                             ),
 
                             // ชื่อของ account
@@ -177,7 +148,10 @@ class _ProfileState extends State<Profile> {
                             Container(
                                 margin: EdgeInsets.only(top: a.width / 1000),
                                 child: Text(
-                                  "Join " + snapshot.data['createdDay'],
+                                  snapshot.data['createdDay'].runtimeType ==
+                                          String
+                                      ? "Join ${snapshot.data['createdDay']}"
+                                      : "Join ${DateFormat('d/M/y').format(snapshot.data['createdDay'].toDate())}",
                                   style: TextStyle(
                                       fontSize: a.width / 11,
                                       color: Color(0xff26A4FF)),
@@ -191,8 +165,11 @@ class _ProfileState extends State<Profile> {
                                       snapshot?.data['status'] ??
                                           'แตะเพื่อเพิ่มสเตตัส',
                                       textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      softWrap: false,
                                       style: TextStyle(
-                                          fontSize: a.width / 15,
+                                          fontSize: a.width / 16.5,
                                           color:
                                               snapshot?.data['status'] == null
                                                   ? Colors.grey
@@ -206,33 +183,6 @@ class _ProfileState extends State<Profile> {
                               onTap: () {
                                 editStatus(snapshot?.data['status'], "thrown");
                               },
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Image.asset(
-                                  'assets/paper.png',
-                                  width: a.width / 8,
-                                ),
-                                Text(
-                                  '$scraps/15',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: a.width / 12),
-                                ),
-                                IconButton(
-                                    icon: Icon(Icons.refresh,
-                                        size: a.width / 12,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      scraps == 15
-                                          ? toast('กระดาษของคุณยังเต็มอยู่')
-                                          : checkReset(
-                                              snapshot.data['scraps'],
-                                              snapshot?.data['lastReset'] ??
-                                                  '');
-                                    })
-                              ],
                             ),
                             // ใส่ Container เพื่อสร้างกรอบ
                             Container(
@@ -276,7 +226,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                   Container(
-                                    width: a.width / 4.5,
+                                    width: a.width / 4,
                                     // color: Colors.blue,
                                     child: Column(
                                       children: <Widget>[
@@ -365,7 +315,7 @@ class _ProfileState extends State<Profile> {
                                               snapshot.connectionState ==
                                                   ConnectionState.active) {
                                             Set mSet = {};
-                                            modiList(
+                                            modiForScrap(
                                                 snapshot?.data['id'],
                                                 snapshot?.data['scraps'],
                                                 mSet,
@@ -544,6 +494,42 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  modiForScrap(List users, Map data, Set mSet, String key) {
+    if (users != null || data != null) {
+      for (var id in users) {
+        if (data[id] == null || data[id].length == 0) {
+          clearScrap(data[id] == null, id, key);
+        } else {
+          for (var scraps in data[id]) {
+            if (scraps['time'].runtimeType == String) {
+              scraps['time'] = Timestamp.fromDate(DateTime.parse(datDate(
+                  scraps['time'].substring(6),
+                  scraps['time'].substring(0, 5))));
+              mSet.add({'scap': scraps, 'id': id});
+            } else {
+              mSet.add({'scap': scraps, 'id': id});
+            }
+          }
+        }
+      }
+    }
+  }
+
+  String datDate(String date, String time) {
+    date.length == 10
+        ? date =
+            "${date[6]}${date[7]}${date[8]}${date[9]}-${date[3]}${date[4]}-${date[0]}${date[1]}"
+        : date.length == 9
+            ? date[1] == '/'
+                ? date =
+                    "${date[5]}${date[6]}${date[7]}${date[8]}-${date[2]}${date[3]}-0${date[0]}"
+                : date =
+                    "${date[5]}${date[6]}${date[7]}${date[8]}-0${date[3]}-${date[0]}${date[1]}"
+            : date =
+                "${date[4]}${date[5]}${date[6]}${date[7]}-0${date[2]}-0${date[0]}";
+    return date + ' $time' + ':00';
+  }
+
   clearScrap(bool onlyID, String id, String key) {
     Firestore.instance
         .collection('Users')
@@ -575,7 +561,6 @@ class _ProfileState extends State<Profile> {
         children: mList
             .map(
               (scrap) => InkWell(
-                
                 child: LongPaper(
                   scrap: backward(mList, scrap),
                   uid: widget.doc['uid'],
@@ -589,11 +574,13 @@ class _ProfileState extends State<Profile> {
 
   //data[data.length - 1 -data.indexOf(userID)]
   Widget wrapScrap(Size a, List scraps) {
+    scraps.sort((a, b) =>
+        a['scap']['time'].toDate().compareTo(b['scap']['time'].toDate()));
     return Wrap(
-      children: scraps
-          .map((scrapData) => scrap(a, backward(scraps, scrapData)))
-          .toList(),
-    );
+        children: scraps.reversed
+            .toList()
+            .map((scrapData) => scrap(a, scrapData))
+            .toList());
   }
 
   dynamic backward(List list, dynamic value) {
@@ -613,6 +600,8 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget scrap(Size a, Map scrap) {
+    DateTime convTime = scrap['scap']['time'].toDate();
+    String time = DateFormat('HH:mm d/M/y').format(convTime);
     return Container(
       padding: EdgeInsets.all(a.width / 32),
       child: InkWell(
@@ -623,8 +612,8 @@ class _ProfileState extends State<Profile> {
           fit: BoxFit.cover,
         ),
         onTap: () {
-          dialog(scrap['scap']['text'], scrap['scap']['writer'],
-              scrap['scap']['time'], scrap['scap'], scrap['id']);
+          dialog(scrap['scap']['text'], scrap['scap']['writer'], time,
+              scrap['scap'], scrap['id']);
         },
       ),
     );
@@ -632,186 +621,362 @@ class _ProfileState extends State<Profile> {
 
   //ส่วนของ กระดาษที่ถูกปาใ��่ เม���่อกด
   dialog(
-      String text, String writer, String time, Map scpData, String writerID) {
+      String text, String writer, String time, Map scpData, String writerUID) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) {
           Size a = MediaQuery.of(context).size;
           return StatefulBuilder(builder: (context, StateSetter setState) {
             return Scaffold(
               backgroundColor: Colors.black,
-              body: InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Stack(
-                  children: <Widget>[
-                    Container(
-                      color: Colors.black,
-                      margin: EdgeInsets.only(
-                        top: a.height / 8,
-                      ),
-                      padding: EdgeInsets.only(
-                          left: a.width / 20, right: a.width / 20),
-                      width: a.width,
-                      height: a.height / 1,
-                      child: Stack(
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              Stack(
-                                children: <Widget>[
-                                  Container(
+              resizeToAvoidBottomPadding: false,
+              body: Stack(
+                children: <Widget>[
+                  Container(
+                    color: Colors.black,
+                    padding: EdgeInsets.only(
+                        left: a.width / 20, right: a.width / 20),
+                    width: a.width,
+                    height: a.height,
+                    child: Stack(
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Stack(
+                              children: <Widget>[
+                                Container(
+                                  width: a.width,
+                                  child: Image.asset(
+                                    'assets/paper-readed.png',
                                     width: a.width,
-                                    child: Image.asset(
-                                      'assets/paper-readed.png',
-                                      width: a.width,
-                                      height: a.height / 1.6,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Positioned(
-                                      top: 12,
-                                      left: 12,
-                                      child: Container(
-                                        width: a.width / 1.2,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text('เขียนโดย : $writer'),
-                                                Text('เวลา : $time')
-                                              ],
-                                            ),
-                                            InkWell(
-                                              child: Container(
-                                                width: a.width / 7,
-                                                height: a.width / 12,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: Colors.black),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            a.width / 10)),
-                                                alignment: Alignment.center,
-                                                child: Text("ปากลับ"),
-                                              ),
-                                              onTap: () {
-                                                dialogPa(writerID, writer);
-                                              },
-                                            )
-                                          ],
-                                        ),
-                                      )),
-                                  Container(
-                                    alignment: Alignment.center,
-                                    padding:
-                                        EdgeInsets.only(left: 25, right: 25),
                                     height: a.height / 1.6,
-                                    // width: a.width / 1.2,
-                                    child: Text(
-                                      text,
-                                      style: TextStyle(
-                                        fontSize: a.width / 14,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                    top: 12,
+                                    left: 12,
+                                    child: Container(
+                                      width: a.width / 1.2,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text('เขียนโดย : $writer'),
+                                              Text('เวลา : $time')
+                                            ],
+                                          ),
+                                          Row(
+                                            children: <Widget>[
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.error,
+                                                  color: Colors.black,
+                                                  size: a.width / 11.2,
+                                                ),
+                                                onPressed: () {
+                                                  reportDialog(a, writer,
+                                                      writerUID, text, scpData);
+                                                },
+                                              ),
+                                              SizedBox(
+                                                width: a.width / 56,
+                                              ),
+                                              InkWell(
+                                                child: Container(
+                                                  width: a.width / 7,
+                                                  height: a.width / 12,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Colors.black),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width / 10)),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    "ปากลับ",
+                                                    style: TextStyle(
+                                                        fontSize: a.width / 21),
+                                                  ),
+                                                ),
+                                                onTap: () {
+                                                  dialogPa(writerUID, writer);
+                                                },
+                                              )
+                                            ],
+                                          )
+                                        ],
                                       ),
-                                      textAlign: TextAlign.center,
+                                    )),
+                                Container(
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.only(left: 25, right: 25),
+                                  height: a.height / 1.6,
+                                  width: a.width,
+                                  child: Text(
+                                    text,
+                                    style: TextStyle(
+                                      height: 1.35,
+                                      fontSize: a.width / 14,
                                     ),
-                                    // onTap: () {
-                                    //   dialogPa(writerID, writer);
-                                    // },
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: a.width / 15),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(a.width)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  InkWell(
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.only(right: a.width / 40),
+                                      width: a.width / 6,
+                                      height: a.width / 6,
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.block,
+                                              color: Colors.grey[600],
+                                              size: a.width / 14,
+                                            ),
+                                            Text(
+                                              "บล็อค",
+                                              style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: a.width / 25),
+                                            )
+                                          ]),
+                                    ),
+                                    onTap: () {
+                                      blockDialog(widget.doc['uid'], writerUID,
+                                          scpData);
+                                    },
                                   ),
                                   InkWell(
                                     child: Container(
-                                      width: a.width / 7,
-                                      height: a.width / 12,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.red[200]),
-                                          borderRadius: BorderRadius.circular(
-                                              a.width / 10)),
-                                      alignment: Alignment.center,
-                                      child: Text("บล็อค"),
+                                      margin:
+                                          EdgeInsets.only(right: a.width / 40),
+                                      width: a.width / 6,
+                                      height: a.width / 6,
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            // Icon(
+                                            //   Icons.delete_outline,
+                                            //   color: Colors.grey[600],
+                                            //   size: a.width / 15,
+                                            // ),
+                                            Image.asset(
+                                                'assets/garbage_grey.png',
+                                                width: a.width / 14,
+                                                height: a.width / 14,
+                                                fit: BoxFit.cover),
+                                            Text(
+                                              "ทิ้ง",
+                                              style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: a.width / 25),
+                                            )
+                                          ]),
                                     ),
-                                    onTap: () {
-                                      blockDialog(widget.doc['id'], writerID,
-                                          writer, time, text, scpData);
-                                      //dialogPa(writerID, writer);
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      await ignore(writerUID, scpData);
                                     },
+                                  ),
+                                  InkWell(
+                                    child: Container(
+                                      width: a.width / 6,
+                                      height: a.width / 6,
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.save_alt,
+                                              color: Colors.grey[600],
+                                              size: a.width / 14,
+                                            ),
+                                            Text(
+                                              "เก็บไว้",
+                                              style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: a.width / 25),
+                                            )
+                                          ]),
+                                    ),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      await Firestore.instance
+                                          .collection('Users')
+                                          .document(widget.doc['uid'])
+                                          .collection('scraps')
+                                          .document('collection')
+                                          .setData({
+                                        'id':
+                                            FieldValue.arrayUnion([writerUID]),
+                                        'scraps': {
+                                          writerUID:
+                                              FieldValue.arrayUnion([scpData])
+                                        }
+                                      }, merge: true);
+                                      await ignore(writerUID, scpData);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                      top: a.height / 21,
+                      right: a.width / 21,
+                      child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: a.width / 12,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }))
+                ],
+              ),
+            );
+          });
+        },
+        fullscreenDialog: true));
+  }
+
+  reportDialog(
+      Size a, String id, String reportedUID, String text, Map scpData) {
+    String describe;
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            return Dialog(
+              child: Container(
+                height: a.height / 2.8,
+                padding: EdgeInsets.all(a.width / 56),
+                child: Stack(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          height: a.width / 8.1,
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey[300]))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "รายงาน : ",
+                                    style: TextStyle(
+                                        fontSize: a.width / 20,
+                                        color: Colors.black),
+                                  ),
+                                  Text(
+                                    "@$id",
+                                    style: TextStyle(
+                                        color: Color(0xff26A4FF),
+                                        fontSize: a.width / 18),
                                   )
                                 ],
                               ),
-                              SizedBox(height: a.width / 15),
-                              Container(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    SizedBox(width: a.width / 20),
-                                    InkWell(
-                                      child: Container(
-                                        margin: EdgeInsets.only(
-                                            left: a.width / 55,
-                                            right: a.width / 55),
-                                        width: a.width / 3.5,
-                                        height: a.width / 6.5,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(a.width)),
-                                        alignment: Alignment.center,
-                                        child: Text("เก็บไว้",
-                                            style: TextStyle(
-                                                fontSize: a.width / 15,
-                                                color: Color(0xff26A4FF))),
-                                      ),
-                                      onTap: () async {
-                                        Navigator.pop(context);
-                                        await Firestore.instance
-                                            .collection('Users')
-                                            .document(widget.doc['uid'])
-                                            .collection('scraps')
-                                            .document('collection')
-                                            .setData({
-                                          'id':
-                                              FieldValue.arrayUnion([writerID]),
-                                          'scraps': {
-                                            writerID:
-                                                FieldValue.arrayUnion([scpData])
-                                          }
-                                        }, merge: true);
-                                        await ignore(writerID, scpData);
-                                      },
-                                    ),
-                                    InkWell(
-                                      child: Container(
-                                        width: a.width / 3.5,
-                                        height: a.width / 6.5,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(a.width)),
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          "ทิ้ง",
-                                          style:
-                                              TextStyle(fontSize: a.width / 15),
-                                        ),
-                                      ),
-                                      onTap: () async {
-                                        Navigator.pop(context);
-                                        await ignore(writerID, scpData);
-                                      },
-                                    ),
-                                    SizedBox(width: a.width / 20),
-                                  ],
-                                ),
-                              ),
                             ],
                           ),
-                        ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(
+                              right: a.width / 40, left: a.width / 40),
+                          height: a.width / 3.4,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              border: InputBorder.none, //สำหรับใหเส้���ใต้หาย
+                              hintText:
+                                  'เขียนข้อความให้เราทราบพฤติกรรมของผู้ใช้รายนี้..',
+                              hintStyle: TextStyle(
+                                fontSize: a.width / 21,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            validator: (val) {
+                              return val.trim() == null || val.trim() == ""
+                                  ? Taoast().toast("เขียนข้อความด้วยอย่างสิ")
+                                  : null;
+                            },
+                            //เนื้อหาที่กรอกเข้าไปใน text
+                            onChanged: (val) {
+                              describe = val;
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: a.width,
+                          alignment: Alignment.centerRight,
+                          margin: EdgeInsets.only(
+                              top: a.width / 15, right: a.width / 33),
+                          child: InkWell(
+                              child: Container(
+                                  width: a.width / 5.5,
+                                  height: a.width / 11,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff26A4FF),
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "ราบงาน",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: a.width / 15),
+                                  )),
+                              onTap: () async {
+                                report(reportedUID, widget.doc['uid'], text,
+                                    describe);
+                                await ignore(reportedUID, scpData);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                toast('รายงานเรียบร้อยแล้ว');
+                              }),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      right: 2,
+                      top: 2,
+                      child: InkWell(
+                        child: Container(
+                            width: a.width / 15,
+                            height: a.width / 15,
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(a.width)),
+                            child: Icon(Icons.clear, color: Colors.white)),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
                       ),
                     )
                   ],
@@ -819,8 +984,24 @@ class _ProfileState extends State<Profile> {
               ),
             );
           });
-        },
-        fullscreenDialog: true));
+        });
+  }
+
+  report(String reportedUID, String reporterUID, String text,
+      String describe) async {
+    DateTime now = DateTime.now();
+    String date = DateFormat('y-M-d').format(now);
+    Firestore.instance
+        .collection('Report')
+        .document('reportUser')
+        .collection(date)
+        .add({
+      'reported': reportedUID,
+      'reporter': reporterUID,
+      'text': text,
+      'describe': describe,
+      'timeStamp': FieldValue.serverTimestamp()
+    });
   }
 
   editStatus(String status, String thrown) {
@@ -852,13 +1033,18 @@ class _ProfileState extends State<Profile> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey[300]))),
-                          child: Text(
-                            "แก้ไขสเตตัส",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              fontSize: a.width / 15,
-                              color: Colors.black,
-                            ),
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(width: 5),
+                              Text(
+                                "แก้ไขสเตตัส",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: a.width / 15,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         Container(
@@ -870,6 +1056,8 @@ class _ProfileState extends State<Profile> {
                               fontSize: a.width / 17,
                             ),
                             controller: tx,
+                            maxLines: null,
+                            maxLength: 60,
                             decoration: InputDecoration(
                               border: InputBorder.none, //สำหรับใหเส้นใต้หาย
                               hintText: 'เขียนข้อความของคุณ',
@@ -917,7 +1105,6 @@ class _ProfileState extends State<Profile> {
                               statusEditer(edit);
                               toast('แก้ไขสเตตัสเรียนร้อย');
                             }
-                            // throwTo(id, text2);
                           },
                         )
                       ],
@@ -951,6 +1138,7 @@ class _ProfileState extends State<Profile> {
   }
 
   dialogPa(String id, String thrown) {
+    var _key = GlobalKey<FormState>();
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -964,91 +1152,107 @@ class _ProfileState extends State<Profile> {
                   top: a.width / 100),
               child: Stack(
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Container(
-                        height: a.width / 8,
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(color: Colors.grey[300]))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                SizedBox(width: 5),
-                                Text(
-                                  "ปาใส่กลับโดย : ",
-                                  style: TextStyle(
-                                      fontSize: a.width / 20,
-                                      color: Colors.black),
-                                ),
-                                Text(
-                                  "@" + widget.doc['id'],
-                                  style: TextStyle(
-                                      color: Color(0xff26A4FF),
-                                      fontSize: a.width / 20),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(
-                            right: a.width / 40, left: a.width / 40),
-                        height: a.width / 3.4,
-                        child: TextFormField(
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border: InputBorder.none, //สำหรับใหเส้นใต้หาย
-                            hintText: 'เขียนข้อความบางอย่าง',
-                            hintStyle: TextStyle(
-                              fontSize: a.width / 25,
-                              color: Colors.grey,
-                            ),
+                  Form(
+                    key: _key,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: a.width / 8,
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey[300]))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "ปาใส่กลับโดย : ",
+                                    style: TextStyle(
+                                        fontSize: a.width / 20,
+                                        color: Colors.black),
+                                  ),
+                                  Text(
+                                    "@" + widget.doc['id'],
+                                    style: TextStyle(
+                                        color: Color(0xff26A4FF),
+                                        fontSize: a.width / 20),
+                                  )
+                                ],
+                              ),
+                            ],
                           ),
-                          validator: (val) {
-                            return val.trim() == null || val.trim() == ""
-                                ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
-                                : null;
-                          },
-                          //เนื้อหาที่กรอกเข้าไปใน text
-                          onChanged: (val) {
-                            text2 = val;
-                          },
                         ),
-                      ),
-                      InkWell(
-                        child: Container(
+                        Container(
+                          padding: EdgeInsets.only(
+                              right: a.width / 40, left: a.width / 40),
+                          height: a.width / 3.4,
+                          child: TextFormField(
+                            maxLines: null,
+                            maxLength: 250,
+                            decoration: InputDecoration(
+                              border: InputBorder.none, //สำหรับใหเส้���ใต้��าย
+                              hintText: 'เขียนข้อความบางอย่าง',
+                              hintStyle: TextStyle(
+                                fontSize: a.width / 25,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            validator: (val) {
+                              return val.trim() == null || val.trim() == ""
+                                  ? Taoast().toast("ลองเขียนข้อความบางอย่างสิ")
+                                  : null;
+                            },
+                            //เนื้อหาที่กรอกเข้าไปใน text
+                            onChanged: (val) {
+                              text2 = val;
+                            },
+                          ),
+                        ),
+                        Container(
                           width: a.width,
                           alignment: Alignment.centerRight,
                           margin: EdgeInsets.only(
                               top: a.width / 15, right: a.width / 33),
-                          child: Container(
-                              width: a.width / 5.5,
-                              height: a.width / 11,
-                              decoration: BoxDecoration(
-                                  color: Color(0xff26A4FF),
-                                  borderRadius: BorderRadius.circular(a.width)),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "ปาเลย",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: a.width / 15),
-                              )),
+                          child: InkWell(
+                              child: Container(
+                                  width: a.width / 5.5,
+                                  height: a.width / 11,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff26A4FF),
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "ปาเลย",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: a.width / 15),
+                                  )),
+                              onTap: () async {
+                                if (_key.currentState.validate()) {
+                                  if (await scraps.blocked(
+                                      widget.doc['uid'], id)) {
+                                    toast('คุณไม่สามารถปาไปหา"$thrown"ได้');
+                                  } else {
+                                    toast(thrown == 'ไม่ระบุตัวตน'
+                                        ? 'ปากลับแล้ว'
+                                        : 'ปากลับใส่"$thrown"แล้ว');
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    scraps.throwTo(
+                                        uid: widget.doc['uid'],
+                                        writer: widget.doc['id'],
+                                        thrownUID: id,
+                                        text: text2,
+                                        public: true);
+                                  }
+                                }
+                              }),
                         ),
-                        onTap: () {
-                          toast(thrown == 'ไม่ระบุตัวตน'
-                              ? 'ปากลับแล้ว'
-                              : 'ปากลับใส่"$thrown"แล้ว');
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          throwTo(id, text2);
-                        },
-                      )
-                    ],
+                      ],
+                    ),
                   ),
                   Positioned(
                     right: 2,
@@ -1073,59 +1277,71 @@ class _ProfileState extends State<Profile> {
         });
   }
 
-  blockDialog(String userReceive, String userSent, String writer, String time,
-      String text, Map scpData) {
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      content: Container(
-        child:
-            Text('คุณต้องการบล็อคผู้ใช้นี้ใช่หรือไม่ (สามารถแก้ไขได้ภายหลัง)'),
-      ),
-      actions: <Widget>[
-        FlatButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('ยกเลิก')),
-        FlatButton(
-          child: Text('ตกลง'),
-          onPressed: () async {
-            toast('ทำการบล็อคแล้ว');
-            Navigator.pop(context);
-            Navigator.pop(context);
-            //await throwTo(widget.data, thrownID);
-            await blockFunction(
-                userReceive, userSent, writer, time, text, scpData);
-          },
-        )
-      ],
-    );
+  blockDialog(String userReceive, String userSent, Map scpData) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Container(
+              child: Text(
+                  'คุณต้องการบล็อคผู้ใช้นี้ใช่หรือไม่ (สามารถแก้ไขได้ภายหลัง)'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('ยกเลิก')),
+              FlatButton(
+                child: Text('ตกลง'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  await blockCheck(userReceive, userSent, scpData);
+                },
+              )
+            ],
+          );
+        });
   }
 
-  blockFunction(String userReceive, String userSent, String writer, String time,
-      String text, Map scpData) async {
-    blockAddUser(userReceive, userSent);
-    blockAddPaper(userReceive, writer, time, text, scpData);
-  }
-
-  blockAddUser(String userReceive, String userSent) async {
+  blockCheck(String userReceive, String userSent, Map scpData) async {
+    List blockList = [];
     await Firestore.instance
         .collection("Users")
         .document(userReceive)
-        .updateData({
-      'blockList': FieldValue.arrayUnion([userSent])
+        .collection("info")
+        .document("blockList")
+        .get()
+        .then((value) {
+      blockList = value?.data['blockList'] ?? [];
     });
+    bool check = blockList.where((data) => data['uid'] == userSent).length > 0;
+    if (check) {
+      toast('คุณบล็อคอยู่แล้ว');
+    } else {
+      blockFunction(userReceive, userSent, scpData);
+      ignore(userSent, scpData);
+      toast('ทำการบล็อคแล้ว');
+    }
   }
 
-  blockAddPaper(String userReceive, String writer, String time, String text,
-      Map scpData) async {
-    List paperData = [writer, time, text, scpData];
+  blockFunction(String userReceive, String userSent, Map scpData) async {
+    Map blocked = {
+      'uid': userSent,
+      'id': scpData['writer'],
+      'text': scpData['text'],
+      'time': scpData['time']
+    };
     await Firestore.instance
         .collection("Users")
         .document(userReceive)
-        .updateData({
-      'blockPaperList': FieldValue.arrayUnion([paperData])
-    });
+        .collection('info')
+        .document('blockList')
+        .setData({
+      'blockList': FieldValue.arrayUnion([blocked])
+    }, merge: true);
   }
 
   statusEditer(String status) async {
@@ -1137,67 +1353,8 @@ class _ProfileState extends State<Profile> {
         .updateData({'status': status});
   }
 
-  throwTo(String thrownID, String text) async {
-    DateTime now = DateTime.now();
-    String time = DateFormat('Hm').format(now);
-    String date = DateFormat('d/M/y').format(now);
-    await Firestore.instance
-        .collection('Users')
-        .document(thrownID)
-        .collection('scraps')
-        .document('recently')
-        .setData({
-      'id': FieldValue.arrayUnion([widget.doc['uid']]),
-      'scraps': {
-        widget.doc['uid']: FieldValue.arrayUnion([
-          {'text': text, 'writer': widget.doc['id'], 'time': '$time $date'}
-        ])
-      }
-    }, merge: true);
-    await notifaication(thrownID, date, time);
-    await updateHistory(widget.doc['uid'], thrownID);
-    await increaseTransaction(widget.doc['uid'], 'written');
-    await increaseTransaction(thrownID, 'threw');
-  }
-
-  updateHistory(String uid, String thrown) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document('searchHist')
-        .updateData({
-      'history': FieldValue.arrayUnion([thrown])
-    });
-  }
-
-  notifaication(String who, String date, String time) async {
-    await Firestore.instance.collection('Notifications').add({'uid': who});
-    await Firestore.instance
-        .collection('Users')
-        .document(who)
-        .collection('notification')
-        .add({'writer': widget.doc, 'date': date, 'time': time});
-  }
-
-  increaseTransaction(String uid, String key) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .get()
-        .then((value) => Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('info')
-            .document(uid)
-            .updateData(
-                {key: value?.data[key] == null ? 1 : ++value.data[key]}));
-  }
-
   ignore(String writerID, Map scpData) async {
-    await Firestore.instance
+    Firestore.instance
         .collection('Users')
         .document(widget.doc['uid'])
         .collection('scraps')
@@ -1205,7 +1362,7 @@ class _ProfileState extends State<Profile> {
         .get()
         .then((value) async {
       if (value.data['scraps'][writerID].length == 1) {
-        await Firestore.instance
+        Firestore.instance
             .collection('Users')
             .document(widget.doc['uid'])
             .collection('scraps')
@@ -1213,7 +1370,7 @@ class _ProfileState extends State<Profile> {
             .setData({
           'scraps': {writerID: FieldValue.delete()}
         }, merge: true);
-        await Firestore.instance
+        Firestore.instance
             .collection('Users')
             .document(widget.doc['uid'])
             .collection('scraps')
@@ -1254,17 +1411,38 @@ class _ProfileState extends State<Profile> {
             context,
             MaterialPageRoute(
                 builder: (context) => EditProfile(
-                      doc: widget.doc,
-                      info: info,
-                    )));
+                    doc: widget.doc,
+                    info: info,
+                    id: widget.doc['id'],
+                    email: widget.doc['email'],
+                    password: widget.doc['password'])));
         break;
       case Constans.Feedback:
-        print('Feedback');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => FeedbackPage()));
         break;
+      case Constans.Block:
+        Firestore.instance
+            .collection('Users')
+            .document(widget.doc['uid'])
+            .collection('info')
+            .document('blockList')
+            .get()
+            .then((value) {
+          value.exists
+              ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          BlockingList(uid: widget.doc['uid'])))
+              : value.reference.setData({}).then((value) => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          BlockingList(uid: widget.doc['uid']))));
+        });
+        break;
       case Constans.About:
-        print('About');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => About()));
         break;
@@ -1274,8 +1452,15 @@ class _ProfileState extends State<Profile> {
           Navigator.pop(context);
         });
         break;
+      case Constans.History:
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => History(
+                      uid: widget.doc['uid'],
+                    )));
+        break;
       default:
-        print('About');
         break;
     }
   }
@@ -1284,12 +1469,16 @@ class _ProfileState extends State<Profile> {
 class Constans {
   static const String Account = 'แก้ไขบัญชี';
   static const String Feedback = 'ให้คำแนะนำ';
+  static const String History = 'ประวัติการทิ้ง';
+  static const String Block = 'การบล็อค';
   static const String About = 'เกี่ยวกับแอป';
   static const String SignOut = 'ออกจากระบบ';
 
   static const List<String> choices = <String>[
     Account,
     Feedback,
+    History,
+    Block,
     About,
     SignOut,
   ];

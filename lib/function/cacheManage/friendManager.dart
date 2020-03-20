@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/services/jsonConverter.dart';
 
 class FriendManager {
@@ -12,7 +13,7 @@ class FriendManager {
         .document('friends')
         .get()
         .then((doc) async {
-      await updateDataAll(doc['friendList'] ?? []);
+      updateDataAll(doc['friendList'] ?? []);
     });
   }
 
@@ -24,7 +25,7 @@ class FriendManager {
           .document(uid)
           .get()
           .then((doc) async {
-        await getInfo(fID, uid, doc.data['id']);
+        getInfo(fID, uid, doc.data['id']);
       });
     }
     await jsonConverter.writeContent(listm: fID);
@@ -57,16 +58,21 @@ class FriendManager {
     });
   }
 
-  getInfo(List list, String uid, String name) async {
-    await Firestore.instance
+  getInfo(List list, String uid, String name) {
+    Firestore.instance
         .collection('Users')
         .document(uid)
         .collection('info')
         .document(uid)
         .get()
         .then((doc) async {
-      list.add(
-          {'id': name, 'img': doc.data['img'], 'join': doc.data['createdDay']});
+      list.add({
+        'id': name,
+        'img': doc.data['img'],
+        'join': doc.data['createdDay'].runtimeType == String
+            ? doc.data['createdDay']
+            : DateFormat('d/M/y').format(doc.data['createdDay'].toDate())
+      });
     });
   }
 }

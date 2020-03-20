@@ -31,11 +31,8 @@ class _LoginPageState extends State<LoginPage> {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: _email, password: _password)
           .then((value) async {
-        await updateToken(value.user.uid);
-        await friendManager.initFriend(value.user.uid);
-        setState(() {
-          loading = false;
-        });
+         updateToken(value.user.uid);
+         friendManager.initFriend(value.user.uid);
       });
     } catch (e) {
       setState(() {

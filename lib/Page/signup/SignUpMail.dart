@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/setting/servicedoc.dart';
 import 'package:scrap/Page/signup/SignUpTel.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -64,9 +65,7 @@ class _SignUpMailState extends State<SignUpMail> {
                               color: Colors.black, size: a.width / 15),
                         ),
                         onTap: () {
-                          Navigator.pop(
-                            context,
-                          );
+                          Navigator.pop(context);
                         },
                       ),
                     ),
@@ -74,7 +73,7 @@ class _SignUpMailState extends State<SignUpMail> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(top: a.width / 6),
+                          margin: EdgeInsets.only(top: a.width / 10),
                           child: Text(
                             "สมัครสมาชิก",
                             style: TextStyle(
@@ -86,7 +85,7 @@ class _SignUpMailState extends State<SignUpMail> {
                         ),
                         Container(
                           child: Text(
-                            "\"ผู้คนกำลังรออ่านกระดาษของคุณ\"",
+                            '"ผู้คนกำลังรออ่านกระดาษของคุณ"',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: a.width / 18,
@@ -272,6 +271,46 @@ class _SignUpMailState extends State<SignUpMail> {
                             ),
                           ),
                         ),
+                        SizedBox(
+                          height: a.height / 56,
+                        ),
+                        SizedBox(
+                          width: a.width / 1.2,
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'การกดดำเนินการต่อจะหมายถึงการที่คุณยอมรับใน',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 20,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Servicedoc()));
+                                },
+                                child: Text(
+                                  '"ข้อกำหนด" ',
+                                  style: TextStyle(
+                                      color: Color(0xff26A4FF),
+                                      fontSize: a.width / 20,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Text(
+                                'ทั้งหมดของเรา',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 20,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -287,6 +326,7 @@ class _SignUpMailState extends State<SignUpMail> {
     setState(() {
       loading = false;
     });
-    Dg().warning(context, 'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว', "เกิดผิดพลาด");
+    Dg().warning(
+        context, 'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว', "เกิดผิดพลาด");
   }
 }

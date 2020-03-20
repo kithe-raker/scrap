@@ -9,7 +9,7 @@ class Register {
   final String token;
   Register({
     @required this.email,
-    @required this.phone,
+    this.phone,
     @required this.password,
     @required this.token,
   });
@@ -55,9 +55,8 @@ class Register {
     await Firestore.instance.collection('Users').document(uid).setData({
       'email': this.email,
       'password': this.password,
-      'phone': this.phone,
+      'phone': this.phone ?? '',
       'uid': uid,
-      'accept': false
     });
     await Firestore.instance
         .collection('Users')

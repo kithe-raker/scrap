@@ -11,6 +11,7 @@ class _SqUserdocState extends State<SqUserdoc> {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         actions: <Widget>[
           Container(
             padding: EdgeInsets.only(left: a.width / 20, right: a.width / 20),
