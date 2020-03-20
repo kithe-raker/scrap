@@ -11,6 +11,7 @@ class MainStream extends StatefulWidget {
 }
 
 class _MainStreamState extends State<MainStream> {
+
   Stream<DocumentSnapshot> userStream(BuildContext context) async* {
     try {
       final uid = await Provider.of(context).auth.currentUser();
