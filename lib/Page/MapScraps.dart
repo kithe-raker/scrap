@@ -344,7 +344,7 @@ class _MapScrapsState extends State<MapScraps> {
                       child: CircularProgressIndicator(),
                     ),
             ),
-            Positioned(left: -56, bottom: a.height / 3.6, child: slider())
+          //  Positioned(left: -56, bottom: a.height / 3.6, child: slider())
           ],
         ));
   }
@@ -562,7 +562,6 @@ class _MapScrapsState extends State<MapScraps> {
               '${convTime.day}/${convTime.month}/${convTime.year}', id);
           addRead(id);
           scrap.increaseTransaction(user, 'read');
-          print('${convTime.year},${convTime.month},${convTime.day}');
           increasHistTran(
               user, '${convTime.year},${convTime.month},${convTime.day}', id);
         } catch (e) {
@@ -616,10 +615,7 @@ class _MapScrapsState extends State<MapScraps> {
       final ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context);
       BitmapDescriptor.fromAssetImage(
-              imageConfiguration,
-              checkPlatform
-                  ? 'assets/yourlocation-icon-l.png'
-                  : 'assets/yourlocation-icon-l.png')
+              imageConfiguration, 'assets/yourlocation-icon-l.png')
           .then(_updateBitmap);
     }
   }

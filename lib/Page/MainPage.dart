@@ -23,6 +23,7 @@ class _MainPageState extends State<MainPage> {
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
   JsonConverter jsonConverter = JsonConverter();
   ImgCacheManager imgCacheManager = ImgCacheManager();
+  DocumentSnapshot appInfo;
   initLocalMessage() {
     var android = AndroidInitializationSettings('noti_ic');
     var ios = IOSInitializationSettings();
@@ -79,6 +80,7 @@ class _MainPageState extends State<MainPage> {
         .get()
         .then((doc) {
       close = doc.data['close'];
+      appInfo = doc;
     });
     final uid = await Provider.of(context).auth?.currentUser() ?? '';
     return close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
@@ -86,13 +88,10 @@ class _MainPageState extends State<MainPage> {
 
   Future<bool> versionChecker() async {
     String recent = '1.0.3', incoming;
-    await Firestore.instance
-        .collection('App')
-        .document('info')
-        .get()
-        .then((doc) {
-      incoming = doc.data['version'];
-    });
+    bool isIOS = Platform.isIOS;
+    isIOS
+        ? incoming = appInfo['versions']['IOS']
+        : incoming = appInfo['versions']['androind'];
     final uid = await Provider.of(context).auth?.currentUser() ?? '';
     return recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }

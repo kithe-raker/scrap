@@ -284,11 +284,6 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                           style: TextStyle(
                                               fontSize: scr.width / 12,
                                               color: Colors.white),
-                                          validator: ((val) {
-                                            return val.trim() == ''
-                                                ? 'กรุณาระบุเพศ'
-                                                : null;
-                                          }),
                                           onSaved: (gen) =>
                                               genders = gen.trim(),
                                           textInputAction: TextInputAction.next,
@@ -314,9 +309,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                     fontWeight: FontWeight.w800,
                                   )),
                               onPressed: () async {
-                                _formKey.currentState.save();
-                                if (_formKey.currentState.validate() &&
-                                    bDay != now) {
+                                if (bDay != now) {
+                                  _formKey.currentState.save();
                                   setState(() {
                                     loading = true;
                                   });
