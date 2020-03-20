@@ -50,13 +50,15 @@ class _SuserState extends State<Suser> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Container(child: Text("@phuminsathipchan")),
+                          Container(child: Text("@phuminsathipchan",style: TextStyle(color:Color(0xff26A4FF),fontSize: a.width/18),)),
                           Container(
-                            width: a.width / 9,
-                            height: a.width / 9,
+                            width: a.width / 10,
+                            height: a.width / 10,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(a.width),
-                                color: Colors.white),
+                                border: Border.all(color:Colors.white),
+                                color: Color(0xff26A4FF)),
+                              child: Icon(Icons.search,size: a.width/20,color: Colors.white,),
                           )
                         ],
                       ),
@@ -66,7 +68,7 @@ class _SuserState extends State<Suser> {
                     child: ProfileCard(),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: a.width / 20),
+                    margin: EdgeInsets.only(top: a.width / 20,left: a.width/25,right: a.width/25),
                     width: a.width,
                   
                     child: Row(
@@ -82,7 +84,7 @@ class _SuserState extends State<Suser> {
                             children: <Widget>[
                               Container(
                                 //color: Colors.black,
-                                width: a.width / 6,
+                                width: a.width / 5.5,
                                 child: Column(
                                   //เพื่อใช้สำหรับให้ จำนวน และ เขียน
                                   children: <Widget>[
@@ -103,7 +105,7 @@ class _SuserState extends State<Suser> {
                                 ),
                               ),
                               Container(
-                                width: a.width / 6,
+                                width: a.width / 5.5,
                                 // color: Colors.blue,
                                 child: Column(
                                   children: <Widget>[
@@ -125,7 +127,7 @@ class _SuserState extends State<Suser> {
                                 ),
                               ),
                               Container(
-                                width: a.width / 6,
+                                width: a.width / 5.5,
                                 //  color: Colors.blue,
                                 child: Column(
                                   //เพื่อใช้สำหรับให้ จำนวน ��ละ โ��นปาใส��
@@ -150,23 +152,23 @@ class _SuserState extends State<Suser> {
                           ),
                         ),
                         Container(
-                          width: a.width / 5,
-                          height: a.width / 5,
+                          width: a.width / 4,
+                          height: a.width / 4,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(a.width),
                               border: Border.all(
                                   color: Colors.white38, width: a.width / 500)),
                           child: Container(
-                            margin: EdgeInsets.all(a.width / 35),
-                            width: a.width / 5,
-                            height: a.width / 5,
+                            margin: EdgeInsets.all(a.width / 40),
+                            width: a.width / 6,
+                            height: a.width / 6,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(a.width),
                                 border: Border.all(color: Colors.white)),
                             child: Container(
-                              margin: EdgeInsets.all(a.width / 35),
-                              width: a.width / 5,
-                              height: a.width / 5,
+                              margin: EdgeInsets.all(a.width / 40),
+                              width: a.width / 6,
+                              height: a.width / 6,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(a.width),
                                   color: Colors.white,

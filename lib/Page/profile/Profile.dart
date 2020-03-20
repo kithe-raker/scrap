@@ -111,9 +111,10 @@ class _ProfileState extends State<Profile> {
                                           size: a.width / 15),
                                     ),
                                     onTap: () {
-                                      Navigator.pop(
-                                        context,
-                                      );
+                                      // Navigator.pop(
+                                      //   context,
+                                      // );
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Suser(),));
                                     },
                                   ),
                                   PopupMenuButton<String>(

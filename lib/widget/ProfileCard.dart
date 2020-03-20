@@ -20,13 +20,18 @@ class _ProfileCardState extends State<ProfileCard> {
       child: Column(
         children: <Widget>[
           CircleAvatar(backgroundColor: Colors.white, minRadius: a.width / 7),
-          Text(
-            "@natsatapon23",
-            style: TextStyle(color: Colors.white, fontSize: a.width / 15),
+          Container(
+            margin: EdgeInsets.only(top: a.width/20),
+            child: Text(
+              "@natsatapon23",
+              style: TextStyle(color: Colors.white, fontSize: a.width / 15),
+            ),
           ),
-          Text(
-            "Join 15/02/2020",
-            style: TextStyle(color: Color(0xff26A4FF), fontSize: a.width / 18),
+          Container( margin: EdgeInsets.only(top: a.width/40),
+            child: Text(
+              "Join 15/02/2020",
+              style: TextStyle(color: Color(0xff26A4FF), fontSize: a.width / 18),
+            ),
           ),
           SizedBox(
             height: a.width / 5,
@@ -40,7 +45,7 @@ class _ProfileCardState extends State<ProfileCard> {
             alignment: Alignment.center,
             child: Text(
               "+ สหาย",
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white,fontSize: a.width/20),
             ),
           )
         ],
