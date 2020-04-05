@@ -505,6 +505,7 @@ class _ProfileState extends State<Profile> {
               scraps['time'] = Timestamp.fromDate(DateTime.parse(datDate(
                   scraps['time'].substring(6),
                   scraps['time'].substring(0, 5))));
+              scraps['old'] = true;
               mSet.add({'scap': scraps, 'id': id});
             } else {
               mSet.add({'scap': scraps, 'id': id});
@@ -1379,16 +1380,32 @@ class _ProfileState extends State<Profile> {
           'id': FieldValue.arrayRemove([writerID])
         });
       } else {
-        Firestore.instance
-            .collection('Users')
-            .document(widget.doc['uid'])
-            .collection('scraps')
-            .document('recently')
-            .setData({
-          'scraps': {
-            writerID: FieldValue.arrayRemove([scpData])
-          }
-        }, merge: true);
+        if (scpData['old'] == null) {
+          Firestore.instance
+              .collection('Users')
+              .document(widget.doc['uid'])
+              .collection('scraps')
+              .document('recently')
+              .setData({
+            'scraps': {
+              writerID: FieldValue.arrayRemove([scpData])
+            }
+          }, merge: true);
+        } else {
+          scpData['time'] =
+              DateFormat('HH:mm d/M/y').format(scpData['time'].toDate());
+          scpData.remove('old');
+          Firestore.instance
+              .collection('Users')
+              .document(widget.doc['uid'])
+              .collection('scraps')
+              .document('recently')
+              .setData({
+            'scraps': {
+              writerID: FieldValue.arrayRemove([scpData])
+            }
+          }, merge: true);
+        }
       }
     });
   }

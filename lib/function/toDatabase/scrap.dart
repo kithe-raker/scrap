@@ -11,7 +11,7 @@ class Scraps {
       @required String writer,
       @required String thrownUID,
       @required String text,
-      @required bool public}) async {
+      @required bool public}) {
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
     String date = DateFormat('d/M/y').format(now);
@@ -38,7 +38,7 @@ class Scraps {
     increaseTransaction(thrownUID, 'threw');
   }
 
-  updateHistory(String uid, String thrown) async {
+  updateHistory(String uid, String thrown) {
     Firestore.instance
         .collection('Users')
         .document(uid)
@@ -50,7 +50,7 @@ class Scraps {
   }
 
   notifaication(
-      String who, String date, String time, bool public, String writer) async {
+      String who, String date, String time, bool public, String writer) {
     Firestore.instance.collection('Notifications').add({'uid': who});
     Firestore.instance
         .collection('Users')
@@ -64,7 +64,7 @@ class Scraps {
     });
   }
 
-  increaseTransaction(String uid, String key) async {
+  increaseTransaction(String uid, String key) {
     Firestore.instance
         .collection('Users')
         .document(uid)
@@ -104,7 +104,7 @@ class Scraps {
     increaseTransaction(doc['uid'], 'written');
   }
 
-  update(String id, String uid) async {
+  update(String id, String uid) {
     Firestore.instance
         .collection('Users')
         .document(uid)
@@ -115,7 +115,7 @@ class Scraps {
     });
   }
 
-  toHistory(String uid, String docID, String text) async {
+  toHistory(String uid, String docID, String text) {
     DateTime now = DateTime.now();
     String date = DateFormat('y,M,d').format(now);
     String dateRef = DateFormat('yyyyMMdd').format(now);
@@ -134,13 +134,13 @@ class Scraps {
     }, merge: true);
   }
 
-  resetScrap(List scraps, String uid) async {
+  resetScrap(List scraps, String uid) {
     DateTime now = DateTime.now();
     String date = DateFormat('d/M/y').format(now);
-    scraps.forEach((id) async {
-      await deleteScrap(id);
+    scraps.forEach((id) {
+      deleteScrap(id);
     });
-    await Firestore.instance
+    Firestore.instance
         .collection('Users')
         .document(uid)
         .collection('info')
@@ -149,9 +149,9 @@ class Scraps {
     toast('คุณได้รับกระดาษเพิ่มแล้ว');
   }
 
-  deleteScrap(dynamic scrapID) async {
+  deleteScrap(dynamic scrapID) {
     if (scrapID.runtimeType is String) {
-      await Firestore.instance
+      Firestore.instance
           .collection('Scraps')
           .document('hatyai')
           .collection('scrapsPosition')

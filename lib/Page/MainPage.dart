@@ -87,11 +87,11 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<bool> versionChecker() async {
-    String recent = '1.0.3', incoming;
+    String recent = '1.1.0', incoming;
     bool isIOS = Platform.isIOS;
     isIOS
         ? incoming = appInfo['versions']['IOS']
-        : incoming = appInfo['versions']['androind'];
+        : incoming = appInfo['versions']['android'];
     final uid = await Provider.of(context).auth?.currentUser() ?? '';
     return recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }

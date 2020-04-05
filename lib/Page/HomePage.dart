@@ -392,9 +392,9 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 AlertDialog(
                   backgroundColor: Colors.white,
-                  title: Text('คุณต้องขอกระดาษ���หม่ใช่หรือไม่'),
+                  title: Text('คุณต้องขอกระดาษใหม่ใช่หรือไม่'),
                   content: Text(
-                      'หลังจากขอกระดาษใหม่กระดาษที�������ุณทิ้งไว้จะหายไปทั้งหมด'),
+                      'หลังจากขอกระดาษใหม่กระดาษที่คุณทิ้งไว้จะหายไปทั้งหมด'),
                   actions: <Widget>[
                     FlatButton(
                       child: Text('ยกเลิก'),

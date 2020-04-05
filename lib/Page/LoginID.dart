@@ -46,7 +46,7 @@ class _LoginIDState extends State<LoginID> {
         .signInWithEmailAndPassword(email: email, password: _password)
         .then((auth) async {
       updateToken(auth.user.uid);
-      friendManager.initFriend(auth.user.uid);
+      await friendManager.initFriend(auth.user.uid);
     });
     setState(() {
       loading = false;
@@ -317,7 +317,7 @@ class _LoginIDState extends State<LoginID> {
                                           loading = true;
                                         });
                                         await hasAccount(id)
-                                            ? continueSignIn()
+                                            ? await continueSignIn()
                                             : warning(
                                                 context, 'ไม่พบบัญชีดังกล่าว');
                                       }
@@ -357,7 +357,7 @@ class _LoginIDState extends State<LoginID> {
         actions: <Widget>[
           FlatButton(
             child: Text(
-              'ตกล��',
+              'ตกลง',
               style: TextStyle(fontSize: 16),
             ),
             onPressed: () {

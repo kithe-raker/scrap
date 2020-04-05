@@ -398,9 +398,9 @@ class ScrapFilter {
     this.wordsToFilter = this.dirtyWords;
   }
 
-  ///Returns a censored version of the [inputString], with asterisk (*) pattern as default.
-  ///By check from [inputString] contains the dirty word?
-  ///Y: use replacRange method to replace that word to *
+  ///Returns a censored version of the [inputString], with asterisk (*) pattern as default,
+  ///by check from [inputString] contains the dirty word,
+  ///then use replacRange method to replace that word to *
   String censorString(String inputString) {
     this.wordsToFilter.forEach((word) {
       if (inputString.contains(word)) {
