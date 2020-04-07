@@ -1,12 +1,6 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
-
-import '../../OTPScreen.dart';
 
 class ChangePhone extends StatefulWidget {
   @override
@@ -17,67 +11,6 @@ class _ChangePhoneState extends State<ChangePhone> {
   String phone;
   bool loading = false;
   var _key = GlobalKey<FormState>();
-
-  Future<void> phoneVerified() async {
-    final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
-      print(id);
-    };
-    final PhoneCodeSent smsCode = (String id, [int resendCode]) {
-      setState(() {
-        loading = false;
-      });
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OTPScreen(
-                    verifiedID: id,
-                    phone: phone,
-                    edit: true,
-                  )));
-    };
-    final PhoneVerificationCompleted success = (AuthCredential credent) async {
-      print('yes sure');
-      // FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      // user.linkWithCredential(credent);
-    };
-    PhoneVerificationFailed failed = (AuthException error) {
-      print(error);
-    };
-    await FirebaseAuth.instance
-        .verifyPhoneNumber(
-            phoneNumber: '+66' + phone,
-            timeout: Duration(seconds: 120),
-            verificationCompleted: success,
-            verificationFailed: failed,
-            codeSent: smsCode,
-            codeAutoRetrievalTimeout: autoRetrieval)
-        .catchError((e) {
-      print(e.toString());
-    });
-  }
-
-  Future<bool> alreadyUse(String phone) async {
-    final QuerySnapshot phones = await Firestore.instance
-        .collection('Users')
-        .where('phone', isEqualTo: phone)
-        .limit(1)
-        .getDocuments();
-    final List<DocumentSnapshot> doc = phones.documents;
-    return doc.length == 1;
-  }
-
-  changeNumber() async {
-    final uid = await Provider.of(context).auth.currentUser();
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .updateData({'phone': phone});
-    setState(() {
-      loading = false;
-    });
-    Navigator.pop(context);
-    Navigator.pop(context);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +47,7 @@ class _ChangePhoneState extends State<ChangePhone> {
                         ),
                       ),
                       Container(
-                        height: a.height/1.2,
+                        height: a.height / 1.2,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
@@ -225,7 +158,6 @@ class _ChangePhoneState extends State<ChangePhone> {
                                 ],
                               ),
                             ),
-
                             SizedBox(
                               height: a.width / 7,
                             ),
@@ -248,13 +180,6 @@ class _ChangePhoneState extends State<ChangePhone> {
                               onTap: () async {
                                 if (_key.currentState.validate()) {
                                   _key.currentState.save();
-                                  setState(() {
-                                    loading = true;
-                                  });
-                                  await alreadyUse(phone)
-                                      ? warning(context,
-                                          'เบอร์โทรนี้ได้ทำการลงทะเบียนไว้แล้ว')
-                                      : await changeNumber();
                                 }
                               },
                             )

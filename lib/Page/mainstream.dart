@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
-import 'package:scrap/services/provider.dart';
+import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
 
 class MainStream extends StatefulWidget {
@@ -14,7 +14,7 @@ class _MainStreamState extends State<MainStream> {
 
   Stream<DocumentSnapshot> userStream(BuildContext context) async* {
     try {
-      final uid = await Provider.of(context).auth.currentUser();
+      final uid = await authService.getuid();
       yield* Firestore.instance.collection('Users').document(uid).snapshots();
     } catch (e) {
       print(e.toString());

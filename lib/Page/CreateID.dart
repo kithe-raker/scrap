@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/OTPScreen.dart';
+import 'package:scrap/Page/authenPage/OTPScreen.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class CreateID extends StatefulWidget {
@@ -12,52 +12,6 @@ class CreateID extends StatefulWidget {
 class _CreateIDState extends State<CreateID> {
   String _email, _pass, _password, phone;
   var _key = GlobalKey<FormState>();
-
-  Future<bool> uniqueEmail(String email) async {
-    final QuerySnapshot emails = await Firestore.instance
-        .collection('Users')
-        .where('email', isEqualTo: email)
-        .limit(1)
-        .getDocuments();
-    final List<DocumentSnapshot> doc = emails.documents;
-    return doc.length < 1;
-  }
-
-  Future<void> phoneVerified() async {
-    final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
-      print(id);
-    };
-    final PhoneCodeSent smsCode = (String id, [int resendCode]) {
-      print(id.toString() + " sent and " + resendCode.toString());
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OTPScreen(
-                  verifiedID: id,
-                  email: _email,
-                  password: _password,
-                  phone: phone)));
-    };
-    final PhoneVerificationCompleted success = (AuthCredential credent) async {
-      print('yes sure');
-      // FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      // user.linkWithCredential(credent);
-    };
-    PhoneVerificationFailed failed = (AuthException error) {
-      print(error.message);
-    };
-    await FirebaseAuth.instance
-        .verifyPhoneNumber(
-            phoneNumber: '+66' + phone,
-            timeout: Duration(seconds: 120),
-            verificationCompleted: success,
-            verificationFailed: failed,
-            codeSent: smsCode,
-            codeAutoRetrievalTimeout: autoRetrieval)
-        .catchError((e) {
-      print(e.toString());
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +109,9 @@ class _CreateIDState extends State<CreateID> {
                           validator: (val) {
                             return val.trim() == ""
                                 ? Taoast().toast("")
-                                : _pass != val ? Taoast().toast("กรุณากรอก") : null;
+                                : _pass != val
+                                    ? Taoast().toast("กรุณากรอก")
+                                    : null;
                           },
                           onSaved: (val) {
                             _password = val.trim();
@@ -237,11 +193,6 @@ class _CreateIDState extends State<CreateID> {
                         onTap: () async {
                           if (_key.currentState.validate()) {
                             _key.currentState.save();
-                            await uniqueEmail(_email)
-                                ? await phoneVerified()
-                                : print('ซ้ำ');
-                          } else {
-                            print('nope');
                           }
                         },
                       )

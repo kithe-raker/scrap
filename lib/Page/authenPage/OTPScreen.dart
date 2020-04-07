@@ -1,188 +1,34 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/Auth.dart';
-import 'package:scrap/function/toDatabase/phoneAuthen.dart';
+import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
-import 'package:scrap/widget/warning.dart';
 
 class OTPScreen extends StatefulWidget {
-  final String verifiedID;
-  final String email;
-  final String password;
-  final String phone;
   final bool edit;
-  OTPScreen(
-      {@required this.verifiedID,
-      @required this.phone,
-      this.email,
-      this.password,
-      this.edit = false});
+  final bool register;
+  OTPScreen({this.edit = false, this.register = false});
   @override
   _OTPScreenState createState() => _OTPScreenState();
 }
 
 class _OTPScreenState extends State<OTPScreen> {
   var _key = GlobalKey<FormState>();
-  String otpCode, newVerified, token;
+  String otp, newVerified;
   bool loading = false;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-
-  Future<void> resend() async {
-    final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
-      print(id);
-    };
-    final PhoneCodeSent smsCode = (String id, [int resendCode]) {
-      print(id.toString() + " sent and " + resendCode.toString());
-      newVerified = id;
-    };
-    final PhoneVerificationCompleted success =
-        (AuthCredential credent) async {};
-    PhoneVerificationFailed failed = (AuthException error) {
-      print(error.message);
-      Dg().warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองใหม่', "เกิดข้อผิดพลาด");
-    };
-    await FirebaseAuth.instance
-        .verifyPhoneNumber(
-            phoneNumber: '+66' + widget.phone,
-            timeout: Duration(seconds: 120),
-            verificationCompleted: success,
-            verificationFailed: failed,
-            codeSent: smsCode,
-            codeAutoRetrievalTimeout: autoRetrieval)
-        .catchError((e) {
-      Dg().warning(context, 'เกิดข้อผิดพลาดไม่ทราบสาเหตุกรุณาลองใหม่', "เกิดข้อผิดพลาด");
-      print(e.toString());
-    });
-  }
-
-  register() async {
-    try {
-      Register register = Register(
-          email: widget.email,
-          phone: widget.phone,
-          password: widget.password,
-          token: token);
-      await register.registerWithPhone(
-          newVerified ?? widget.verifiedID, otpCode);
-      setState(() {
-        loading = false;
-      });
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Authen()));
-    } catch (e) {
-      switch (e.toString()) {
-        case 'PlatformException(ERROR_INVALID_VERIFICATION_CODE, The SMS verification code used to create the phone auth credential is invalid. Please resend the verification code SMS and be sure to use the verification code provided by the user., null)':
-          Dg().warning(context, 'กรุณาเช็ครหัสOTPของท่าน', "เกิดข้อผิดพลาด");
-          break;
-        default:
-         Dg().warning(context,
-              'เกิดข้อผิดพลาด OTP อาจหมดเวลาและกรุณาเช็คการเชื่อต่อของคุณ', "เกิดข้อผิดพลาด");
-          break;
-      }
-      print(e.toString());
-    }
-  }
-
-  login() {
-    PhoneLogin()
-        .loginWithOTP(newVerified ?? widget.verifiedID, otpCode)
-        .then((_) {
-      setState(() {
-        loading = false;
-      });
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Authen()));
-    }).catchError((e) {
-      switch (e.toString()) {
-        case 'PlatformException(ERROR_INVALID_VERIFICATION_CODE, The SMS verification code used to create the phone auth credential is invalid. Please resend the verification code SMS and be sure to use the verification code provided by the user., null)':
-          Dg().warning(context, 'กรุณาเช็ครหัสOTPของท่าน', "เกิดข้อผิดพลาด");
-          break;
-        default:
-          Dg().warning(context,
-              'เกิดข้อผิดพลาด OTP อาจหมดเวลาและกรุณาเช็คการเชื่อต่อของคุณ', "เกิดข้อผิดพลาด");
-          break;
-      }
-    });
-  }
-
-  changePhone() async {
-    var authCredential = PhoneAuthProvider.getCredential(
-        verificationId: newVerified ?? widget.verifiedID, smsCode: otpCode);
-    var user = await FirebaseAuth.instance.currentUser();
-    await user.updatePhoneNumberCredential(authCredential).then((value) async {
-      await Firestore.instance
-          .collection('Users')
-          .document(user.uid)
-          .updateData({'phone': widget.phone});
-      setState(() {
-        loading = false;
-      });
-      Navigator.pop(context);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Authen()));
-    }).catchError((e) {
-      switch (e.toString()) {
-        case 'PlatformException(ERROR_INVALID_VERIFICATION_CODE, The SMS verification code used to create the phone auth credential is invalid. Please resend the verification code SMS and be sure to use the verification code provided by the user., null)':
-          Dg().warning(context, 'กรุณาเช็ครหัสOTPของท่าน', "เกิดข้อผิดพลาด");
-          break;
-        default:
-          Dg().warning(context,
-              'เกิดข้อผิดพลาด OTP อาจหมดเวลาและกรุณาเช็คการเชื่อต่อของคุณ', "เกิดข้อผิดพลาด");
-          break;
-      }
-    });
-  }
-
-  toDb(String uid) async {
-    await Firestore.instance.collection('Users').document(uid).setData({
-      'email': widget.email,
-      'password': widget.password,
-      'phone': widget.phone,
-      'uid': uid,
-      'accept': false
-    });
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('scraps')
-        .document('recently')
-        .setData({});
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('scraps')
-        .document('collection')
-        .setData({});
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('scraps')
-        .document('notification')
-        .setData({});
-  }
-
-  addToken(String uid) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('token')
-        .document(token)
-        .setData({'token': token});
-  }
-
-  void getToken() {
-    firebaseMessaging.getToken().then((String tken) {
-      assert(tken != null);
-      token = tken;
-    });
-  }
+  StreamSubscription loadStatus;
 
   @override
   void initState() {
-    getToken();
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
   }
 
   @override
@@ -243,6 +89,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                     child: TextFormField(
                                       maxLength: 6,
                                       textAlign: TextAlign.center,
+                                      keyboardType: TextInputType.number,
                                       style: TextStyle(
                                         fontSize: a.width / 10,
                                         color: Colors.white,
@@ -260,7 +107,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                             ? 'กรุณากรอกเลข 6 หลัก'
                                             : null;
                                       },
-                                      onSaved: (val) => otpCode = val,
+                                      onSaved: (val) => otp = val.trim(),
                                     ),
                                   ),
                                   Column(
@@ -284,9 +131,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                                   TextDecoration.underline),
                                           textAlign: TextAlign.center,
                                         ),
-                                        onPressed: () async {
-                                          await resend();
-                                        },
+                                        onPressed: () async {},
                                       ),
                                     ],
                                   ),
@@ -311,16 +156,13 @@ class _OTPScreenState extends State<OTPScreen> {
                                     onTap: () async {
                                       if (_key.currentState.validate()) {
                                         _key.currentState.save();
-                                        setState(() {
-                                          loading = true;
-                                        });
-                                        widget.email != null
-                                            ? await register()
+                                        widget.register
+                                            ? print('regis')
                                             : widget.edit
-                                                ? await changePhone()
-                                                : await login();
-                                      } else {
-                                        print('nope');
+                                                ? print('edit')
+                                                : authService.signInWithPhone(
+                                                    context,
+                                                    smsCode: otp);
                                       }
                                     },
                                   ),
@@ -365,6 +207,4 @@ class _OTPScreenState extends State<OTPScreen> {
       ),
     );
   }
-
-  
 }

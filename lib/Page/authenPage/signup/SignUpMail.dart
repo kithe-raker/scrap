@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/authenPage/signup/SignUpTel.dart';
 import 'package:scrap/Page/setting/servicedoc.dart';
-import 'package:scrap/Page/signup/SignUpTel.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/warning.dart';

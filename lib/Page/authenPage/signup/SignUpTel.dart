@@ -1,10 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/Auth.dart';
-import 'package:scrap/function/toDatabase/phoneAuthen.dart';
-import 'package:scrap/services/jsonConverter.dart';
-import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/warning.dart';
 
@@ -19,111 +13,11 @@ class SignUpTel extends StatefulWidget {
 class _SignUpTelState extends State<SignUpTel> {
   String phone, token;
   bool loading = false;
-  JsonConverter jsonConverter = JsonConverter();
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   var _key = GlobalKey<FormState>();
 
-  Future<bool> hasAccount(String phone) async {
-    final QuerySnapshot phones = await Firestore.instance
-        .collection('Users')
-        .where('phone', isEqualTo: phone)
-        .limit(1)
-        .getDocuments();
-    final List<DocumentSnapshot> doc = phones.documents;
-    return doc.length == 1;
-  }
-
-  // Future<void> phoneVerified() async {
-  //   Register register = Register(
-  //       email: widget.email,
-  //       phone: phone,
-  //       password: widget.password,
-  //       token: token);
-  //   final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
-  //     print(id);
-  //   };
-  //   final PhoneCodeSent smsCode = (String id, [int resendCode]) {
-  //     setState(() {
-  //       loading = false;
-  //     });
-  //     Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //             builder: (context) => OTPScreen(
-  //                   verifiedID: id,
-  //                   phone: phone,
-  //                   email: widget.email,
-  //                   password: widget.password,
-  //                 )));
-  //   };
-  //   final PhoneVerificationCompleted success = (AuthCredential credent) async {
-  //     await register.register(credent);
-  //     setState(() {
-  //       loading = false;
-  //     });
-  //     Navigator.push(
-  //         context, MaterialPageRoute(builder: (context) => Authen()));
-  //   };
-  //   PhoneVerificationFailed failed = (AuthException error) {
-  //     Dg().warning(
-  //         context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง', "เกิดผิดพลาด");
-  //   };
-  //   await FirebaseAuth.instance
-  //       .verifyPhoneNumber(
-  //           phoneNumber: '+66' + phone,
-  //           timeout: Duration(seconds: 120),
-  //           verificationCompleted: success,
-  //           verificationFailed: failed,
-  //           codeSent: smsCode,
-  //           codeAutoRetrievalTimeout: autoRetrieval)
-  //       .catchError((e) {
-  //     Dg().warning(
-  //       context,
-  //       'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง',
-  //       "เกิดผิดพลาด",
-  //     );
-  //   });
-  // }
-
-  signUp({bool usePhone = false}) async {
-    try {
-      Register regis = Register(
-          email: widget.email,
-          password: widget.password,
-          phone: usePhone ? phone : null,
-          token: token);
-      jsonConverter.writeContent(listm: []);
-      final uid = await Provider.of(context)
-          .auth
-          .createUserWithEmailAndPassword(widget.email, widget.password);
-      await regis.toDb(uid);
-      await regis.addToken(uid);
-
-      setState(() {
-        loading = false;
-      });
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Authen()));
-    } catch (e) {
-      setState(() {
-        loading = false;
-      });
-      Dg().warning(
-          context, 'เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง', "เกิดผิดพลาด");
-    }
-  }
-
-  void getToken() {
-    firebaseMessaging.getToken().then((String tken) {
-      assert(tken != null);
-      token = tken;
-    });
-  }
-
   @override
   void initState() {
-    getToken();
     super.initState();
   }
 
@@ -292,16 +186,6 @@ class _SignUpTelState extends State<SignUpTel> {
                               ),
                               onTap: () async {
                                 _key.currentState.save();
-                                setState(() {
-                                  loading = true;
-                                });
-                                if (phone != null && phone.length == 10) {
-                                  await hasAccount(phone)
-                                      ? fail()
-                                      : await signUp(usePhone: true);
-                                } else {
-                                  await signUp();
-                                }
                               },
                             )
                           ],

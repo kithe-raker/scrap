@@ -1,15 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:flutter_twitter_login/flutter_twitter_login.dart';
+import 'package:flutter_twitter/flutter_twitter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/Page/authenPage/AuthenPage.dart';
+import 'package:scrap/Page/authenPage/OTPScreen.dart';
 import 'package:scrap/provider/authen_provider.dart';
 
 final fireStore = Firestore.instance;
 final fireAuth = FirebaseAuth.instance;
+final fireMess = FirebaseMessaging();
+
 final fbSign = FacebookLogin();
 final ggSign = GoogleSignIn();
 final twSign = TwitterLogin(
@@ -19,7 +24,7 @@ final twSign = TwitterLogin(
 
 class AuthService {
   PublishSubject<bool> load = PublishSubject();
-  Stream<FirebaseUser> user = fireAuth.onAuthStateChanged;
+
   Future<bool> hasAccount(String key, dynamic value) async {
     var doc = await fireStore
         .collection('Account')
@@ -53,17 +58,24 @@ class AuthService {
         });
   }
 
-  Future<void> phoneVerified(String phone, BuildContext context,
-      {bool login = false}) async {
+  void navigatorToAuthenPage(BuildContext context) {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => AuthenPage()));
+  }
+
+  Future<void> phoneVerified(BuildContext context,
+      {bool register = false}) async {
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
       print(id);
     };
     final PhoneCodeSent smsCode = (String id, [int resendCode]) {
       authenInfo.verificationID = id;
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OTPScreen(register: register)));
       load.add(false);
-      // Navigator.push(context,
-      //     MaterialPageRoute(builder: (context) => OTPScreen(login: login)));
     };
     final PhoneVerificationCompleted success = (AuthCredential credent) async {
       authenInfo.verificationID != null ? print('use OTP') : print('succese');
@@ -73,41 +85,39 @@ class AuthService {
     };
     await fireAuth
         .verifyPhoneNumber(
-            phoneNumber: '+66' + phone,
+            phoneNumber: '+66' + authenInfo.phone,
             timeout: Duration(seconds: 120),
             verificationCompleted: success,
             verificationFailed: failed,
             codeSent: smsCode,
             codeAutoRetrievalTimeout: autoRetrieval)
         .catchError((e) {
+      load.add(false);
       print('e');
     });
   }
 
   Future<String> signUpWithPhone(BuildContext context,
-      {@required String verificationId,
-      @required String smsCode,
-      @required String phone,
-      @required String region,
-      @required String password,
-      @required String pName}) async {
+      {@required String smsCode}) async {
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     String uid;
     load.add(true);
     var phoneCredent = PhoneAuthProvider.getCredential(
-        verificationId: verificationId, smsCode: smsCode);
+        verificationId: authenInfo.verificationID, smsCode: smsCode);
     var emailCredent = EmailAuthProvider.getCredential(
-        email: phone + '@gmail.com', password: password);
+        email: authenInfo.phone + '@gmail.com', password: authenInfo.password);
     await fireAuth.signInWithCredential(phoneCredent).then((authResult) async {
+      var token = await getToken();
       uid = authResult.user?.uid ?? null;
       authResult.user.linkWithCredential(emailCredent);
       await fireStore.collection('Account').document(uid).setData({
-        'email': phone + '@gmail.com',
-        'password': password,
-        'pName': pName,
-        'region': region,
-        'phone': phone
+        'email': authenInfo.phone + '@gmail.com',
+        'password': authenInfo.password,
+        'pName': authenInfo.pName,
+        'region': authenInfo.region,
+        'phone': authenInfo.phone,
+        'token': token
       });
-      print('link fin');
       load.add(false);
     }).catchError((e) {
       switch (e.code) {
@@ -122,17 +132,20 @@ class AuthService {
           break;
       }
     });
-
     return uid;
   }
 
-  signInWithPhone(BuildContext context,
-      {@required String verificationId, @required String smsCode}) async {
-    var credent = PhoneAuthProvider.getCredential(
-        verificationId: verificationId, smsCode: smsCode);
-    await fireAuth.signInWithCredential(credent).then((value) {
+  signInWithPhone(BuildContext context, {@required String smsCode}) async {
+    try {
+      final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
+      load.add(true);
+      var credent = PhoneAuthProvider.getCredential(
+          verificationId: authenInfo.verificationID, smsCode: smsCode);
+      var curUser = await fireAuth.signInWithCredential(credent);
+      await updateToken(curUser.user.uid);
       load.add(false);
-    }).catchError((e) {
+    } catch (e) {
+      print(e.toString());
       switch (e.code) {
         case 'ERROR_NETWORK_REQUEST_FAILED':
           warn('ตรวจสอบการเชื่อมต่อ', context);
@@ -144,12 +157,30 @@ class AuthService {
           warn('OTPอาจหมดอายุ', context);
           break;
       }
-    });
+    }
   }
 
-  signInWithPenName({@required String email, @required String password}) async {
-    await fireAuth.signInWithEmailAndPassword(email: email, password: password);
-    load.add(false);
+  signInWithPenName(BuildContext context,
+      {@required String penname, @required String password}) async {
+    load.add(true);
+    var docs = await Firestore.instance
+        .collection('Account')
+        .where('pName', isEqualTo: penname)
+        .limit(1)
+        .getDocuments();
+    if (docs.documents.length > 0) {
+      var doc = docs.documents[0];
+      if (password == doc['password']) {
+        var curUser = await fireAuth.signInWithEmailAndPassword(
+            email: doc['email'], password: password);
+        await updateToken(curUser.user.uid);
+        load.add(false);
+      } else {
+        warn('ตรวจสอบรหัสผ่านของท่าน', context);
+      }
+    } else {
+      warn('ไม่พบบัญชีดังกล่าว', context);
+    }
   }
 
   signOut(BuildContext context) async {
@@ -160,15 +191,17 @@ class AuthService {
     load.add(false);
   }
 
-  signInWithFacebook() async {
+  signInWithFacebook(BuildContext context) async {
     load.add(true);
     var fbLogin = await fbSign.logIn(['email', 'public_profile']);
     switch (fbLogin.status) {
       case FacebookLoginStatus.loggedIn:
         var fbCredent = FacebookAuthProvider.getCredential(
             accessToken: fbLogin.accessToken.token);
-        await fireAuth.signInWithCredential(fbCredent);
+        var curUser = await fireAuth.signInWithCredential(fbCredent);
+        await updateToken(curUser.user.uid);
         print('face fin');
+        navigatorToAuthenPage(context);
         load.add(false);
         break;
       default:
@@ -178,7 +211,7 @@ class AuthService {
     }
   }
 
-  signInWithTwitter() async {
+  signInWithTwitter(BuildContext context) async {
     load.add(true);
     var user = await twSign.authorize();
     switch (user.status) {
@@ -186,8 +219,10 @@ class AuthService {
         var twCredent = TwitterAuthProvider.getCredential(
             authToken: user.session.token,
             authTokenSecret: user.session.secret);
-        await fireAuth.signInWithCredential(twCredent);
+        var curUser = await fireAuth.signInWithCredential(twCredent);
+        await updateToken(curUser.user.uid);
         print('twit fin');
+        navigatorToAuthenPage(context);
         load.add(false);
         break;
       default:
@@ -197,18 +232,39 @@ class AuthService {
     }
   }
 
-  signInWithGoogle() async {
+  signInWithGoogle(BuildContext context) async {
     load.add(true);
     try {
       GoogleSignInAccount account = await ggSign.signIn();
       GoogleSignInAuthentication user = await account.authentication;
       var ggCredent = GoogleAuthProvider.getCredential(
           idToken: user.idToken, accessToken: user.accessToken);
-      await fireAuth.signInWithCredential(ggCredent);
+      var curUser = await fireAuth.signInWithCredential(ggCredent);
+      await updateToken(curUser.user.uid);
+      navigatorToAuthenPage(context);
+      load.add(false);
     } catch (e) {
       print(e);
+      load.add(false);
     }
-    load.add(false);
+  }
+
+  Future<String> getuid() async {
+    var user = await fireAuth.currentUser();
+    return user?.uid ?? '';
+  }
+
+  Future<void> updateToken(String uid) async {
+    var token = await getToken();
+    await Firestore.instance
+        .collection('Account')
+        .document(uid)
+        .setData({'token': token}, merge: true);
+  }
+
+  Future<String> getToken() async {
+    var token = await fireMess.getToken();
+    return token;
   }
 }
 

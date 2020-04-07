@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/provider/authen_provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/warning.dart';
-
-import 'OTPScreen.dart';
 
 class LoginPhone extends StatefulWidget {
   @override
@@ -14,63 +14,28 @@ class LoginPhone extends StatefulWidget {
 
 class _LoginPhoneState extends State<LoginPhone> {
   String phone;
-  bool loading = false;
   var _key = GlobalKey<FormState>();
 
-  Future<void> phoneVerified() async {
-    final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {
-      print(id);
-    };
-    final PhoneCodeSent smsCode = (String id, [int resendCode]) {
-      setState(() {
-        loading = false;
-      });
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OTPScreen(verifiedID: id, phone: phone)));
-    };
-    final PhoneVerificationCompleted success = (AuthCredential credent) async {
-      print('yes sure');
-      // FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      // user.linkWithCredential(credent);
-    };
-    PhoneVerificationFailed failed = (AuthException error) {
-      Dg().warning(
-        context,
-        'เกิดข้อผิดพลาดไม่ทราบสาเหตุ กรุณาลองอีกครั้ง',
-        "เกิดผิดพลาด",
-      );
-    };
-    await FirebaseAuth.instance
-        .verifyPhoneNumber(
-            phoneNumber: '+66' + phone,
-            timeout: Duration(seconds: 120),
-            verificationCompleted: success,
-            verificationFailed: failed,
-            codeSent: smsCode,
-            codeAutoRetrievalTimeout: autoRetrieval)
-        .catchError((e) {
-      setState(() {
-        loading = false;
-      });
-      print(e.toString());
-    });
+  bool loading = false;
+  StreamSubscription loadStatus;
+
+  @override
+  void initState() {
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
+    super.initState();
   }
 
-  Future<bool> hasAccount(String phone) async {
-    final QuerySnapshot phones = await Firestore.instance
-        .collection('Users')
-        .where('phone', isEqualTo: phone)
-        .limit(1)
-        .getDocuments();
-    final List<DocumentSnapshot> doc = phones.documents;
-    return doc.length == 1;
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
+    final authenInfo = Provider.of<AuthenProvider>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: ListView(
@@ -81,11 +46,12 @@ class _LoginPhoneState extends State<LoginPhone> {
                 padding: EdgeInsets.all(a.width / 20),
                 child: Container(
                   width: a.width,
+                  height: a.height,
                   alignment: Alignment.topLeft,
                   child: Form(
                       key: _key,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
@@ -104,6 +70,9 @@ class _LoginPhoneState extends State<LoginPhone> {
                                 Navigator.pop(context);
                               },
                             ),
+                          ),
+                          SizedBox(
+                            height: a.height / 6.4,
                           ),
                           Container(
                             child: Column(
@@ -131,19 +100,18 @@ class _LoginPhoneState extends State<LoginPhone> {
                                               bottomLeft:
                                                   const Radius.circular(40.0)),
                                           border: Border(
-                                            top: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                            left: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                            right: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                            bottom: BorderSide(
-                                                width: 1.0,
-                                                color: Colors.white),
-                                          ),
+                                              top: BorderSide(
+                                                  width: 1.0,
+                                                  color: Colors.white),
+                                              left: BorderSide(
+                                                  width: 1.0,
+                                                  color: Colors.white),
+                                              right: BorderSide(
+                                                  width: 1.0,
+                                                  color: Colors.white),
+                                              bottom: BorderSide(
+                                                  width: 1.0,
+                                                  color: Colors.white)),
                                         ),
                                         width: a.width / 4,
                                         height: a.width / 6.3,
@@ -214,12 +182,13 @@ class _LoginPhoneState extends State<LoginPhone> {
                                             return val.trim() == ""
                                                 ? Taoast().toast(
                                                     "กรุณาใส่เบอร์โทรศัพท์")
-                                                : val.trim().length > 10
+                                                : val.trim().length != 10
                                                     ? Taoast().toast(
-                                                        "ตรวจสอบเลข 10 หลัก")
+                                                        "กรุณาใส่เบอร์โทรศัพท์ 10 หลัก")
                                                     : null;
                                           },
                                           onSaved: (val) {
+                                            authenInfo.phone = val.trim();
                                             phone = val.trim();
                                           },
                                         ),
@@ -256,33 +225,11 @@ class _LoginPhoneState extends State<LoginPhone> {
                                   onTap: () async {
                                     if (_key.currentState.validate()) {
                                       _key.currentState.save();
-                                      setState(() {
-                                        loading = true;
-                                      });
-                                      await hasAccount(phone)
-                                          ? await phoneVerified()
-                                          : Dg().warning(
-                                              context,
-                                              'ไม่พบัญชีที่ใช้เบอร์โทรนี้',
-                                              "เกิดผิดพลาด",
-                                            );
+                                      login();
                                     }
                                   },
                                 )
                               ],
-                            ),
-                          ),
-                          Container(
-                            width: a.width,
-                            height: a.width / 10,
-                            alignment: Alignment.center,
-                            color: Colors.black,
-                            child: Text(
-                              'สร้างบัญชีใหม่',
-                              style: TextStyle(
-                                  fontSize: a.width / 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[500]),
                             ),
                           ),
                         ],
@@ -295,5 +242,12 @@ class _LoginPhoneState extends State<LoginPhone> {
         ],
       ),
     );
+  }
+
+  login() async {
+    authService.load.add(true);
+    await authService.hasAccount('phone', phone)
+        ? authService.phoneVerified(context)
+        : authService.warn('ไม่พบบัญชีดังกล่าว', context);
   }
 }
