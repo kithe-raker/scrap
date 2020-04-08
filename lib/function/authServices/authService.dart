@@ -14,6 +14,8 @@ import 'package:scrap/provider/authen_provider.dart';
 import 'package:scrap/provider/authen_provider.dart';
 
 import '../../cacheManagement/cache_UserInfo.dart';
+import '../../cacheManagement/cache_UserInfo.dart';
+import '../../cacheManagement/cache_UserInfo.dart';
 
 final fireStore = Firestore.instance;
 final fireAuth = FirebaseAuth.instance;
@@ -150,6 +152,7 @@ class AuthService {
       var curUser = await fireAuth.signInWithCredential(credent);
       await updateToken(curUser.user.uid);
       authenInfo.uid = curUser.user.uid;
+      CacheUserInfo().userInfo(curUser.user.uid);
       load.add(false);
     } catch (e) {
       print(e.toString());
