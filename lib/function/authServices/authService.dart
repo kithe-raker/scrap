@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_twitter/flutter_twitter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/src/provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/authenPage/AuthenPage.dart';
 import 'package:scrap/Page/authenPage/OTPScreen.dart';
 import 'package:scrap/provider/authen_provider.dart';
+import 'package:scrap/provider/authen_provider.dart';
+
+import '../../cacheManagement/cache_UserInfo.dart';
 
 final fireStore = Firestore.instance;
 final fireAuth = FirebaseAuth.instance;
@@ -23,6 +27,8 @@ final twSign = TwitterLogin(
 );
 
 class AuthService {
+
+
   PublishSubject<bool> load = PublishSubject();
 
   Future<bool> hasAccount(String key, dynamic value) async {
@@ -143,6 +149,7 @@ class AuthService {
           verificationId: authenInfo.verificationID, smsCode: smsCode);
       var curUser = await fireAuth.signInWithCredential(credent);
       await updateToken(curUser.user.uid);
+      authenInfo.uid = curUser.user.uid;
       load.add(false);
     } catch (e) {
       print(e.toString());
@@ -163,6 +170,7 @@ class AuthService {
   signInWithPenName(BuildContext context,
       {@required String penname, @required String password}) async {
     load.add(true);
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     var docs = await Firestore.instance
         .collection('Account')
         .where('pName', isEqualTo: penname)
@@ -174,6 +182,7 @@ class AuthService {
         var curUser = await fireAuth.signInWithEmailAndPassword(
             email: doc['email'], password: password);
         await updateToken(curUser.user.uid);
+        authenInfo.uid = curUser.user.uid;
         load.add(false);
       } else {
         warn('ตรวจสอบรหัสผ่านของท่าน', context);
@@ -192,6 +201,7 @@ class AuthService {
   }
 
   signInWithFacebook(BuildContext context) async {
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     load.add(true);
     var fbLogin = await fbSign.logIn(['email', 'public_profile']);
     switch (fbLogin.status) {
@@ -200,6 +210,7 @@ class AuthService {
             accessToken: fbLogin.accessToken.token);
         var curUser = await fireAuth.signInWithCredential(fbCredent);
         await updateToken(curUser.user.uid);
+        authenInfo.uid = curUser.user.uid;
         print('face fin');
         navigatorToAuthenPage(context);
         load.add(false);

@@ -6,12 +6,16 @@ class AuthenProvider extends ChangeNotifier {
   String _password;
   String _pName;
   String _region;
+  String _uid;
+
 
   String get verificationID => _verificationID;
   String get phone => _phone;
   String get password => _password;
   String get pName => _pName;
   String get region => _region;
+  String get uid => _uid;
+
 
   set verificationID(String val) {
     _verificationID = val;
@@ -37,4 +41,10 @@ class AuthenProvider extends ChangeNotifier {
     _region = val;
     notifyListeners();
   }
+
+  set uid(String val) {
+    _uid = val;
+    notifyListeners();
+  }
+
 }

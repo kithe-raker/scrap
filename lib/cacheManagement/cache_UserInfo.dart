@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import '../provider/authen_provider.dart';
 
 class CacheUserInfo {
   File jsonFile;
@@ -10,13 +12,6 @@ class CacheUserInfo {
   String fileName = "userInfo";
   bool fileExists = false;
   Map<String, String > fileContent;
-
-  String uid = getUid();
-
-   getUid() async {
-    var uid = await FirebaseAuth.instance.currentUser();
-    return uid.uid;
-  }
 
   hasFile() async {
   Directory _directory = await getApplicationDocumentsDirectory();
@@ -33,7 +28,6 @@ class CacheUserInfo {
 
   newFileUserInfo(){
     Map<String,String> _content;
-
     Firestore.instance
     .collection("User")
     .document("th")
