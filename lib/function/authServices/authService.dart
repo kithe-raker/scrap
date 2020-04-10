@@ -186,6 +186,7 @@ class AuthService {
             email: doc['email'], password: password);
         await updateToken(curUser.user.uid);
         authenInfo.uid = curUser.user.uid;
+        CacheUserInfo().userInfo(curUser.user.uid);
         load.add(false);
       } else {
         warn('ตรวจสอบรหัสผ่านของท่าน', context);
@@ -214,6 +215,7 @@ class AuthService {
         var curUser = await fireAuth.signInWithCredential(fbCredent);
         await updateToken(curUser.user.uid);
         authenInfo.uid = curUser.user.uid;
+        CacheUserInfo().userInfo(curUser.user.uid);
         print('face fin');
         navigatorToAuthenPage(context);
         load.add(false);
@@ -235,6 +237,7 @@ class AuthService {
             authTokenSecret: user.session.secret);
         var curUser = await fireAuth.signInWithCredential(twCredent);
         await updateToken(curUser.user.uid);
+        CacheUserInfo().userInfo(curUser.user.uid);
         print('twit fin');
         navigatorToAuthenPage(context);
         load.add(false);
@@ -255,6 +258,7 @@ class AuthService {
           idToken: user.idToken, accessToken: user.accessToken);
       var curUser = await fireAuth.signInWithCredential(ggCredent);
       await updateToken(curUser.user.uid);
+      CacheUserInfo().userInfo(curUser.user.uid);
       navigatorToAuthenPage(context);
       load.add(false);
     } catch (e) {
