@@ -73,8 +73,8 @@ class _CreateProfile1State extends State<CreateProfile1> {
 
   @override
   void initState() {
-    super.initState();
     initUserInfo();
+    super.initState();
   }
 
   @override

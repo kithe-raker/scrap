@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/addPlayer.dart';
-import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
@@ -215,14 +214,7 @@ class _HomePageState extends State<HomePage> {
                             child: Icon(Icons.people,
                                 color: Colors.black, size: a.width / 15),
                           ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => FriendList(
-                                          doc: widget.doc,
-                                        )));
-                          },
+                          onTap: () {},
                         )),
                     Container(
                         height: a.width / 5,
@@ -758,19 +750,6 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    FriendList(
-                                                  doc: widget.doc,
-                                                  data: {
-                                                    'text': text,
-                                                    'public': public
-                                                  },
-                                                ),
-                                              ));
                                         }
                                       },
                                     )

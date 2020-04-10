@@ -20,7 +20,7 @@ class CreateProfile2 extends StatefulWidget {
 class _CreateProfile2State extends State<CreateProfile2> {
   var _formKey = GlobalKey<FormState>();
   DateTime now = DateTime.now(), bDay;
-  String genders, selectYear, region;
+  String genders, selectYear, region = 'th';
   bool loading = false;
   StreamSubscription loadStatus;
 
@@ -39,17 +39,18 @@ class _CreateProfile2State extends State<CreateProfile2> {
   }
 
   Future uploadImg(File img, String uid, String imgNm) async {
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     final StorageReference ref = FirebaseStorage.instance.ref().child(imgNm);
     final StorageUploadTask task = ref.putFile(img);
     var picUrl = await (await task.onComplete).ref.getDownloadURL();
+    authenInfo.img = picUrl;
     await addImg(uid, picUrl);
   }
 
   addImg(String uid, String pic) async {
-    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     await Firestore.instance
         .collection('User')
-        .document(authenInfo.region)
+        .document(region)
         .collection('users')
         .document(uid)
         .setData({
@@ -295,6 +296,25 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                     authenInfo.password = val.trim();
                                   },
                                 ),
+                                TextFormField(
+                                    style: TextStyle(
+                                        fontSize: scr.width / 12,
+                                        color: Colors.white),
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                      hintText: 'ประเทศ',
+                                      hintStyle:
+                                          TextStyle(color: Colors.grey[400]),
+                                    ),
+                                    validator: (val) {
+                                      return val.trim() == ''
+                                          ? Taoast().toast('ระบุประเทศของคุณ')
+                                          : null;
+                                    },
+                                    onSaved: (region) {
+                                      region = region.trim();
+                                      authenInfo.region = region.trim();
+                                    }),
                               ],
                             ),
                             Padding(
@@ -312,10 +332,13 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                       _formKey.currentState.save();
                                       creatAccount();
                                     } else {
-                                      bDay != null
-                                          ? Taoast().toast('เลือกเพศของคุณ')
-                                          : Taoast()
-                                              .toast('เลือกวันเกิดของคุณ');
+                                      bDay == null
+                                          ? Taoast().toast('เลือกวันเกิดของคุณ')
+                                          : region == null
+                                              ? Taoast().toast(
+                                                  'เลือกประเทศที่คุณอยู่')
+                                              : Taoast()
+                                                  .toast('เลือกเพศของคุณ');
                                     }
                                   }
                                 },
@@ -352,6 +375,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
         ? await addImg(uid, authenInfo.img)
         : await uploadImg(authenInfo.img, uid, uid + '_pro0');
     await authService.setAccount(context);
+    print('creat fin');
     authService.navigatorReplace(context, AuthenPage());
     authService.load.add(false);
   }

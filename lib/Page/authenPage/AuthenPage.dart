@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/authenPage/signIn/LoginPage.dart';
 import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/function/cacheManager/cache_UserInfo.dart';
 
 class AuthenPage extends StatelessWidget {
   @override
@@ -11,11 +12,20 @@ class AuthenPage extends StatelessWidget {
         if (snapshot.hasData) {
           return Scaffold(
             body: Center(
-              child: RaisedButton(
-                  child: Text('sign out'),
-                  onPressed: () {
-                    authService.signOut(context);
-                  }),
+              child: Column(
+                children: <Widget>[
+                  RaisedButton(
+                      child: Text('sign out'),
+                      onPressed: () {
+                        authService.signOut(context);
+                      }),
+                  RaisedButton(
+                      child: Text('print data'),
+                      onPressed: () async {
+                        print(await CacheUserInfo().getUserInfo());
+                      }),
+                ],
+              ),
             ),
           );
         } else {
