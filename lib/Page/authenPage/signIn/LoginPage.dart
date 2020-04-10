@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/authenPage/signIn/LoginOtherMethod.dart';
-import 'package:scrap/Page/authenPage/signup/SignUpMail.dart';
+import 'package:scrap/Page/authenPage/signup/SelectSignUp.dart';
 
 import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -18,47 +16,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String pName, _password, token;
+  String pName, _password;
   bool loading = false;
   var _key = GlobalKey<FormState>();
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   StreamSubscription loadStatus;
-
-  updateToken(String uid) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('token')
-        .getDocuments()
-        .then((docs) async {
-      List data = docs.documents;
-      if (data[0].documentID != token) {
-        await Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('token')
-            .document(data[0].documentID)
-            .delete();
-        await Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('token')
-            .document(token)
-            .setData({'token': token});
-      }
-    });
-  }
-
-  void getToken() {
-    firebaseMessaging.getToken().then((String tken) {
-      assert(tken != null);
-      token = tken;
-    });
-  }
 
   @override
   void initState() {
-    getToken();
     loadStatus =
         authService.load.listen((value) => setState(() => loading = value));
     super.initState();
@@ -334,7 +298,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SignUpMail()));
+                                  builder: (context) => SelectSignUp()));
                         },
                       ),
                     )

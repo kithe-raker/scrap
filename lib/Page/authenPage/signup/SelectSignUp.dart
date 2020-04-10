@@ -1,32 +1,20 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/authenPage/SubmitPhone.dart';
+import 'package:scrap/Page/setting/servicedoc.dart';
 import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
 
-class LoginOtherMethod extends StatefulWidget {
+import '../SubmitPhone.dart';
+
+class SelectSignUp extends StatefulWidget {
+  SelectSignUp({Key key}) : super(key: key);
   @override
-  _LoginOtherMethodState createState() => _LoginOtherMethodState();
+  _SelectSignUpState createState() => _SelectSignUpState();
 }
 
-class _LoginOtherMethodState extends State<LoginOtherMethod> {
-  String phone;
+class _SelectSignUpState extends State<SelectSignUp> {
+  String _email, _password;
   bool loading = false;
-  StreamSubscription loadStatus;
-
-  @override
-  void initState() {
-    loadStatus =
-        authService.load.listen((value) => setState(() => loading = value));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    loadStatus.cancel();
-    super.dispose();
-  }
+  var _key = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +41,7 @@ class _LoginOtherMethodState extends State<LoginOtherMethod> {
                               color: Colors.black, size: a.width / 15),
                         ),
                         onTap: () {
-                          Navigator.pop(
-                            context,
-                          );
+                          Navigator.pop(context);
                         },
                       ),
                     ),
@@ -63,9 +49,9 @@ class _LoginOtherMethodState extends State<LoginOtherMethod> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(top: a.width / 6),
+                          margin: EdgeInsets.only(top: a.width / 21),
                           child: Text(
-                            "เข้าสู่ระบบ",
+                            "สมัครสมาชิก",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: a.width / 9,
@@ -75,7 +61,7 @@ class _LoginOtherMethodState extends State<LoginOtherMethod> {
                         ),
                         Container(
                           child: Text(
-                            "\"ผู้คนกำลังรออ่านกระดาษของคุณ\"",
+                            '"ผู้คนกำลังรออ่านกระดาษของคุณ"',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: a.width / 18,
@@ -84,7 +70,7 @@ class _LoginOtherMethodState extends State<LoginOtherMethod> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: a.width / 30),
+                          margin: EdgeInsets.only(top: a.width / 8),
                           child: InkWell(
                             child: Container(
                                 width: a.width / 1.3,
@@ -103,7 +89,7 @@ class _LoginOtherMethodState extends State<LoginOtherMethod> {
                                         color: Colors.white,
                                         size: a.width / 20),
                                     SizedBox(width: 5.0),
-                                    Text("เข้าสู่ระบบด้วยเบอร์โทร",
+                                    Text("สมัครสามชิกด้วยเบอร์โทร",
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontSize: a.width / 18,
@@ -114,7 +100,8 @@ class _LoginOtherMethodState extends State<LoginOtherMethod> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SubmitPhone()));
+                                      builder: (context) =>
+                                          SubmitPhone(register: true)));
                             },
                           ),
                         ),
@@ -126,7 +113,13 @@ class _LoginOtherMethodState extends State<LoginOtherMethod> {
                                   bottom: BorderSide(
                                       color: Colors.white70, width: 2))),
                         ),
-                        SizedBox(height: a.height / 12),
+                        SizedBox(height: a.height / 24),
+                        Text("สมัครสามชิกด้วยช่องทางอย่างอื่น",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: a.width / 18,
+                                fontWeight: FontWeight.bold)),
+                        SizedBox(height: a.height / 24),
                         Container(
                           width: a.width / 1.2,
                           child: Row(
@@ -149,7 +142,48 @@ class _LoginOtherMethodState extends State<LoginOtherMethod> {
                               })
                             ],
                           ),
-                        )
+                        ),
+                        SizedBox(
+                          height: a.height / 56,
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: a.width / 6.4),
+                          width: a.width / 1.2,
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                ' การสมัครสมาชิคจะหมายถึงการที่คุณยอมรับใน ',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 20,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Servicedoc()));
+                                },
+                                child: Text(
+                                  '"ข้อกำหนด" ',
+                                  style: TextStyle(
+                                      color: Color(0xff26A4FF),
+                                      fontSize: a.width / 20,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Text(
+                                'ทั้งหมดของเรา',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 20,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ],

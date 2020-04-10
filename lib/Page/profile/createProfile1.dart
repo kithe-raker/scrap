@@ -1,27 +1,28 @@
+import 'dart:async';
 import 'dart:io'; //ref from creatProfile
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:scrap/widget/Toast.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/profile/createProfile2.dart';
+import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/provider/authen_provider.dart';
+import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class CreateProfile1 extends StatefulWidget {
-  final String uid;
-  CreateProfile1({@required this.uid});
   @override
   _CreateProfile1State createState() => _CreateProfile1State();
 }
 
 class _CreateProfile1State extends State<CreateProfile1> {
   var _formKey = GlobalKey<FormState>();
-  String id;
-  File image;
-  bool loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  String pName;
+  dynamic image;
+  bool loading = true;
+  FirebaseUser user;
+  StreamSubscription loadStatus;
+  var nameController = TextEditingController();
 
   sendCam() async {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
@@ -39,25 +40,55 @@ class _CreateProfile1State extends State<CreateProfile1> {
     }
   }
 
-  Future<bool> hasAccount(String user) async {
-    final QuerySnapshot users = await Firestore.instance
-        .collection('Users')
-        .where('id', isEqualTo: user)
-        .limit(1)
-        .getDocuments();
-    final List<DocumentSnapshot> doc = users.documents;
-    return doc.length == 1;
+  initUserInfo() async {
+    user = await fireAuth.currentUser();
+    nameController.text = user?.displayName ?? null;
+    image = user?.photoUrl ?? null;
+    loading = false;
+    setState(() {});
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
+  }
+
+  validator() async {
+    authService.load.add(true);
+    image != null || user?.photoUrl != null
+        ? await authService.hasAccount('pName', pName)
+            ? authService.warn('นามนี้ได้ทำการลงทะเบียนไว้แล้ว', context)
+            : register()
+        : authService.warn('กรุณาเลือกรูปโปรไฟล์ของท่าน', context);
+  }
+
+  register() async {
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
+    authenInfo.img = image;
+    authenInfo.pName = pName;
+    await fireStore
+        .collection('Account')
+        .document(user.uid)
+        .setData({'pName': pName}, merge: true);
+    authService.navigatorReplace(context, CreateProfile2());
+    authService.load.add(false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initUserInfo();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    nameController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
     return WillPopScope(
-      onWillPop: () =>
-          warning('คุณต้องการออกจากหน้านี้ใช่หรือไม่', function: () {
-        Navigator.pop(context);
-        Navigator.pop(context);
-      }),
+      onWillPop: () => null,
       child: Scaffold(
         body: Stack(
           children: <Widget>[
@@ -122,12 +153,19 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                   color: Colors.white,
                                                 ),
                                               )
-                                            : Image.file(
-                                                image,
-                                                width: scr.width / 3,
-                                                height: scr.width / 3,
-                                                fit: BoxFit.cover,
-                                              ),
+                                            : image.runtimeType == String
+                                                ? Image.network(
+                                                    user.photoUrl,
+                                                    width: scr.width / 3,
+                                                    height: scr.width / 3,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Image.file(
+                                                    image,
+                                                    width: scr.width / 3,
+                                                    height: scr.width / 3,
+                                                    fit: BoxFit.cover,
+                                                  ),
                                         borderRadius: BorderRadius.circular(
                                           scr.width / 3,
                                         )),
@@ -181,6 +219,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                 ),
                                               ),
                                               child: TextFormField(
+                                                controller: nameController,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: Colors.white,
@@ -189,23 +228,18 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                 ),
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
-                                                  hintText: '@yourname',
+                                                  hintText: 'penname',
                                                   hintStyle: TextStyle(
                                                       color: Colors.grey[500]),
                                                 ),
                                                 validator: ((val) {
-                                                  return val.trim() == null ||
-                                                          val.trim() == ''
+                                                  return val.trim() == ''
                                                       ? Taoast().toast(
-                                                          "กรุณาใส่ไอดีของท่าน")
+                                                          "กรุณาใส่นามปากกาของท่าน")
                                                       : null;
                                                 }),
-                                                onSaved: (gId) =>
-                                                    gId.trim()[0] == '@'
-                                                        ? id = gId
-                                                            .trim()
-                                                            .substring(1)
-                                                        : id = gId.trim(),
+                                                onSaved: (name) =>
+                                                    pName = name.trim(),
                                                 textInputAction:
                                                     TextInputAction.done,
                                               ),
@@ -241,25 +275,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                               if (_formKey.currentState
                                                   .validate()) {
                                                 _formKey.currentState.save();
-                                                image != null
-                                                    ? await hasAccount(id)
-                                                        ? warning(
-                                                            'ไอดีนี้ได้ทำการลงทะเบียนไว้แล้ว')
-                                                        : Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    CreateProfile2(
-                                                                        uid: widget
-                                                                            .uid,
-                                                                        pro: {
-                                                                          'img':
-                                                                              image,
-                                                                          'id':
-                                                                              id
-                                                                        })))
-                                                    : warning(
-                                                        'กรุณาเลือกรูปโปรไฟล์ของท่าน');
+                                                validator();
                                               }
                                             },
                                             color: Colors.white,
@@ -284,37 +300,11 @@ class _CreateProfile1State extends State<CreateProfile1> {
                 ],
               ),
             ),
-            loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : SizedBox()
+            loading ? Loading() : SizedBox()
           ],
         ),
       ),
     );
-  }
-
-  warning(String warn, {Function function}) {
-    return showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            title: Text('ขออภัยค่ะ'),
-            content: Container(
-              child: Text(warn),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: function ??
-                      () {
-                        Navigator.pop(context);
-                      },
-                  child: Text('ok'))
-            ],
-          );
-        });
   }
 
   selectImg(BuildContext context) {

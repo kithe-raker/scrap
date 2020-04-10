@@ -157,7 +157,9 @@ class _OTPScreenState extends State<OTPScreen> {
                                       if (_key.currentState.validate()) {
                                         _key.currentState.save();
                                         widget.register
-                                            ? print('regis')
+                                            ? authService.signUpWithPhone(
+                                                context,
+                                                smsCode: otp)
                                             : widget.edit
                                                 ? print('edit')
                                                 : authService.signInWithPhone(

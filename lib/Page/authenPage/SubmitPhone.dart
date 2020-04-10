@@ -7,12 +7,14 @@ import 'package:scrap/provider/authen_provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
-class LoginPhone extends StatefulWidget {
+class SubmitPhone extends StatefulWidget {
+  final bool register;
+  SubmitPhone({this.register = false});
   @override
-  _LoginPhoneState createState() => _LoginPhoneState();
+  _SubmitPhoneState createState() => _SubmitPhoneState();
 }
 
-class _LoginPhoneState extends State<LoginPhone> {
+class _SubmitPhoneState extends State<SubmitPhone> {
   String phone;
   var _key = GlobalKey<FormState>();
 
@@ -225,7 +227,8 @@ class _LoginPhoneState extends State<LoginPhone> {
                                   onTap: () async {
                                     if (_key.currentState.validate()) {
                                       _key.currentState.save();
-                                      login();
+                                      authService.load.add(true);
+                                      widget.register ? register() : login();
                                     }
                                   },
                                 )
@@ -244,8 +247,13 @@ class _LoginPhoneState extends State<LoginPhone> {
     );
   }
 
+  register() async {
+    await authService.hasAccount('phone', phone)
+        ? authService.warn('บัญชีดังกล่าวลงทะเบียนไว้แล้ว', context)
+        : authService.phoneVerified(context, register: true);
+  }
+
   login() async {
-    authService.load.add(true);
     await authService.hasAccount('phone', phone)
         ? authService.phoneVerified(context)
         : authService.warn('ไม่พบบัญชีดังกล่าว', context);

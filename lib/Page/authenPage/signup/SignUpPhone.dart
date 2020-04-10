@@ -1,44 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/authenPage/signup/SignUpTel.dart';
 import 'package:scrap/Page/setting/servicedoc.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/warning.dart';
 
-class SignUpMail extends StatefulWidget {
-  SignUpMail({Key key}) : super(key: key);
+class SignUpPhone extends StatefulWidget {
   @override
-  _SignUpMailState createState() => _SignUpMailState();
+  _SignUpPhoneState createState() => _SignUpPhoneState();
 }
 
-class _SignUpMailState extends State<SignUpMail> {
+class _SignUpPhoneState extends State<SignUpPhone> {
   String _email, _password;
   bool loading = false;
   var _key = GlobalKey<FormState>();
-
-  Future<bool> uniqueEmail(String email) async {
-    final QuerySnapshot emails = await Firestore.instance
-        .collection('Users')
-        .where('email', isEqualTo: email)
-        .limit(1)
-        .getDocuments();
-    final List<DocumentSnapshot> doc = emails.documents;
-    return doc.length < 1;
-  }
-
-  continueSignUp() {
-    setState(() {
-      loading = false;
-    });
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SignUpTel(
-                  email: _email,
-                  password: _password,
-                )));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -257,14 +230,6 @@ class _SignUpMailState extends State<SignUpMail> {
                                     onTap: () async {
                                       if (_key.currentState.validate()) {
                                         _key.currentState.save();
-                                        setState(() {
-                                          loading = true;
-                                        });
-                                        await uniqueEmail(_email)
-                                            ? continueSignUp()
-                                            : fail();
-                                      } else {
-                                        print('nope');
                                       }
                                     }),
                               ],
@@ -320,13 +285,5 @@ class _SignUpMailState extends State<SignUpMail> {
           ),
           loading ? Loading() : SizedBox()
         ]));
-  }
-
-  fail() {
-    setState(() {
-      loading = false;
-    });
-    Dg().warning(
-        context, 'ขออภัยอีเมลนี้ได้ลงทะเบียนไว้แล้ว', "เกิดผิดพลาด");
   }
 }

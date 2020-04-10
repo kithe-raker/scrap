@@ -1,17 +1,18 @@
 import 'package:flutter/widgets.dart';
 
 class AuthenProvider extends ChangeNotifier {
-  String _verificationID;
-  String _phone;
-  String _password;
-  String _pName;
-  String _region;
+  String _verificationID, _phone, _password, _pName, _region, _gender;
+  dynamic _img;
+  DateTime _birthday;
 
   String get verificationID => _verificationID;
   String get phone => _phone;
   String get password => _password;
   String get pName => _pName;
   String get region => _region;
+  String get gender => _gender;
+  dynamic get img => _img;
+  DateTime get birthday => _birthday;
 
   set verificationID(String val) {
     _verificationID = val;
@@ -35,6 +36,21 @@ class AuthenProvider extends ChangeNotifier {
 
   set region(String val) {
     _region = val;
+    notifyListeners();
+  }
+
+  set gender(String val) {
+    _gender = val;
+    notifyListeners();
+  }
+
+  set img(dynamic val) {
+    _img = val;
+    notifyListeners();
+  }
+
+  set birthday(dynamic val) {
+    _birthday = val;
     notifyListeners();
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/authenPage/signIn/LoginPage.dart';
-import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/function/authServices/authService.dart';
 
 class AuthenPage extends StatelessWidget {
