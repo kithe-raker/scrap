@@ -123,7 +123,11 @@ class AuthService {
       load.add(true);
       var phoneCredent = PhoneAuthProvider.getCredential(
           verificationId: authenInfo.verificationID, smsCode: smsCode);
-      await fireAuth.signInWithCredential(phoneCredent);
+      var curUser = await fireAuth.signInWithCredential(phoneCredent);
+      await fireStore
+          .collection('Account')
+          .document(curUser.user.uid)
+          .setData({'phone': authenInfo.phone}, merge: true);
       navigatorReplace(context, CreateProfile1());
       load.add(false);
     } catch (e) {
@@ -322,8 +326,7 @@ class AuthService {
       'password': authenInfo.password,
       'pName': authenInfo.pName,
       'region': authenInfo.region,
-      'phone': authenInfo.phone,
-      'token': token
+      'token': token,
     });
     batch.setData(
         userRef,

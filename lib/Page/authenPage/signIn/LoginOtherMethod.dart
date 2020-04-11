@@ -114,7 +114,8 @@ class _LoginOtherMethodState extends State<LoginOtherMethod> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SubmitPhone()));
+                                      builder: (context) =>
+                                          SubmitPhone(login: true)));
                             },
                           ),
                         ),

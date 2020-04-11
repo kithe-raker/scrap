@@ -11,11 +11,18 @@ class CacheUserInfo {
   bool fileExists = false;
   var fileContent;
 
-  hasFile(String uid) async {
+  Future<bool> hasFile() async {
     Directory _directory = await getApplicationDocumentsDirectory();
-    jsonFile = File(_directory.path + "/" + fileName + "_" + uid);
+    jsonFile = File(_directory.path + "/" + fileName);
     fileExists = jsonFile.existsSync();
     return fileExists;
+  }
+
+  Future<bool> userDataExist(String uid) async {
+    bool fileExist = await hasFile();
+    Map data = {'uid': ''};
+    if (fileExist) data = await getUserInfo();
+    return fileExist && data['uid'] == uid;
   }
 
   getUserInfo() async {
@@ -58,7 +65,7 @@ class CacheUserInfo {
     if (reg != '' && reg != null) {
       doc = await Firestore.instance
           .collection("User")
-          .document(region)
+          .document(reg)
           .collection("users")
           .document(uid)
           .get();
@@ -76,8 +83,8 @@ class CacheUserInfo {
   }
 
   //first call func---------------------------
-  userInfo(String uid, {Map info}) {
-    bool _hasFile = hasFile(uid);
+  userInfo(String uid, {Map info}) async {
+    bool _hasFile = await hasFile();
     if (_hasFile == false)
       newFileUserInfo(uid, info: info);
     else

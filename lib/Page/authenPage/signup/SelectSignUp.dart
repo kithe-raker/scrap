@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/authenPage/SubmitPhone.dart';
 import 'package:scrap/Page/setting/servicedoc.dart';
 import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
-
-import '../SubmitPhone.dart';
 
 class SelectSignUp extends StatefulWidget {
   SelectSignUp({Key key}) : super(key: key);
@@ -12,9 +13,21 @@ class SelectSignUp extends StatefulWidget {
 }
 
 class _SelectSignUpState extends State<SelectSignUp> {
-  String _email, _password;
   bool loading = false;
-  var _key = GlobalKey<FormState>();
+  StreamSubscription loadStatus;
+
+  @override
+  void initState() {
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -9,9 +9,8 @@ import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
 import 'package:scrap/Page/authenPage/AuthenPage.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/Page/profile/createProfile1.dart';
 import 'package:scrap/function/authServices/authService.dart';
-import 'package:scrap/services/ImgCacheManger.dart';
-import 'package:scrap/services/jsonConverter.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -21,8 +20,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
-  JsonConverter jsonConverter = JsonConverter();
-  ImgCacheManager imgCacheManager = ImgCacheManager();
   DocumentSnapshot appInfo;
   initLocalMessage() {
     var android = AndroidInitializationSettings('noti_ic');
@@ -72,7 +69,7 @@ class _MainPageState extends State<MainPage> {
             MaterialPageRoute(builder: (context) => Profile(doc: data))));
   }
 
-  Future<bool> serverChecker() async {
+  Future<bool> serverClose() async {
     bool close;
     var doc = await Firestore.instance.collection('App').document('info').get();
     close = doc['close'];
@@ -80,13 +77,22 @@ class _MainPageState extends State<MainPage> {
     return false;
   }
 
-  Future<bool> versionChecker() async {
+  Future<bool> recentVersion() async {
     String recent = '1.1.0', incoming;
     bool isIOS = Platform.isIOS;
     isIOS
         ? incoming = appInfo['versions']['IOS']
         : incoming = appInfo['versions']['android'];
     return true;
+  }
+
+  Future<bool> finishProfile() async {
+    var user = await fireAuth.currentUser();
+    bool docExist = true;
+    if (user != null && !await cacheUser.userDataExist(user.uid)) {
+      docExist = await cacheUser.documentExist(user.uid);
+    }
+    return user != null && !docExist;
   }
 
   @override
@@ -109,10 +115,12 @@ class _MainPageState extends State<MainPage> {
               name: 'assets/splash.flr',
               startAnimation: 'Untitled',
               onSuccess: (data) async {
-                await serverChecker()
+                await serverClose()
                     ? navigator(Sorry())
-                    : await versionChecker()
-                        ? navigator(AuthenPage())
+                    : await recentVersion()
+                        ? await finishProfile()
+                            ? navigator(CreateProfile1())
+                            : navigator(AuthenPage())
                         : navigator(Update());
               },
               loopAnimation: '1',
