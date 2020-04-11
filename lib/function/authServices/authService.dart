@@ -309,7 +309,8 @@ class AuthService {
     return token;
   }
 
-  Future<void> setAccount(BuildContext context) async {
+  Future<void> setAccount(BuildContext context,
+      {bool withPhone = false}) async {
     var token = await getToken();
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     var user = await fireAuth.currentUser();
@@ -321,13 +322,23 @@ class AuthService {
         .collection('users')
         .document(uid);
     var batch = fireStore.batch();
-    batch.setData(accRef, {
-      'email': uid + '@gmail.com',
-      'password': authenInfo.password,
-      'pName': authenInfo.pName,
-      'region': authenInfo.region,
-      'token': token,
-    });
+    batch.setData(
+        accRef,
+        withPhone
+            ? {
+                'email': uid + '@gmail.com',
+                'password': authenInfo.password,
+                'pName': authenInfo.pName,
+                'region': authenInfo.region,
+                'token': token,
+              }
+            : {
+                'email': user.email,
+                'password': authenInfo.password,
+                'pName': authenInfo.pName,
+                'region': authenInfo.region,
+                'token': token,
+              });
     batch.setData(
         userRef,
         {
@@ -347,9 +358,11 @@ class AuthService {
       'gender': authenInfo.gender,
     });
     await batch.commit();
-    var emailCredent = EmailAuthProvider.getCredential(
-        email: uid + '@gmail.com', password: authenInfo.password);
-    user.linkWithCredential(emailCredent);
+    if (withPhone) {
+      var emailCredent = EmailAuthProvider.getCredential(
+          email: uid + '@gmail.com', password: authenInfo.password);
+      user.linkWithCredential(emailCredent);
+    }
     print('set fin');
   }
 }
