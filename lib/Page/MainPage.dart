@@ -89,8 +89,8 @@ class _MainPageState extends State<MainPage> {
   Future<bool> finishProfile() async {
     var user = await fireAuth.currentUser();
     bool docExist = true;
-    if (user != null && !await cacheUser.userDataExist(user.uid)) {
-      docExist = await cacheUser.documentExist(user.uid);
+    if (user != null && !await cacheUser.hasUserData(user.uid)) {
+      docExist = await cacheUser.docExistsThenNewFile(user.uid);
     }
     return user != null && !docExist;
   }

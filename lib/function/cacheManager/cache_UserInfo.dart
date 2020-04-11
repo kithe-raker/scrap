@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scrap/function/authServices/authService.dart';
 
+
+///Cache management for user's info
 class CacheUserInfo {
   File jsonFile;
   Directory dir;
@@ -11,6 +13,7 @@ class CacheUserInfo {
   bool fileExists = false;
   var fileContent;
 
+  ///Check if there is userInfo.json in directory?
   Future<bool> hasFile() async {
     Directory _directory = await getApplicationDocumentsDirectory();
     jsonFile = File(_directory.path + "/" + fileName);
@@ -18,13 +21,16 @@ class CacheUserInfo {
     return fileExists;
   }
 
-  Future<bool> userDataExist(String uid) async {
+
+  ///Check if there are user's data in userInfo.json return file.exist && uid.exist
+  Future<bool> hasUserData(String uid) async {
     bool fileExist = await hasFile();
     Map data = {'uid': ''};
     if (fileExist) data = await getUserInfo();
     return fileExist && data['uid'] == uid;
   }
 
+  ///Get user's info from cache file return Map
   getUserInfo() async {
     Directory _directory = await getApplicationDocumentsDirectory();
     jsonFile = File(_directory.path + "/" + fileName);
@@ -32,14 +38,16 @@ class CacheUserInfo {
     return fileContent;
   }
 
-  newFileUserInfo(String uid, {Map info}) async {
+  ///Create new cache file 
+  newFileUserInfo(String uid, {Map info,String region}) async {
+    String reg = region ?? await authService.getRegion(uid);
     Directory _directory = await getApplicationDocumentsDirectory();
     jsonFile = File(_directory.path + "/" + fileName);
     Map _content;
     info == null
         ? await Firestore.instance
             .collection("User")
-            .document("th")
+            .document(reg)
             .collection("users")
             .document(uid)
             .get()
@@ -59,7 +67,9 @@ class CacheUserInfo {
     jsonFile.writeAsStringSync(jsonEncode(_content));
   }
 
-  Future<bool> documentExist(String uid, {String region}) async {
+
+  ///if document exists then create new file Return doc.exists
+  Future<bool> docExistsThenNewFile(String uid, {String region}) async {
     String reg = region ?? await authService.getRegion(uid);
     var doc;
     if (reg != '' && reg != null) {
@@ -82,13 +92,14 @@ class CacheUserInfo {
     return (doc?.exists ?? false) && reg != '' && reg != null;
   }
 
-  //first call func---------------------------
+  ///Create cache if file and userdata does not exist then get file
+  ///Get file if cache file and userdata already exist
   userInfo(String uid, {Map info}) async {
-    bool _hasFile = await hasFile();
-    if (_hasFile == false)
-      newFileUserInfo(uid, info: info);
-    else
+    bool _hasData = await hasUserData(uid);
+    if (!_hasData)
+        await newFileUserInfo(uid, info: info);
       getUserInfo();
+
   }
   //------------------------------------------
 

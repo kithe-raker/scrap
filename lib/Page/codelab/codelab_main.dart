@@ -19,7 +19,7 @@ class _CodeLabState extends State<CodeLab> {
   Future getImage()async{
     var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
     var dir = await getTemporaryDirectory();
-    String path = dir.path;
+    String path = dir.path + "myimage.webp";
 
     File newImage = await FlutterImageCompress.compressAndGetFile(
       tempImage.path, 
@@ -52,7 +52,7 @@ class _CodeLabState extends State<CodeLab> {
             child: Text("Select"),
             onPressed: getImage
           ),
-          status == 0 ? Text("") : RaisedButton(child: Text("Upload"),onPressed: uploadImage),
+          status == false ? Text("") : RaisedButton(child: Text("Upload"),onPressed: uploadImage),
 
         ],
 
