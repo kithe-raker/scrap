@@ -109,7 +109,7 @@ class _PennameLoginState extends State<PennameLogin> {
                               ),
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: '@tarit.in.th111',
+                                  text: '@tarit.in.th',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: ScreenUtil().setSp(70),
