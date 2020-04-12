@@ -14,6 +14,7 @@ class CacheUserInfo {
   bool fileExists = false;
   var fileContent;
 
+  ///Check if there is userInfo.json in directory?
   Future<bool> hasFile() async {
     Directory _directory = await getApplicationDocumentsDirectory();
     jsonFile = File(_directory.path + "/" + fileName);
@@ -21,13 +22,15 @@ class CacheUserInfo {
     return fileExists;
   }
 
-  Future<bool> userDataExist(String uid) async {
+  ///Check if there are user's data in userInfo.json return file.exist && uid.exist
+  Future<bool> hasUserData(String uid) async {
     bool fileExist = await hasFile();
     Map data = {'uid': ''};
     if (fileExist) data = await getUserInfo();
     return fileExist && data['uid'] == uid;
   }
 
+  ///Get user's info from cache file return Map
   getUserInfo() async {
     Directory _directory = await getApplicationDocumentsDirectory();
     jsonFile = File(_directory.path + "/" + fileName);
@@ -35,36 +38,22 @@ class CacheUserInfo {
     return fileContent;
   }
 
-  newFileUserInfo(String uid, BuildContext context, {Map info}) async {
+  ///Create new cache file
+  newFileUserInfo(String uid, BuildContext context,
+      {@required Map info}) async {
     Directory _directory = await getApplicationDocumentsDirectory();
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     jsonFile = File(_directory.path + "/" + fileName);
     Map _content;
-    info == null
-        ? await Firestore.instance
-            .collection("User")
-            .document("th")
-            .collection("users")
-            .document(uid)
-            .get()
-            .then((value) {
-            _content = {
-              "uid": uid,
-              "pName": value['pName'],
-              "img": value['img'],
-              "birthday": value['birthday'],
-              "gender": value['gender'].toString(),
-              'region': value['region']
-            };
-          })
-        : _content = info;
+    _content = info;
     authenInfo.pName = _content['pName'];
     authenInfo.img = _content['img'];
     jsonFile.createSync();
     jsonFile.writeAsStringSync(jsonEncode(_content));
   }
 
-  Future<bool> documentExist(String uid, BuildContext context,
+  ///if document exists then create new file Return doc.exists
+  Future<bool> docExistsThenNewFile(String uid, BuildContext context,
       {String region}) async {
     String reg = region ?? await authService.getRegion(uid);
     var doc;
@@ -88,7 +77,8 @@ class CacheUserInfo {
     return (doc?.exists ?? false) && reg != '' && reg != null;
   }
 
-  //first call func---------------------------
+  ///Create cache if file and userdata does not exist then get file
+  ///Get file if cache file and userdata already exist
   userInfo(String uid, BuildContext context, {Map info}) async {
     bool _hasFile = await hasFile();
     if (_hasFile == false)
@@ -96,6 +86,4 @@ class CacheUserInfo {
     else
       getUserInfo();
   }
-  //------------------------------------------
-
 }

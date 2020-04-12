@@ -156,7 +156,7 @@ class AuthService {
       var uid = curUser.user.uid;
       await updateToken(uid);
 
-      if (await cacheUser.documentExist(uid, context,
+      if (await cacheUser.docExistsThenNewFile(uid, context,
           region: authenInfo?.region ?? null))
         navigatorReplace(context, AuthenPage());
       else
@@ -195,7 +195,7 @@ class AuthService {
         var uid = curUser.user.uid;
         await updateToken(uid);
 
-        if (await cacheUser.documentExist(uid, context,
+        if (await cacheUser.docExistsThenNewFile(uid, context,
             region: doc?.data['region'] ?? null))
           navigatorReplace(context, AuthenPage());
         else
@@ -228,7 +228,7 @@ class AuthService {
         var uid = curUser.user.uid;
         await updateToken(uid);
 
-        if (await cacheUser.documentExist(uid, context))
+        if (await cacheUser.docExistsThenNewFile(uid, context))
           navigatorReplace(context, AuthenPage());
         else
           navigatorReplace(context, CreateProfile1());
@@ -254,7 +254,7 @@ class AuthService {
         var uid = curUser.user.uid;
         await updateToken(uid);
 
-        if (await cacheUser.documentExist(uid, context))
+        if (await cacheUser.docExistsThenNewFile(uid, context))
           navigatorReplace(context, AuthenPage());
         else
           navigatorReplace(context, CreateProfile1());
@@ -279,7 +279,7 @@ class AuthService {
       var uid = curUser.user.uid;
       await updateToken(curUser.user.uid);
 
-      if (await cacheUser.documentExist(uid, context))
+      if (await cacheUser.docExistsThenNewFile(uid, context))
         navigatorReplace(context, AuthenPage());
       else
         navigatorReplace(context, CreateProfile1());

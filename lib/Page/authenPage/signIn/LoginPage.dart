@@ -9,6 +9,8 @@ import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
+import '../../codelab/codelab_main.dart';
+
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
   @override
@@ -259,7 +261,40 @@ class _LoginPageState extends State<LoginPage> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   LoginOtherMethod()));
-                                    })),
+                                    })
+                                    ),
+                              //LAB LAB LAB LAB LAB LAB LAB LAB LAB LAB LAB LAB LAB
+                              InkWell(
+                                child: FlatButton(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.build,
+                                          color: Colors.white,
+                                          size: a.width / 20,
+                                        ),
+                                        SizedBox(width: 5.0),
+                                        Text(
+                                          'Code Lab',
+                                          style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              color: Colors.white,
+                                              fontSize: a.width / 12,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CodeLab()));
+                                    })
+                                    ),
                           ],
                         ),
                       ),
