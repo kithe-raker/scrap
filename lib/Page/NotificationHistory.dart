@@ -231,25 +231,30 @@ class _NotificationHistoryState extends State<NotificationHistory> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              doc.data['writer'] == 'ไม่ระบุตัวตน'
-                                  ? 'ใครบางคน'
-                                  : '@' + doc.data['writer'],
-                              style: TextStyle(
-                                  fontSize: a.width / 15,
-                                  color: doc.data['writer'] == 'ไม่ระบุตัวตน'
-                                      ? Colors.white
-                                      : Color(0xff26A4FF)),
-                            ),
-                            Text(
-                              'ปากระดาษใส่คุณ',
-                              style: TextStyle(
-                                  fontSize: a.width / 15,
-                                  color: Colors.grey[300]),
-                            ),
-                          ],
+                        SizedBox(
+                          width: a.width/1.2,
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(
+                                child: Text(
+                                  doc.data['writer'] == 'ไม่ระบุตัวตน'
+                                      ? 'ใครบางคน'
+                                      : '@' + doc.data['writer'],
+                                  style: TextStyle(
+                                      fontSize: a.width / 15,
+                                      color: doc.data['writer'] == 'ไม่ระบุตัวตน'
+                                          ? Colors.white
+                                          : Color(0xff26A4FF)),
+                                ),
+                              ),
+                              Text(
+                                'ปากระดาษใส่คุณ',
+                                style: TextStyle(
+                                    fontSize: a.width / 15,
+                                    color: Colors.grey[300]),
+                              ),
+                            ],
+                          ),
                         ),
                         Text(
                           '${doc.data['time']} ${doc.data['date']}',

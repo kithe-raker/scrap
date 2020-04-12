@@ -167,7 +167,16 @@ class _AboutState extends State<About> {
                                     )
                                   ],
                                 ),
-                                Column(
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: a.width / 1.1,
+                                padding: EdgeInsets.all(a.width/21),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     InkWell(
                                       child: Container(
@@ -220,10 +229,8 @@ class _AboutState extends State<About> {
                                       },
                                     )
                                   ],
-                                )
-                              ],
-                            ),
-                          )
+                                ),
+                              ))
                         ],
                       ),
                     )

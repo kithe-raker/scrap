@@ -280,13 +280,13 @@ class _WriteScrapState extends State<WriteScrap> {
                                           'คุณไม่สามารถปาไปหา"${widget.tID}"ได้');
                                     } else {
                                       Navigator.pop(context);
+                                      scraps.toast('ปาใส่"${widget.tID}"แล้ว');
                                       await scraps.throwTo(
                                           uid: widget.uid,
                                           writer: widget.id,
                                           thrownUID: widget.thrownUID,
                                           text: text,
                                           public: public);
-                                      scraps.toast('ปาใส่"${widget.tID}"แล้ว');
                                     }
                                   }
                                 },

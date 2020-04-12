@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +23,7 @@ class _MainPageState extends State<MainPage> {
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
   JsonConverter jsonConverter = JsonConverter();
   ImgCacheManager imgCacheManager = ImgCacheManager();
+  DocumentSnapshot appInfo;
   initLocalMessage() {
     var android = AndroidInitializationSettings('noti_ic');
     var ios = IOSInitializationSettings();
@@ -80,31 +80,21 @@ class _MainPageState extends State<MainPage> {
         .get()
         .then((doc) {
       close = doc.data['close'];
+      appInfo = doc;
     });
-    return close;
+    final uid = await Provider.of(context).auth?.currentUser() ?? '';
+    return close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }
 
   Future<bool> versionChecker() async {
-    String recent = '1.0.3', incoming;
-    await Firestore.instance
-        .collection('App')
-        .document('info')
-        .get()
-        .then((doc) {
-      incoming = doc.data['version'];
-    });
-    return recent == incoming;
+    String recent = '1.1.0', incoming;
+    bool isIOS = Platform.isIOS;
+    isIOS
+        ? incoming = appInfo['versions']['IOS']
+        : incoming = appInfo['versions']['android'];
+    final uid = await Provider.of(context).auth?.currentUser() ?? '';
+    return recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }
-
-  checkAuth() async {
-    if (await FirebaseAuth.instance.currentUser() != null) {}
-  }
-
-  // getCache()async {
-  //   List friends = [];
-  //   friends = await jsonConverter.readContents();
-  //   imgCacheManager.getSingleFile(url);
-  // }
 
   @override
   void initState() {

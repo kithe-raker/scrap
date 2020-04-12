@@ -5,8 +5,8 @@ import 'package:scrap/services/jsonConverter.dart';
 class FriendManager {
   JsonConverter jsonConverter = JsonConverter();
 
-  initFriend(String uid) async {
-    await Firestore.instance
+  initFriend(String uid) {
+    Firestore.instance
         .collection('Users')
         .document(uid)
         .collection('info')
@@ -25,7 +25,7 @@ class FriendManager {
           .document(uid)
           .get()
           .then((doc) async {
-        await getInfo(fID, uid, doc.data['id']);
+        getInfo(fID, uid, doc.data['id']);
       });
     }
     await jsonConverter.writeContent(listm: fID);
@@ -58,8 +58,8 @@ class FriendManager {
     });
   }
 
-  getInfo(List list, String uid, String name) async {
-    await Firestore.instance
+  getInfo(List list, String uid, String name) {
+    Firestore.instance
         .collection('Users')
         .document(uid)
         .collection('info')

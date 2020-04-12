@@ -12,12 +12,11 @@ class _ArrowBackState extends State<ArrowBack> {
     return Container(
         color: Colors.black,
         width: a.width,
-        
         child: Column(children: <Widget>[
           Container(
               color: Colors.black,
               width: a.width,
-              height: a.height / 6,
+              height: a.height / 8,
               child: Padding(
                   padding: EdgeInsets.only(
                       top: a.width / 15,

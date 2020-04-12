@@ -386,12 +386,7 @@ class _FriendListState extends State<FriendList> {
               width: a.width,
               decoration: BoxDecoration(
                   color: Color(0xff282828),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                    bottomRight: Radius.circular(16.0),
-                    bottomLeft: Radius.circular(16.0),
-                  )),
+                  borderRadius: BorderRadius.circular(16)),
               child: Padding(
                 padding: EdgeInsets.only(
                   top: 10,
@@ -453,8 +448,9 @@ class _FriendListState extends State<FriendList> {
                         ],
                       ),
                       Container(
-                        width: a.width / 6.4,
-                        height: a.width / 6.4,
+                        margin: EdgeInsets.only(right: 2),
+                        width: a.width / 6.2,
+                        height: a.width / 6.2,
                         decoration: BoxDecoration(
                             // color: Colors.orange,
                             borderRadius: BorderRadius.circular(a.width),

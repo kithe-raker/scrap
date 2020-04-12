@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class LongPaper extends StatefulWidget {
   final Map scrap;
@@ -50,7 +51,9 @@ class _LongPaperState extends State<LongPaper> {
                             style: TextStyle(
                                 fontSize: a.width / 22, color: Colors.grey)),
                         Text(
-                          "เวลา : ${widget.scrap['scap']['time']}",
+                          widget.scrap['scap']['time'].runtimeType == String
+                              ? "เวลา : ${widget.scrap['scap']['time']}"
+                              : "เวลา : ${DateFormat('HH:mm d/M/y').format(widget.scrap['scap']['time'].toDate())}",
                           style: TextStyle(
                               fontSize: a.width / 22, color: Colors.grey),
                         ),
@@ -133,7 +136,10 @@ class _LongPaperState extends State<LongPaper> {
                                         fontSize: a.width / 22,
                                         color: Colors.grey)),
                                 Text(
-                                  "เวลา : ${widget.scrap['scap']['time']}",
+                                  widget.scrap['scap']['time'].runtimeType ==
+                                          String
+                                      ? "เวลา : ${widget.scrap['scap']['time']}"
+                                      : "เวลา : ${DateFormat('HH:mm d/M/y').format(widget.scrap['scap']['time'].toDate())}",
                                   style: TextStyle(
                                       fontSize: a.width / 22,
                                       color: Colors.grey),
