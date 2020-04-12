@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 
 class Servicedoc extends StatefulWidget {
-  final bool regis;
-  Servicedoc({this.regis = false});
   @override
   _ServicedocState createState() => _ServicedocState();
 }
@@ -62,58 +58,7 @@ class _ServicedocState extends State<Servicedoc> {
                               fontWeight: FontWeight.bold,
                               fontSize: a.width / 20),
                         ),
-                      ),
-                      widget.regis
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Theme(
-                                  data: Theme.of(context).copyWith(
-                                    unselectedWidgetColor: Colors.black,
-                                  ),
-                                  child: Checkbox(
-                                      value: acp ?? false,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          acp = val;
-                                        });
-                                      }),
-                                ),
-                                Text(
-                                  'ฉันยอมรับตามข้อกำหนดการใช้บริการทั้งหมด',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: a.width / 20),
-                                ),
-                                SizedBox(
-                                  width: a.width / 32,
-                                )
-                              ],
-                            )
-                          : SizedBox(),
-                      widget.regis
-                          ? Align(
-                              alignment: Alignment.centerRight,
-                              child: InkWell(
-                                  child: Container(
-                                    margin:
-                                        EdgeInsets.only(right: 32, bottom: 32),
-                                    padding:
-                                        EdgeInsets.fromLTRB(24, 12, 24, 12),
-                                    color: acp ?? false
-                                        ? Colors.blue[200]
-                                        : Colors.grey[350],
-                                    child: Text(
-                                      'เสร็จสิ้น',
-                                      style: TextStyle(fontSize: a.width / 20),
-                                    ),
-                                  ),
-                                  onTap: acp ?? false
-                                      ? () async {
-                                          await accept();
-                                        }
-                                      : null))
-                          : SizedBox()
+                      ),                
                     ],
                   ),
                 )
@@ -124,19 +69,5 @@ class _ServicedocState extends State<Servicedoc> {
         ),
       ),
     );
-  }
-
-  accept() async {
-    final uid = await Provider.of(context).auth.currentUser();
-    setState(() {
-      loading = true;
-    });
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .updateData({'accept': true});
-    setState(() {
-      loading = false;
-    });
   }
 }

@@ -25,10 +25,21 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>fb152617042778122</string>
+				 <string>twitterkit-"consumerkey"</string>
 				<string>com.googleusercontent.apps.273076153449-05fbevf8cmcld0v6ebt5q7fhic0mmoo1</string>
 			</array>
 		</dict>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>twitter</string>
+		<string>twitterauth</string>
+	</array>
+	<key>FacebookAppID</key>
+	<string>152617042778122</string>
+	<key>FacebookDisplayName</key>
+	<string>scrap</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>

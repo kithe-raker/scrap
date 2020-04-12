@@ -1,17 +1,15 @@
+import 'dart:async';
 import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/LoginID.dart';
+import 'package:scrap/Page/authenPage/signIn/LoginOtherMethod.dart';
+import 'package:scrap/Page/authenPage/signup/SelectSignUp.dart';
 
-import 'package:scrap/Page/signup/SignUpMail.dart';
-import 'package:scrap/function/cacheManage/friendManager.dart';
+import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
-import 'package:scrap/widget/warning.dart';
+import '../../codelab/codelab_main.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -20,101 +18,22 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String _email, _password, token;
+  String pName, _password;
   bool loading = false;
   var _key = GlobalKey<FormState>();
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-  FriendManager friendManager = FriendManager();
-
-  login() async {
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _email, password: _password)
-          .then((value) async {
-        updateToken(value.user.uid);
-        await friendManager.initFriend(value.user.uid);
-      });
-    } catch (e) {
-      setState(() {
-        loading = false;
-      });
-      switch (e.toString()) {
-        case 'PlatformException(ERROR_INVALID_EMAIL, The email address is badly formatted., null)':
-          Dg().warning(
-            context,
-            'กรุณาตรวจสอบ"อีเมล"ของท่าน',
-            "ขออภัยการเข้าสู่ระบบผิดพลาด",
-          );
-          break;
-        case 'PlatformException(ERROR_USER_NOT_FOUND, There is no user record corresponding to this identifier. The user may have been deleted., null)':
-          Dg().warning(
-            context,
-            'ไม่พบบัญชีผู้ใช้กรุณาตรวจสอบใหม่',
-            "ขออภัยการเข้าสู่ระบบผิดพลาด",
-          );
-          break;
-        case 'PlatformException(ERROR_WRONG_PASSWORD, The password is invalid or the user does not have a password., null)':
-          Dg().warning(
-            context,
-            'กรุณาตรวจสอบรหัสผ่านของท่าน',
-            "ขออภัยการเข้าสู่ระบบผิดพลาด",
-          );
-          break;
-        case "'package:firebase_auth/src/firebase_auth.dart': Failed assertion: line 224 pos 12: 'email != null': is not true.":
-          Dg().warning(
-            context,
-            'กรุณากรอกอีเมลและรหัสผ่าน',
-            "ขออภัยการเข้าสู่ระบบผิดพลาด",
-          );
-          break;
-        default:
-          Dg().warning(
-            context,
-            'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อต่ออินเทอร์เน็ต',
-            "ขออภัยการเข้าสู่ระบบผิดพลาด",
-          );
-          break;
-      }
-      print(e.toString());
-    }
-  }
-
-  updateToken(String uid) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('token')
-        .getDocuments()
-        .then((docs) async {
-      List data = docs.documents;
-      if (data[0].documentID != token) {
-        await Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('token')
-            .document(data[0].documentID)
-            .delete();
-        await Firestore.instance
-            .collection('Users')
-            .document(uid)
-            .collection('token')
-            .document(token)
-            .setData({'token': token});
-      }
-    });
-  }
-
-  void getToken() {
-    firebaseMessaging.getToken().then((String tken) {
-      assert(tken != null);
-      token = tken;
-    });
-  }
+  StreamSubscription loadStatus;
 
   @override
   void initState() {
-    getToken();
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
   }
 
   @override
@@ -180,13 +99,13 @@ class _LoginPageState extends State<LoginPage> {
                                 child: Row(
                                   children: <Widget>[
                                     Icon(
-                                      Icons.mail,
+                                      Icons.person,
                                       color: Colors.white,
                                       size: a.width / 22,
                                     ),
                                     SizedBox(width: 5.0),
                                     Text(
-                                      'อีเมล',
+                                      'นามปากกา',
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: a.width / 20,
@@ -210,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: 'example@mail.com',
+                                  hintText: 'นามปากกา',
                                   hintStyle: TextStyle(
                                     color: Colors.grey[500],
                                     fontWeight: FontWeight.w900,
@@ -219,17 +138,11 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 validator: (val) {
                                   return val.trim() == ""
-                                      ? Taoast()
-                                          .toast("โปรดใส่อีเมลและรหัสผ่าน")
-                                      : val.contains('@') &&
-                                              val.contains(
-                                                  '.com', val.length - 4)
-                                          ? null
-                                          : Taoast().toast(
-                                              "โปรดเขียนอีเมลให้ถูกต้อง");
+                                      ? Taoast().toast("กรุณาใส่นามปากกาของคุณ")
+                                      : null;
                                 },
                                 onSaved: (val) {
-                                  _email = val.trim();
+                                  pName = val.trim();
                                 },
                               ),
                             ),
@@ -239,13 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                                   top: a.width / 20,
                                   left: a.width / 20,
                                   bottom: a.width / 80),
-                              child:
-                                  /*Text(
-                                      "Password",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: a.width / 20 , fontWeight: FontWeight.w600),
-                                    )*/
-                                  Row(
+                              child: Row(
                                 children: <Widget>[
                                   Icon(
                                     Icons.lock,
@@ -321,12 +228,8 @@ class _LoginPageState extends State<LoginPage> {
                                 onTap: () async {
                                   if (_key.currentState.validate()) {
                                     _key.currentState.save();
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    await login();
-                                  } else {
-                                    print('nope');
+                                    authService.signInWithPenName(context,
+                                        penname: pName, password: _password);
                                   }
                                 }),
                             InkWell(
@@ -336,13 +239,13 @@ class _LoginPageState extends State<LoginPage> {
                                           MainAxisAlignment.center,
                                       children: <Widget>[
                                         Icon(
-                                          Icons.person,
+                                          Icons.devices_other,
                                           color: Colors.white,
                                           size: a.width / 20,
                                         ),
                                         SizedBox(width: 5.0),
                                         Text(
-                                          'เข้าสู่ระบบด้วยไอดี',
+                                          'เข้าสู่ระบบด้วยวิธีอื่น',
                                           style: TextStyle(
                                               decoration:
                                                   TextDecoration.underline,
@@ -356,8 +259,42 @@ class _LoginPageState extends State<LoginPage> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => LoginID()));
-                                    })),
+                                              builder: (context) =>
+                                                  LoginOtherMethod()));
+                                    })
+                                    ),
+                              //LAB LAB LAB LAB LAB LAB LAB LAB LAB LAB LAB LAB LAB
+                              InkWell(
+                                child: FlatButton(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.build,
+                                          color: Colors.white,
+                                          size: a.width / 20,
+                                        ),
+                                        SizedBox(width: 5.0),
+                                        Text(
+                                          'Code Lab',
+                                          style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              color: Colors.white,
+                                              fontSize: a.width / 12,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CodeLab()));
+                                    })
+                                    ),
                           ],
                         ),
                       ),
@@ -396,7 +333,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SignUpMail()));
+                                  builder: (context) => SelectSignUp()));
                         },
                       ),
                     )

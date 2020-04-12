@@ -10,9 +10,8 @@ import 'package:scrap/Page/setting/FeedbackPage.dart';
 import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
 import 'package:scrap/Page/setting/blockingList.dart';
 import 'package:scrap/Page/setting/History.dart';
+import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
-import 'package:scrap/services/auth.dart';
-import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/LongPaper.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -1464,10 +1463,7 @@ class _ProfileState extends State<Profile> {
             context, MaterialPageRoute(builder: (context) => About()));
         break;
       case Constans.SignOut:
-        Auth auth = Provider.of(context).auth;
-        await auth.signOut().then((value) {
-          Navigator.pop(context);
-        });
+         authService.signOut(context);
         break;
       case Constans.History:
         Navigator.push(
