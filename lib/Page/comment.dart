@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:scrap/widget/Arrow_back.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Comment extends StatefulWidget {
   @override
@@ -7,204 +8,318 @@ class Comment extends StatefulWidget {
 }
 
 class _CommentState extends State<Comment> {
+  var tx = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    Size a = MediaQuery.of(context).size;
+    ScreenUtil.init(context, width: 750, height: 1334, allowFontScaling: false);
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: <Widget>[
-          Column(
+      body: SafeArea(
+        child: Container(
+          height: ScreenUtil.screenHeightDp,
+          width: ScreenUtil.screenWidthDp,
+          color: Colors.black,
+          child: Stack(
             children: <Widget>[
               Container(
-                width: a.width,
-                height: a.width / 3.5,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                margin: EdgeInsets.only(top: ScreenUtil.screenWidthDp / 5.5),
+                width: ScreenUtil.screenWidthDp,
+                height: ScreenUtil.screenHeightDp -
+                    ((ScreenUtil.screenWidthDp / 5.5) * 2),
+                color: Colors.black,
+                padding: EdgeInsets.only(
+                  // top: ScreenUtil.screenHeightDp / 50,
+                  right: ScreenUtil.screenWidthDp / 20,
+                  left: ScreenUtil.screenWidthDp / 20,
+                  bottom: ScreenUtil.screenHeightDp / 50,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Container(
-                        child: Column(children: <Widget>[
-                      Container(
-                          color: Colors.black,
-                          width: a.width / 4,
-                          height: a.height / 7,
-                          child: Padding(
-                              padding: EdgeInsets.only(
-                                  top: a.width / 15,
-                                  right: a.width / 25,
-                                  left: a.width / 25,
-                                  bottom: a.width / 30.0),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        InkWell(
-                                          //back btn
-                                          child: Container(
-                                            width: a.width / 7,
-                                            height: a.width / 10,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        a.width),
-                                                color: Colors.white),
-                                            child: Icon(Icons.arrow_back,
-                                                color: Colors.black,
-                                                size: a.width / 15),
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(
-                                              context,
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ), //back btn
-                                  ]))),
-                    ])),
-                    Container(
-                      alignment: Alignment.topLeft,
-                      padding: EdgeInsets.only(
-                        top: a.width / 15,
-                        right: a.width / 25,
-                      ),
-                      child: Text(
-                        "ความเห็น",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                            color: Colors.white, fontSize: a.width / 10),
+                    Expanded(
+                      child: ListView(
+                        physics: BouncingScrollPhysics(),
+                        children: <Widget>[
+                          InkWell(
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  top: ScreenUtil.screenHeightDp / 55,
+                                  bottom: ScreenUtil.screenHeightDp / 55),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.replay,
+                                    color: Colors.white60,
+                                    size: ScreenUtil().setSp(40),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    'ดูความคิดเห็นก่อนหน้า',
+                                    style: TextStyle(
+                                        color: Colors.white60,
+                                        fontSize: ScreenUtil().setSp(40),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          commentChip(
+                              'ไอแดงลูกพ่อ',
+                              'https://storage.thaipost.net/main/uploads/photos/big/20191011/image_big_5da028c93088d.jpg',
+                              'สู้ไปด้วยกัน',
+                              '10:58 18 มีนาคม 2020'),
+                          commentChip(
+                              'ลุงพรชัย',
+                              'https://www.thairath.co.th/media/dFQROr7oWzulq5FZYkSMwXE9A1XvNQQeX9o5eqVV9bVBdBnFOJuCUoo7rtfwrfCvDJi.jpg',
+                              'ขอให้ประเทศไทยผ่านวิกฤตนี้ไปได้ค่ะ',
+                              '15 ชั่วโมงที่แล้ว'),
+                          commentChip(
+                              'ตู่มาแว้ว',
+                              'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRUBheK-Lvo4EQG5V7gWFgOaQBN9DlQX8ZhMiop3Vkh9jIW0CMr',
+                              'ผมจะดูแลประชาชนให้ดีที่สุดครับ',
+                              '2 นาทีที่แล้ว'),
+                          commentChip(
+                              'บิ้กป้อม',
+                              'https://siamrath.co.th/files/styles/1140/public/img/20190811/1bebd9268892945e74b2ba669a881b7071250b816cb97cc053111463718ccb5c.jpg?itok=kRopIDa0',
+                              'สู้ ๆ ตู่น้องพี่',
+                              'เมื่อสักครู่'),
+                          SizedBox(height: ScreenUtil.screenHeightDp / 55)
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-              Container(
+              Positioned(
+                top: 0,
+                left: 0,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    lconta("ชอบ", "1", 0xff13AD8F),
-                    lconta("ไม่ชอบ", "1", 0xffAD1313),
-                    lconta("เฉยๆ", "1", 0xff656565)
+                    Container(
+                      color: Colors.black,
+                      width: ScreenUtil.screenWidthDp,
+                      height: ScreenUtil.screenWidthDp / 5.5,
+                      padding: EdgeInsets.only(
+                        top: ScreenUtil.screenHeightDp / 80,
+                        right: ScreenUtil.screenWidthDp / 20,
+                        left: ScreenUtil.screenWidthDp / 20,
+                        bottom: ScreenUtil.screenHeightDp / 80,
+                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            //Logo
+                            InkWell(
+                              child: Container(
+                                width: ScreenUtil.screenWidthDp / 7,
+                                height: ScreenUtil.screenWidthDp / 10,
+                                margin: EdgeInsets.only(
+                                    right: ScreenUtil.screenWidthDp / 20),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        ScreenUtil.screenWidthDp),
+                                    color: Colors.white),
+                                child: Icon(Icons.arrow_back,
+                                    color: Colors.black,
+                                    size: ScreenUtil.screenWidthDp / 15),
+                              ),
+                              onTap: () {
+                                Navigator.pop(
+                                  context,
+                                );
+                              },
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  'กล่องความเห็น 1',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: ScreenUtil().setSp(46),
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '12,405 ความคิดเห็น',
+                                  style: TextStyle(
+                                      height: 0.6,
+                                      color: Color(0xff757575),
+                                      fontSize: ScreenUtil().setSp(35),
+                                      fontWeight: FontWeight.normal),
+                                ),
+                              ],
+                            ),
+                          ]),
+                    ),
                   ],
                 ),
               ),
-              Container(
-                width: a.width,
-                height: a.height / 1.28,
-                child: ListView(
+              Positioned(
+                bottom: 0,
+                left: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    card("@somename","10:58"," 18 March 2020","หน้ากินจุง","ชอบ", 0xff13AD8F),
-                     card("@somename","10:58"," 18 March 2020","ลงเหี้ยอะไรตอนนี้","ไม่ชอบ", 0xffAD1313),
-                      card("@somename","10:58"," 18 March 2020","อีกไหมคับ","เฉยๆ", 0xff656565),
+                    Container(
+                      width: ScreenUtil.screenWidthDp,
+                      height: ScreenUtil.screenWidthDp / 6.5,
+                      padding: EdgeInsets.only(
+                        top: ScreenUtil.screenWidthDp / 50,
+                        right: ScreenUtil.screenWidthDp / 20,
+                        left: ScreenUtil.screenWidthDp / 20,
+                        bottom: ScreenUtil.screenWidthDp / 50,
+                      ),
+                      decoration: BoxDecoration(
+                          color: Color(0xff272727),
+                          borderRadius: BorderRadius.only(
+                            topLeft:
+                                Radius.circular(ScreenUtil.screenWidthDp / 40),
+                            topRight:
+                                Radius.circular(ScreenUtil.screenWidthDp / 40),
+                          )),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                height: ScreenUtil.screenHeightDp / 15,
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.only(
+                                  right: ScreenUtil.screenWidthDp / 20,
+                                  left: ScreenUtil.screenWidthDp / 20,
+                                ),
+                                decoration: BoxDecoration(
+                                    color: Color(0xff313131),
+                                    borderRadius: BorderRadius.circular(
+                                        ScreenUtil.screenWidthDp / 15),
+                                    border: Border.all(
+                                      color: Colors.white38,
+                                      width: 0.2,
+                                    )),
+                                child: TextField(
+                                  cursorColor: Colors.grey,
+                                  controller: tx,
+                                  maxLines: null,
+                                  // textInputAction: TextInputAction.newline,
+                                  style: TextStyle(
+                                    fontSize: ScreenUtil().setSp(36),
+                                    color: Colors.grey[350],
+                                  ),
+                                  decoration: InputDecoration(
+                                    border:
+                                        InputBorder.none, //สำหรับใหเส้นใต้หาย
+                                    hintText: 'เขียนความคิดเห็น',
+                                    hintStyle: TextStyle(
+                                      fontSize: ScreenUtil().setSp(36),
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              child: Container(
+                                  margin: EdgeInsets.only(
+                                      left: ScreenUtil.screenWidthDp / 30),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.send,
+                                      color: Colors.white70,
+                                      size: ScreenUtil().setSp(45),
+                                    ),
+                                  )),
+                            ),
+                          ]),
+                    ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
-          Container(
-            width: a.width,
-            height: a.width / 5,
-            color: Color(0xff272727),
-            margin: EdgeInsets.only(top: a.height / 1.1),
-            alignment: Alignment.center,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                      top: a.width / 25,
-                      bottom: a.width / 25,
-                      left: a.width / 30),
-                  width: a.width / 1.2,
-                  height: a.width / 12,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(a.width),
-                      border: Border.all(color: Color(0xff707070))),
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                      padding: EdgeInsets.only(left: a.width / 20),
-                      child: Text(
-                        "แสดงความคิดเห็น",
-                        style: TextStyle(
-                            fontSize: a.width / 18, color: Color(0xff707070)),
-                      )),
-                ),
-                Container(
-                    margin: EdgeInsets.only(left: a.width / 20),
-                    child: Icon(Icons.send, color: Colors.white))
-              ],
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
 
-  lconta(String text01, String num01, int color) {
-    Size a = MediaQuery.of(context).size;
+  Widget commentChip(String name, String img, String text, String time) {
     return Container(
-        width: a.width / 5,
-        height: a.width / 15,
-        decoration: BoxDecoration(
-            color: Color(color), borderRadius: BorderRadius.circular(a.width)),
-        margin: EdgeInsets.only(left: a.width / 20),
-        alignment: Alignment.center,
-        child: Text(text01 + " :" + num01,
-            style: TextStyle(color: Colors.white, fontSize: a.width / 20)));
-  }
-
-  card(String text001,text002,text003,text004,text005,int color001) {
-    Size a = MediaQuery.of(context).size;
-    return Container(
-      margin: EdgeInsets.only(left: a.width / 25,right:a.width / 25,bottom: a.width / 25),
-      padding: EdgeInsets.only(top:a.width / 30,bottom: a.width / 30,left: a.width / 30),
+      margin: EdgeInsets.only(bottom: ScreenUtil.screenHeightDp / 55),
+      padding: EdgeInsets.only(
+        top: ScreenUtil.screenWidthDp / 20,
+        right: ScreenUtil.screenWidthDp / 20,
+        left: ScreenUtil.screenWidthDp / 20,
+        bottom: ScreenUtil.screenWidthDp / 20,
+      ),
       decoration: BoxDecoration(
-          color: Color(0xff272727),
-          borderRadius: BorderRadius.circular(a.width / 30)),
-      width: a.width,
-      height: a.width / 3.2,
-      child: Row(
+          color: Color(0xff161616),
+          borderRadius: BorderRadius.circular(ScreenUtil.screenWidthDp / 30)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Column(
+          Row(
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(right: a.width/40),
-                    width: a.width / 8,
-                    height: a.width / 8,
-                    decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(a.width),
-                        border: Border.all(color: Colors.white)),
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.circular(ScreenUtil.screenWidthDp),
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 0.75,
+                    )),
+                width: ScreenUtil.screenWidthDp / 9,
+                height: ScreenUtil.screenWidthDp / 9,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(ScreenUtil.screenWidthDp),
+                  child: CachedNetworkImage(
+                    fadeInDuration: Duration(milliseconds: 100),
+                    imageUrl: img,
+                    fit: BoxFit.cover,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                    Text(text001,style: TextStyle(color:Color(0xff26A4FF),fontSize: a.width/18,)),
-                    Text(text002+text003,style: TextStyle(color: Colors.white,fontSize: a.width/18,),)
-                  ],)
-                ],
+                ),
               ),
-              Container(     
-                width: a.width/2,
-                height: a.width/10,
-                alignment: Alignment.bottomLeft,
-                child: Text(text004,style: TextStyle(color: Colors.white,fontSize: a.width/15),))
+              SizedBox(
+                width: ScreenUtil.screenWidthDp / 40,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    '@$name',
+                    style: TextStyle(
+                        height: 0.95,
+                        color: Color(0xff26A4FF),
+                        fontSize: ScreenUtil().setSp(42)),
+                  ),
+                  Text(
+                    time,
+                    style: TextStyle(
+                        height: 0.95,
+                        color: Colors.white54,
+                        fontSize: ScreenUtil().setSp(35)),
+                  )
+                ],
+              )
             ],
           ),
-          Container(
-            alignment: Alignment.centerRight,
-            width: a.width/2.59,
-            height: a.width/8,
-          
-            child: Container(
-              width: a.width/7.5,
-            height: a.width/15,
-            decoration: BoxDecoration(color: Color(color001),borderRadius: BorderRadius.only(topLeft: Radius.circular(a.width),bottomLeft:  Radius.circular(a.width))),
-            alignment: Alignment.center,
-            child: Text(text005,style: TextStyle(color: Colors.white,fontSize: a.width/20),),
-            ),
+          SizedBox(
+            height: ScreenUtil.screenHeightDp / 70,
+          ),
+          Text(
+            text,
+            style: TextStyle(
+                color: Colors.white, fontSize: ScreenUtil().setSp(42)),
           )
         ],
       ),
