@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-class MainLogin extends StatefulWidget {
+class PennameLogin extends StatefulWidget {
   @override
-  _MainLoginState createState() => _MainLoginState();
+  _PennameLoginState createState() => _PennameLoginState();
 }
 
-class _MainLoginState extends State<MainLogin> {
+class _PennameLoginState extends State<PennameLogin> {
   String loginMode = 'phone';
 
   changeLogin(String mode) {
@@ -32,34 +31,52 @@ class _MainLoginState extends State<MainLogin> {
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
+                    color: Colors.black,
                     width: ScreenUtil.screenWidthDp,
                     height: ScreenUtil().setHeight(130),
                     padding: EdgeInsets.only(
                       top: ScreenUtil().setHeight(15),
-                      right: ScreenUtil().setWidth(70),
-                      left: ScreenUtil().setWidth(70),
+                      right: ScreenUtil().setWidth(20),
+                      left: ScreenUtil().setWidth(20),
                       bottom: ScreenUtil().setHeight(15),
                     ),
                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           GestureDetector(
                             child: Container(
-                              height: ScreenUtil().setHeight(80),
-                              alignment: Alignment.center,
-                              child: Image.asset(
-                                'assets/SCRAP.png',
-                              ),
+                              width: ScreenUtil().setWidth(100),
+                              height: ScreenUtil().setHeight(75),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                      ScreenUtil.screenWidthDp),
+                                  color: Colors.white),
+                              child: Icon(Icons.arrow_back,
+                                  color: Colors.black,
+                                  size: ScreenUtil().setSp(48)),
                             ),
                             onTap: () {
                               Navigator.pop(
                                 context,
                               );
                             },
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: ScreenUtil().setWidth(60),
+                            ),
+                            child: Text(
+                              'ลงชื่อเข้าใช้',
+                              style: TextStyle(
+                                height: 1.0,
+                                color: Colors.white,
+                                fontSize: ScreenUtil().setSp(45),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ]),
                   ),
@@ -80,117 +97,77 @@ class _MainLoginState extends State<MainLogin> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      RichText(
-                        text: TextSpan(
-                            style: TextStyle(
-                              fontFamily: 'ThaiSans',
-                              height: 1.0,
-                              color: Colors.white,
-                              fontSize: ScreenUtil().setSp(40),
-                            ),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'สวัสดี!',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: RichText(
+                          text: TextSpan(
+                              style: TextStyle(
+                                fontFamily: 'ThaiSans',
+                                height: 0.9,
+                                color: Colors.white,
+                                fontSize: ScreenUtil().setSp(40),
                               ),
-                              TextSpan(
-                                text:
-                                    ' เหล่านักเขียน นักอ่าน ทุกท่าน \nโลกของงานเขียนรอท่านอยู่หลังจากนี้ไป',
-                              )
-                            ]),
-                      ),
-                      loginMode == 'phone'
-                          ? Container(
-                              width: ScreenUtil.screenWidthDp,
-                              height: ScreenUtil().setHeight(110),
-                              margin: EdgeInsets.only(
-                                top: ScreenUtil().setHeight(30),
-                                bottom: ScreenUtil().setHeight(30),
-                              ),
-                              padding: EdgeInsets.fromLTRB(
-                                  ScreenUtil().setWidth(50),
-                                  ScreenUtil().setHeight(20),
-                                  ScreenUtil().setWidth(50),
-                                  ScreenUtil().setHeight(20)),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenUtil.screenWidthDp),
-                                color: Color(0xff101010),
-                              ),
-                              child: Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Text(
-                                          '+66',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: ScreenUtil().setSp(40),
-                                            fontWeight: FontWeight.normal,
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                            left: ScreenUtil().setWidth(10),
-                                            right: ScreenUtil().setWidth(10),
-                                          ),
-                                          child: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.white,
-                                            size: ScreenUtil().setSp(40),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    VerticalDivider(
-                                      color: Colors.white30,
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        left: ScreenUtil().setWidth(50),
-                                        right: ScreenUtil().setWidth(50),
-                                      ),
-                                      child: Text(
-                                        'หมายเลขโทรศัพท์',
-                                        style: TextStyle(
-                                          color: Colors.white30,
-                                          fontSize: ScreenUtil().setSp(40),
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(
-                              width: ScreenUtil.screenWidthDp,
-                              height: ScreenUtil().setHeight(110),
-                              margin: EdgeInsets.only(
-                                top: ScreenUtil().setHeight(30),
-                                bottom: ScreenUtil().setHeight(30),
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenUtil.screenWidthDp),
-                                color: Color(0xff101010),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '@penname',
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '@tarit.in.th',
                                   style: TextStyle(
-                                    color: Colors.white30,
-                                    fontSize: ScreenUtil().setSp(40),
-                                    fontWeight: FontWeight.normal,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: ScreenUtil().setSp(70),
                                   ),
                                 ),
-                              ),
-                            ),
+                              ]),
+                        ),
+                      ),
                       Container(
                         width: ScreenUtil.screenWidthDp,
                         height: ScreenUtil().setHeight(110),
                         margin: EdgeInsets.only(
+                          top: ScreenUtil().setHeight(15),
+                          bottom: ScreenUtil().setHeight(15),
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(ScreenUtil.screenWidthDp),
+                          color: Color(0xff101010),
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              left: ScreenUtil().setWidth(50),
+                              right: ScreenUtil().setWidth(50),
+                            ),
+                            child: Text(
+                              'Password',
+                              style: TextStyle(
+                                color: Colors.white30,
+                                fontSize: ScreenUtil().setSp(40),
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          child: Text(
+                            'ลืมรหัสผ่าน?',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              height: 1.0,
+                              color: Colors.white70,
+                              fontSize: ScreenUtil().setSp(38),
+                            ),
+                          ),
+                          onTap: () {},
+                        ),
+                      ),
+                      Container(
+                        width: ScreenUtil.screenWidthDp,
+                        height: ScreenUtil().setHeight(110),
+                        margin: EdgeInsets.only(
+                          top: ScreenUtil().setHeight(50),
                           bottom: ScreenUtil().setHeight(25),
                         ),
                         decoration: BoxDecoration(
@@ -209,36 +186,37 @@ class _MainLoginState extends State<MainLogin> {
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        child: Text(
-                          loginMode == 'phone'
-                              ? 'ลงชื่อเข้าใช้ด้วยนามปากกา'
-                              : 'ลงชื่อเข้าใช้ด้วยเบอร์โทรศัพท์',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            height: 1.0,
-                            color: Colors.white70,
-                            fontSize: ScreenUtil().setSp(38),
-                          ),
-                        ),
-                        onTap: () {
-                          changeLogin(
-                              loginMode == 'phone' ? 'penname' : 'phone');
-                        },
-                      ),
+                      // GestureDetector(
+                      //   child: Text(
+                      //     loginMode == 'phone'
+                      //         ? 'ลงชื่อเข้าใช้ด้วยนามปากกา'
+                      //         : 'ลงชื่อเข้าใช้ด้วยเบอร์โทรศัพท์',
+                      //     style: TextStyle(
+                      //       decoration: TextDecoration.underline,
+                      //       height: 1.0,
+                      //       color: Colors.white70,
+                      //       fontSize: ScreenUtil().setSp(38),
+                      //     ),
+                      //   ),
+                      //   onTap: () {
+                      //     changeLogin(
+                      //         loginMode == 'phone' ? 'penname' : 'phone');
+                      //   },
+                      // ),
                     ],
                   ),
                 ),
               ),
               Expanded(
-                flex: 35,
+                flex: 45,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Container(
                       margin: EdgeInsets.only(
                         left: ScreenUtil().setWidth(70),
                         right: ScreenUtil().setWidth(70),
+                        bottom: ScreenUtil().setHeight(70),
                       ),
                       width: ScreenUtil.screenWidthDp,
                       child: Column(
@@ -334,29 +312,6 @@ class _MainLoginState extends State<MainLogin> {
                             ],
                           )
                         ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      width: ScreenUtil.screenWidthDp,
-                      margin:
-                          EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
-                      child: Center(
-                        child: Text(
-                          'created by BualoiTech Co.,Ltd.',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ScreenUtil().setSp(34),
-                          ),
-                        ),
                       ),
                     ),
                   ],
