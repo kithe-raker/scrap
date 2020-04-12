@@ -156,7 +156,7 @@ class AuthService {
       var uid = curUser.user.uid;
       await updateToken(uid);
 
-      if (await cacheUser.documentExist(uid,
+      if (await cacheUser.documentExist(uid, context,
           region: authenInfo?.region ?? null))
         navigatorReplace(context, AuthenPage());
       else
@@ -195,7 +195,7 @@ class AuthService {
         var uid = curUser.user.uid;
         await updateToken(uid);
 
-        if (await cacheUser.documentExist(uid,
+        if (await cacheUser.documentExist(uid, context,
             region: doc?.data['region'] ?? null))
           navigatorReplace(context, AuthenPage());
         else
@@ -228,7 +228,7 @@ class AuthService {
         var uid = curUser.user.uid;
         await updateToken(uid);
 
-        if (await cacheUser.documentExist(uid))
+        if (await cacheUser.documentExist(uid, context))
           navigatorReplace(context, AuthenPage());
         else
           navigatorReplace(context, CreateProfile1());
@@ -254,7 +254,7 @@ class AuthService {
         var uid = curUser.user.uid;
         await updateToken(uid);
 
-        if (await cacheUser.documentExist(uid))
+        if (await cacheUser.documentExist(uid, context))
           navigatorReplace(context, AuthenPage());
         else
           navigatorReplace(context, CreateProfile1());
@@ -279,7 +279,7 @@ class AuthService {
       var uid = curUser.user.uid;
       await updateToken(curUser.user.uid);
 
-      if (await cacheUser.documentExist(uid))
+      if (await cacheUser.documentExist(uid, context))
         navigatorReplace(context, AuthenPage());
       else
         navigatorReplace(context, CreateProfile1());
@@ -309,8 +309,7 @@ class AuthService {
     return token;
   }
 
-  Future<void> setAccount(BuildContext context,
-      {bool withPhone = false}) async {
+  Future<void> setAccount(BuildContext context) async {
     var token = await getToken();
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     var user = await fireAuth.currentUser();
@@ -324,7 +323,7 @@ class AuthService {
     var batch = fireStore.batch();
     batch.setData(
         accRef,
-        withPhone
+        user?.email == null
             ? {
                 'email': uid + '@gmail.com',
                 'password': authenInfo.password,
@@ -349,7 +348,7 @@ class AuthService {
           'created': FieldValue.serverTimestamp(),
         },
         merge: true);
-    cacheUser.newFileUserInfo(uid, info: {
+    cacheUser.newFileUserInfo(uid, context, info: {
       "uid": uid,
       "img": authenInfo.img,
       'pName': authenInfo.pName,
@@ -358,7 +357,7 @@ class AuthService {
       'gender': authenInfo.gender,
     });
     await batch.commit();
-    if (withPhone) {
+    if (user?.email == null) {
       var emailCredent = EmailAuthProvider.getCredential(
           email: uid + '@gmail.com', password: authenInfo.password);
       user.linkWithCredential(emailCredent);

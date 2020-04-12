@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/provider/authen_provider.dart';
 
 class CacheUserInfo {
   File jsonFile;
@@ -32,8 +35,9 @@ class CacheUserInfo {
     return fileContent;
   }
 
-  newFileUserInfo(String uid, {Map info}) async {
+  newFileUserInfo(String uid, BuildContext context, {Map info}) async {
     Directory _directory = await getApplicationDocumentsDirectory();
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     jsonFile = File(_directory.path + "/" + fileName);
     Map _content;
     info == null
@@ -54,12 +58,14 @@ class CacheUserInfo {
             };
           })
         : _content = info;
-
+    authenInfo.pName = _content['pName'];
+    authenInfo.img = _content['img'];
     jsonFile.createSync();
     jsonFile.writeAsStringSync(jsonEncode(_content));
   }
 
-  Future<bool> documentExist(String uid, {String region}) async {
+  Future<bool> documentExist(String uid, BuildContext context,
+      {String region}) async {
     String reg = region ?? await authService.getRegion(uid);
     var doc;
     if (reg != '' && reg != null) {
@@ -70,7 +76,7 @@ class CacheUserInfo {
           .document(uid)
           .get();
       if (doc.exists)
-        await newFileUserInfo(uid, info: {
+        await newFileUserInfo(uid, context, info: {
           "uid": uid,
           "pName": doc['pName'],
           "img": doc['img'],
@@ -83,10 +89,10 @@ class CacheUserInfo {
   }
 
   //first call func---------------------------
-  userInfo(String uid, {Map info}) async {
+  userInfo(String uid, BuildContext context, {Map info}) async {
     bool _hasFile = await hasFile();
     if (_hasFile == false)
-      newFileUserInfo(uid, info: info);
+      newFileUserInfo(uid, context, info: info);
     else
       getUserInfo();
   }

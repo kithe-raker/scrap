@@ -90,7 +90,7 @@ class _MainPageState extends State<MainPage> {
     var user = await fireAuth.currentUser();
     bool docExist = true;
     if (user != null && !await cacheUser.userDataExist(user.uid)) {
-      docExist = await cacheUser.documentExist(user.uid);
+      docExist = await cacheUser.documentExist(user.uid,context);
     }
     return user != null && !docExist;
   }

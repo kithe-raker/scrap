@@ -374,7 +374,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
     authenInfo.img.runtimeType == String
         ? await addImg(uid, authenInfo.img)
         : await uploadImg(authenInfo.img, uid, uid + '_pro0');
-    await authService.setAccount(context, withPhone: authenInfo?.phone != null);
+    await authService.setAccount(context);
     print('creat fin');
     authService.navigatorReplace(context, AuthenPage());
     authService.load.add(false);
