@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/authenPage/AuthenPage.dart';
 import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/function/others/resizeImage.dart';
 import 'package:scrap/provider/authen_provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -40,8 +41,13 @@ class _CreateProfile2State extends State<CreateProfile2> {
 
   Future uploadImg(File img, String uid, String imgNm) async {
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
+    String type = Platform.isAndroid ? 'webp' : 'jpeg';
+    var resizeImg = await resize.resize(image: img, type: type, quality: 40);
+
+    var meta = StorageMetadata(contentType: 'image/$type');
     final StorageReference ref = FirebaseStorage.instance.ref().child(imgNm);
-    final StorageUploadTask task = ref.putFile(img);
+    final StorageUploadTask task = ref.putFile(resizeImg, meta);
+    
     var picUrl = await (await task.onComplete).ref.getDownloadURL();
     authenInfo.img = picUrl;
     await addImg(uid, picUrl);

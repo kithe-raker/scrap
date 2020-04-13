@@ -26,8 +26,11 @@ final twSign = TwitterLogin(
 final cacheUser = CacheUserInfo();
 
 class AuthService {
+  ///[load] is varieble that use for tell the widget whether
+  ///current function is in process or not
   PublishSubject<bool> load = PublishSubject();
 
+  ///For check Accoubt in database whether in [key] has [value] or not
   Future<bool> hasAccount(String key, dynamic value) async {
     var doc = await fireStore
         .collection('Account')
@@ -37,11 +40,13 @@ class AuthService {
     return doc.documents.length > 0;
   }
 
+  ///get user region by [uid] if null return empty String
   Future<String> getRegion(String uid) async {
     var doc = await fireStore.collection('Account').document(uid).get();
     return doc?.data['region'] ?? '';
   }
 
+  ///warning dialog auto set [load] to false ,When was called
   warn(String warning, BuildContext context) {
     load.add(false);
     showDialog(
@@ -66,11 +71,14 @@ class AuthService {
         });
   }
 
+  ///shortcut for [Navigator.pushReplacement] by pass Class is [where]
   void navigatorReplace(BuildContext context, var where) {
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => where));
   }
 
+  ///Validate whicg phone number has already use || which is hasn't use yet
+  ///Depends on [login] value is true || false
   Future<void> phoneValidator(BuildContext context,
       {bool login = false}) async {
     load.add(true);
@@ -89,6 +97,9 @@ class AuthService {
     }
   }
 
+  ///Send OTP code for verified phone number
+  ///[region] use for check country phone code of user
+  ///you can pass region to [region] if provider doesn't work well
   Future<void> phoneVerified(BuildContext context, {String region}) async {
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     authenInfo.region = region;
@@ -116,6 +127,8 @@ class AuthService {
     });
   }
 
+  ///Sign user up with phone number and requied [smsCode] or OTP code 
+  ///use for verified phone number Then this will lead user to [CreateProfile1] immediately
   Future signUpWithPhone(BuildContext context,
       {@required String smsCode}) async {
     try {
@@ -146,6 +159,9 @@ class AuthService {
     }
   }
 
+  ///Sign user in with phone number and requied [smsCode] or OTP code 
+  ///get user data then store to cache ,after that lead to [AuthenPage]
+  ///if user's data doesn't exist lead to [CreateProfile1] immediately
   signInWithPhone(BuildContext context, {@required String smsCode}) async {
     try {
       final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
@@ -179,6 +195,9 @@ class AuthService {
     }
   }
 
+  ///Sign user in with [penname] and requied [password]
+  ///get user data then store to cache ,after that lead to [AuthenPage]
+  ///if user's data doesn't exist lead to [CreateProfile1] immediately
   signInWithPenName(BuildContext context,
       {@required String penname, @required String password}) async {
     load.add(true);
@@ -210,6 +229,7 @@ class AuthService {
     }
   }
 
+  ///sign current user out then laed to [AuthenPage]
   signOut(BuildContext context) async {
     load.add(true);
     await fireAuth.signOut();
@@ -217,6 +237,9 @@ class AuthService {
     load.add(false);
   }
 
+  ///Sign user in with facebook aacount 
+  ///get user data then store to cache ,after that lead to [AuthenPage]
+  ///if user's data doesn't exist lead to [CreateProfile1] immediately
   authenWithFacebook(BuildContext context) async {
     load.add(true);
     var fbLogin = await fbSign.logIn(['email', 'public_profile']);
@@ -242,6 +265,9 @@ class AuthService {
     }
   }
 
+  ///Sign user in with twitter aacount 
+  ///get user data then store to cache ,after that lead to [AuthenPage]
+  ///if user's data doesn't exist lead to [CreateProfile1] immediately
   authenWithTwitter(BuildContext context, {bool signUp = false}) async {
     load.add(true);
     var user = await twSign.authorize();
@@ -268,6 +294,9 @@ class AuthService {
     }
   }
 
+  ///Sign user in with google aacount 
+  ///get user data then store to cache ,after that lead to [AuthenPage]
+  ///if user's data doesn't exist lead to [CreateProfile1] immediately
   authenWithGoogle(BuildContext context) async {
     load.add(true);
     try {
@@ -291,11 +320,14 @@ class AuthService {
     }
   }
 
+  ///get current user an uid if [null] return empty String
   Future<String> getuid() async {
     var user = await fireAuth.currentUser();
     return user?.uid ?? '';
   }
 
+  ///Update current user token required [uid]
+  ///[token] use for send notification to user
   Future<void> updateToken(String uid) async {
     var token = await getToken();
     await Firestore.instance
@@ -304,11 +336,14 @@ class AuthService {
         .setData({'token': token}, merge: true);
   }
 
+  ///Get application token by [fireMess] library
+  ///[token] use for send notification to user
   Future<String> getToken() async {
     var token = await fireMess.getToken();
     return token;
   }
 
+  ///Set up user account in data base after user has Sign up
   Future<void> setAccount(BuildContext context) async {
     var token = await getToken();
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
