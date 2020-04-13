@@ -7,7 +7,7 @@ import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/NewWorld.dart';
 import 'package:scrap/Page/createworld/ConfigWorld.dart';
 import 'package:scrap/Page/authentication/MainLogin.dart';
-import 'package:scrap/Page/authentication/registered/penname/PennameLogin.dart';
+import 'package:scrap/Page/authentication/registered/penname/PennameWithPassword.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
