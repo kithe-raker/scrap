@@ -9,8 +9,6 @@ import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
-import '../../codelab/codelab_main.dart';
-
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
   @override
