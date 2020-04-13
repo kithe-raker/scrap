@@ -8,6 +8,7 @@ import 'package:scrap/Page/NewWorld.dart';
 import 'package:scrap/Page/createworld/ConfigWorld.dart';
 import 'package:scrap/Page/authentication/MainLogin.dart';
 import 'package:scrap/Page/authentication/registered/penname/PennameWithPassword.dart';
+import 'package:scrap/Page/authentication/registered/phone/PhoneWithOTP.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: PennameLogin()),
+          home: PhoneWithOTP()),
     );
   }
 }

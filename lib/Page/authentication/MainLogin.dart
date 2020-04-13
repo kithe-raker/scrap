@@ -146,18 +146,27 @@ class _MainLoginState extends State<MainLogin> {
                                     VerticalDivider(
                                       color: Colors.white30,
                                     ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        left: ScreenUtil().setWidth(50),
-                                        right: ScreenUtil().setWidth(50),
-                                      ),
-                                      child: Text(
-                                        'หมายเลขโทรศัพท์',
-                                        style: TextStyle(
-                                          color: Colors.white30,
-                                          fontSize: ScreenUtil().setSp(40),
-                                          fontWeight: FontWeight.normal,
-                                        ),
+                                    Expanded(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                              left: ScreenUtil().setWidth(30),
+                                              // right: ScreenUtil().setWidth(50),
+                                            ),
+                                            child: Text(
+                                              'หมายเลขโทรศัพท์',
+                                              style: TextStyle(
+                                                color: Colors.white30,
+                                                fontSize:
+                                                    ScreenUtil().setSp(40),
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],

@@ -1,13 +1,54 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class PennameLogin extends StatefulWidget {
+class PhoneWithOTP extends StatefulWidget {
   @override
-  _PennameLoginState createState() => _PennameLoginState();
+  _PhoneWithOTPState createState() => _PhoneWithOTPState();
 }
 
-class _PennameLoginState extends State<PennameLogin> {
-  String loginMode = 'phone';
+class _PhoneWithOTPState extends State<PhoneWithOTP> {
+  String loginMode = 'otp';
+  bool requestOTP = true;
+
+  @override
+  void initState() {
+    super.initState();
+    getOTP();
+  }
+
+  Timer _timer;
+  int _start = 60;
+
+  void getOTP() {
+    setState(() {
+      requestOTP = false;
+    });
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+          if (_start < 1) {
+            timer.cancel();
+            setState(() {
+              _start = 60;
+              requestOTP = true;
+            });
+          } else {
+            _start = _start - 1;
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   changeLogin(String mode) {
     setState(() {
@@ -83,11 +124,11 @@ class _PennameLoginState extends State<PennameLogin> {
                 ],
               ),
               Expanded(
-                flex: 15,
+                flex: 5,
                 child: Container(),
               ),
               Expanded(
-                flex: 40,
+                flex: 50,
                 child: Container(
                   width: ScreenUtil.screenWidthDp,
                   margin: EdgeInsets.only(
@@ -97,32 +138,130 @@ class _PennameLoginState extends State<PennameLogin> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: RichText(
-                          text: TextSpan(
-                              style: TextStyle(
-                                fontFamily: 'ThaiSans',
-                                height: 0.9,
-                                color: Colors.white,
-                                fontSize: ScreenUtil().setSp(40),
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '@tarit.in.th',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: ScreenUtil().setSp(70),
+                      Container(
+                        width: ScreenUtil.screenWidthDp,
+                        height: ScreenUtil().setHeight(110),
+                        margin: EdgeInsets.only(
+                          // top: ScreenUtil().setHeight(30),
+                          bottom: ScreenUtil().setHeight(30),
+                        ),
+                        padding: EdgeInsets.fromLTRB(
+                            ScreenUtil().setWidth(50),
+                            ScreenUtil().setHeight(20),
+                            ScreenUtil().setWidth(20),
+                            ScreenUtil().setHeight(20)),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(ScreenUtil.screenWidthDp),
+                          color: Color(0xff101010),
+                        ),
+                        child: Container(
+                          //color: Colors.red,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        '+66',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: ScreenUtil().setSp(40),
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                          left: ScreenUtil().setWidth(10),
+                                          right: ScreenUtil().setWidth(10),
+                                        ),
+                                        child: Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.white,
+                                          size: ScreenUtil().setSp(40),
+                                        ),
+                                      ),
+                                      VerticalDivider(
+                                        color: Colors.white30,
+                                      ),
+                                    ],
                                   ),
+                                ],
+                              ),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        left: ScreenUtil().setWidth(30),
+                                        // right: ScreenUtil().setWidth(50),
+                                      ),
+                                      child: Text(
+                                        'หมายเลขโทรศัพท์',
+                                        style: TextStyle(
+                                          color: Colors.white30,
+                                          fontSize: ScreenUtil().setSp(40),
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                    loginMode == 'otp'
+                                        ? GestureDetector(
+                                            child: Container(
+                                              padding: EdgeInsets.only(
+                                                top: ScreenUtil().setWidth(10),
+                                                left: ScreenUtil().setWidth(20),
+                                                right:
+                                                    ScreenUtil().setWidth(20),
+                                                bottom:
+                                                    ScreenUtil().setWidth(10),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        ScreenUtil
+                                                            .screenWidthDp),
+                                                border: Border.all(
+                                                  color: requestOTP
+                                                      ? Color(0xff26A4FF)
+                                                      : Colors.white38,
+                                                  width: 0.2,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                requestOTP
+                                                    ? 'ส่งใหม่'
+                                                    : 'ส่งใหม่ ($_start)',
+                                                style: TextStyle(
+                                                  color: requestOTP
+                                                      ? Color(0xff26A4FF)
+                                                      : Colors.white38,
+                                                  fontSize:
+                                                      ScreenUtil().setSp(38),
+                                                ),
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              requestOTP ? getOTP() : null;
+                                            },
+                                          )
+                                        : SizedBox(),
+                                  ],
                                 ),
-                              ]),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Container(
                         width: ScreenUtil.screenWidthDp,
                         height: ScreenUtil().setHeight(110),
                         margin: EdgeInsets.only(
-                          top: ScreenUtil().setHeight(15),
+                          // top: ScreenUtil().setHeight(15),
                           bottom: ScreenUtil().setHeight(15),
                         ),
                         decoration: BoxDecoration(
@@ -132,37 +271,59 @@ class _PennameLoginState extends State<PennameLogin> {
                         ),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              left: ScreenUtil().setWidth(50),
-                              right: ScreenUtil().setWidth(50),
-                            ),
-                            child: Text(
-                              'Password',
-                              style: TextStyle(
-                                color: Colors.white30,
-                                fontSize: ScreenUtil().setSp(40),
-                                fontWeight: FontWeight.normal,
+                          child: loginMode == 'otp'
+                              ? Container(
+                                  margin: EdgeInsets.only(
+                                    left: ScreenUtil().setWidth(50),
+                                    right: ScreenUtil().setWidth(50),
+                                  ),
+                                  child: Text(
+                                    'OTP',
+                                    style: TextStyle(
+                                      color: Colors.white30,
+                                      fontSize: ScreenUtil().setSp(40),
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  margin: EdgeInsets.only(
+                                    left: ScreenUtil().setWidth(50),
+                                    right: ScreenUtil().setWidth(50),
+                                  ),
+                                  child: Text(
+                                    'Password',
+                                    style: TextStyle(
+                                      color: Colors.white30,
+                                      fontSize: ScreenUtil().setSp(40),
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
+                      loginMode == 'password'
+                          ? Align(
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                child: Container(
+                                  height: ScreenUtil().setHeight(40),
+                                  child: Text(
+                                    'ลืมรหัสผ่าน?',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      height: 1.0,
+                                      color: Colors.white70,
+                                      fontSize: ScreenUtil().setSp(38),
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {},
                               ),
+                            )
+                          : Container(
+                              height: ScreenUtil().setHeight(40),
                             ),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          child: Text(
-                            'ลืมรหัสผ่าน?',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              height: 1.0,
-                              color: Colors.white70,
-                              fontSize: ScreenUtil().setSp(38),
-                            ),
-                          ),
-                          onTap: () {},
-                        ),
-                      ),
                       Container(
                         width: ScreenUtil.screenWidthDp,
                         height: ScreenUtil().setHeight(110),
@@ -177,7 +338,7 @@ class _PennameLoginState extends State<PennameLogin> {
                         ),
                         child: Center(
                           child: Text(
-                            'ดำเนินการต่อ',
+                            'เข้าสู่ระบบ',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: ScreenUtil().setSp(45),
@@ -186,23 +347,22 @@ class _PennameLoginState extends State<PennameLogin> {
                           ),
                         ),
                       ),
-                      // GestureDetector(
-                      //   child: Text(
-                      //     loginMode == 'phone'
-                      //         ? 'ลงชื่อเข้าใช้ด้วยนามปากกา'
-                      //         : 'ลงชื่อเข้าใช้ด้วยเบอร์โทรศัพท์',
-                      //     style: TextStyle(
-                      //       decoration: TextDecoration.underline,
-                      //       height: 1.0,
-                      //       color: Colors.white70,
-                      //       fontSize: ScreenUtil().setSp(38),
-                      //     ),
-                      //   ),
-                      //   onTap: () {
-                      //     changeLogin(
-                      //         loginMode == 'phone' ? 'penname' : 'phone');
-                      //   },
-                      // ),
+                      GestureDetector(
+                        child: Text(
+                          loginMode == 'otp'
+                              ? 'ลงชื่อเข้าใช้ด้วยรหัสผ่าน'
+                              : 'ลงชื่อเข้าใช้ด้วย OTP',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            height: 1.0,
+                            color: Colors.white70,
+                            fontSize: ScreenUtil().setSp(38),
+                          ),
+                        ),
+                        onTap: () {
+                          changeLogin(loginMode == 'otp' ? 'password' : 'otp');
+                        },
+                      ),
                     ],
                   ),
                 ),
