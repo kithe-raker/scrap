@@ -12,7 +12,10 @@ class CreateWorld extends StatefulWidget {
 class _CreateWorldState extends State<CreateWorld> {
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334, allowFontScaling: false);
+    ScreenUtil.init(context,
+        width: defaultScreenWidth,
+        height: defaultScreenHeight,
+        allowFontScaling: fontScaling);
     return Scaffold(
         backgroundColor: AppColors.black,
         body: SafeArea(
