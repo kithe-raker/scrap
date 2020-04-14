@@ -271,65 +271,28 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                         ),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: loginMode == 'otp'
-                              ? Container(
-                                  margin: EdgeInsets.only(
-                                    left: ScreenUtil().setWidth(50),
-                                    right: ScreenUtil().setWidth(50),
-                                  ),
-                                  child: Text(
-                                    'OTP',
-                                    style: TextStyle(
-                                      color: Colors.white30,
-                                      fontSize: ScreenUtil().setSp(40),
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  margin: EdgeInsets.only(
-                                    left: ScreenUtil().setWidth(50),
-                                    right: ScreenUtil().setWidth(50),
-                                  ),
-                                  child: Text(
-                                    'Password',
-                                    style: TextStyle(
-                                      color: Colors.white30,
-                                      fontSize: ScreenUtil().setSp(40),
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              left: ScreenUtil().setWidth(50),
+                              right: ScreenUtil().setWidth(50),
+                            ),
+                            child: Text(
+                              'OTP',
+                              style: TextStyle(
+                                color: Colors.white30,
+                                fontSize: ScreenUtil().setSp(40),
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      loginMode == 'password'
-                          ? Align(
-                              alignment: Alignment.centerRight,
-                              child: GestureDetector(
-                                child: Container(
-                                  height: ScreenUtil().setHeight(40),
-                                  child: Text(
-                                    'ลืมรหัสผ่าน?',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      height: 1.0,
-                                      color: Colors.white70,
-                                      fontSize: ScreenUtil().setSp(38),
-                                    ),
-                                  ),
-                                ),
-                                onTap: () {},
-                              ),
-                            )
-                          : Container(
-                              height: ScreenUtil().setHeight(40),
-                            ),
                       Container(
                         width: ScreenUtil.screenWidthDp,
                         height: ScreenUtil().setHeight(110),
                         margin: EdgeInsets.only(
-                          top: ScreenUtil().setHeight(50),
-                          bottom: ScreenUtil().setHeight(25),
+                          top: ScreenUtil().setHeight(90),
+                          bottom: ScreenUtil().setHeight(65),
                         ),
                         decoration: BoxDecoration(
                           borderRadius:
@@ -338,7 +301,7 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                         ),
                         child: Center(
                           child: Text(
-                            'เข้าสู่ระบบ',
+                            'ต่อไป',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: ScreenUtil().setSp(45),
@@ -346,22 +309,6 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                             ),
                           ),
                         ),
-                      ),
-                      GestureDetector(
-                        child: Text(
-                          loginMode == 'otp'
-                              ? 'ลงชื่อเข้าใช้ด้วยรหัสผ่าน'
-                              : 'ลงชื่อเข้าใช้ด้วย OTP',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            height: 1.0,
-                            color: Colors.white70,
-                            fontSize: ScreenUtil().setSp(38),
-                          ),
-                        ),
-                        onTap: () {
-                          changeLogin(loginMode == 'otp' ? 'password' : 'otp');
-                        },
                       ),
                     ],
                   ),

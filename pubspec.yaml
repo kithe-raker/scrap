@@ -46,6 +46,7 @@ dependencies:
   flutter_screenutil: ^1.0.2
   preload_page_view: ^0.1.4
   flutter_svg: ^0.17.4
+  flutter_cupertino_date_picker: ^1.0.12
 
 dev_dependencies:
   flutter_test:
