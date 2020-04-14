@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrap/Page/createworld/ConfigWorld.dart';
+import 'package:scrap/theme/AppColors.dart';
+import 'package:scrap/theme/ScreenUtil.dart';
 
 class CreateWorld extends StatefulWidget {
   @override
@@ -10,9 +12,12 @@ class CreateWorld extends StatefulWidget {
 class _CreateWorldState extends State<CreateWorld> {
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334, allowFontScaling: false);
+    ScreenUtil.init(context,
+        width: defaultScreenWidth,
+        height: defaultScreenHeight,
+        allowFontScaling: fontScaling);
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.black,
         body: SafeArea(
           child: Stack(
             children: <Widget>[
@@ -20,14 +25,14 @@ class _CreateWorldState extends State<CreateWorld> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    color: Colors.black,
-                    width: ScreenUtil.screenWidthDp,
-                    height: ScreenUtil().setHeight(130),
+                    color: AppColors.black,
+                    width: screenWidthDp,
+                    height: screen.setHeight(130),
                     padding: EdgeInsets.only(
-                      top: ScreenUtil().setHeight(15),
-                      right: ScreenUtil().setWidth(20),
-                      left: ScreenUtil().setWidth(20),
-                      bottom: ScreenUtil().setHeight(15),
+                      top: screen.setHeight(15),
+                      right: screen.setWidth(20),
+                      left: screen.setWidth(20),
+                      bottom: screen.setHeight(15),
                     ),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -35,15 +40,17 @@ class _CreateWorldState extends State<CreateWorld> {
                         children: <Widget>[
                           GestureDetector(
                             child: Container(
-                              width: ScreenUtil().setWidth(100),
-                              height: ScreenUtil().setHeight(75),
+                              width: screen.setWidth(100),
+                              height: screen.setHeight(75),
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                      ScreenUtil.screenWidthDp),
-                                  color: Colors.white),
-                              child: Icon(Icons.arrow_back,
-                                  color: Colors.black,
-                                  size: ScreenUtil().setSp(48)),
+                                  borderRadius:
+                                      BorderRadius.circular(screenWidthDp),
+                                  color: AppColors.arrowBackBg),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: AppColors.arrowBackIcon,
+                                size: screen.setSp(48),
+                              ),
                             ),
                             onTap: () {
                               Navigator.pop(
@@ -57,15 +64,15 @@ class _CreateWorldState extends State<CreateWorld> {
               ),
               Container(
                 margin: EdgeInsets.only(
-                  top: ScreenUtil().setHeight(130),
+                  top: screen.setHeight(130),
                 ),
                 child: SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      minWidth: ScreenUtil.screenWidthDp,
-                      minHeight: ScreenUtil.screenHeightDp -
-                          ScreenUtil.statusBarHeight -
-                          ScreenUtil().setHeight(130),
+                      minWidth: screenWidthDp,
+                      minHeight: screenHeightDp -
+                          statusBarHeight -
+                          screen.setHeight(130),
                     ),
                     child: IntrinsicHeight(
                       child: Column(
@@ -74,10 +81,10 @@ class _CreateWorldState extends State<CreateWorld> {
                           Expanded(
                             flex: 12,
                             child: Container(
-                              width: ScreenUtil.screenWidthDp,
+                              width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                right: ScreenUtil().setWidth(70),
-                                left: ScreenUtil().setWidth(70),
+                                right: screen.setWidth(70),
+                                left: screen.setWidth(70),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,8 +92,8 @@ class _CreateWorldState extends State<CreateWorld> {
                                   Text(
                                     'เริ่มกันเลย!',
                                     style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(65),
+                                      color: AppColors.white,
+                                      fontSize: screen.setSp(65),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -94,8 +101,8 @@ class _CreateWorldState extends State<CreateWorld> {
                                     'เพิ่มข้อมูลเพื่อให้ผู้คนรู้จักโลกของคุณ',
                                     style: TextStyle(
                                       height: 0.8,
-                                      color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(40),
+                                      color: AppColors.white,
+                                      fontSize: screen.setSp(40),
                                     ),
                                   ),
                                 ],
@@ -106,29 +113,30 @@ class _CreateWorldState extends State<CreateWorld> {
                             flex: 70,
                             child: Container(
                               margin: EdgeInsets.only(
-                                right: ScreenUtil().setWidth(70),
-                                left: ScreenUtil().setWidth(70),
+                                right: screen.setWidth(70),
+                                left: screen.setWidth(70),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Container(
                                     margin: EdgeInsets.only(
-                                        top: ScreenUtil.screenHeightDp / 40,
-                                        bottom: ScreenUtil.screenHeightDp / 60),
+                                        top: screenHeightDp / 40,
+                                        bottom: screenHeightDp / 60),
                                     child: Center(
                                       child: Stack(
                                         children: <Widget>[
                                           Container(
-                                            height: ScreenUtil().setWidth(300),
-                                            width: ScreenUtil().setWidth(300),
+                                            height: screen.setWidth(300),
+                                            width: screen.setWidth(300),
                                             decoration: BoxDecoration(
-                                              color: Colors.grey,
+                                              color: AppColors.imagePlaceholder,
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      ScreenUtil.screenWidthDp),
+                                                      screenWidthDp),
                                               border: Border.all(
-                                                color: Color(0xff8E8E8E),
+                                                color: AppColors
+                                                    .imagePlaceholderBoder,
                                                 width: 1.5,
                                               ),
                                             ),
@@ -142,13 +150,13 @@ class _CreateWorldState extends State<CreateWorld> {
                                             // ),
                                           ),
                                           Positioned(
-                                            right: ScreenUtil().setWidth(20),
-                                            bottom: ScreenUtil().setWidth(0),
+                                            right: screen.setWidth(20),
+                                            bottom: screen.setWidth(0),
                                             child: Container(
-                                              height: ScreenUtil().setWidth(56),
-                                              width: ScreenUtil().setWidth(56),
+                                              height: screen.setWidth(56),
+                                              width: screen.setWidth(56),
                                               decoration: BoxDecoration(
-                                                color: Colors.white,
+                                                color: AppColors.white,
                                                 borderRadius:
                                                     BorderRadius.circular(
                                                         ScreenUtil
@@ -156,8 +164,8 @@ class _CreateWorldState extends State<CreateWorld> {
                                               ),
                                               child: Icon(
                                                 Icons.create,
-                                                color: Color(0xff4A4A4A),
-                                                size: ScreenUtil().setSp(34),
+                                                color: AppColors.iconDark,
+                                                size: screen.setSp(38),
                                               ),
                                             ),
                                           )
@@ -169,35 +177,35 @@ class _CreateWorldState extends State<CreateWorld> {
                                     'ชื่อโลก',
                                     style: TextStyle(
                                       // height: 0.8,
-                                      color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(40),
+                                      color: AppColors.textFieldLabel,
+                                      fontSize: screen.setSp(40),
                                     ),
                                   ),
                                   Container(
-                                    width: ScreenUtil.screenWidthDp,
-                                    height: ScreenUtil().setHeight(110),
+                                    width: screenWidthDp,
+                                    height: screen.setHeight(110),
                                     margin: EdgeInsets.only(
-                                        bottom: ScreenUtil.screenHeightDp / 60,
-                                        top: ScreenUtil.screenHeightDp / 80),
+                                        bottom: screenHeightDp / 60,
+                                        top: screenHeightDp / 80),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          ScreenUtil.screenWidthDp),
-                                      color: Color(0xff101010),
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp),
+                                      color: AppColors.textField,
                                     ),
                                     child: Center(
                                       child: TextFormField(
                                         textInputAction: TextInputAction.next,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: ScreenUtil().setSp(40),
+                                          color: AppColors.textFieldInput,
+                                          fontSize: screen.setSp(40),
                                         ),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText: 'ชื่อโลกของคุณ',
                                           hintStyle: TextStyle(
-                                            color: Colors.white30,
-                                            fontSize: ScreenUtil().setSp(40),
+                                            color: AppColors.hintText,
+                                            fontSize: screen.setSp(40),
                                           ),
                                         ),
                                       ),
@@ -207,35 +215,35 @@ class _CreateWorldState extends State<CreateWorld> {
                                     'คำอธิบายสั้น ๆ',
                                     style: TextStyle(
                                       // height: 0.8,
-                                      color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(40),
+                                      color: AppColors.textFieldLabel,
+                                      fontSize: screen.setSp(40),
                                     ),
                                   ),
                                   Container(
-                                    width: ScreenUtil.screenWidthDp,
-                                    height: ScreenUtil().setHeight(110),
+                                    width: screenWidthDp,
+                                    height: screen.setHeight(110),
                                     margin: EdgeInsets.only(
-                                        bottom: ScreenUtil.screenHeightDp / 60,
-                                        top: ScreenUtil.screenHeightDp / 80),
+                                        bottom: screenHeightDp / 60,
+                                        top: screenHeightDp / 80),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          ScreenUtil.screenWidthDp),
-                                      color: Color(0xff101010),
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp),
+                                      color: AppColors.textField,
                                     ),
                                     child: Center(
                                       child: TextFormField(
                                         textInputAction: TextInputAction.done,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: ScreenUtil().setSp(40),
+                                          color: AppColors.textFieldInput,
+                                          fontSize: screen.setSp(40),
                                         ),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText: 'เกี่ยวกับโลกของคุณ',
                                           hintStyle: TextStyle(
-                                            color: Colors.white30,
-                                            fontSize: ScreenUtil().setSp(40),
+                                            color: AppColors.hintText,
+                                            fontSize: screen.setSp(40),
                                           ),
                                         ),
                                       ),
@@ -251,25 +259,25 @@ class _CreateWorldState extends State<CreateWorld> {
                               children: <Widget>[
                                 GestureDetector(
                                   child: Container(
-                                    width: ScreenUtil.screenWidthDp,
-                                    height: ScreenUtil().setHeight(110),
+                                    width: screenWidthDp,
+                                    height: screen.setHeight(110),
                                     margin: EdgeInsets.only(
-                                      right: ScreenUtil().setWidth(70),
-                                      left: ScreenUtil().setWidth(70),
+                                      right: screen.setWidth(70),
+                                      left: screen.setWidth(70),
                                     ),
                                     // margin:
-                                    //     EdgeInsets.only(bottom: ScreenUtil.screenHeightDp / 40),
+                                    //     EdgeInsets.only(bottom: screenHeightDp / 40),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          ScreenUtil.screenWidthDp),
-                                      color: Color(0xffffffff),
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp),
+                                      color: AppColors.whiteButton,
                                     ),
                                     child: Center(
                                       child: Text(
                                         'ต่อไป',
                                         style: TextStyle(
-                                          color: Colors.grey[850],
-                                          fontSize: ScreenUtil().setSp(45),
+                                          color: AppColors.whiteButtonText,
+                                          fontSize: screen.setSp(45),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
