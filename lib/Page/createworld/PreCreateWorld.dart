@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrap/Page/createworld/CreateWorld.dart';
+import 'package:scrap/theme/AppColors.dart';
+import 'package:scrap/theme/ScreenUtil.dart';
 
 class PreCreateWorld extends StatefulWidget {
   @override
@@ -12,7 +14,7 @@ class _PreCreateWorldState extends State<PreCreateWorld> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334, allowFontScaling: false);
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.black,
       body: SafeArea(
         child: Stack(
           children: <Widget>[
@@ -20,14 +22,14 @@ class _PreCreateWorldState extends State<PreCreateWorld> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  color: Colors.black,
-                  width: ScreenUtil.screenWidthDp,
-                  height: ScreenUtil().setHeight(130),
+                  color: AppColors.black,
+                  width: screenWidthDp,
+                  height: screen.setHeight(130),
                   padding: EdgeInsets.only(
-                    top: ScreenUtil().setHeight(15),
-                    right: ScreenUtil().setWidth(20),
-                    left: ScreenUtil().setWidth(20),
-                    bottom: ScreenUtil().setHeight(15),
+                    top: screen.setHeight(15),
+                    right: screen.setWidth(20),
+                    left: screen.setWidth(20),
+                    bottom: screen.setHeight(15),
                   ),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -35,15 +37,17 @@ class _PreCreateWorldState extends State<PreCreateWorld> {
                       children: <Widget>[
                         GestureDetector(
                           child: Container(
-                            width: ScreenUtil().setWidth(100),
-                            height: ScreenUtil().setHeight(75),
+                            width: screen.setWidth(100),
+                            height: screen.setHeight(75),
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenUtil.screenWidthDp),
-                                color: Colors.white),
-                            child: Icon(Icons.arrow_back,
-                                color: Colors.black,
-                                size: ScreenUtil().setSp(48)),
+                                borderRadius:
+                                    BorderRadius.circular(screenWidthDp),
+                                color: AppColors.arrowBackBg),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: AppColors.arrowBackIcon,
+                              size: screen.setSp(48),
+                            ),
                           ),
                           onTap: () {
                             Navigator.pop(
@@ -57,15 +61,15 @@ class _PreCreateWorldState extends State<PreCreateWorld> {
             ),
             Container(
               margin: EdgeInsets.only(
-                top: ScreenUtil().setHeight(130),
+                top: screen.setHeight(130),
               ),
               child: SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minWidth: ScreenUtil.screenWidthDp,
-                    minHeight: ScreenUtil.screenHeightDp -
-                        ScreenUtil.statusBarHeight -
-                        ScreenUtil().setHeight(130),
+                    minWidth: screenWidthDp,
+                    minHeight: screenHeightDp -
+                        statusBarHeight -
+                        screen.setHeight(130),
                   ),
                   child: IntrinsicHeight(
                     child: Column(
@@ -74,10 +78,10 @@ class _PreCreateWorldState extends State<PreCreateWorld> {
                         Expanded(
                           flex: 12,
                           child: Container(
-                            width: ScreenUtil.screenWidthDp,
+                            width: screenWidthDp,
                             margin: EdgeInsets.only(
-                              right: ScreenUtil().setWidth(70),
-                              left: ScreenUtil().setWidth(70),
+                              right: screen.setWidth(70),
+                              left: screen.setWidth(70),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,8 +89,8 @@ class _PreCreateWorldState extends State<PreCreateWorld> {
                                 Text(
                                   'สร้างโลก',
                                   style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: ScreenUtil().setSp(65),
+                                    color: AppColors.white,
+                                    fontSize: screen.setSp(65),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -94,8 +98,8 @@ class _PreCreateWorldState extends State<PreCreateWorld> {
                                   'สร้างโลกในแบบที่คุณต้องการ',
                                   style: TextStyle(
                                     height: 0.8,
-                                    color: Colors.white,
-                                    fontSize: ScreenUtil().setSp(40),
+                                    color: AppColors.white,
+                                    fontSize: screen.setSp(40),
                                   ),
                                 ),
                               ],
@@ -105,22 +109,22 @@ class _PreCreateWorldState extends State<PreCreateWorld> {
                         Expanded(
                           flex: 70,
                           child: Container(
-                            width: ScreenUtil.screenWidthDp,
+                            width: screenWidthDp,
                             margin: EdgeInsets.only(
-                              right: ScreenUtil().setWidth(70),
-                              left: ScreenUtil().setWidth(70),
+                              right: screen.setWidth(70),
+                              left: screen.setWidth(70),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        ScreenUtil.screenWidthDp),
-                                    color: Colors.black,
+                                    borderRadius:
+                                        BorderRadius.circular(screenWidthDp),
+                                    color: AppColors.black,
                                   ),
-                                  width: ScreenUtil.screenWidthDp / 1.4,
-                                  height: ScreenUtil.screenWidthDp / 1.4,
+                                  width: screenWidthDp / 1.4,
+                                  height: screenWidthDp / 1.4,
                                   child: ClipRRect(
                                     child: Image.network(
                                       'https://tarit.in.th/scrap/app_assets/Group144.png',
@@ -138,25 +142,25 @@ class _PreCreateWorldState extends State<PreCreateWorld> {
                             children: <Widget>[
                               GestureDetector(
                                 child: Container(
-                                  width: ScreenUtil.screenWidthDp,
-                                  height: ScreenUtil().setWidth(100),
+                                  width: screenWidthDp,
+                                  height: screen.setWidth(100),
                                   margin: EdgeInsets.only(
-                                    right: ScreenUtil().setWidth(70),
-                                    left: ScreenUtil().setWidth(70),
+                                    right: screen.setWidth(70),
+                                    left: screen.setWidth(70),
                                   ),
                                   // margin:
-                                  //     EdgeInsets.only(bottom: ScreenUtil.screenHeightDp / 40),
+                                  //     EdgeInsets.only(bottom: screenHeightDp / 40),
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        ScreenUtil.screenWidthDp),
-                                    color: Color(0xffffffff),
+                                    borderRadius:
+                                        BorderRadius.circular(screenWidthDp),
+                                    color: AppColors.whiteButton,
                                   ),
                                   child: Center(
                                     child: Text(
                                       'ต่อไป',
                                       style: TextStyle(
-                                        color: Colors.grey[850],
-                                        fontSize: ScreenUtil().setSp(45),
+                                        color: AppColors.whiteButtonText,
+                                        fontSize: screen.setSp(45),
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
