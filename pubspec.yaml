@@ -45,6 +45,7 @@ dependencies:
   flutter_cache_manager: ^1.1.3
   flutter_screenutil: ^1.1.0
   flutter_colorpicker: any
+  social_share: ^2.0.4
 
   
 dev_dependencies:

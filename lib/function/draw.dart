@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-
+import 'package:social_share/social_share.dart';
 class Draw extends StatefulWidget {
   @override
   _DrawState createState() => _DrawState();
@@ -33,8 +33,8 @@ class _DrawState extends State<Draw> {
         child: Container(
             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.0),
-                color: Colors.greenAccent),
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.grey[300]),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -78,6 +78,12 @@ class _DrawState extends State<Draw> {
                               points.clear();
                             });
                           }),
+                      IconButton(icon: Icon(Icons.share), 
+                      onPressed: () async {
+                        SocialShare.checkInstalledAppsForShare().then((data) {
+                      print(data.toString());
+                    });
+                      })
                     ],
                   ),
                   Visibility(
