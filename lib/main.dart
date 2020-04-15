@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scrap/Page/createworld/ConfigWorld.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart';
 import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/Page/NewWorld.dart';
+import 'package:scrap/Page/createworld/PreCreateWorld.dart';
+import 'package:scrap/Page/authentication/MainLogin.dart';
+import 'package:scrap/Page/authentication/registered/penname/PennameLogin.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +16,6 @@ void main() {
       .then((_) {
     runApp(MyApp());
   });
-
 }
 
 class MyApp extends StatelessWidget {
@@ -21,13 +25,11 @@ class MyApp extends StatelessWidget {
     return Provider(
       auth: Auth(),
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Scrap.',
-        theme: ThemeData(
-            fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-        home: MainPage()
-      ),
+          debugShowCheckedModeBanner: false,
+          title: 'Scrap.',
+          theme: ThemeData(
+              fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
+          home: PreCreateWorld()),
     );
   }
 }
-
