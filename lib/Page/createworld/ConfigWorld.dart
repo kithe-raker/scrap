@@ -1,16 +1,23 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:scrap/function/world/worldFunction.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
 
 class ConfigWorld extends StatefulWidget {
+  final File image;
+  final String worldName;
+  final String descript;
+  ConfigWorld({this.descript, this.worldName, this.image});
   @override
   _ConfigWorldState createState() => _ConfigWorldState();
 }
 
 class _ConfigWorldState extends State<ConfigWorld> {
   String mapSelect = 'ทมิฬ';
-  String writePermission = 'onlyme';
+  int writePermission = 0;
 
   _mapSelect(String texture) {
     setState(() {
@@ -18,7 +25,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
     });
   }
 
-  _writePermission(String permission) {
+  _writePermission(int permission) {
     setState(() {
       writePermission = permission;
     });
@@ -303,8 +310,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                                       width: 1,
                                                     ),
                                                   ),
-                                                  child: writePermission ==
-                                                          'onlyme'
+                                                  child: writePermission == 0
                                                       ? Container(
                                                           margin:
                                                               EdgeInsets.all(
@@ -375,7 +381,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                             ),
                                           ),
                                           onTap: () {
-                                            _writePermission('onlyme');
+                                            _writePermission(0);
                                           },
                                         ),
                                         GestureDetector(
@@ -403,8 +409,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                                       width: 1,
                                                     ),
                                                   ),
-                                                  child: writePermission ==
-                                                          'everyone'
+                                                  child: writePermission == 1
                                                       ? Container(
                                                           margin:
                                                               EdgeInsets.all(
@@ -475,7 +480,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                             ),
                                           ),
                                           onTap: () {
-                                            _writePermission('everyone');
+                                            _writePermission(1);
                                           },
                                         ),
                                         GestureDetector(
@@ -503,8 +508,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                                       width: 1,
                                                     ),
                                                   ),
-                                                  child: writePermission ==
-                                                          'allowed'
+                                                  child: writePermission == 2
                                                       ? Container(
                                                           margin:
                                                               EdgeInsets.all(
@@ -575,7 +579,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                             ),
                                           ),
                                           onTap: () {
-                                            _writePermission('allowed');
+                                            _writePermission(2);
                                           },
                                         ),
                                         Container(
@@ -589,13 +593,24 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                             color: AppColors.blueButton,
                                           ),
                                           child: Center(
-                                            child: Text(
-                                              'สร้างโลก',
-                                              style: TextStyle(
-                                                color: AppColors.blueButtonText,
-                                                fontSize: screen.setSp(45),
-                                                fontWeight: FontWeight.bold,
+                                            child: InkWell(
+                                              child: Text(
+                                                'สร้างโลก',
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.blueButtonText,
+                                                  fontSize: screen.setSp(45),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
+                                              onTap: () {
+                                                worldFunction.createWorld(
+                                                    widget.descript,
+                                                    widget.worldName,
+                                                    widget.image,
+                                                    mapSelect,
+                                                    writePermission, []);
+                                              },
                                             ),
                                           ),
                                         )
