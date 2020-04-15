@@ -9,7 +9,6 @@ import 'package:scrap/Page/createworld/ConfigWorld.dart';
 import 'package:scrap/Page/authentication/MainLogin.dart';
 import 'package:scrap/Page/authentication/registered/penname/PennameWithPassword.dart';
 import 'package:scrap/Page/authentication/not_registered/phone/PhoneWithOTP.dart';
-import 'package:scrap/Page/authentication/registered/phone/SetPenname.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'ThaiSans',
           unselectedWidgetColor: Colors.white,
         ),
-        home: SetPenname(),
+        home: MainLogin(),
       ),
     );
   }

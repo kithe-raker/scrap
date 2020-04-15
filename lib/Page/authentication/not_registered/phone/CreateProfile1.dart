@@ -1,86 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scrap/Page/authentication/registered/phone/SetYourInfo.dart';
+import 'package:scrap/Page/authentication/not_registered/phone/CreateProfile2.dart';
+import 'package:scrap/theme/ScreenUtil.dart';
+import 'package:scrap/theme/AppColors.dart';
+import 'package:scrap/widget/AppBar.dart';
+import 'package:scrap/method/Navigator.dart';
 
-class SetPenname extends StatefulWidget {
+class CreateProfile1 extends StatefulWidget {
   @override
-  _SetPennameState createState() => _SetPennameState();
+  _CreateProfile1State createState() => _CreateProfile1State();
 }
 
-class _SetPennameState extends State<SetPenname> {
+class _CreateProfile1State extends State<CreateProfile1> {
+  final nav = Nav();
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334, allowFontScaling: false);
+    ScreenUtil.init(
+      context,
+      width: defaultScreenWidth,
+      height: defaultScreenHeight,
+      allowFontScaling: fontScaling,
+    );
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.bg,
         body: SafeArea(
           child: Stack(
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    color: Colors.black,
-                    width: ScreenUtil.screenWidthDp,
-                    height: ScreenUtil().setHeight(130),
-                    padding: EdgeInsets.only(
-                      top: ScreenUtil().setHeight(15),
-                      right: ScreenUtil().setWidth(20),
-                      left: ScreenUtil().setWidth(20),
-                      bottom: ScreenUtil().setHeight(15),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        GestureDetector(
-                          child: Container(
-                            width: ScreenUtil().setWidth(100),
-                            height: ScreenUtil().setHeight(75),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenUtil.screenWidthDp),
-                                color: Colors.white),
-                            child: Icon(Icons.arrow_back,
-                                color: Colors.black,
-                                size: ScreenUtil().setSp(48)),
-                          ),
-                          onTap: () {
-                            Navigator.pop(
-                              context,
-                            );
-                          },
-                        ),
-                        // Container(
-                        //   margin: EdgeInsets.only(
-                        //     left: ScreenUtil().setWidth(60),
-                        //   ),
-                        //   child: Text(
-                        //     'สร้างบัญชี',
-                        //     style: TextStyle(
-                        //       height: 1.0,
-                        //       color: Colors.white,
-                        //       fontSize: ScreenUtil().setSp(45),
-                        //       fontWeight: FontWeight.bold,
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              AppBarWithArrow(),
               Container(
                 margin: EdgeInsets.only(
-                  top: ScreenUtil().setHeight(130),
+                  top: appBarHeight,
                 ),
                 child: SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      minWidth: ScreenUtil.screenWidthDp,
-                      minHeight: ScreenUtil.screenHeightDp -
-                          ScreenUtil.statusBarHeight -
-                          ScreenUtil().setHeight(130),
+                      minWidth: screenWidthDp,
+                      minHeight:
+                          screenHeightDp - statusBarHeight - appBarHeight,
                     ),
                     child: IntrinsicHeight(
                       child: Column(
@@ -89,10 +45,10 @@ class _SetPennameState extends State<SetPenname> {
                           Expanded(
                             flex: 15,
                             child: Container(
-                              width: ScreenUtil.screenWidthDp,
+                              width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                left: ScreenUtil().setWidth(70),
-                                right: ScreenUtil().setWidth(70),
+                                left: 70.w,
+                                right: 70.w,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,8 +56,8 @@ class _SetPennameState extends State<SetPenname> {
                                   Text(
                                     'เกือบเสร็จแล้ว!',
                                     style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(65),
+                                      color: AppColors.white,
+                                      fontSize: s65,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -109,8 +65,8 @@ class _SetPennameState extends State<SetPenname> {
                                     'เพิ่มข้อมูลของคุณเพื่อให้ผู้คนค้นหาคุณเจอ',
                                     style: TextStyle(
                                       height: 0.8,
-                                      color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(40),
+                                      color: AppColors.white,
+                                      fontSize: s40,
                                     ),
                                   ),
                                 ],
@@ -120,31 +76,32 @@ class _SetPennameState extends State<SetPenname> {
                           Expanded(
                             flex: 40,
                             child: Container(
-                              width: ScreenUtil.screenWidthDp,
+                              width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                left: ScreenUtil().setWidth(70),
-                                right: ScreenUtil().setWidth(70),
+                                left: 70.w,
+                                right: 70.w,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Container(
                                     margin: EdgeInsets.only(
-                                        top: ScreenUtil.screenHeightDp / 40,
-                                        bottom: ScreenUtil.screenHeightDp / 40),
+                                        top: screenHeightDp / 40,
+                                        bottom: screenHeightDp / 40),
                                     child: Center(
                                       child: Stack(
                                         children: <Widget>[
                                           Container(
-                                            height: ScreenUtil().setWidth(300),
-                                            width: ScreenUtil().setWidth(300),
+                                            height: 300.w,
+                                            width: 300.w,
                                             decoration: BoxDecoration(
-                                              color: Colors.grey,
+                                              color: AppColors.imagePlaceholder,
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      ScreenUtil.screenWidthDp),
+                                                      screenWidthDp),
                                               border: Border.all(
-                                                color: Color(0xff8E8E8E),
+                                                color: AppColors
+                                                    .imagePlaceholderBoder,
                                                 width: 1.5,
                                               ),
                                             ),
@@ -158,22 +115,21 @@ class _SetPennameState extends State<SetPenname> {
                                             // ),
                                           ),
                                           Positioned(
-                                            right: ScreenUtil().setWidth(20),
-                                            bottom: ScreenUtil().setWidth(0),
+                                            right: 20.w,
+                                            bottom: 0,
                                             child: Container(
-                                              height: ScreenUtil().setWidth(55),
-                                              width: ScreenUtil().setWidth(55),
+                                              height: 55.w,
+                                              width: 55.w,
                                               decoration: BoxDecoration(
-                                                color: Colors.white,
+                                                color: AppColors.white,
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                        ScreenUtil
-                                                            .screenWidthDp),
+                                                        screenWidthDp),
                                               ),
                                               child: Icon(
                                                 Icons.create,
-                                                color: Color(0xff4A4A4A),
-                                                size: ScreenUtil().setSp(34),
+                                                color: AppColors.iconDark,
+                                                size: s34,
                                               ),
                                             ),
                                           )
@@ -188,10 +144,10 @@ class _SetPennameState extends State<SetPenname> {
                           Expanded(
                             flex: 20,
                             child: Container(
-                              width: ScreenUtil.screenWidthDp,
+                              width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                left: ScreenUtil().setWidth(70),
-                                right: ScreenUtil().setWidth(70),
+                                left: 70.w,
+                                right: 70.w,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,47 +159,47 @@ class _SetPennameState extends State<SetPenname> {
                                           text: 'นามปากกา',
                                           style: TextStyle(
                                             fontFamily: 'ThaiSans',
-                                            color: Colors.white,
-                                            fontSize: ScreenUtil().setSp(40),
+                                            color: AppColors.white,
+                                            fontSize: s40,
                                           ),
                                         ),
                                         TextSpan(
                                           text: ' (ผู้คนจะรู้จักคุณในชื่อนี้)',
                                           style: TextStyle(
                                             fontFamily: 'ThaiSans',
-                                            color: Colors.white38,
-                                            fontSize: ScreenUtil().setSp(38),
+                                            color: AppColors.white38,
+                                            fontSize: s38,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   Container(
-                                    width: ScreenUtil.screenWidthDp,
-                                    height: ScreenUtil().setHeight(110),
+                                    width: screenWidthDp,
+                                    height: textFieldHeight,
                                     margin: EdgeInsets.only(
-                                      bottom: ScreenUtil.screenHeightDp / 60,
-                                      top: ScreenUtil.screenHeightDp / 80,
+                                      bottom: screenHeightDp / 60,
+                                      top: screenHeightDp / 80,
                                     ),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          ScreenUtil.screenWidthDp),
-                                      color: Color(0xff101010),
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp),
+                                      color: AppColors.textField,
                                     ),
                                     child: Center(
                                       child: TextFormField(
                                         textInputAction: TextInputAction.done,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: ScreenUtil().setSp(40),
+                                          color: AppColors.white,
+                                          fontSize: s40,
                                         ),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText: '@penname',
                                           hintStyle: TextStyle(
-                                            color: Colors.white30,
-                                            fontSize: ScreenUtil().setSp(40),
+                                            color: AppColors.white30,
+                                            fontSize: s40,
                                           ),
                                         ),
                                       ),
@@ -259,24 +215,24 @@ class _SetPennameState extends State<SetPenname> {
                               children: <Widget>[
                                 GestureDetector(
                                   child: Container(
-                                    height: ScreenUtil().setHeight(110),
-                                    width: ScreenUtil.screenWidthDp,
+                                    height: textFieldHeight,
+                                    width: screenWidthDp,
                                     margin: EdgeInsets.only(
-                                      left: ScreenUtil().setWidth(70),
-                                      right: ScreenUtil().setWidth(70),
+                                      left: 70.w,
+                                      right: 70.w,
                                     ),
                                     // margin:
-                                    //     EdgeInsets.only(bottom: ScreenUtil.screenHeightDp / 40),
+                                    //     EdgeInsets.only(bottom: screenHeightDp / 40),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          ScreenUtil.screenWidthDp),
-                                      color: Color(0xff26A4FF),
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp),
+                                      color: AppColors.blueButton,
                                     ),
                                     child: Center(
                                       child: Text(
                                         'ต่อไป',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: AppColors.blueButtonText,
                                           fontSize: ScreenUtil().setSp(45),
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -284,12 +240,7 @@ class _SetPennameState extends State<SetPenname> {
                                     ),
                                   ),
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SetYourInfo(),
-                                      ),
-                                    );
+                                    nav.push(context, CreateProfile2());
                                   },
                                 ),
                               ],

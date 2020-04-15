@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:scrap/Page/authentication/not_registered/phone/PhoneWithOTP.dart';
+import 'package:scrap/theme/ScreenUtil.dart';
+import 'package:scrap/theme/AppColors.dart';
+import 'package:scrap/widget/AppBar.dart';
+import 'package:scrap/method/Navigator.dart';
 
-class SetYourInfo extends StatefulWidget {
-  SetYourInfo({Key key}) : super(key: key);
+class CreateProfile2 extends StatefulWidget {
+  CreateProfile2({Key key}) : super(key: key);
   @override
-  _SetYourInfoState createState() => _SetYourInfoState();
+  _CreateProfile2State createState() => _CreateProfile2State();
 }
 
-class _SetYourInfoState extends State<SetYourInfo> {
+class _CreateProfile2State extends State<CreateProfile2> {
   bool _showTitle = true;
 
   DateTimePickerLocale _locale = DateTimePickerLocale.en_us;
@@ -41,15 +44,15 @@ class _SetYourInfoState extends State<SetYourInfo> {
         confirm: Text(
           'เสร็จ',
           style: TextStyle(
-            color: Color(0xff26A4FF),
-            fontSize: ScreenUtil().setSp(38),
+            color: AppColors.scrapblue,
+            fontSize: s38,
           ),
         ),
         cancel: Text(
           'ยกเลิก',
           style: TextStyle(
-            color: Colors.red,
-            fontSize: ScreenUtil().setSp(38),
+            color: AppColors.red,
+            fontSize: s38,
           ),
         ),
       ),
@@ -77,75 +80,21 @@ class _SetYourInfoState extends State<SetYourInfo> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334, allowFontScaling: false);
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.black,
         body: SafeArea(
           child: Stack(
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    color: Colors.black,
-                    width: ScreenUtil.screenWidthDp,
-                    height: ScreenUtil().setHeight(130),
-                    padding: EdgeInsets.only(
-                      top: ScreenUtil().setHeight(15),
-                      right: ScreenUtil().setWidth(20),
-                      left: ScreenUtil().setWidth(20),
-                      bottom: ScreenUtil().setHeight(15),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        GestureDetector(
-                          child: Container(
-                            width: ScreenUtil().setWidth(100),
-                            height: ScreenUtil().setHeight(75),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenUtil.screenWidthDp),
-                                color: Colors.white),
-                            child: Icon(Icons.arrow_back,
-                                color: Colors.black,
-                                size: ScreenUtil().setSp(48)),
-                          ),
-                          onTap: () {
-                            Navigator.pop(
-                              context,
-                            );
-                          },
-                        ),
-                        // Container(
-                        //   margin: EdgeInsets.only(
-                        //     left: ScreenUtil().setWidth(60),
-                        //   ),
-                        //   child: Text(
-                        //     'สร้างบัญชี',
-                        //     style: TextStyle(
-                        //       height: 1.0,
-                        //       color: Colors.white,
-                        //       fontSize: ScreenUtil().setSp(45),
-                        //       fontWeight: FontWeight.bold,
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              AppBarWithArrow(),
               Container(
                 margin: EdgeInsets.only(
-                  top: ScreenUtil().setHeight(130),
+                  top: appBarHeight,
                 ),
                 child: SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      minWidth: ScreenUtil.screenWidthDp,
-                      minHeight: ScreenUtil.screenHeightDp -
-                          ScreenUtil.statusBarHeight -
-                          ScreenUtil().setHeight(130),
+                      minWidth: screenWidthDp,
+                      minHeight:
+                          screenHeightDp - statusBarHeight - appBarHeight,
                     ),
                     child: IntrinsicHeight(
                       child: Column(
@@ -154,10 +103,10 @@ class _SetYourInfoState extends State<SetYourInfo> {
                           Expanded(
                             flex: 15,
                             child: Container(
-                              width: ScreenUtil.screenWidthDp,
+                              width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                left: ScreenUtil().setWidth(70),
-                                right: ScreenUtil().setWidth(70),
+                                left: 70.w,
+                                right: 70.w,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,8 +114,8 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                   Text(
                                     'ใกล้เสร็จแล้ว!',
                                     style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(65),
+                                      color: AppColors.white,
+                                      fontSize: s65,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -174,8 +123,8 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                     'โลกของงานเขียนรอคุณอยู่หลังจากนี้ไป',
                                     style: TextStyle(
                                       height: 0.8,
-                                      color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(40),
+                                      color: AppColors.white,
+                                      fontSize: s40,
                                     ),
                                   ),
                                 ],
@@ -185,10 +134,10 @@ class _SetYourInfoState extends State<SetYourInfo> {
                           Expanded(
                             flex: 40,
                             child: Container(
-                              width: ScreenUtil.screenWidthDp,
+                              width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                left: ScreenUtil().setWidth(70),
-                                right: ScreenUtil().setWidth(70),
+                                left: 70.w,
+                                right: 70.w,
                               ),
                               child: Column(
                                 mainAxisAlignment:
@@ -202,8 +151,8 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                       Text(
                                         'ประเทศ/ภูมิภาค',
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: ScreenUtil().setSp(60),
+                                          color: AppColors.white,
+                                          fontSize: s60,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -212,19 +161,19 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                           Text(
                                             'ไทย',
                                             style: TextStyle(
-                                              color: Colors.white38,
-                                              fontSize: ScreenUtil().setSp(45),
+                                              color: AppColors.white38,
+                                              fontSize: s45,
                                               fontWeight: FontWeight.normal,
                                             ),
                                           ),
                                           Container(
                                             margin: EdgeInsets.only(
-                                              left: ScreenUtil().setWidth(5),
-                                              right: ScreenUtil().setWidth(5),
+                                              left: 5.w,
+                                              right: 5.w,
                                             ),
                                             child: Icon(
                                               Icons.arrow_drop_down,
-                                              color: Colors.white38,
+                                              color: AppColors.white38,
                                               size: ScreenUtil().setSp(50),
                                             ),
                                           ),
@@ -239,8 +188,8 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                       Text(
                                         'วันเกิด',
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: ScreenUtil().setSp(60),
+                                          color: AppColors.white,
+                                          fontSize: s60,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -248,8 +197,8 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                         child: Text(
                                           '${_dateTime.day.toString().padLeft(2, '0')}/${_dateTime.month.toString().padLeft(2, '0')}/${_dateTime.year}',
                                           style: TextStyle(
-                                            color: Color(0xff26A4FF),
-                                            fontSize: ScreenUtil().setSp(60),
+                                            color: AppColors.scrapblue,
+                                            fontSize: s60,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -266,8 +215,8 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                       Text(
                                         'เพศ',
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: ScreenUtil().setSp(60),
+                                          color: AppColors.white,
+                                          fontSize: s60,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -280,10 +229,10 @@ class _SetYourInfoState extends State<SetYourInfo> {
                           Expanded(
                             flex: 20,
                             child: Container(
-                              width: ScreenUtil.screenWidthDp,
+                              width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                left: ScreenUtil().setWidth(70),
-                                right: ScreenUtil().setWidth(70),
+                                left: 70.w,
+                                right: 70.w,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,8 +244,8 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                           text: 'Password',
                                           style: TextStyle(
                                             fontFamily: 'ThaiSans',
-                                            color: Colors.white,
-                                            fontSize: ScreenUtil().setSp(40),
+                                            color: AppColors.white,
+                                            fontSize: s40,
                                           ),
                                         ),
                                         TextSpan(
@@ -304,24 +253,24 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                               ' (สำหรับเข้าใช้งานบัญชีของคุณ)',
                                           style: TextStyle(
                                             fontFamily: 'ThaiSans',
-                                            color: Colors.white38,
-                                            fontSize: ScreenUtil().setSp(38),
+                                            color: AppColors.white38,
+                                            fontSize: s38,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   Container(
-                                    width: ScreenUtil.screenWidthDp,
-                                    height: ScreenUtil().setHeight(110),
+                                    width: screenWidthDp,
+                                    height: textFieldHeight,
                                     margin: EdgeInsets.only(
-                                      bottom: ScreenUtil.screenHeightDp / 60,
-                                      top: ScreenUtil.screenHeightDp / 80,
+                                      bottom: screenHeightDp / 60,
+                                      top: screenHeightDp / 80,
                                     ),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          ScreenUtil.screenWidthDp),
-                                      color: Color(0xff101010),
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp),
+                                      color: AppColors.textField,
                                     ),
                                     child: Center(
                                       child: TextFormField(
@@ -329,18 +278,18 @@ class _SetYourInfoState extends State<SetYourInfo> {
                                         textInputAction: TextInputAction.done,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: AppColors.white,
                                           letterSpacing: 10,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: ScreenUtil().setSp(40),
+                                          fontSize: s40,
                                         ),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText: '••••••••',
                                           hintStyle: TextStyle(
-                                            color: Colors.grey[500],
+                                            color: AppColors.hintText,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: ScreenUtil().setSp(40),
+                                            fontSize: s40,
                                           ),
                                         ),
                                       ),
@@ -356,25 +305,25 @@ class _SetYourInfoState extends State<SetYourInfo> {
                               children: <Widget>[
                                 GestureDetector(
                                   child: Container(
-                                    height: ScreenUtil().setHeight(110),
-                                    width: ScreenUtil.screenWidthDp,
+                                    height: textFieldHeight,
+                                    width: screenWidthDp,
                                     margin: EdgeInsets.only(
-                                      left: ScreenUtil().setWidth(70),
-                                      right: ScreenUtil().setWidth(70),
+                                      left: 70.w,
+                                      right: 70.w,
                                     ),
                                     // margin:
-                                    //     EdgeInsets.only(bottom: ScreenUtil.screenHeightDp / 40),
+                                    //     EdgeInsets.only(bottom: screenHeightDp / 40),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          ScreenUtil.screenWidthDp),
-                                      color: Color(0xff26A4FF),
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp),
+                                      color: AppColors.blueButton,
                                     ),
                                     child: Center(
                                       child: Text(
                                         'เสร็จสิ้น',
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: ScreenUtil().setSp(45),
+                                          color: AppColors.blueButtonText,
+                                          fontSize: s45,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
