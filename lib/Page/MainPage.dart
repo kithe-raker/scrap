@@ -5,13 +5,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:scrap/Page/Auth.dart';
 import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
+import 'package:scrap/Page/authenPage/AuthenPage.dart';
 import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/services/ImgCacheManger.dart';
-import 'package:scrap/services/jsonConverter.dart';
-import 'package:scrap/services/provider.dart';
+import 'package:scrap/Page/profile/createProfile1.dart';
+import 'package:scrap/function/authServices/authService.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -21,8 +20,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
-  JsonConverter jsonConverter = JsonConverter();
-  ImgCacheManager imgCacheManager = ImgCacheManager();
   DocumentSnapshot appInfo;
   initLocalMessage() {
     var android = AndroidInitializationSettings('noti_ic');
@@ -66,34 +63,36 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future onTapMessage(String payload) async {
-    final uid = await Provider.of(context).auth.currentUser();
+    final uid = await authService.getuid();
     await Firestore.instance.collection('Users').document(uid).get().then(
         (data) => Navigator.push(context,
             MaterialPageRoute(builder: (context) => Profile(doc: data))));
   }
 
-  Future<bool> serverChecker() async {
+  Future<bool> serverClose() async {
     bool close;
-    await Firestore.instance
-        .collection('App')
-        .document('info')
-        .get()
-        .then((doc) {
-      close = doc.data['close'];
-      appInfo = doc;
-    });
-    final uid = await Provider.of(context).auth?.currentUser() ?? '';
-    return close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
+    var doc = await Firestore.instance.collection('App').document('info').get();
+    close = doc['close'];
+    appInfo = doc;
+    return false;
   }
 
-  Future<bool> versionChecker() async {
+  Future<bool> recentVersion() async {
     String recent = '1.1.0', incoming;
     bool isIOS = Platform.isIOS;
     isIOS
         ? incoming = appInfo['versions']['IOS']
         : incoming = appInfo['versions']['android'];
-    final uid = await Provider.of(context).auth?.currentUser() ?? '';
-    return recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
+    return true;
+  }
+
+  Future<bool> finishProfile() async {
+    var user = await fireAuth.currentUser();
+    bool docExist = true;
+    if (user != null && !await cacheUser.hasUserData(user.uid)) {
+      docExist = await cacheUser.docExistsThenNewFile(user.uid, context);
+    }
+    return user != null && !docExist;
   }
 
   @override
@@ -116,27 +115,26 @@ class _MainPageState extends State<MainPage> {
               name: 'assets/splash.flr',
               startAnimation: 'Untitled',
               onSuccess: (data) async {
-                await serverChecker()
+                await serverClose()
                     ? navigator(Sorry())
-                    : await versionChecker()
-                        ? navigator(Authen())
+                    : await recentVersion()
+                        ? await finishProfile()
+                            ? navigator(CreateProfile1())
+                            : navigator(AuthenPage())
                         : navigator(Update());
               },
               loopAnimation: '1',
               until: () => Future.delayed(Duration(seconds: 1)),
               endAnimation: '0',
-              onError: (e, er) {
-                print(e);
-                print(er);
-              },
+              onError: (e, er) {},
             ),
           ),
         ));
   }
 
   navigator(var where) {
-    Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => where));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => where));
   }
 }
 

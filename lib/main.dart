@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:scrap/services/auth.dart';
-import 'package:scrap/services/provider.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/createworld/PreCreateWorld.dart';
+import 'package:scrap/provider/authen_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +14,12 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      auth: Auth(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthenProvider>.value(value: AuthenProvider()),
+      ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Scrap.',
