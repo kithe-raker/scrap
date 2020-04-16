@@ -41,14 +41,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
 
   Future uploadImg(File img, String uid, String imgNm) async {
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
-    String type = Platform.isAndroid ? 'webp' : 'jpeg';
-    var resizeImg = await resize.resize(image: img, type: type, quality: 40);
-
-    var meta = StorageMetadata(contentType: 'image/$type');
-    final StorageReference ref = FirebaseStorage.instance.ref().child(imgNm);
-    final StorageUploadTask task = ref.putFile(resizeImg, meta);
-    
-    var picUrl = await (await task.onComplete).ref.getDownloadURL();
+    var resizeImg = await resize.resize(image: img, quality: 40);
+    String picUrl = await resize.uploadImg(img: resizeImg, imageName: imgNm);
     authenInfo.img = picUrl;
     await addImg(uid, picUrl);
   }

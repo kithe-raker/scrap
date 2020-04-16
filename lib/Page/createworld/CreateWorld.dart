@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:scrap/function/world/worldFunction.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
+import 'package:scrap/widget/Loading.dart';
 
 class CreateWorld extends StatefulWidget {
   @override
@@ -16,6 +18,8 @@ class _CreateWorldState extends State<CreateWorld> {
   File image;
   String worldName, descript;
   var _key = GlobalKey<FormState>();
+  bool loading = false;
+  StreamSubscription loadStatus;
 
   sendCam() async {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
@@ -31,6 +35,19 @@ class _CreateWorldState extends State<CreateWorld> {
       image = img;
       setState(() {});
     }
+  }
+
+  @override
+  void initState() {
+    loadStatus =
+        worldFunction.load.listen((value) => setState(() => loading = value));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
   }
 
   @override
@@ -337,8 +354,10 @@ class _CreateWorldState extends State<CreateWorld> {
                                         _key.currentState.save();
                                         worldFunction.toConfigWorld(descript,
                                             worldName, image, context);
-                                      } else {
-                                        if (image == null) print('img == null');
+                                      } else if (image == null) {
+                                        worldFunction.warn(
+                                            'กรุณาเลือกรูปสำหรับโลกของคุณ',
+                                            context);
                                       }
                                     },
                                   ),
@@ -352,6 +371,7 @@ class _CreateWorldState extends State<CreateWorld> {
                   ),
                 ),
               ),
+              loading ? Loading() : SizedBox()
             ],
           ),
         ));

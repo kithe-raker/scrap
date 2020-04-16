@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrap/function/world/worldFunction.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
+import 'package:scrap/widget/Loading.dart';
 
 class ConfigWorld extends StatefulWidget {
   final File image;
@@ -18,6 +20,8 @@ class ConfigWorld extends StatefulWidget {
 class _ConfigWorldState extends State<ConfigWorld> {
   String mapSelect = 'ทมิฬ';
   int writePermission = 0;
+  bool loading = false;
+  StreamSubscription loadStatus;
 
   _mapSelect(String texture) {
     setState(() {
@@ -101,6 +105,19 @@ class _ConfigWorldState extends State<ConfigWorld> {
         _mapSelect(name);
       },
     );
+  }
+
+  @override
+  void initState() {
+    loadStatus =
+        worldFunction.load.listen((value) => setState(() => loading = value));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
   }
 
   @override
@@ -592,8 +609,8 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                                 screenWidthDp),
                                             color: AppColors.blueButton,
                                           ),
-                                          child: Center(
-                                            child: InkWell(
+                                          child: InkWell(
+                                            child: Center(
                                               child: Text(
                                                 'สร้างโลก',
                                                 style: TextStyle(
@@ -603,15 +620,16 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              onTap: () {
-                                                worldFunction.createWorld(
-                                                    widget.descript,
-                                                    widget.worldName,
-                                                    widget.image,
-                                                    mapSelect,
-                                                    writePermission, []);
-                                              },
                                             ),
+                                            onTap: () {
+                                              worldFunction.createWorld(
+                                                  widget.descript,
+                                                  widget.worldName,
+                                                  widget.image,
+                                                  permission: writePermission,
+                                                  theme: mapSelect,
+                                                  writer: []);
+                                            },
                                           ),
                                         )
                                       ],
@@ -627,6 +645,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
                   ),
                 ),
               ),
+              loading ? Loading() : SizedBox()
             ],
           ),
         ));
