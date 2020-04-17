@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/function/world/worldFunction.dart';
+import 'package:scrap/provider/createWorldProvider.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -52,6 +54,7 @@ class _CreateWorldState extends State<CreateWorld> {
 
   @override
   Widget build(BuildContext context) {
+    final worldInfo = Provider.of<CreateWorldProvider>(context, listen: false);
     ScreenUtil.init(context,
         width: defaultScreenWidth,
         height: defaultScreenHeight,
@@ -265,7 +268,7 @@ class _CreateWorldState extends State<CreateWorld> {
                                                 : null;
                                           },
                                           onSaved: (val) =>
-                                              worldName = val.trim(),
+                                              worldInfo.worldName = val.trim(),
                                         ),
                                       ),
                                     ),
@@ -310,7 +313,7 @@ class _CreateWorldState extends State<CreateWorld> {
                                                 : null;
                                           },
                                           onSaved: (val) =>
-                                              descript = val.trim(),
+                                              worldInfo.descript = val.trim(),
                                         ),
                                       ),
                                     ),
@@ -349,15 +352,10 @@ class _CreateWorldState extends State<CreateWorld> {
                                       ),
                                     ),
                                     onTap: () {
-                                      if (_key.currentState.validate() &&
-                                          image != null) {
+                                      if (_key.currentState.validate()) {
                                         _key.currentState.save();
-                                        worldFunction.toConfigWorld(descript,
-                                            worldName, image, context);
-                                      } else if (image == null) {
-                                        worldFunction.warn(
-                                            'กรุณาเลือกรูปสำหรับโลกของคุณ',
-                                            context);
+                                        worldInfo.image = image;
+                                        worldFunction.toConfigWorld(context);
                                       }
                                     },
                                   ),

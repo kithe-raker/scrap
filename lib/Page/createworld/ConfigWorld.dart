@@ -1,18 +1,15 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/function/world/worldFunction.dart';
+import 'package:scrap/provider/createWorldProvider.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
 import 'package:scrap/widget/Loading.dart';
 
 class ConfigWorld extends StatefulWidget {
-  final File image;
-  final String worldName;
-  final String descript;
-  ConfigWorld({this.descript, this.worldName, this.image});
   @override
   _ConfigWorldState createState() => _ConfigWorldState();
 }
@@ -122,6 +119,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
 
   @override
   Widget build(BuildContext context) {
+    final worldInfo = Provider.of<CreateWorldProvider>(context, listen: false);
     ScreenUtil.init(context,
         width: defaultScreenWidth,
         height: defaultScreenHeight,
@@ -622,10 +620,7 @@ class _ConfigWorldState extends State<ConfigWorld> {
                                               ),
                                             ),
                                             onTap: () {
-                                              worldFunction.createWorld(
-                                                  widget.descript,
-                                                  widget.worldName,
-                                                  widget.image,
+                                              worldFunction.createWorld(context,
                                                   permission: writePermission,
                                                   theme: mapSelect,
                                                   writer: []);
