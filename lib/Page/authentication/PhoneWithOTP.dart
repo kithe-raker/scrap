@@ -352,6 +352,7 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                     ),
                                   ),
                                   onTap: () {
+                                    authenInfo.region = 'th';
                                     if (_key.currentState.validate()) {
                                       _key.currentState.save();
                                       widget.register
