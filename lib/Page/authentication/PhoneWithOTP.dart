@@ -2,28 +2,29 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/authentication/SocialLogin.dart';
-import 'package:scrap/Page/authentication/not_registered/phone/CreateProfile1.dart';
+import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/provider/authen_provider.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/widget/AppBar.dart';
 import 'package:scrap/method/Navigator.dart';
+import 'package:scrap/widget/Loading.dart';
 
 class PhoneWithOTP extends StatefulWidget {
+  final bool register;
+  PhoneWithOTP({this.register = false});
   @override
   _PhoneWithOTPState createState() => _PhoneWithOTPState();
 }
 
 class _PhoneWithOTPState extends State<PhoneWithOTP> {
   final nav = Nav();
-  String loginMode = 'otp';
-  bool requestOTP = true;
-
-  @override
-  void initState() {
-    super.initState();
-    getOTP();
-  }
+  var _key = GlobalKey<FormState>();
+  String loginMode = 'otp', value;
+  bool requestOTP = true, loading = false;
+  StreamSubscription loadStatus;
 
   Timer _timer;
   int _start = 60;
@@ -32,6 +33,8 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
     setState(() {
       requestOTP = false;
     });
+    authService.load.add(true);
+    authService.phoneVerified(context);
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
@@ -52,8 +55,17 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
   }
 
   @override
+  void initState() {
+    getOTP();
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _timer.cancel();
+    loadStatus.cancel();
     super.dispose();
   }
 
@@ -71,12 +83,13 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
       height: defaultScreenHeight,
       allowFontScaling: fontScaling,
     );
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
         child: Stack(
           children: <Widget>[
-            AppBarWithTitle('สร้างบัญชี'),
+            AppBarWithTitle(widget.register ? 'สร้างบัญชี' : 'ลงชื่อเข้าใช้'),
             Container(
               margin: EdgeInsets.only(
                 top: appBarHeight,
@@ -110,11 +123,15 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                   width: screenWidthDp,
                                   height: textFieldHeight,
                                   margin: EdgeInsets.only(
-                                    // top: 30.h,
+                                    // top: ScreenUtil().setHeight(30),
                                     bottom: 30.h,
                                   ),
                                   padding: EdgeInsets.fromLTRB(
-                                      50.w, 20.h, 20.w, 20.h),
+                                    50.w,
+                                    20.h,
+                                    20.w,
+                                    20.h,
+                                  ),
                                   decoration: BoxDecoration(
                                     borderRadius:
                                         BorderRadius.circular(screenWidthDp),
@@ -168,7 +185,7 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                   // right: 50.w,
                                                 ),
                                                 child: Text(
-                                                  'หมายเลขโทรศัพท์',
+                                                  authenInfo.phone ?? '',
                                                   style: TextStyle(
                                                     color: AppColors.white30,
                                                     fontSize: s40,
@@ -177,7 +194,8 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                   ),
                                                 ),
                                               ),
-                                              loginMode == 'otp'
+                                              widget.register ||
+                                                      loginMode == 'otp'
                                                   ? GestureDetector(
                                                       child: Container(
                                                         padding:
@@ -216,9 +234,8 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                         ),
                                                       ),
                                                       onTap: () {
-                                                        requestOTP
-                                                            ? getOTP()
-                                                            : null;
+                                                        if (requestOTP)
+                                                          getOTP();
                                                       },
                                                     )
                                                   : SizedBox(),
@@ -243,38 +260,89 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                   ),
                                   child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Container(
-                                      margin: EdgeInsets.only(
-                                        left: 50.w,
-                                        right: 50.w,
-                                      ),
-                                      child: Text(
-                                        'OTP',
-                                        style: TextStyle(
-                                          color: AppColors.white30,
-                                          fontSize: s40,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
+                                    child: Form(
+                                      key: _key,
+                                      child: widget.register ||
+                                              loginMode == 'otp'
+                                          ? Container(
+                                              margin: EdgeInsets.only(
+                                                left: 50.w,
+                                                right: 50.w,
+                                              ),
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                    hintText: 'OTP',
+                                                    hintStyle: TextStyle(
+                                                        color:
+                                                            AppColors.white30,
+                                                        fontSize: s40,
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                                style: TextStyle(
+                                                    color: AppColors.white30,
+                                                    fontSize: s40,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                                validator: (val) {
+                                                  return val.trim() == ''
+                                                      ? 'ใส่รหัส OTP ของคุณ'
+                                                      : val.trim().length != 6
+                                                          ? 'ใส่รหัส OTP 6 หลัก'
+                                                          : null;
+                                                },
+                                                onSaved: (val) {
+                                                  value = val.trim();
+                                                },
+                                              ),
+                                            )
+                                          : Container(
+                                              margin: EdgeInsets.only(
+                                                left: 50.w,
+                                                right: 50.w,
+                                              ),
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                    hintStyle: TextStyle(
+                                                      color: AppColors.white30,
+                                                      fontSize: s40,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                    ),
+                                                    hintText: 'Password'),
+                                                style: TextStyle(
+                                                  color: AppColors.white30,
+                                                  fontSize: s40,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                                validator: (val) {
+                                                  return val.trim() == ''
+                                                      ? 'กรุณาใส่รหัสผ่าน'
+                                                      : null;
+                                                },
+                                                onSaved: (val) {
+                                                  value = val.trim();
+                                                },
+                                              ),
+                                            ),
                                     ),
                                   ),
                                 ),
+                                Container(height: 40.h),
                                 GestureDetector(
                                   child: Container(
                                     width: screenWidthDp,
                                     height: textFieldHeight,
                                     margin: EdgeInsets.only(
-                                      top: 90.h,
-                                      bottom: 65.h,
-                                    ),
+                                        top: 50.h, bottom: 25.h),
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(screenWidthDp),
-                                      color: AppColors.blueButton,
-                                    ),
+                                        borderRadius: BorderRadius.circular(
+                                            screenWidthDp),
+                                        color: AppColors.blueButton),
                                     child: Center(
                                       child: Text(
-                                        'ต่อไป',
+                                        widget.register
+                                            ? 'สร้างบัญชี'
+                                            : 'เข้าสู่ระบบ',
                                         style: TextStyle(
                                           color: AppColors.blueButtonText,
                                           fontSize: s45,
@@ -284,9 +352,42 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                     ),
                                   ),
                                   onTap: () {
-                                    nav.push(context, CreateProfile1());
+                                    if (_key.currentState.validate()) {
+                                      _key.currentState.save();
+                                      widget.register
+                                          ? authService.signUpWithPhone(context,
+                                              smsCode: value)
+                                          : loginMode == 'otp'
+                                              ? authService.signInWithPhone(
+                                                  context,
+                                                  smsCode: value)
+                                              : authService.signInWithPassword(
+                                                  context,
+                                                  password: value);
+                                    }
                                   },
                                 ),
+                                widget.register
+                                    ? SizedBox()
+                                    : GestureDetector(
+                                        child: Text(
+                                          loginMode == 'otp'
+                                              ? 'ลงชื่อเข้าใช้ด้วยรหัสผ่าน'
+                                              : 'ลงชื่อเข้าใช้ด้วย OTP',
+                                          style: TextStyle(
+                                            decoration:
+                                                TextDecoration.underline,
+                                            height: 1.0,
+                                            color: AppColors.white70,
+                                            fontSize: s38,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          changeLogin(loginMode == 'otp'
+                                              ? 'password'
+                                              : 'otp');
+                                        },
+                                      ),
                               ],
                             ),
                           ),
@@ -314,6 +415,7 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                 ),
               ),
             ),
+            loading ? Loading() : SizedBox()
           ],
         ),
       ),

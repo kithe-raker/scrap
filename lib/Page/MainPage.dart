@@ -9,8 +9,9 @@ import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
 import 'package:scrap/Page/authenPage/AuthenPage.dart';
 import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/Page/profile/createProfile1.dart';
 import 'package:scrap/function/authServices/authService.dart';
+
+import 'authentication/not_registered/CreateProfile1.dart';
 
 class MainPage extends StatefulWidget {
   @override

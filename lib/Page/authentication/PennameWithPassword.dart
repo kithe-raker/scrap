@@ -1,10 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/authentication/SocialLogin.dart';
+import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/provider/authen_provider.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/widget/AppBar.dart';
 import 'package:scrap/method/Navigator.dart';
+import 'package:scrap/widget/Loading.dart';
 
 class PennameLogin extends StatefulWidget {
   @override
@@ -13,16 +19,27 @@ class PennameLogin extends StatefulWidget {
 
 class _PennameLoginState extends State<PennameLogin> {
   final nav = Nav();
-  String loginMode = 'phone';
+  var _key = GlobalKey<FormState>();
+  String password;
+  bool loading = false;
+  StreamSubscription loadStatus;
 
-  changeLogin(String mode) {
-    setState(() {
-      loginMode = mode;
-    });
+  @override
+  void initState() {
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     ScreenUtil.init(
       context,
       width: defaultScreenWidth,
@@ -76,7 +93,7 @@ class _PennameLoginState extends State<PennameLogin> {
                                         ),
                                         children: <TextSpan>[
                                           TextSpan(
-                                            text: '@tarit.in.th',
+                                            text: authenInfo.pName,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               fontSize: s70,
@@ -85,51 +102,68 @@ class _PennameLoginState extends State<PennameLogin> {
                                         ]),
                                   ),
                                 ),
-                                Container(
-                                  width: screenWidthDp,
-                                  height: textFieldHeight,
-                                  margin: EdgeInsets.only(
-                                    top: 15.h,
-                                    bottom: 15.h,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(screenWidthDp),
-                                    color: Color(0xff101010),
-                                  ),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Container(
-                                      margin: EdgeInsets.only(
-                                        left: 50.w,
-                                        right: 50.w,
-                                      ),
-                                      child: Text(
-                                        'Password',
-                                        style: TextStyle(
-                                          color: AppColors.white30,
-                                          fontSize: s40,
-                                          fontWeight: FontWeight.normal,
+                                Form(
+                                  key: _key,
+                                  child: Container(
+                                    width: screenWidthDp,
+                                    height: textFieldHeight,
+                                    margin: EdgeInsets.only(
+                                      top: 15.h,
+                                      bottom: 15.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp),
+                                      color: Color(0xff101010),
+                                    ),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                          left: 50.w,
+                                          right: 50.w,
                                         ),
+                                        child: TextFormField(
+                                            decoration: InputDecoration(
+                                              hintText: 'Password',
+                                              hintStyle: TextStyle(
+                                                color: AppColors.white30,
+                                                fontSize: s40,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            style: TextStyle(
+                                              color: AppColors.white30,
+                                              fontSize: s40,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                            validator: (val) {
+                                              return val.trim() == ''
+                                                  ? 'กรุณาใส่รหัสผ่าน'
+                                                  : null;
+                                            },
+                                            onSaved: (val) {
+                                              password = val.trim();
+                                            }),
                                       ),
                                     ),
                                   ),
                                 ),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: GestureDetector(
-                                    child: Text(
-                                      'ลืมรหัสผ่าน?',
-                                      style: TextStyle(
-                                        decoration: TextDecoration.underline,
-                                        height: 1.0,
-                                        color: AppColors.white70,
-                                        fontSize: s38,
-                                      ),
-                                    ),
-                                    onTap: () {},
-                                  ),
-                                ),
+                                // Align(
+                                //   alignment: Alignment.centerRight,
+                                //   child: GestureDetector(
+                                //     child: Text(
+                                //       'ลืมรหัสผ่าน?',
+                                //       style: TextStyle(
+                                //         decoration: TextDecoration.underline,
+                                //         height: 1.0,
+                                //         color: AppColors.white70,
+                                //         fontSize: s38,
+                                //       ),
+                                //     ),
+                                //     onTap: () {},
+                                //   ),
+                                // ),
                                 GestureDetector(
                                   child: Container(
                                     width: screenWidthDp,
@@ -155,7 +189,11 @@ class _PennameLoginState extends State<PennameLogin> {
                                     ),
                                   ),
                                   onTap: () {
-                                    nav.push(context, null);
+                                    if (_key.currentState.validate()) {
+                                      _key.currentState.save();
+                                      authService.signInWithPassword(context,
+                                          password: password);
+                                    }
                                   },
                                 ),
                                 // GestureDetector(
@@ -202,6 +240,7 @@ class _PennameLoginState extends State<PennameLogin> {
                 ),
               ),
             ),
+            loading ? Loading() : SizedBox()
           ],
         ),
       ),

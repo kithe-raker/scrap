@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/authentication/SocialLogin.dart';
-import 'package:scrap/Page/authentication/not_registered/phone/PhoneWithOTP.dart';
-import 'package:scrap/Page/authentication/registered/penname/PennameWithPassword.dart';
+import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/provider/authen_provider.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/widget/AppBar.dart';
 import 'package:scrap/method/Navigator.dart';
+import 'package:scrap/widget/Loading.dart';
 
 class MainLogin extends StatefulWidget {
   @override
@@ -14,8 +18,11 @@ class MainLogin extends StatefulWidget {
 }
 
 class _MainLoginState extends State<MainLogin> {
+  var _key = GlobalKey<FormState>();
   final nav = Nav();
-  String loginMode = 'phone';
+  String loginMode = 'phone', value;
+  bool loading = false;
+  StreamSubscription loadStatus;
 
   changeLogin(String mode) {
     setState(() {
@@ -24,7 +31,21 @@ class _MainLoginState extends State<MainLogin> {
   }
 
   @override
+  void initState() {
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     ScreenUtil.init(
       context,
       width: defaultScreenWidth,
@@ -86,106 +107,154 @@ class _MainLoginState extends State<MainLogin> {
                                         )
                                       ]),
                                 ),
-                                loginMode == 'phone'
-                                    ? Container(
-                                        width: screenWidthDp,
-                                        height: textFieldHeight,
-                                        margin: EdgeInsets.only(
-                                          top: 30.h,
-                                          bottom: 30.h,
-                                        ),
-                                        padding: EdgeInsets.fromLTRB(
-                                          50.w,
-                                          20.h,
-                                          50.w,
-                                          20.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              screenWidthDp),
-                                          color: AppColors.textField,
-                                        ),
-                                        child: Container(
-                                          child: Row(
-                                            children: <Widget>[
-                                              Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    '+66',
-                                                    style: TextStyle(
-                                                      color: AppColors.white,
-                                                      fontSize: s40,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                      left: 10.w,
-                                                      right: 10.w,
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.arrow_drop_down,
-                                                      color: AppColors.white,
-                                                      size: s40,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              VerticalDivider(
-                                                color: AppColors.white30,
-                                              ),
-                                              Expanded(
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                Form(
+                                  key: _key,
+                                  child: loginMode == 'phone'
+                                      ? Container(
+                                          width: screenWidthDp,
+                                          height: textFieldHeight,
+                                          margin: EdgeInsets.only(
+                                            top: 30.h,
+                                            bottom: 30.h,
+                                          ),
+                                          padding: EdgeInsets.fromLTRB(
+                                            50.w,
+                                            20.h,
+                                            50.w,
+                                            20.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                screenWidthDp),
+                                            color: AppColors.textField,
+                                          ),
+                                          child: Container(
+                                            child: Row(
+                                              children: <Widget>[
+                                                Row(
                                                   children: <Widget>[
+                                                    Text(
+                                                      '+66',
+                                                      style: TextStyle(
+                                                        color: AppColors.white,
+                                                        fontSize: s40,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                                    ),
                                                     Container(
                                                       margin: EdgeInsets.only(
-                                                        left: 30.w,
+                                                        left: 10.w,
+                                                        right: 10.w,
                                                       ),
-                                                      child: Text(
-                                                        'หมายเลขโทรศัพท์',
-                                                        style: TextStyle(
-                                                          color:
-                                                              AppColors.white30,
-                                                          fontSize: s40,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                        ),
+                                                      child: Icon(
+                                                        Icons.arrow_drop_down,
+                                                        color: AppColors.white,
+                                                        size: s40,
                                                       ),
-                                                    ),
+                                                    )
                                                   ],
                                                 ),
-                                              ),
-                                            ],
+                                                VerticalDivider(
+                                                  color: AppColors.white30,
+                                                ),
+                                                Expanded(
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        width: 160,
+                                                        height: 50,
+                                                        margin: EdgeInsets.only(
+                                                          left: 30.w,
+                                                        ),
+                                                        child: TextFormField(
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          style: TextStyle(
+                                                              color: AppColors
+                                                                  .white30,
+                                                              fontSize: s40,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal),
+                                                          decoration:
+                                                              InputDecoration(
+                                                            hintText:
+                                                                'หมายเลขโทรศัพท์',
+                                                            hintStyle: TextStyle(
+                                                                color: AppColors
+                                                                    .white30,
+                                                                fontSize: s40,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal),
+                                                          ),
+                                                          validator: (val) {
+                                                            return val.trim() ==
+                                                                    ''
+                                                                ? 'กรุณาใส่หมายเลขโทรศัฟท์'
+                                                                : val.trim().length !=
+                                                                        10
+                                                                    ? 'ใส่หมายเลข10หลัก'
+                                                                    : null;
+                                                          },
+                                                          onSaved: (val) {
+                                                            value = val.trim();
+                                                            authenInfo.phone =
+                                                                val.trim();
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                    : Container(
-                                        width: screenWidthDp,
-                                        height: textFieldHeight,
-                                        margin: EdgeInsets.only(
-                                          top: 30.h,
-                                          bottom: 30.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              screenWidthDp),
-                                          color: AppColors.textField,
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            '@penname',
+                                        )
+                                      : Container(
+                                          width: screenWidthDp,
+                                          height: textFieldHeight,
+                                          margin: EdgeInsets.only(
+                                            top: 30.h,
+                                            bottom: 30.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                screenWidthDp),
+                                            color: AppColors.textField,
+                                          ),
+                                          child: TextFormField(
                                             style: TextStyle(
                                               color: AppColors.white30,
                                               fontSize: s40,
                                               fontWeight: FontWeight.normal,
                                             ),
+                                            textAlign: TextAlign.center,
+                                            decoration: InputDecoration(
+                                              hintText: '@penname',
+                                              hintStyle: TextStyle(
+                                                color: AppColors.white30,
+                                                fontSize: s40,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            validator: (val) {
+                                              return val.trim() == ''
+                                                  ? 'กรุณาใส่นามปากกา'
+                                                  : null;
+                                            },
+                                            onSaved: (val) {
+                                              value = val.trim();
+                                              authenInfo.pName = val.trim();
+                                            },
                                           ),
                                         ),
-                                      ),
+                                ),
                                 GestureDetector(
                                   child: Container(
                                     width: screenWidthDp,
@@ -210,9 +279,11 @@ class _MainLoginState extends State<MainLogin> {
                                     ),
                                   ),
                                   onTap: () {
-                                    loginMode == 'phone'
-                                        ? nav.push(context, PhoneWithOTP())
-                                        : nav.push(context, PennameLogin());
+                                    if (_key.currentState.validate()) {
+                                      _key.currentState.save();
+                                      authService.validator(context, value,
+                                          withPhone: loginMode == 'phone');
+                                    }
                                   },
                                 ),
                                 GestureDetector(
@@ -297,6 +368,7 @@ class _MainLoginState extends State<MainLogin> {
                 ),
               ),
             ),
+            loading ? Loading() : SizedBox()
           ],
         ),
       ),

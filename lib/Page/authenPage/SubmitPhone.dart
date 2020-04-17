@@ -226,13 +226,7 @@ class _SubmitPhoneState extends State<SubmitPhone> {
                                                   fontWeight: FontWeight.bold),
                                             ),
                                           ),
-                                          onTap: () async {
-                                            if (_keyPhone.currentState
-                                                .validate()) {
-                                              _keyPhone.currentState.save();
-                                              authService
-                                                  .phoneValidator(context,login: widget.login);
-                                            }
+                                          onTap: () async {                      
                                           })
                                     ])),
                                 Form(

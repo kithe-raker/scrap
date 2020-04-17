@@ -1,10 +1,18 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scrap/Page/authentication/not_registered/phone/CreateProfile2.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/Page/authentication/not_registered/CreateProfile2.dart';
+import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/provider/authen_provider.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/widget/AppBar.dart';
 import 'package:scrap/method/Navigator.dart';
+import 'package:scrap/widget/Loading.dart';
 
 class CreateProfile1 extends StatefulWidget {
   @override
@@ -13,6 +21,77 @@ class CreateProfile1 extends StatefulWidget {
 
 class _CreateProfile1State extends State<CreateProfile1> {
   final nav = Nav();
+  var _key = GlobalKey<FormState>();
+  String pName;
+  dynamic image;
+  bool loading = false;
+  var user;
+  StreamSubscription loadStatus;
+  var nameController = TextEditingController();
+
+  sendCam() async {
+    File img = await ImagePicker.pickImage(source: ImageSource.camera);
+    if (img != null) {
+      image = img;
+      setState(() {});
+    }
+  }
+
+  sendPic() async {
+    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (img != null) {
+      image = img;
+      setState(() {});
+    }
+  }
+
+  initUserInfo() async {
+    user = await fireAuth.currentUser();
+    nameController.text = user?.displayName ?? null;
+    image = user?.photoUrl ?? null;
+    loading = false;
+    setState(() {});
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
+  }
+
+  validator() async {
+    authService.load.add(true);
+    if (image != null || user?.photoUrl != null) {
+      var docs = await authService.getDocuments('pName', pName);
+      var data = docs.documents[0];
+      docs.documents.length < 1 || data.documentID == user.uid
+          ? register()
+          : authService.warn('นามนี้ได้ทำการลงทะเบียนไว้แล้ว', context);
+    } else
+      authService.warn('กรุณาเลือกรูปโปรไฟล์ของท่าน', context);
+  }
+
+  register() async {
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
+    authenInfo.img = image;
+    authenInfo.pName = pName;
+    await fireStore
+        .collection('Account')
+        .document(user.uid)
+        .setData({'pName': pName}, merge: true);
+    nav.push(context, CreateProfile2());
+    authService.load.add(false);
+  }
+
+  @override
+  void initState() {
+    initUserInfo();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    nameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(
@@ -91,28 +170,45 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                     child: Center(
                                       child: Stack(
                                         children: <Widget>[
-                                          Container(
-                                            height: 300.w,
-                                            width: 300.w,
-                                            decoration: BoxDecoration(
-                                              color: AppColors.imagePlaceholder,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      screenWidthDp),
-                                              border: Border.all(
-                                                color: AppColors
-                                                    .imagePlaceholderBoder,
-                                                width: 1.5,
+                                          GestureDetector(
+                                            child: Container(
+                                              height: 300.w,
+                                              width: 300.w,
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    AppColors.imagePlaceholder,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        screenWidthDp),
+                                                border: Border.all(
+                                                  color: AppColors
+                                                      .imagePlaceholderBoder,
+                                                  width: 1.5,
+                                                ),
                                               ),
+                                              child: ClipRRect(
+                                                  child: image == null
+                                                      ? Image.network(
+                                                          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+                                                          fit: BoxFit.cover)
+                                                      : image.runtimeType ==
+                                                              String
+                                                          ? Image.network(
+                                                              user.photoUrl,
+                                                              fit: BoxFit.cover,
+                                                            )
+                                                          : Image.file(
+                                                              image,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                    300,
+                                                  )),
                                             ),
-                                            // child: ClipRRect(
-                                            //   borderRadius:
-                                            //       BorderRadius.circular(300),
-                                            //   child: Image.network(
-                                            //     'https://tarit.in.th/scrap/app_assets/globe-01-512.png',
-                                            //     fit: BoxFit.cover,
-                                            //   ),
-                                            // ),
+                                            onTap: () {
+                                              selectImg(context);
+                                            },
                                           ),
                                           Positioned(
                                             right: 20.w,
@@ -174,33 +270,43 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                       ],
                                     ),
                                   ),
-                                  Container(
-                                    width: screenWidthDp,
-                                    height: textFieldHeight,
-                                    margin: EdgeInsets.only(
-                                      bottom: screenHeightDp / 60,
-                                      top: screenHeightDp / 80,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(screenWidthDp),
-                                      color: AppColors.textField,
-                                    ),
-                                    child: Center(
-                                      child: TextFormField(
-                                        textInputAction: TextInputAction.done,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: AppColors.white,
-                                          fontSize: s40,
-                                        ),
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: '@penname',
-                                          hintStyle: TextStyle(
-                                            color: AppColors.white30,
+                                  Form(
+                                    key: _key,
+                                    child: Container(
+                                      width: screenWidthDp,
+                                      height: textFieldHeight,
+                                      margin: EdgeInsets.only(
+                                        bottom: screenHeightDp / 60,
+                                        top: screenHeightDp / 80,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                            screenWidthDp),
+                                        color: AppColors.textField,
+                                      ),
+                                      child: Center(
+                                        child: TextFormField(
+                                          textInputAction: TextInputAction.done,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: AppColors.white,
                                             fontSize: s40,
                                           ),
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: '@penname',
+                                            hintStyle: TextStyle(
+                                              color: AppColors.white30,
+                                              fontSize: s40,
+                                            ),
+                                          ),
+                                          validator: ((val) {
+                                            return val.trim() == ''
+                                                ? "กรุณาใส่นามปากกาของท่าน"
+                                                : null;
+                                          }),
+                                          onSaved: (name) =>
+                                              pName = name.trim(),
                                         ),
                                       ),
                                     ),
@@ -240,7 +346,10 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                     ),
                                   ),
                                   onTap: () {
-                                    nav.push(context, CreateProfile2());
+                                    if (_key.currentState.validate()) {
+                                      _key.currentState.save();
+                                      validator();
+                                    }
                                   },
                                 ),
                               ],
@@ -252,8 +361,82 @@ class _CreateProfile1State extends State<CreateProfile1> {
                   ),
                 ),
               ),
+              loading ? Loading() : SizedBox()
             ],
           ),
         ));
+  }
+
+  selectImg(BuildContext context) {
+    Size scr = MediaQuery.of(context).size;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        contentPadding: EdgeInsets.all(3),
+        content: Container(
+          height: scr.height / 3.8,
+          width: scr.width / 1.1,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: 20, top: 20),
+                child: Text(
+                  "อัปโหลดรูปภาพ",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  iconImg(
+                    Icons.image,
+                    () {
+                      sendPic();
+                      Navigator.pop(context);
+                    },
+                  ),
+                  iconImg(Icons.camera_alt, () {
+                    sendCam();
+                    Navigator.pop(context);
+                  })
+                ],
+              )
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              'ยกเลิก',
+              style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget iconImg(IconData icon, Function func) {
+    Size scr = MediaQuery.of(context).size;
+    return Container(
+      width: scr.width / 1.1 / 2.8,
+      height: scr.height / 6.4,
+      decoration: BoxDecoration(
+          color: Colors.grey[200], borderRadius: BorderRadius.circular(18)),
+      child: IconButton(
+          icon: Icon(
+            icon,
+            size: scr.width / 6,
+            color: Colors.grey[800],
+          ),
+          onPressed: func),
+    );
   }
 }

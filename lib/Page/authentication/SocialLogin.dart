@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scrap/Page/authentication/not_registered/phone/CreateProfile2.dart';
-import 'package:scrap/Page/authentication/not_registered/social/CreateProfile1.dart';
+import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/theme/ScreenUtil.dart';
 import 'package:scrap/method/Navigator.dart';
@@ -78,48 +77,58 @@ class _SocialLoginState extends State<SocialLogin> {
                   ),
                 ),
                 onTap: () {
-                  nav.push(context, CreateProfile1());
+                  authService.authenWithFacebook(context);
                 },
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                width: 80.w,
-                height: 80.w,
-                decoration: BoxDecoration(
-                  color: AppColors.black,
-                  borderRadius: BorderRadius.circular(screenWidthDp),
-                  border: Border.all(
-                    color: AppColors.white,
-                    width: 0.2,
-                  ),
-                ),
+              GestureDetector(
                 child: Container(
-                  margin: EdgeInsets.all(15.w),
-                  child: Image.network(
-                    'https://tarit.in.th/scrap/app_assets/icon/gmail.png',
-                    fit: BoxFit.contain,
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  width: 80.w,
+                  height: 80.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.black,
+                    borderRadius: BorderRadius.circular(screenWidthDp),
+                    border: Border.all(
+                      color: AppColors.white,
+                      width: 0.2,
+                    ),
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.all(15.w),
+                    child: Image.network(
+                      'https://tarit.in.th/scrap/app_assets/icon/gmail.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
+                onTap: () {
+                  authService.authenWithGoogle(context);
+                },
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                width: 80.w,
-                height: 80.w,
-                decoration: BoxDecoration(
-                  color: AppColors.black,
-                  borderRadius: BorderRadius.circular(screenWidthDp),
-                  border: Border.all(
-                    color: AppColors.white,
-                    width: 0.2,
-                  ),
-                ),
+              GestureDetector(
                 child: Container(
-                  margin: EdgeInsets.all(15.w),
-                  child: Image.network(
-                    'https://tarit.in.th/scrap/app_assets/icon/twitter.png',
-                    fit: BoxFit.contain,
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  width: 80.w,
+                  height: 80.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.black,
+                    borderRadius: BorderRadius.circular(screenWidthDp),
+                    border: Border.all(
+                      color: AppColors.white,
+                      width: 0.2,
+                    ),
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.all(15.w),
+                    child: Image.network(
+                      'https://tarit.in.th/scrap/app_assets/icon/twitter.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
+                onTap: () {
+                  authService.authenWithTwitter(context);
+                },
               )
             ],
           ),

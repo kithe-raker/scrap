@@ -69,7 +69,7 @@ class CacheUserInfo {
           "uid": uid,
           "pName": doc['pName'],
           "img": doc['img'],
-          "birthday": doc['birthday'].toString(),
+          "birthday": doc['birthday'].toDate().toString(),
           "gender": doc['gender'],
           'region': doc['region']
         });

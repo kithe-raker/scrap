@@ -8,13 +8,18 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/authenPage/AuthenPage.dart';
-import 'package:scrap/Page/profile/createProfile1.dart';
+import 'package:scrap/Page/authentication/PennameWithPassword.dart';
+import 'package:scrap/Page/authentication/PhoneWithOTP.dart';
+import 'package:scrap/Page/authentication/not_registered/CreateProfile1.dart';
 import 'package:scrap/function/cacheManager/cache_UserInfo.dart';
+import 'package:scrap/function/others/resizeImage.dart';
+import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/provider/authen_provider.dart';
 
 final fireStore = Firestore.instance;
 final fireAuth = FirebaseAuth.instance;
 final fireMess = FirebaseMessaging();
+final nav = Nav();
 
 final fbSign = FacebookLogin();
 final ggSign = GoogleSignIn();
@@ -38,6 +43,18 @@ class AuthService {
         .limit(1)
         .getDocuments();
     return doc.documents.length > 0;
+  }
+
+  ///Get multi documents by pass [key] and [value]
+  ///
+  ///this will return as [QuerySnapshot]
+  Future<QuerySnapshot> getDocuments(String key, dynamic value) async {
+    var doc = await fireStore
+        .collection('Account')
+        .where(key, isEqualTo: value)
+        .limit(1)
+        .getDocuments();
+    return doc;
   }
 
   ///get user region by [uid] if null return empty String
@@ -77,32 +94,36 @@ class AuthService {
         context, MaterialPageRoute(builder: (context) => where));
   }
 
-  ///Validate whicg phone number has already use || which is hasn't use yet
-  ///Depends on [login] value is true || false
-  Future<void> phoneValidator(BuildContext context,
-      {bool login = false}) async {
+  ///Validator for seperate whether where should lead user to ,
+  ///By pass [value] and [withPhone] whether user authentication with phone or not
+  ///
+  ///[withPhone] default is false
+  Future<void> validator(BuildContext context, String value,
+      {bool withPhone = false}) async {
     load.add(true);
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
-    var docs = await Firestore.instance
-        .collection('Account')
-        .where('phone', isEqualTo: authenInfo.phone)
-        .limit(1)
-        .getDocuments();
-    if (docs.documents.length > 0) {
-      login
-          ? phoneVerified(context, region: docs.documents[0]['region'])
-          : warn('บัญชีดังกล่าวลงทะเบียนไว้แล้ว', context);
+    var doc =
+        await authService.getDocuments(withPhone ? 'phone' : 'pName', value);
+    if (doc.documents.length > 0) {
+      var accDoc = doc.documents[0];
+      authenInfo.email = accDoc['email'];
+      authenInfo.password = accDoc['password'];
+      authenInfo.region = accDoc['region'] ?? '';
+      nav.push(context, withPhone ? PhoneWithOTP() : PennameLogin());
+      load.add(false);
+    } else if (withPhone) {
+      nav.push(context, PhoneWithOTP(register: true));
+      load.add(false);
     } else {
-      login ? warn('ไม่พบบัญชีดังกล่าว', context) : phoneVerified(context);
+      warn('ไม่พบบัญชีดังกล่าว', context);
     }
   }
 
   ///Send OTP code for verified phone number
   ///[region] use for check country phone code of user
   ///you can pass region to [region] if provider doesn't work well
-  Future<void> phoneVerified(BuildContext context, {String region}) async {
+  Future<void> phoneVerified(BuildContext context) async {
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
-    authenInfo.region = region;
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {};
     final PhoneCodeSent smsCode = (String id, [int resendCode]) {
       authenInfo.verificationID = id;
@@ -127,7 +148,7 @@ class AuthService {
     });
   }
 
-  ///Sign user up with phone number and requied [smsCode] or OTP code 
+  ///Sign user up with phone number and requied [smsCode] or OTP code
   ///use for verified phone number Then this will lead user to [CreateProfile1] immediately
   Future signUpWithPhone(BuildContext context,
       {@required String smsCode}) async {
@@ -159,7 +180,7 @@ class AuthService {
     }
   }
 
-  ///Sign user in with phone number and requied [smsCode] or OTP code 
+  ///Sign user in with phone number and requied [smsCode] or OTP code
   ///get user data then store to cache ,after that lead to [AuthenPage]
   ///if user's data doesn't exist lead to [CreateProfile1] immediately
   signInWithPhone(BuildContext context, {@required String smsCode}) async {
@@ -195,37 +216,27 @@ class AuthService {
     }
   }
 
-  ///Sign user in with [penname] and requied [password]
+  ///Sign user in with [penname] and required [password]
   ///get user data then store to cache ,after that lead to [AuthenPage]
   ///if user's data doesn't exist lead to [CreateProfile1] immediately
-  signInWithPenName(BuildContext context,
-      {@required String penname, @required String password}) async {
+  signInWithPassword(BuildContext context, {@required String password}) async {
     load.add(true);
-    var docs = await Firestore.instance
-        .collection('Account')
-        .where('pName', isEqualTo: penname)
-        .limit(1)
-        .getDocuments();
-    if (docs.documents.length > 0) {
-      var doc = docs.documents[0];
-      if (password == doc['password']) {
-        var curUser = await fireAuth.signInWithEmailAndPassword(
-            email: doc['email'], password: password);
-        var uid = curUser.user.uid;
-        await updateToken(uid);
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
+    if (password == authenInfo.password) {
+      var curUser = await fireAuth.signInWithEmailAndPassword(
+          email: authenInfo.email, password: password);
+      var uid = curUser.user.uid;
+      await updateToken(uid);
 
-        if (await cacheUser.docExistsThenNewFile(uid, context,
-            region: doc?.data['region'] ?? null))
-          navigatorReplace(context, AuthenPage());
-        else
-          navigatorReplace(context, CreateProfile1());
+      if (await cacheUser.docExistsThenNewFile(uid, context,
+          region: authenInfo?.region ?? null))
+        navigatorReplace(context, AuthenPage());
+      else
+        navigatorReplace(context, CreateProfile1());
 
-        load.add(false);
-      } else {
-        warn('ตรวจสอบรหัสผ่านของท่าน', context);
-      }
+      load.add(false);
     } else {
-      warn('ไม่พบบัญชีดังกล่าว', context);
+      warn('ตรวจสอบรหัสผ่านของคุณ', context);
     }
   }
 
@@ -237,7 +248,7 @@ class AuthService {
     load.add(false);
   }
 
-  ///Sign user in with facebook aacount 
+  ///Sign user in with facebook aacount
   ///get user data then store to cache ,after that lead to [AuthenPage]
   ///if user's data doesn't exist lead to [CreateProfile1] immediately
   authenWithFacebook(BuildContext context) async {
@@ -248,6 +259,7 @@ class AuthService {
         var fbCredent = FacebookAuthProvider.getCredential(
             accessToken: fbLogin.accessToken.token);
         var curUser = await fireAuth.signInWithCredential(fbCredent);
+
         var uid = curUser.user.uid;
         await updateToken(uid);
 
@@ -265,10 +277,10 @@ class AuthService {
     }
   }
 
-  ///Sign user in with twitter aacount 
+  ///Sign user in with twitter aacount
   ///get user data then store to cache ,after that lead to [AuthenPage]
   ///if user's data doesn't exist lead to [CreateProfile1] immediately
-  authenWithTwitter(BuildContext context, {bool signUp = false}) async {
+  authenWithTwitter(BuildContext context) async {
     load.add(true);
     var user = await twSign.authorize();
     switch (user.status) {
@@ -277,6 +289,7 @@ class AuthService {
             authToken: user.session.token,
             authTokenSecret: user.session.secret);
         var curUser = await fireAuth.signInWithCredential(twCredent);
+
         var uid = curUser.user.uid;
         await updateToken(uid);
 
@@ -294,17 +307,19 @@ class AuthService {
     }
   }
 
-  ///Sign user in with google aacount 
+  ///Sign user in with google aacount
   ///get user data then store to cache ,after that lead to [AuthenPage]
   ///if user's data doesn't exist lead to [CreateProfile1] immediately
   authenWithGoogle(BuildContext context) async {
-    load.add(true);
     try {
+      load.add(true);
       GoogleSignInAccount account = await ggSign.signIn();
       GoogleSignInAuthentication user = await account.authentication;
+
       var ggCredent = GoogleAuthProvider.getCredential(
           idToken: user.idToken, accessToken: user.accessToken);
       var curUser = await fireAuth.signInWithCredential(ggCredent);
+
       var uid = curUser.user.uid;
       await updateToken(curUser.user.uid);
 
@@ -356,23 +371,21 @@ class AuthService {
         .collection('users')
         .document(uid);
     var batch = fireStore.batch();
+    if (authenInfo.img.runtimeType != String) {
+      var resizeImg = await resize.resize(image: authenInfo.img);
+      authenInfo.img =
+          await resize.uploadImg(img: resizeImg, imageName: uid + '_pro0');
+    }
     batch.setData(
         accRef,
-        user?.email == null
-            ? {
-                'email': uid + '@gmail.com',
-                'password': authenInfo.password,
-                'pName': authenInfo.pName,
-                'region': authenInfo.region,
-                'token': token,
-              }
-            : {
-                'email': user.email,
-                'password': authenInfo.password,
-                'pName': authenInfo.pName,
-                'region': authenInfo.region,
-                'token': token,
-              });
+        {
+          'email': user?.email ?? '$uid@gmail.com',
+          'password': authenInfo.password,
+          'pName': authenInfo.pName,
+          'region': authenInfo.region,
+          'token': token,
+        },
+        merge: true);
     batch.setData(
         userRef,
         {
@@ -381,6 +394,8 @@ class AuthService {
           'birthday': authenInfo.birthday,
           'gender': authenInfo.gender,
           'created': FieldValue.serverTimestamp(),
+          'img': authenInfo.img,
+          'imgList': FieldValue.arrayUnion([authenInfo.img])
         },
         merge: true);
     cacheUser.newFileUserInfo(uid, context, info: {
@@ -392,12 +407,13 @@ class AuthService {
       'gender': authenInfo.gender,
     });
     await batch.commit();
-    if (user?.email == null) {
-      var emailCredent = EmailAuthProvider.getCredential(
-          email: uid + '@gmail.com', password: authenInfo.password);
-      user.linkWithCredential(emailCredent);
-    }
-    print('set fin');
+
+    var emailCredent = EmailAuthProvider.getCredential(
+        email: user?.email ?? '$uid@gmail.com', password: authenInfo.password);
+    await user.linkWithCredential(emailCredent);
+
+    nav.pushReplacement(context, AuthenPage());
+    load.add(false);
   }
 }
 
