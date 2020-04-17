@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/authentication/SocialLogin.dart';
@@ -11,6 +12,8 @@ import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/widget/AppBar.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/warning.dart';
 
 class PhoneWithOTP extends StatefulWidget {
   final bool register;
@@ -25,6 +28,8 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
   String loginMode = 'otp', value;
   bool requestOTP = true, loading = false;
   StreamSubscription loadStatus;
+  var _otpField = TextEditingController();
+  var _passwordField = TextEditingController();
 
   Timer _timer;
   int _start = 60;
@@ -42,10 +47,8 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
         () {
           if (_start < 1) {
             timer.cancel();
-            setState(() {
-              _start = 60;
-              requestOTP = true;
-            });
+            _start = 60;
+            requestOTP = true;
           } else {
             _start = _start - 1;
           }
@@ -66,12 +69,16 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
   void dispose() {
     _timer.cancel();
     loadStatus.cancel();
+    _otpField.dispose();
+    _passwordField.dispose();
     super.dispose();
   }
 
   changeLogin(String mode) {
     setState(() {
       loginMode = mode;
+      _otpField.clear();
+      _passwordField.clear();
     });
   }
 
@@ -187,7 +194,7 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                 child: Text(
                                                   authenInfo.phone ?? '',
                                                   style: TextStyle(
-                                                    color: AppColors.white30,
+                                                    color: AppColors.white,
                                                     fontSize: s40,
                                                     fontWeight:
                                                         FontWeight.normal,
@@ -270,25 +277,40 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                 right: 50.w,
                                               ),
                                               child: TextFormField(
+                                                controller: _otpField,
+                                                obscureText: true,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                inputFormatters: <
+                                                    TextInputFormatter>[
+                                                  WhitelistingTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                maxLength: 6,
                                                 decoration: InputDecoration(
-                                                    hintText: 'OTP',
-                                                    hintStyle: TextStyle(
-                                                        color:
-                                                            AppColors.white30,
-                                                        fontSize: s40,
-                                                        fontWeight:
-                                                            FontWeight.normal)),
-                                                style: TextStyle(
+                                                  border: InputBorder.none,
+                                                  counterText: '',
+                                                  counterStyle:
+                                                      TextStyle(fontSize: 0),
+                                                  errorStyle: TextStyle(
+                                                      fontSize: 0, height: 0),
+                                                  hintText: 'OTP',
+                                                  hintStyle: TextStyle(
                                                     color: AppColors.white30,
+                                                    fontSize: s40,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                                ),
+                                                style: TextStyle(
+                                                    color: AppColors.white,
                                                     fontSize: s40,
                                                     fontWeight:
                                                         FontWeight.normal),
                                                 validator: (val) {
                                                   return val.trim() == ''
-                                                      ? 'ใส่รหัส OTP ของคุณ'
-                                                      : val.trim().length != 6
-                                                          ? 'ใส่รหัส OTP 6 หลัก'
-                                                          : null;
+                                                      ? 'กรุณากรอกรหัส OTP'
+                                                      : null;
                                                 },
                                                 onSaved: (val) {
                                                   value = val.trim();
@@ -301,7 +323,12 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                 right: 50.w,
                                               ),
                                               child: TextFormField(
+                                                controller: _passwordField,
+                                                obscureText: true,
                                                 decoration: InputDecoration(
+                                                    border: InputBorder.none,
+                                                    errorStyle: TextStyle(
+                                                        fontSize: 0, height: 0),
                                                     hintStyle: TextStyle(
                                                       color: AppColors.white30,
                                                       fontSize: s40,
@@ -310,13 +337,13 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                     ),
                                                     hintText: 'Password'),
                                                 style: TextStyle(
-                                                  color: AppColors.white30,
+                                                  color: AppColors.white,
                                                   fontSize: s40,
                                                   fontWeight: FontWeight.normal,
                                                 ),
                                                 validator: (val) {
                                                   return val.trim() == ''
-                                                      ? 'กรุณาใส่รหัสผ่าน'
+                                                      ? 'กรุณากรอกรหัสผ่าน'
                                                       : null;
                                                 },
                                                 onSaved: (val) {
@@ -365,6 +392,16 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                               : authService.signInWithPassword(
                                                   context,
                                                   password: value);
+                                    } else {
+                                      if (loginMode == 'otp') {
+                                        if (_otpField.text.trim() == '') {
+                                          warn("กรุณากรอกรหัส OTP", context);
+                                        }
+                                      } else {
+                                        if (_passwordField.text.trim() == '') {
+                                          warn("กรุณากรอกรหัสผ่าน", context);
+                                        }
+                                      }
                                     }
                                   },
                                 ),

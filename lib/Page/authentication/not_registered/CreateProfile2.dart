@@ -12,6 +12,7 @@ import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/widget/AppBar.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/warning.dart';
 
 class CreateProfile2 extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
   String gender;
   bool loading = false;
   StreamSubscription loadStatus;
+  var _passwordField = TextEditingController();
 
   DateTimePickerLocale _locale = DateTimePickerLocale.en_us;
   List<DateTimePickerLocale> _locales = DateTimePickerLocale.values;
@@ -65,11 +67,6 @@ class _CreateProfile2State extends State<CreateProfile2> {
       locale: _locale,
       // onClose: () => print("onClose"),
       // onCancel: () => print('onCancel'),
-      onChange: (dateTime, List<int> index) {
-        setState(() {
-          birthDay = dateTime;
-        });
-      },
       onConfirm: (dateTime, List<int> index) {
         setState(() {
           birthDay = dateTime;
@@ -90,6 +87,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
   void dispose() {
     loadStatus.cancel();
     _formatCtrl.dispose();
+    _passwordField.dispose();
     super.dispose();
   }
 
@@ -340,6 +338,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                       ),
                                       child: Center(
                                         child: TextFormField(
+                                          controller: _passwordField,
                                           obscureText: true,
                                           textInputAction: TextInputAction.done,
                                           textAlign: TextAlign.center,
@@ -350,6 +349,11 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                             fontSize: s40,
                                           ),
                                           decoration: InputDecoration(
+                                            counterText: '',
+                                            counterStyle:
+                                                TextStyle(fontSize: 0),
+                                            errorStyle: TextStyle(
+                                                fontSize: 0, height: 0),
                                             border: InputBorder.none,
                                             hintText: '••••••••',
                                             hintStyle: TextStyle(
@@ -415,10 +419,20 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                           authService.setAccount(context);
                                         } else {
                                           if (birthDay == null)
-                                            Taoast()
-                                                .toast('เลือกวันเกิดของคุณ');
+                                            warn("กรุณาระบุวันเกิดของคุณ",
+                                                context);
                                           else if (gender == null)
-                                            Taoast().toast('เลือกเพศของคุณ');
+                                            warn("กรุณาระบุเพศของคุณ", context);
+                                          else if (_passwordField.text.trim() ==
+                                              '')
+                                            warn("กรุณากรอกรหัสผ่าน", context);
+                                          else if (_passwordField.text
+                                                  .trim()
+                                                  .length <
+                                              6)
+                                            warn(
+                                                "รหัสผ่านต้องมีความยาว 6 ตัวอักษรขึ้นไป",
+                                                context);
                                         }
                                       }),
                                 ],

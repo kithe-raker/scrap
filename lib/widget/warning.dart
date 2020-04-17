@@ -112,6 +112,28 @@ class Dg {
           );
         });
   }
+}
 
-  
+///warning dialog auto set [load] to false ,When was called
+warn(String warning, BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            height: MediaQuery.of(context).size.height / 6,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(warning),
+                RaisedButton(
+                    child: Text('ok'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    })
+              ],
+            ),
+          ),
+        );
+      });
 }
