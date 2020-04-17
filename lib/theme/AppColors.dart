@@ -5,10 +5,13 @@ class AppColors {
   static Color black = Colors.black;
   static Color white = Colors.white;
   static Color white30 = Colors.white30;
+  static Color white38 = Colors.white38;
   static Color white60 = Colors.white60;
   static Color white70 = Colors.white70;
+  static Color red = Colors.red;
 
   /* Scrap Theme colors */
+  static Color bg = Colors.black;
   static Color scrapblue = Color(0xff26A4FF);
   static Color darkgrey = Color(0xff24292e);
 

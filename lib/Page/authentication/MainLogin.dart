@@ -1,6 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/Page/authentication/SocialLogin.dart';
+import 'package:scrap/function/authServices/authService.dart';
+import 'package:scrap/provider/authen_provider.dart';
+import 'package:scrap/theme/ScreenUtil.dart';
+import 'package:scrap/theme/AppColors.dart';
+import 'package:scrap/widget/AppBar.dart';
+import 'package:scrap/method/Navigator.dart';
+import 'package:scrap/widget/Loading.dart';
 
 class MainLogin extends StatefulWidget {
   @override
@@ -8,7 +18,11 @@ class MainLogin extends StatefulWidget {
 }
 
 class _MainLoginState extends State<MainLogin> {
-  String loginMode = 'phone';
+  var _key = GlobalKey<FormState>();
+  final nav = Nav();
+  String loginMode = 'phone', value;
+  bool loading = false;
+  StreamSubscription loadStatus;
 
   changeLogin(String mode) {
     setState(() {
@@ -17,353 +31,345 @@ class _MainLoginState extends State<MainLogin> {
   }
 
   @override
+  void initState() {
+    loadStatus =
+        authService.load.listen((value) => setState(() => loading = value));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334, allowFontScaling: false);
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
+    ScreenUtil.init(
+      context,
+      width: defaultScreenWidth,
+      height: defaultScreenHeight,
+      allowFontScaling: fontScaling,
+    );
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: Container(
-          height: ScreenUtil.screenHeightDp,
-          width: ScreenUtil.screenWidthDp,
-          color: Colors.black,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: ScreenUtil.screenWidthDp,
-                    height: ScreenUtil().setHeight(130),
-                    padding: EdgeInsets.only(
-                      top: ScreenUtil().setHeight(15),
-                      right: ScreenUtil().setWidth(70),
-                      left: ScreenUtil().setWidth(70),
-                      bottom: ScreenUtil().setHeight(15),
-                    ),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          GestureDetector(
-                            child: Container(
-                              height: ScreenUtil().setHeight(80),
-                              alignment: Alignment.center,
-                              child: Image.asset(
-                                'assets/SCRAP.png',
-                              ),
-                            ),
-                            onTap: () {
-                              Navigator.pop(
-                                context,
-                              );
-                            },
-                          ),
-                        ]),
-                  ),
-                ],
+        child: Stack(
+          children: <Widget>[
+            AppBarMainLogin(),
+            Container(
+              margin: EdgeInsets.only(
+                top: appBarHeight,
               ),
-              Expanded(
-                flex: 15,
-                child: Container(),
-              ),
-              Expanded(
-                flex: 40,
-                child: Container(
-                  width: ScreenUtil.screenWidthDp,
-                  margin: EdgeInsets.only(
-                    left: ScreenUtil().setWidth(70),
-                    right: ScreenUtil().setWidth(70),
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: screenWidthDp,
+                    minHeight: screenHeightDp - statusBarHeight - appBarHeight,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      RichText(
-                        text: TextSpan(
-                            style: TextStyle(
-                              fontFamily: 'ThaiSans',
-                              height: 1.0,
-                              color: Colors.white,
-                              fontSize: ScreenUtil().setSp(40),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 15,
+                          child: Container(),
+                        ),
+                        Expanded(
+                          flex: 40,
+                          child: Container(
+                            width: screenWidthDp,
+                            margin: EdgeInsets.only(
+                              left: 70.w,
+                              right: 70.w,
                             ),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'สวัสดี!',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              TextSpan(
-                                text:
-                                    ' เหล่านักเขียน นักอ่าน ทุกท่าน \nโลกของงานเขียนรอท่านอยู่หลังจากนี้ไป',
-                              )
-                            ]),
-                      ),
-                      loginMode == 'phone'
-                          ? Container(
-                              width: ScreenUtil.screenWidthDp,
-                              height: ScreenUtil().setHeight(110),
-                              margin: EdgeInsets.only(
-                                top: ScreenUtil().setHeight(30),
-                                bottom: ScreenUtil().setHeight(30),
-                              ),
-                              padding: EdgeInsets.fromLTRB(
-                                  ScreenUtil().setWidth(50),
-                                  ScreenUtil().setHeight(20),
-                                  ScreenUtil().setWidth(50),
-                                  ScreenUtil().setHeight(20)),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenUtil.screenWidthDp),
-                                color: Color(0xff101010),
-                              ),
-                              child: Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Text(
-                                          '+66',
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                RichText(
+                                  text: TextSpan(
+                                      style: TextStyle(
+                                        fontFamily: 'ThaiSans',
+                                        height: 1.0,
+                                        color: AppColors.white,
+                                        fontSize: s40,
+                                      ),
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text: 'สวัสดี!',
                                           style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: ScreenUtil().setSp(40),
-                                            fontWeight: FontWeight.normal,
-                                          ),
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                        Container(
+                                        TextSpan(
+                                          text:
+                                              ' เหล่านักเขียน นักอ่าน ทุกท่าน \nโลกของงานเขียนรอท่านอยู่หลังจากนี้ไป',
+                                        )
+                                      ]),
+                                ),
+                                Form(
+                                  key: _key,
+                                  child: loginMode == 'phone'
+                                      ? Container(
+                                          width: screenWidthDp,
+                                          height: textFieldHeight,
                                           margin: EdgeInsets.only(
-                                            left: ScreenUtil().setWidth(10),
-                                            right: ScreenUtil().setWidth(10),
+                                            top: 30.h,
+                                            bottom: 30.h,
                                           ),
-                                          child: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.white,
-                                            size: ScreenUtil().setSp(40),
+                                          padding: EdgeInsets.fromLTRB(
+                                            50.w,
+                                            20.h,
+                                            50.w,
+                                            20.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                screenWidthDp),
+                                            color: AppColors.textField,
+                                          ),
+                                          child: Container(
+                                            child: Row(
+                                              children: <Widget>[
+                                                Row(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '+66',
+                                                      style: TextStyle(
+                                                        color: AppColors.white,
+                                                        fontSize: s40,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                        left: 10.w,
+                                                        right: 10.w,
+                                                      ),
+                                                      child: Icon(
+                                                        Icons.arrow_drop_down,
+                                                        color: AppColors.white,
+                                                        size: s40,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                VerticalDivider(
+                                                  color: AppColors.white30,
+                                                ),
+                                                Expanded(
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        width: 160,
+                                                        height: 50,
+                                                        margin: EdgeInsets.only(
+                                                          left: 30.w,
+                                                        ),
+                                                        child: TextFormField(
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          style: TextStyle(
+                                                              color: AppColors
+                                                                  .white30,
+                                                              fontSize: s40,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal),
+                                                          decoration:
+                                                              InputDecoration(
+                                                            hintText:
+                                                                'หมายเลขโทรศัพท์',
+                                                            hintStyle: TextStyle(
+                                                                color: AppColors
+                                                                    .white30,
+                                                                fontSize: s40,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal),
+                                                          ),
+                                                          validator: (val) {
+                                                            return val.trim() ==
+                                                                    ''
+                                                                ? 'กรุณาใส่หมายเลขโทรศัฟท์'
+                                                                : val.trim().length !=
+                                                                        10
+                                                                    ? 'ใส่หมายเลข10หลัก'
+                                                                    : null;
+                                                          },
+                                                          onSaved: (val) {
+                                                            value = val.trim();
+                                                            authenInfo.phone =
+                                                                val.trim();
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         )
-                                      ],
+                                      : Container(
+                                          width: screenWidthDp,
+                                          height: textFieldHeight,
+                                          margin: EdgeInsets.only(
+                                            top: 30.h,
+                                            bottom: 30.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                screenWidthDp),
+                                            color: AppColors.textField,
+                                          ),
+                                          child: TextFormField(
+                                            style: TextStyle(
+                                              color: AppColors.white30,
+                                              fontSize: s40,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                            decoration: InputDecoration(
+                                              hintText: '@penname',
+                                              hintStyle: TextStyle(
+                                                color: AppColors.white30,
+                                                fontSize: s40,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            validator: (val) {
+                                              return val.trim() == ''
+                                                  ? 'กรุณาใส่นามปากกา'
+                                                  : null;
+                                            },
+                                            onSaved: (val) {
+                                              value = val.trim();
+                                              authenInfo.pName = val.trim();
+                                            },
+                                          ),
+                                        ),
+                                ),
+                                GestureDetector(
+                                  child: Container(
+                                    width: screenWidthDp,
+                                    height: textFieldHeight,
+                                    margin: EdgeInsets.only(
+                                      bottom: 25.h,
                                     ),
-                                    VerticalDivider(
-                                      color: Colors.white30,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp),
+                                      color: AppColors.blueButton,
                                     ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        left: ScreenUtil().setWidth(50),
-                                        right: ScreenUtil().setWidth(50),
-                                      ),
+                                    child: Center(
                                       child: Text(
-                                        'หมายเลขโทรศัพท์',
+                                        'ดำเนินการต่อ',
                                         style: TextStyle(
-                                          color: Colors.white30,
-                                          fontSize: ScreenUtil().setSp(40),
-                                          fontWeight: FontWeight.normal,
+                                          color: AppColors.blueButtonText,
+                                          fontSize: s45,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(
-                              width: ScreenUtil.screenWidthDp,
-                              height: ScreenUtil().setHeight(110),
-                              margin: EdgeInsets.only(
-                                top: ScreenUtil().setHeight(30),
-                                bottom: ScreenUtil().setHeight(30),
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenUtil.screenWidthDp),
-                                color: Color(0xff101010),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '@penname',
-                                  style: TextStyle(
-                                    color: Colors.white30,
-                                    fontSize: ScreenUtil().setSp(40),
-                                    fontWeight: FontWeight.normal,
                                   ),
+                                  onTap: () {
+                                    if (_key.currentState.validate()) {
+                                      _key.currentState.save();
+                                      authService.validator(context, value,
+                                          withPhone: loginMode == 'phone');
+                                    }
+                                  },
                                 ),
-                              ),
-                            ),
-                      Container(
-                        width: ScreenUtil.screenWidthDp,
-                        height: ScreenUtil().setHeight(110),
-                        margin: EdgeInsets.only(
-                          bottom: ScreenUtil().setHeight(25),
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(ScreenUtil.screenWidthDp),
-                          color: Color(0xff26A4FF),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'ดำเนินการต่อ',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: ScreenUtil().setSp(45),
-                              fontWeight: FontWeight.bold,
+                                GestureDetector(
+                                  child: Text(
+                                    loginMode == 'phone'
+                                        ? 'ลงชื่อเข้าใช้ด้วยนามปากกา'
+                                        : 'ลงชื่อเข้าใช้ด้วยเบอร์โทรศัพท์',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      height: 1.0,
+                                      color: AppColors.white70,
+                                      fontSize: s38,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    changeLogin(loginMode == 'phone'
+                                        ? 'penname'
+                                        : 'phone');
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                      GestureDetector(
-                        child: Text(
-                          loginMode == 'phone'
-                              ? 'ลงชื่อเข้าใช้ด้วยนามปากกา'
-                              : 'ลงชื่อเข้าใช้ด้วยเบอร์โทรศัพท์',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            height: 1.0,
-                            color: Colors.white70,
-                            fontSize: ScreenUtil().setSp(38),
-                          ),
-                        ),
-                        onTap: () {
-                          changeLogin(
-                              loginMode == 'phone' ? 'penname' : 'phone');
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 35,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                        left: ScreenUtil().setWidth(70),
-                        right: ScreenUtil().setWidth(70),
-                      ),
-                      width: ScreenUtil.screenWidthDp,
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Divider(
-                                  color: Colors.white24,
-                                  thickness: 0.4,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                  left: ScreenUtil().setWidth(15),
-                                  right: ScreenUtil().setWidth(15),
-                                ),
-                                child: Text(
-                                  'หรือ',
-                                  style: TextStyle(
-                                    color: Colors.white38,
-                                    fontSize: ScreenUtil().setSp(34),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Divider(
-                                  color: Colors.white24,
-                                  thickness: 0.4,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(15),
-                          ),
-                          Row(
+                        Expanded(
+                          flex: 35,
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
-                                width: ScreenUtil().setWidth(80),
-                                height: ScreenUtil().setWidth(80),
-                                decoration: BoxDecoration(
-                                  color: Color(0xff0D0D0D),
-                                  borderRadius: BorderRadius.circular(
-                                      ScreenUtil.screenWidthDp),
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 0.2,
-                                  ),
+                                margin: EdgeInsets.only(
+                                  left: 70.w,
+                                  right: 70.w,
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    'f',
-                                    style: TextStyle(
-                                      height: 1.2,
-                                      color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(70),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
+                                width: screenWidthDp,
+                                child: SocialLogin(),
                               ),
-                              Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
-                                width: ScreenUtil().setWidth(80),
-                                height: ScreenUtil().setWidth(80),
-                                decoration: BoxDecoration(
-                                  color: Color(0xff0D0D0D),
-                                  borderRadius: BorderRadius.circular(
-                                      ScreenUtil.screenWidthDp),
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 0.2,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
-                                width: ScreenUtil().setWidth(80),
-                                height: ScreenUtil().setWidth(80),
-                                decoration: BoxDecoration(
-                                  color: Color(0xff0D0D0D),
-                                  borderRadius: BorderRadius.circular(
-                                      ScreenUtil.screenWidthDp),
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 0.2,
-                                  ),
-                                ),
-                              )
                             ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      width: ScreenUtil.screenWidthDp,
-                      margin:
-                          EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
-                      child: Center(
-                        child: Text(
-                          'created by BualoiTech Co.,Ltd.',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ScreenUtil().setSp(34),
                           ),
                         ),
-                      ),
+                        Expanded(
+                          flex: 10,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Container(
+                                width: screenWidthDp,
+                                margin: EdgeInsets.only(bottom: 10.h),
+                                child: Center(
+                                  child: RichText(
+                                    text: TextSpan(
+                                        style: TextStyle(
+                                          fontFamily: 'ThaiSans',
+                                          height: 1.0,
+                                          color: AppColors.white,
+                                          fontSize: s34,
+                                        ),
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                            text: 'created by Bualoi',
+                                          ),
+                                          TextSpan(
+                                            text: 'Tech ',
+                                            style: TextStyle(
+                                              color: AppColors.scrapblue,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: 'Co.,Ltd.',
+                                          )
+                                        ]),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+            loading ? Loading() : SizedBox()
+          ],
         ),
       ),
     );

@@ -9,8 +9,6 @@ import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 
-import '../../codelab/codelab_main.dart';
-
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
   @override
@@ -228,8 +226,8 @@ class _LoginPageState extends State<LoginPage> {
                                 onTap: () async {
                                   if (_key.currentState.validate()) {
                                     _key.currentState.save();
-                                    authService.signInWithPenName(context,
-                                        penname: pName, password: _password);
+                                    authService.signInWithPassword(context,
+                                        password: _password);
                                   }
                                 }),
                             InkWell(
