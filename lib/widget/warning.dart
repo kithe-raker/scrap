@@ -187,4 +187,5 @@ alert(String title, String warning, BuildContext context) {
       return alert;
     },
   );
+  return '';
 }

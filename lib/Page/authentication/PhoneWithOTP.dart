@@ -309,7 +309,10 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                         FontWeight.normal),
                                                 validator: (val) {
                                                   return val.trim() == ''
-                                                      ? 'กรุณากรอกรหัส OTP'
+                                                      ? alert(
+                                                          infoTitle,
+                                                          "กรุณากรอกรหัส OTP ที่ได้รับจากโทรศัพท์ของคุณ",
+                                                          context)
                                                       : null;
                                                 },
                                                 onSaved: (val) {
@@ -343,7 +346,10 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                 ),
                                                 validator: (val) {
                                                   return val.trim() == ''
-                                                      ? 'กรุณากรอกรหัสผ่าน'
+                                                      ? alert(
+                                                          infoTitle,
+                                                          "กรุณากรอกรหัสผ่านของคุณ",
+                                                          context)
                                                       : null;
                                                 },
                                                 onSaved: (val) {
@@ -392,18 +398,6 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                               : authService.signInWithPassword(
                                                   context,
                                                   password: value);
-                                    } else {
-                                      if (loginMode == 'otp') {
-                                        if (_otpField.text.trim() == '') {
-                                          alert(infoTitle, "กรุณากรอกรหัส OTP",
-                                              context);
-                                        }
-                                      } else {
-                                        if (_passwordField.text.trim() == '') {
-                                          alert(infoTitle, "กรุณากรอกรหัสผ่าน",
-                                              context);
-                                        }
-                                      }
                                     }
                                   },
                                 ),

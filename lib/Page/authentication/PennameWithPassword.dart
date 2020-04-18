@@ -148,7 +148,10 @@ class _PennameLoginState extends State<PennameLogin> {
                                             ),
                                             validator: (val) {
                                               return val.trim() == ''
-                                                  ? 'กรุณากรอกรหัสผ่าน'
+                                                  ? alert(
+                                                      infoTitle,
+                                                      "กรุณากรอกรหัสผ่านของคุณ",
+                                                      context)
                                                   : null;
                                             },
                                             onSaved: (val) {
@@ -202,11 +205,6 @@ class _PennameLoginState extends State<PennameLogin> {
                                       _key.currentState.save();
                                       authService.signInWithPassword(context,
                                           password: password);
-                                    } else {
-                                      if (_passwordField.text.trim() == '') {
-                                        alert(infoTitle, "กรุณากรอกรหัสผ่าน",
-                                            context);
-                                      }
                                     }
                                   },
                                 ),

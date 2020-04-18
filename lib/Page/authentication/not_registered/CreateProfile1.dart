@@ -311,7 +311,10 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                           ),
                                           validator: ((val) {
                                             return val.trim() == ''
-                                                ? 'กรุณากรอกนามปากกาของท่าน'
+                                                ? alert(
+                                                    infoTitle,
+                                                    "กรุณากรอกนามปากกาของคุณ",
+                                                    context)
                                                 : null;
                                           }),
                                           onSaved: (name) =>
@@ -358,9 +361,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                     if (_key.currentState.validate()) {
                                       _key.currentState.save();
                                       validator();
-                                    } else {
-                                      alert(infoTitle,
-                                          "กรุณากรอกนามปากกาของท่าน", context);
                                     }
                                   },
                                 ),

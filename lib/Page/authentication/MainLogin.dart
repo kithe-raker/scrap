@@ -231,7 +231,10 @@ class _MainLoginState extends State<MainLogin> {
                                                     ),
                                                     validator: (val) {
                                                       return val.trim() == ''
-                                                          ? 'กรุณากรอกหมายเลขโทรศัพท์ให้ถูกต้อง'
+                                                          ? alert(
+                                                              infoTitle,
+                                                              "กรุณากรอกหมายเลขโทรศัพท์ให้ถูกต้อง",
+                                                              context)
                                                           : null;
                                                     },
                                                     onSaved: (val) {
@@ -277,7 +280,10 @@ class _MainLoginState extends State<MainLogin> {
                                             ),
                                             validator: (val) {
                                               return val.trim() == ''
-                                                  ? 'กรุณากรอกนามปากกาให้ถูกต้อง'
+                                                  ? alert(
+                                                      infoTitle,
+                                                      "กรุณากรอกนามปากกาให้ถูกต้อง",
+                                                      context)
                                                   : null;
                                             },
                                             onSaved: (val) {
@@ -315,22 +321,6 @@ class _MainLoginState extends State<MainLogin> {
                                       _key.currentState.save();
                                       authService.validator(context, value,
                                           withPhone: loginMode == 'phone');
-                                    } else {
-                                      if (loginMode == 'penname') {
-                                        if (_pNameField.text.trim() == '') {
-                                          alert(
-                                              infoTitle,
-                                              "กรุณากรอกนามปากกาให้ถูกต้อง",
-                                              context);
-                                        }
-                                      } else {
-                                        if (_phoneField.text.trim() == '') {
-                                          alert(
-                                              infoTitle,
-                                              "กรุณากรอกหมายเลขโทรศัพท์ให้ถูกต้อง",
-                                              context);
-                                        }
-                                      }
                                     }
                                   },
                                 ),

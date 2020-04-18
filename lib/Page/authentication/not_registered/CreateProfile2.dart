@@ -364,9 +364,15 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                           ),
                                           validator: (val) {
                                             return val.trim() == ''
-                                                ? 'ใส่รหัสผ่านของคุณ'
+                                                ? alert(
+                                                    infoTitle,
+                                                    "กรุณากรอกรหัสผ่านของคุณ",
+                                                    context)
                                                 : val.trim().length < 6
-                                                    ? 'ต้องมี 6 ตัวขึ้นไป'
+                                                    ? alert(
+                                                        infoTitle,
+                                                        "รหัสผ่านต้องมีความยาว 6 ตัวอักษรขึ้นไป",
+                                                        context)
                                                     : null;
                                           },
                                           onSaved: (val) {
@@ -426,18 +432,6 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                           else if (gender == null)
                                             alert(infoTitle,
                                                 "กรุณาระบุเพศของคุณ", context);
-                                          else if (_passwordField.text.trim() ==
-                                              '')
-                                            alert(infoTitle,
-                                                "กรุณากรอกรหัสผ่าน", context);
-                                          else if (_passwordField.text
-                                                  .trim()
-                                                  .length <
-                                              6)
-                                            alert(
-                                                infoTitle,
-                                                "รหัสผ่านต้องมีความยาว 6 ตัวอักษรขึ้นไป",
-                                                context);
                                         }
                                       }),
                                 ],
