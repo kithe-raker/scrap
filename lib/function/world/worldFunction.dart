@@ -66,9 +66,15 @@ class WorldFunction {
       'theme': theme,
       'img': picUrl,
       'permission': permission,
-      'writer': FieldValue.arrayUnion(writer),
       'owner': uid
     });
+    batch.setData(
+        fireStore
+            .collection('World')
+            .document(id)
+            .collection('config')
+            .document('writers'),
+        {'writer': FieldValue.arrayUnion(writer), 'owner': uid, 'id': id});
     batch.updateData(
         fireStore
             .collection('User')
