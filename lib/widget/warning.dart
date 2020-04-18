@@ -177,7 +177,6 @@ alert(String title, String warning, BuildContext context) {
     ),
     actions: [
       okButton,
-      okButton,
     ],
   );
 
