@@ -359,7 +359,8 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                       _key.currentState.save();
                                       validator();
                                     } else {
-                                      warn("กรุณากรอกนามปากกาของท่าน", context);
+                                      alert(infoTitle,
+                                          "กรุณากรอกนามปากกาของท่าน", context);
                                     }
                                   },
                                 ),

@@ -204,7 +204,8 @@ class _PennameLoginState extends State<PennameLogin> {
                                           password: password);
                                     } else {
                                       if (_passwordField.text.trim() == '') {
-                                        warn("กรุณากรอกรหัสผ่าน", context);
+                                        alert(infoTitle, "กรุณากรอกรหัสผ่าน",
+                                            context);
                                       }
                                     }
                                   },

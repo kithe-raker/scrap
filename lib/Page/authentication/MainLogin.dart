@@ -318,12 +318,15 @@ class _MainLoginState extends State<MainLogin> {
                                     } else {
                                       if (loginMode == 'penname') {
                                         if (_pNameField.text.trim() == '') {
-                                          warn("กรุณากรอกนามปากกาให้ถูกต้อง",
+                                          alert(
+                                              infoTitle,
+                                              "กรุณากรอกนามปากกาให้ถูกต้อง",
                                               context);
                                         }
                                       } else {
                                         if (_phoneField.text.trim() == '') {
-                                          warn(
+                                          alert(
+                                              infoTitle,
                                               "กรุณากรอกหมายเลขโทรศัพท์ให้ถูกต้อง",
                                               context);
                                         }

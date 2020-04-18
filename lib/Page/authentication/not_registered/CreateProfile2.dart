@@ -419,18 +419,23 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                           authService.setAccount(context);
                                         } else {
                                           if (birthDay == null)
-                                            warn("กรุณาระบุวันเกิดของคุณ",
+                                            alert(
+                                                infoTitle,
+                                                "กรุณาระบุวันเกิดของคุณ",
                                                 context);
                                           else if (gender == null)
-                                            warn("กรุณาระบุเพศของคุณ", context);
+                                            alert(infoTitle,
+                                                "กรุณาระบุเพศของคุณ", context);
                                           else if (_passwordField.text.trim() ==
                                               '')
-                                            warn("กรุณากรอกรหัสผ่าน", context);
+                                            alert(infoTitle,
+                                                "กรุณากรอกรหัสผ่าน", context);
                                           else if (_passwordField.text
                                                   .trim()
                                                   .length <
                                               6)
-                                            warn(
+                                            alert(
+                                                infoTitle,
                                                 "รหัสผ่านต้องมีความยาว 6 ตัวอักษรขึ้นไป",
                                                 context);
                                         }

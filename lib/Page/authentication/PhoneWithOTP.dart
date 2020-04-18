@@ -395,11 +395,13 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                     } else {
                                       if (loginMode == 'otp') {
                                         if (_otpField.text.trim() == '') {
-                                          warn("กรุณากรอกรหัส OTP", context);
+                                          alert(infoTitle, "กรุณากรอกรหัส OTP",
+                                              context);
                                         }
                                       } else {
                                         if (_passwordField.text.trim() == '') {
-                                          warn("กรุณากรอกรหัสผ่าน", context);
+                                          alert(infoTitle, "กรุณากรอกรหัสผ่าน",
+                                              context);
                                         }
                                       }
                                     }
