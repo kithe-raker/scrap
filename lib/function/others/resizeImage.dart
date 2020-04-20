@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 class ResizeImage {
   ///resize image required [image] file , you can pass image [quality] 0-100
-  ///default is 60 and image [type] default is webp this will return a resized Image 
+  ///default is 60 and image [type] default is webp this will return a resized Image
   Future<File> resize({@required File image, int quality = 60}) async {
     var dir = await getTemporaryDirectory();
     String type = Platform.isAndroid ? 'webp' : 'jpeg';
