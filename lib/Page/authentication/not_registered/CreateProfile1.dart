@@ -13,6 +13,7 @@ import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/widget/AppBar.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/warning.dart';
 
 class CreateProfile1 extends StatefulWidget {
   @override
@@ -28,6 +29,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
   var user;
   StreamSubscription loadStatus;
   var nameController = TextEditingController();
+  var _pennameField = TextEditingController();
 
   sendCam() async {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
@@ -89,6 +91,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
   void dispose() {
     loadStatus.cancel();
     nameController.dispose();
+    _pennameField.dispose();
     super.dispose();
   }
 
@@ -286,6 +289,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                       ),
                                       child: Center(
                                         child: TextFormField(
+                                          controller: _pennameField,
                                           textInputAction: TextInputAction.done,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
@@ -293,6 +297,11 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                             fontSize: s40,
                                           ),
                                           decoration: InputDecoration(
+                                            counterText: '',
+                                            counterStyle:
+                                                TextStyle(fontSize: 0),
+                                            errorStyle: TextStyle(
+                                                fontSize: 0, height: 0),
                                             border: InputBorder.none,
                                             hintText: '@penname',
                                             hintStyle: TextStyle(
@@ -302,7 +311,10 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                           ),
                                           validator: ((val) {
                                             return val.trim() == ''
-                                                ? "กรุณาใส่นามปากกาของท่าน"
+                                                ? alert(
+                                                    infoTitle,
+                                                    "กรุณากรอกนามปากกาของคุณ",
+                                                    context)
                                                 : null;
                                           }),
                                           onSaved: (name) =>

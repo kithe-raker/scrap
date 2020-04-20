@@ -226,8 +226,7 @@ class _SubmitPhoneState extends State<SubmitPhone> {
                                                   fontWeight: FontWeight.bold),
                                             ),
                                           ),
-                                          onTap: () async {                      
-                                          })
+                                          onTap: () async {})
                                     ])),
                                 Form(
                                   key: _keyOTP,

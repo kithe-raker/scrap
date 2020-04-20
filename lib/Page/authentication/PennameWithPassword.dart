@@ -11,6 +11,8 @@ import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/widget/AppBar.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/warning.dart';
 
 class PennameLogin extends StatefulWidget {
   @override
@@ -23,6 +25,7 @@ class _PennameLoginState extends State<PennameLogin> {
   String password;
   bool loading = false;
   StreamSubscription loadStatus;
+  var _passwordField = TextEditingController();
 
   @override
   void initState() {
@@ -34,6 +37,7 @@ class _PennameLoginState extends State<PennameLogin> {
   @override
   void dispose() {
     loadStatus.cancel();
+    _passwordField.dispose();
     super.dispose();
   }
 
@@ -114,7 +118,7 @@ class _PennameLoginState extends State<PennameLogin> {
                                     decoration: BoxDecoration(
                                       borderRadius:
                                           BorderRadius.circular(screenWidthDp),
-                                      color: Color(0xff101010),
+                                      color: AppColors.textField,
                                     ),
                                     child: Align(
                                       alignment: Alignment.centerLeft,
@@ -124,7 +128,12 @@ class _PennameLoginState extends State<PennameLogin> {
                                           right: 50.w,
                                         ),
                                         child: TextFormField(
+                                            controller: _passwordField,
+                                            obscureText: true,
                                             decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              errorStyle: TextStyle(
+                                                  fontSize: 0, height: 0),
                                               hintText: 'Password',
                                               hintStyle: TextStyle(
                                                 color: AppColors.white30,
@@ -133,13 +142,16 @@ class _PennameLoginState extends State<PennameLogin> {
                                               ),
                                             ),
                                             style: TextStyle(
-                                              color: AppColors.white30,
+                                              color: AppColors.white,
                                               fontSize: s40,
                                               fontWeight: FontWeight.normal,
                                             ),
                                             validator: (val) {
                                               return val.trim() == ''
-                                                  ? 'กรุณาใส่รหัสผ่าน'
+                                                  ? alert(
+                                                      infoTitle,
+                                                      "กรุณากรอกรหัสผ่านของคุณ",
+                                                      context)
                                                   : null;
                                             },
                                             onSaved: (val) {
