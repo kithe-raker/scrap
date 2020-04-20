@@ -8,14 +8,46 @@ import 'package:scrap/provider/authen_provider.dart';
 class AuthenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     return StreamBuilder(
       stream: fireAuth.onAuthStateChanged,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Scaffold(
-            body: Center(
-              child: Column(
+          return TemporaryPage();
+        } else {
+          return MainLogin();
+        }
+      },
+    );
+  }
+}
+
+class TemporaryPage extends StatefulWidget {
+  @override
+  _TemporaryPageState createState() => _TemporaryPageState();
+}
+
+class _TemporaryPageState extends State<TemporaryPage> {
+  bool loading = true;
+
+  initUser() async {
+    await cacheUser.getUserInfo(context);
+    setState(() => loading = false);
+  }
+
+  @override
+  void initState() {
+    initUser();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
+    return Scaffold(
+      body: Center(
+        child: loading
+            ? CircularProgressIndicator()
+            : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ClipRRect(
@@ -40,17 +72,12 @@ class AuthenPage extends StatelessWidget {
                   RaisedButton(
                       child: Text('print data'),
                       onPressed: () async {
-                        var data = await CacheUserInfo().getUserInfo();
+                        var data = await CacheUserInfo().getUserInfo(context);
                         print(data);
                       }),
                 ],
               ),
-            ),
-          );
-        } else {
-          return MainLogin();
-        }
-      },
+      ),
     );
   }
 }

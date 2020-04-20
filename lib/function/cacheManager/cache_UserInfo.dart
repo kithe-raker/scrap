@@ -23,18 +23,20 @@ class CacheUserInfo {
   }
 
   ///Check if there are user's data in userInfo.json return file.exist && uid.exist
-  Future<bool> hasUserData(String uid) async {
+  Future<bool> hasUserData(BuildContext context, {@required String uid}) async {
     bool fileExist = await hasFile();
     Map data = {'uid': ''};
-    if (fileExist) data = await getUserInfo();
+    if (fileExist) data = await getUserInfo(context);
     return fileExist && data['uid'] == uid;
   }
 
   ///Get user's info from cache file return Map
-  getUserInfo() async {
+  getUserInfo(BuildContext context) async {
+    final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     Directory _directory = await getApplicationDocumentsDirectory();
     jsonFile = File(_directory.path + "/" + fileName);
     fileContent = jsonDecode(jsonFile.readAsStringSync());
+    authenInfo.initUserInfo(fileContent);
     return fileContent;
   }
 
@@ -44,12 +46,9 @@ class CacheUserInfo {
     Directory _directory = await getApplicationDocumentsDirectory();
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     jsonFile = File(_directory.path + "/" + fileName);
-    Map _content;
-    _content = info;
-    authenInfo.pName = _content['pName'];
-    authenInfo.img = _content['img'];
+    authenInfo.initUserInfo(info);
     jsonFile.createSync();
-    jsonFile.writeAsStringSync(jsonEncode(_content));
+    jsonFile.writeAsStringSync(jsonEncode(info));
   }
 
   ///if document exists then create new file Return doc.exists
@@ -75,15 +74,5 @@ class CacheUserInfo {
         });
     }
     return (doc?.exists ?? false) && reg != '' && reg != null;
-  }
-
-  ///Create cache if file and userdata does not exist then get file
-  ///Get file if cache file and userdata already exist
-  userInfo(String uid, BuildContext context, {Map info}) async {
-    bool _hasFile = await hasFile();
-    if (_hasFile == false)
-      newFileUserInfo(uid, context, info: info);
-    else
-      getUserInfo();
   }
 }

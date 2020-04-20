@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/provider/authen_provider.dart';
 import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/provider/authen_provider.dart';
+import 'package:scrap/provider/createWorldProvider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthenProvider>.value(value: AuthenProvider()),
+        ChangeNotifierProvider<CreateWorldProvider>.value(
+            value: CreateWorldProvider())
       ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
