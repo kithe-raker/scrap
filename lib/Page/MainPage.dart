@@ -87,10 +87,10 @@ class _MainPageState extends State<MainPage> {
     return true;
   }
 
-  Future<bool> finishProfile() async {
+  Future<bool> notFinishProfile() async {
     var user = await fireAuth.currentUser();
     bool docExist = true;
-    if (user != null && !await cacheUser.hasUserData(user.uid)) {
+    if (user != null && !await cacheUser.hasUserData(context, uid: user.uid)) {
       docExist = await cacheUser.docExistsThenNewFile(user.uid, context);
     }
     return user != null && !docExist;
@@ -119,7 +119,7 @@ class _MainPageState extends State<MainPage> {
                 await serverClose()
                     ? navigator(Sorry())
                     : await recentVersion()
-                        ? await finishProfile()
+                        ? await notFinishProfile()
                             ? navigator(CreateProfile1())
                             : navigator(AuthenPage())
                         : navigator(Update());

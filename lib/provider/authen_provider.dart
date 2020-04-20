@@ -72,4 +72,12 @@ class AuthenProvider extends ChangeNotifier {
     _email = val;
     notifyListeners();
   }
+
+  void initUserInfo(Map user) {
+    _pName = user['pName'];
+    _img = user['img'];
+    _birthday = DateTime.parse(user['birthday']);
+    _region = user['region'];
+    notifyListeners();
+  }
 }
