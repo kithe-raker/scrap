@@ -61,11 +61,15 @@ class _CreateProfile1State extends State<CreateProfile1> {
     authService.load.add(true);
     if (image != null || user?.photoUrl != null) {
       var docs = await authService.getDocuments('pName', pName);
-      var data = docs.documents[0];
-      docs.documents.length < 1 || data.documentID == user.uid
-          ? register()
-          : authService.alert(
-              errorTitle, 'นามปากกานี้ได้ทำการลงทะเบียนไว้แล้ว', context);
+      if (docs.documents.length < 1)
+        register();
+      else {
+        var data = docs.documents[0];
+        data.documentID == user.uid
+            ? register()
+            : authService.alert(
+                errorTitle, 'นามปากกานี้ได้ทำการลงทะเบียนไว้แล้ว', context);
+      }
     } else
       authService.alert(infoTitle, 'กรุณาเลือกรูปโปรไฟล์ของคุณ', context);
   }

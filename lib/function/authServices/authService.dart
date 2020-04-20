@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/authenPage/AuthenPage.dart';
+import 'package:scrap/Page/authentication/MainLogin.dart';
 import 'package:scrap/Page/authentication/PennameWithPassword.dart';
 import 'package:scrap/Page/authentication/PhoneWithOTP.dart';
 import 'package:scrap/Page/authentication/not_registered/CreateProfile1.dart';
@@ -296,8 +297,9 @@ class AuthService {
   ///sign current user out then laed to [AuthenPage]
   signOut(BuildContext context) async {
     load.add(true);
+    await cacheUser.deleteFile();
     await fireAuth.signOut();
-    navigatorReplace(context, AuthenPage());
+    navigatorReplace(context, MainLogin());
     load.add(false);
   }
 
@@ -413,6 +415,7 @@ class AuthService {
 
   ///Set up user account in data base after user has Sign up
   Future<void> setAccount(BuildContext context) async {
+    load.add(true);
     var token = await getToken();
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     var user = await fireAuth.currentUser();

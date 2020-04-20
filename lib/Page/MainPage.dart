@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
 import 'package:scrap/Page/authenPage/AuthenPage.dart';
+import 'package:scrap/Page/authentication/MainLogin.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/function/authServices/authService.dart';
 
@@ -22,6 +23,7 @@ class _MainPageState extends State<MainPage> {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
   DocumentSnapshot appInfo;
+  var user;
   initLocalMessage() {
     var android = AndroidInitializationSettings('noti_ic');
     var ios = IOSInitializationSettings();
@@ -87,13 +89,17 @@ class _MainPageState extends State<MainPage> {
     return true;
   }
 
+  Future<bool> isLogin() async {
+    user = await fireAuth.currentUser();
+    return user != null;
+  }
+
   Future<bool> notFinishProfile() async {
-    var user = await fireAuth.currentUser();
     bool docExist = true;
-    if (user != null && !await cacheUser.hasUserData(context, uid: user.uid)) {
+    if (!await cacheUser.hasUserData(context, uid: user.uid)) {
       docExist = await cacheUser.docExistsThenNewFile(user.uid, context);
     }
-    return user != null && !docExist;
+    return !docExist;
   }
 
   @override
@@ -119,9 +125,11 @@ class _MainPageState extends State<MainPage> {
                 await serverClose()
                     ? navigator(Sorry())
                     : await recentVersion()
-                        ? await notFinishProfile()
-                            ? navigator(CreateProfile1())
-                            : navigator(AuthenPage())
+                        ? await isLogin()
+                            ? await notFinishProfile()
+                                ? navigator(CreateProfile1())
+                                : navigator(AuthenPage())
+                            : navigator(MainLogin())
                         : navigator(Update());
               },
               loopAnimation: '1',

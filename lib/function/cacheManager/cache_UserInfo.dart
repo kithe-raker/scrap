@@ -22,6 +22,12 @@ class CacheUserInfo {
     return fileExists;
   }
 
+  Future<void> deleteFile() async {
+    Directory _directory = await getApplicationDocumentsDirectory();
+    jsonFile = File(_directory.path + "/" + fileName);
+    jsonFile.delete();
+  }
+
   ///Check if there are user's data in userInfo.json return file.exist && uid.exist
   Future<bool> hasUserData(BuildContext context, {@required String uid}) async {
     bool fileExist = await hasFile();
