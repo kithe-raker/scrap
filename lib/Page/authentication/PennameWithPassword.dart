@@ -79,8 +79,8 @@ class _PennameLoginState extends State<PennameLogin> {
                           child: Container(
                             width: screenWidthDp,
                             margin: EdgeInsets.only(
-                              left: 70.w,
-                              right: 70.w,
+                              left: 50.w,
+                              right: 50.w,
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -120,13 +120,13 @@ class _PennameLoginState extends State<PennameLogin> {
                                           BorderRadius.circular(screenWidthDp),
                                       color: AppColors.textField,
                                     ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Container(
-                                        margin: EdgeInsets.only(
-                                          left: 50.w,
-                                          right: 50.w,
-                                        ),
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                        left: 50.w,
+                                        right: 50.w,
+                                      ),
+                                      child: Align(
+                                        alignment: Alignment.center,
                                         child: TextFormField(
                                             controller: _passwordField,
                                             obscureText: true,
@@ -136,13 +136,13 @@ class _PennameLoginState extends State<PennameLogin> {
                                                   fontSize: 0, height: 0),
                                               hintText: 'Password',
                                               hintStyle: TextStyle(
-                                                color: AppColors.white30,
+                                                color: AppColors.hintText,
                                                 fontSize: s40,
                                                 fontWeight: FontWeight.normal,
                                               ),
                                             ),
                                             style: TextStyle(
-                                              color: AppColors.white,
+                                              color: AppColors.textFieldInput,
                                               fontSize: s40,
                                               fontWeight: FontWeight.normal,
                                             ),
@@ -176,37 +176,34 @@ class _PennameLoginState extends State<PennameLogin> {
                                 //     onTap: () {},
                                 //   ),
                                 // ),
-                                GestureDetector(
-                                  child: Container(
-                                    width: screenWidthDp,
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    top: 50.h,
+                                    bottom: 25.h,
+                                  ),
+                                  child: MaterialButton(
+                                    color: AppColors.scrapblue,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            screenWidthDp)),
+                                    minWidth: screenWidthDp,
                                     height: textFieldHeight,
-                                    margin: EdgeInsets.only(
-                                      top: 50.h,
-                                      bottom: 25.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(screenWidthDp),
-                                      color: Color(0xff26A4FF),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'ดำเนินการต่อ',
-                                        style: TextStyle(
-                                          color: AppColors.white,
-                                          fontSize: s45,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                    child: Text(
+                                      'ดำเนินการต่อ',
+                                      style: TextStyle(
+                                        color: AppColors.blueButtonText,
+                                        fontSize: s45,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    onPressed: () {
+                                      if (_key.currentState.validate()) {
+                                        _key.currentState.save();
+                                        authService.signInWithPassword(context,
+                                            password: password);
+                                      }
+                                    },
                                   ),
-                                  onTap: () {
-                                    if (_key.currentState.validate()) {
-                                      _key.currentState.save();
-                                      authService.signInWithPassword(context,
-                                          password: password);
-                                    }
-                                  },
                                 ),
                                 // GestureDetector(
                                 //   child: Text(

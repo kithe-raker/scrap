@@ -129,8 +129,8 @@ class _CreateProfile1State extends State<CreateProfile1> {
                             child: Container(
                               width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                left: 70.w,
-                                right: 70.w,
+                                left: 50.w,
+                                right: 50.w,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,8 +160,8 @@ class _CreateProfile1State extends State<CreateProfile1> {
                             child: Container(
                               width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                left: 70.w,
-                                right: 70.w,
+                                left: 50.w,
+                                right: 50.w,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,27 +173,28 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                     child: Center(
                                       child: Stack(
                                         children: <Widget>[
-                                          GestureDetector(
-                                            child: Container(
-                                              height: 300.w,
-                                              width: 300.w,
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    AppColors.imagePlaceholder,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        screenWidthDp),
-                                                border: Border.all(
-                                                  color: AppColors
-                                                      .imagePlaceholderBoder,
-                                                  width: 1.5,
-                                                ),
+                                          Container(
+                                            height: 300.w,
+                                            width: 300.w,
+                                            decoration: BoxDecoration(
+                                              color: AppColors.imagePlaceholder,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      screenWidthDp),
+                                              border: Border.all(
+                                                color: AppColors
+                                                    .imagePlaceholderBoder,
+                                                width: 2.5,
                                               ),
+                                            ),
+                                            child: Center(
                                               child: ClipRRect(
                                                   child: image == null
                                                       ? Image.network(
-                                                          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
-                                                          fit: BoxFit.cover)
+                                                          'https://www.searchpng.com/wp-content/uploads/2019/02/User-Icon-PNG-715x715.png',
+                                                          height: 100,
+                                                          width: 100,
+                                                        )
                                                       : image.runtimeType ==
                                                               String
                                                           ? Image.network(
@@ -206,30 +207,32 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                             ),
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                    300,
+                                                    image == null ? 0 : 300,
                                                   )),
                                             ),
-                                            onTap: () {
-                                              selectImg(context);
-                                            },
                                           ),
                                           Positioned(
                                             right: 20.w,
                                             bottom: 0,
-                                            child: Container(
-                                              height: 55.w,
-                                              width: 55.w,
-                                              decoration: BoxDecoration(
-                                                color: AppColors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        screenWidthDp),
+                                            child: GestureDetector(
+                                              child: Container(
+                                                height: 55.w,
+                                                width: 55.w,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          screenWidthDp),
+                                                ),
+                                                child: Icon(
+                                                  Icons.create,
+                                                  color: AppColors.iconDark,
+                                                  size: s38,
+                                                ),
                                               ),
-                                              child: Icon(
-                                                Icons.create,
-                                                color: AppColors.iconDark,
-                                                size: s34,
-                                              ),
+                                              onTap: () {
+                                                selectImg(context);
+                                              },
                                             ),
                                           )
                                         ],
@@ -245,8 +248,8 @@ class _CreateProfile1State extends State<CreateProfile1> {
                             child: Container(
                               width: screenWidthDp,
                               margin: EdgeInsets.only(
-                                left: 70.w,
-                                right: 70.w,
+                                left: 50.w,
+                                right: 50.w,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -287,13 +290,14 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                             screenWidthDp),
                                         color: AppColors.textField,
                                       ),
-                                      child: Center(
+                                      child: Align(
+                                        alignment: Alignment.center,
                                         child: TextFormField(
                                           controller: _pennameField,
                                           textInputAction: TextInputAction.done,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            color: AppColors.white,
+                                            color: AppColors.textFieldInput,
                                             fontSize: s40,
                                           ),
                                           decoration: InputDecoration(
@@ -305,7 +309,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                             border: InputBorder.none,
                                             hintText: '@penname',
                                             hintStyle: TextStyle(
-                                              color: AppColors.white30,
+                                              color: AppColors.hintText,
                                               fontSize: s40,
                                             ),
                                           ),
@@ -331,38 +335,33 @@ class _CreateProfile1State extends State<CreateProfile1> {
                             flex: 25,
                             child: Column(
                               children: <Widget>[
-                                GestureDetector(
-                                  child: Container(
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    left: 50.w,
+                                    right: 50.w,
+                                  ),
+                                  child: MaterialButton(
+                                    color: AppColors.scrapblue,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            screenWidthDp)),
+                                    minWidth: screenWidthDp,
                                     height: textFieldHeight,
-                                    width: screenWidthDp,
-                                    margin: EdgeInsets.only(
-                                      left: 70.w,
-                                      right: 70.w,
-                                    ),
-                                    // margin:
-                                    //     EdgeInsets.only(bottom: screenHeightDp / 40),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(screenWidthDp),
-                                      color: AppColors.blueButton,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'ต่อไป',
-                                        style: TextStyle(
-                                          color: AppColors.blueButtonText,
-                                          fontSize: ScreenUtil().setSp(45),
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                    child: Text(
+                                      'ต่อไป',
+                                      style: TextStyle(
+                                        color: AppColors.blueButtonText,
+                                        fontSize: s45,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    onPressed: () {
+                                      if (_key.currentState.validate()) {
+                                        _key.currentState.save();
+                                        validator();
+                                      }
+                                    },
                                   ),
-                                  onTap: () {
-                                    if (_key.currentState.validate()) {
-                                      _key.currentState.save();
-                                      validator();
-                                    }
-                                  },
                                 ),
                               ],
                             ),

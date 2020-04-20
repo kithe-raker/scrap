@@ -11,7 +11,6 @@ import 'package:scrap/theme/ScreenUtil.dart';
 import 'package:scrap/theme/AppColors.dart';
 import 'package:scrap/widget/AppBar.dart';
 import 'package:scrap/widget/Loading.dart';
-import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/warning.dart';
 
 class CreateProfile2 extends StatefulWidget {
@@ -26,6 +25,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
   bool loading = false;
   StreamSubscription loadStatus;
   var _passwordField = TextEditingController();
+  var _genderField = TextEditingController();
 
   DateTimePickerLocale _locale = DateTimePickerLocale.en_us;
   List<DateTimePickerLocale> _locales = DateTimePickerLocale.values;
@@ -123,8 +123,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
                               child: Container(
                                 width: screenWidthDp,
                                 margin: EdgeInsets.only(
-                                  left: 70.w,
-                                  right: 70.w,
+                                  left: 50.w,
+                                  right: 50.w,
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,8 +154,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
                               child: Container(
                                 width: screenWidthDp,
                                 margin: EdgeInsets.only(
-                                  left: 70.w,
-                                  right: 70.w,
+                                  left: 50.w,
+                                  right: 50.w,
                                 ),
                                 child: Column(
                                   mainAxisAlignment:
@@ -231,61 +231,291 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
-                                        Text(
-                                          'เพศ',
-                                          style: TextStyle(
-                                            color: AppColors.white,
-                                            fontSize: s60,
-                                            fontWeight: FontWeight.w500,
+                                        Expanded(
+                                          flex: 1,
+                                          child: Text(
+                                            'เพศ',
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                              fontSize: s60,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
-                                        Radio(
-                                          onChanged: (String ty) {
-                                            setState(() => gender = ty);
-                                            authenInfo.gender = ty;
-                                          },
-                                          value: 'male',
-                                          groupValue: gender,
-                                          activeColor: Color(0xff26A4FF),
-                                        ),
-                                        Text(
-                                          'ชาย',
-                                          style: TextStyle(
-                                              fontSize: 21,
-                                              color: Colors.white),
-                                        ),
-                                        Radio(
-                                          onChanged: (String ty) {
-                                            setState(() => gender = ty);
-                                            authenInfo.gender = ty;
-                                          },
-                                          value: 'female',
-                                          groupValue: gender,
-                                          activeColor: Color(0xff26A4FF),
-                                        ),
-                                        Text(
-                                          'หญิง',
-                                          style: TextStyle(
-                                              fontSize: 21,
-                                              color: Colors.white),
-                                        ),
-                                        Radio(
-                                          onChanged: (String ty) {
-                                            setState(() => gender = ty);
-                                            authenInfo.gender = ty;
-                                          },
-                                          value: 'other',
-                                          groupValue: gender,
-                                          activeColor: Color(0xff26A4FF),
-                                        ),
-                                        Text(
-                                          'อื่นๆ',
-                                          style: TextStyle(
-                                              fontSize: 21,
-                                              color: Colors.white),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              GestureDetector(
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                        right: 15.w,
+                                                      ),
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: BoxDecoration(
+                                                        color: gender == 'ชาย'
+                                                            ? AppColors
+                                                                .checkedbox
+                                                            : AppColors.black,
+                                                        border: Border.all(
+                                                          color: gender == 'ชาย'
+                                                              ? AppColors
+                                                                  .checkedbox
+                                                              : AppColors.white,
+                                                          width: 0.4,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                      ),
+                                                      child: gender == 'ชาย'
+                                                          ? Icon(
+                                                              Icons.check,
+                                                              color: AppColors
+                                                                  .white,
+                                                              size: s30,
+                                                            )
+                                                          : SizedBox(),
+                                                    ),
+                                                    Text(
+                                                      'ชาย',
+                                                      style: TextStyle(
+                                                          fontSize: s45,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ],
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    gender = 'ชาย';
+                                                  });
+                                                  authenInfo.gender = 'ชาย';
+                                                },
+                                              ),
+                                              GestureDetector(
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                        right: 15.w,
+                                                      ),
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: BoxDecoration(
+                                                        color: gender == 'หญิง'
+                                                            ? AppColors
+                                                                .checkedbox
+                                                            : AppColors.black,
+                                                        border: Border.all(
+                                                          color: gender ==
+                                                                  'หญิง'
+                                                              ? AppColors
+                                                                  .checkedbox
+                                                              : AppColors.white,
+                                                          width: 0.4,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                      ),
+                                                      child: gender == 'หญิง'
+                                                          ? Icon(
+                                                              Icons.check,
+                                                              color: AppColors
+                                                                  .white,
+                                                              size: s30,
+                                                            )
+                                                          : SizedBox(),
+                                                    ),
+                                                    Text(
+                                                      'หญิง',
+                                                      style: TextStyle(
+                                                          fontSize: s45,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ],
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    gender = 'หญิง';
+                                                  });
+                                                  authenInfo.gender = 'หญิง';
+                                                },
+                                              ),
+                                              GestureDetector(
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                        right: 15.w,
+                                                      ),
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: BoxDecoration(
+                                                        color: gender ==
+                                                                _genderField
+                                                                    .text
+                                                            ? AppColors
+                                                                .checkedbox
+                                                            : AppColors.black,
+                                                        border: Border.all(
+                                                          color: gender ==
+                                                                  _genderField
+                                                                      .text
+                                                              ? AppColors
+                                                                  .checkedbox
+                                                              : AppColors.white,
+                                                          width: 0.4,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                      ),
+                                                      child: gender ==
+                                                              _genderField.text
+                                                          ? Icon(
+                                                              Icons.check,
+                                                              color: AppColors
+                                                                  .white,
+                                                              size: s30,
+                                                            )
+                                                          : SizedBox(),
+                                                    ),
+                                                    Text(
+                                                      'อื่น ๆ',
+                                                      style: TextStyle(
+                                                          fontSize: s45,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ],
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    gender = '';
+                                                  });
+                                                  authenInfo.gender = '';
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                        // Radio(
+                                        //   onChanged: (String ty) {
+                                        //     setState(() => gender = ty);
+                                        //     authenInfo.gender = ty;
+                                        //   },
+                                        //   value: 'male',
+                                        //   groupValue: gender,
+                                        //   activeColor: Color(0xff26A4FF),
+                                        // ),
+                                        // Text(
+                                        //   'ชาย',
+                                        //   style: TextStyle(
+                                        //       fontSize: 21,
+                                        //       color: Colors.white),
+                                        // ),
+                                        // Radio(
+                                        //   onChanged: (String ty) {
+                                        //     setState(() => gender = ty);
+                                        //     authenInfo.gender = ty;
+                                        //   },
+                                        //   value: 'female',
+                                        //   groupValue: gender,
+                                        //   activeColor: Color(0xff26A4FF),
+                                        // ),
+                                        // Text(
+                                        //   'หญิง',
+                                        //   style: TextStyle(
+                                        //       fontSize: 21,
+                                        //       color: Colors.white),
+                                        // ),
+                                        // Radio(
+                                        //   onChanged: (String ty) {
+                                        //     setState(() => gender = ty);
+                                        //     authenInfo.gender = ty;
+                                        //   },
+                                        //   value: 'other',
+                                        //   groupValue: gender,
+                                        //   activeColor: Color(0xff26A4FF),
+                                        // ),
+                                        // Text(
+                                        //   'อื่นๆ',
+                                        //   style: TextStyle(
+                                        //       fontSize: 21,
+                                        //       color: Colors.white),
+                                        // ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex: 2,
+                                          child: gender == ''
+                                              ? Container(
+                                                  width: screenWidthDp,
+                                                  height: textFieldHeight,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            screenWidthDp),
+                                                    color: AppColors.textField
+                                                        .withOpacity(0.5),
+                                                  ),
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                      left: 50.w,
+                                                      right: 50.w,
+                                                    ),
+                                                    child: TextFormField(
+                                                      style: TextStyle(
+                                                        color: AppColors
+                                                            .textFieldInput,
+                                                        fontSize: s40,
+                                                      ),
+                                                      validator: ((val) {
+                                                        return val.trim() == ''
+                                                            ? alert(
+                                                                infoTitle,
+                                                                "กรุณาระบุเพศของคุณ",
+                                                                context)
+                                                            : null;
+                                                      }),
+                                                      onChanged: (gen) {
+                                                        authenInfo.gender =
+                                                            gen.trim();
+                                                      },
+                                                      textInputAction:
+                                                          TextInputAction.done,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              errorStyle:
+                                                                  TextStyle(
+                                                                      fontSize:
+                                                                          0,
+                                                                      height:
+                                                                          0),
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              hintStyle:
+                                                                  TextStyle(
+                                                                color: AppColors
+                                                                    .hintText,
+                                                              ),
+                                                              hintText:
+                                                                  'ระบุเพศของคุณ'),
+                                                    ),
+                                                  ),
+                                                )
+                                              : SizedBox(),
                                         ),
                                       ],
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
@@ -295,8 +525,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
                               child: Container(
                                 width: screenWidthDp,
                                 margin: EdgeInsets.only(
-                                  left: 70.w,
-                                  right: 70.w,
+                                  left: 50.w,
+                                  right: 50.w,
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,48 +566,51 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                             screenWidthDp),
                                         color: AppColors.textField,
                                       ),
-                                      child: Center(
-                                        child: TextFormField(
-                                          controller: _passwordField,
-                                          obscureText: true,
-                                          textInputAction: TextInputAction.done,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: AppColors.white,
-                                            letterSpacing: 10,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: s40,
-                                          ),
-                                          decoration: InputDecoration(
-                                            counterText: '',
-                                            counterStyle:
-                                                TextStyle(fontSize: 0),
-                                            errorStyle: TextStyle(
-                                                fontSize: 0, height: 0),
-                                            border: InputBorder.none,
-                                            hintText: '••••••••',
-                                            hintStyle: TextStyle(
-                                              color: AppColors.hintText,
-                                              fontWeight: FontWeight.bold,
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                          left: 50.w,
+                                          right: 50.w,
+                                        ),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: TextFormField(
+                                            controller: _passwordField,
+                                            obscureText: true,
+                                            textInputAction:
+                                                TextInputAction.done,
+                                            style: TextStyle(
+                                              color: AppColors.textFieldInput,
                                               fontSize: s40,
+                                              fontWeight: FontWeight.normal,
                                             ),
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              errorStyle: TextStyle(
+                                                  fontSize: 0, height: 0),
+                                              hintText: 'Password',
+                                              hintStyle: TextStyle(
+                                                color: AppColors.hintText,
+                                                fontSize: s40,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            validator: (val) {
+                                              return val.trim() == ''
+                                                  ? alert(
+                                                      infoTitle,
+                                                      "กรุณากรอกรหัสผ่านของคุณ",
+                                                      context)
+                                                  : val.trim().length < 6
+                                                      ? alert(
+                                                          infoTitle,
+                                                          "รหัสผ่านต้องมีความยาว 6 ตัวอักษรขึ้นไป",
+                                                          context)
+                                                      : null;
+                                            },
+                                            onSaved: (val) {
+                                              authenInfo.password = val.trim();
+                                            },
                                           ),
-                                          validator: (val) {
-                                            return val.trim() == ''
-                                                ? alert(
-                                                    infoTitle,
-                                                    "กรุณากรอกรหัสผ่านของคุณ",
-                                                    context)
-                                                : val.trim().length < 6
-                                                    ? alert(
-                                                        infoTitle,
-                                                        "รหัสผ่านต้องมีความยาว 6 ตัวอักษรขึ้นไป",
-                                                        context)
-                                                    : null;
-                                          },
-                                          onSaved: (val) {
-                                            authenInfo.password = val.trim();
-                                          },
                                         ),
                                       ),
                                     ),
@@ -389,33 +622,27 @@ class _CreateProfile2State extends State<CreateProfile2> {
                               flex: 25,
                               child: Column(
                                 children: <Widget>[
-                                  GestureDetector(
-                                      child: Container(
-                                        height: textFieldHeight,
-                                        width: screenWidthDp,
-                                        margin: EdgeInsets.only(
-                                          left: 70.w,
-                                          right: 70.w,
-                                        ),
-                                        // margin:
-                                        //     EdgeInsets.only(bottom: screenHeightDp / 40),
-                                        decoration: BoxDecoration(
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                      left: 50.w,
+                                      right: 50.w,
+                                    ),
+                                    child: MaterialButton(
+                                      color: AppColors.scrapblue,
+                                      shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                              screenWidthDp),
-                                          color: AppColors.blueButton,
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'เสร็จสิ้น',
-                                            style: TextStyle(
-                                              color: AppColors.blueButtonText,
-                                              fontSize: s45,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
+                                              screenWidthDp)),
+                                      minWidth: screenWidthDp,
+                                      height: textFieldHeight,
+                                      child: Text(
+                                        'เสร็จสิ้น',
+                                        style: TextStyle(
+                                          color: AppColors.blueButtonText,
+                                          fontSize: s45,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      onTap: () {
+                                      onPressed: () {
                                         if (_key.currentState.validate() &&
                                             birthDay != null &&
                                             gender != null) {
@@ -433,7 +660,9 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                             alert(infoTitle,
                                                 "กรุณาระบุเพศของคุณ", context);
                                         }
-                                      }),
+                                      },
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

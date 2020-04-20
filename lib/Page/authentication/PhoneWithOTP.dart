@@ -120,8 +120,8 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                           child: Container(
                             width: screenWidthDp,
                             margin: EdgeInsets.only(
-                              left: 70.w,
-                              right: 70.w,
+                              left: 50.w,
+                              right: 50.w,
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -194,7 +194,8 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                 child: Text(
                                                   authenInfo.phone ?? '',
                                                   style: TextStyle(
-                                                    color: AppColors.white,
+                                                    color: AppColors
+                                                        .textFieldInput,
                                                     fontSize: s40,
                                                     fontWeight:
                                                         FontWeight.normal,
@@ -222,7 +223,7 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                                 ? AppColors
                                                                     .scrapblue
                                                                 : AppColors
-                                                                    .white38,
+                                                                    .hintText,
                                                             width: 0.2,
                                                           ),
                                                         ),
@@ -235,7 +236,7 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                                 ? AppColors
                                                                     .scrapblue
                                                                 : AppColors
-                                                                    .white38,
+                                                                    .hintText,
                                                             fontSize: s38,
                                                           ),
                                                         ),
@@ -265,17 +266,16 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                         BorderRadius.circular(screenWidthDp),
                                     color: AppColors.textField,
                                   ),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Form(
-                                      key: _key,
-                                      child: widget.register ||
-                                              loginMode == 'otp'
-                                          ? Container(
-                                              margin: EdgeInsets.only(
-                                                left: 50.w,
-                                                right: 50.w,
-                                              ),
+                                  child: Form(
+                                    key: _key,
+                                    child: widget.register || loginMode == 'otp'
+                                        ? Container(
+                                            margin: EdgeInsets.only(
+                                              left: 50.w,
+                                              right: 50.w,
+                                            ),
+                                            child: Align(
+                                              alignment: Alignment.center,
                                               child: TextFormField(
                                                 controller: _otpField,
                                                 obscureText: true,
@@ -296,14 +296,15 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                       fontSize: 0, height: 0),
                                                   hintText: 'OTP',
                                                   hintStyle: TextStyle(
-                                                    color: AppColors.white30,
+                                                    color: AppColors.hintText,
                                                     fontSize: s40,
                                                     fontWeight:
                                                         FontWeight.normal,
                                                   ),
                                                 ),
                                                 style: TextStyle(
-                                                    color: AppColors.white,
+                                                    color: AppColors
+                                                        .textFieldInput,
                                                     fontSize: s40,
                                                     fontWeight:
                                                         FontWeight.normal),
@@ -319,12 +320,15 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                   value = val.trim();
                                                 },
                                               ),
-                                            )
-                                          : Container(
-                                              margin: EdgeInsets.only(
-                                                left: 50.w,
-                                                right: 50.w,
-                                              ),
+                                            ),
+                                          )
+                                        : Container(
+                                            margin: EdgeInsets.only(
+                                              left: 50.w,
+                                              right: 50.w,
+                                            ),
+                                            child: Align(
+                                              alignment: Alignment.center,
                                               child: TextFormField(
                                                 controller: _passwordField,
                                                 obscureText: true,
@@ -333,14 +337,15 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                     errorStyle: TextStyle(
                                                         fontSize: 0, height: 0),
                                                     hintStyle: TextStyle(
-                                                      color: AppColors.white30,
+                                                      color: AppColors.hintText,
                                                       fontSize: s40,
                                                       fontWeight:
                                                           FontWeight.normal,
                                                     ),
                                                     hintText: 'Password'),
                                                 style: TextStyle(
-                                                  color: AppColors.white,
+                                                  color:
+                                                      AppColors.textFieldInput,
                                                   fontSize: s40,
                                                   fontWeight: FontWeight.normal,
                                                 ),
@@ -357,50 +362,52 @@ class _PhoneWithOTPState extends State<PhoneWithOTP> {
                                                 },
                                               ),
                                             ),
-                                    ),
+                                          ),
                                   ),
                                 ),
                                 Container(height: 40.h),
-                                GestureDetector(
-                                  child: Container(
-                                    width: screenWidthDp,
-                                    height: textFieldHeight,
-                                    margin: EdgeInsets.only(
-                                        top: 50.h, bottom: 25.h),
-                                    decoration: BoxDecoration(
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    top: 50.h,
+                                    bottom: 25.h,
+                                  ),
+                                  child: MaterialButton(
+                                    color: AppColors.scrapblue,
+                                    shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
-                                            screenWidthDp),
-                                        color: AppColors.blueButton),
-                                    child: Center(
-                                      child: Text(
-                                        widget.register
-                                            ? 'สร้างบัญชี'
-                                            : 'เข้าสู่ระบบ',
-                                        style: TextStyle(
-                                          color: AppColors.blueButtonText,
-                                          fontSize: s45,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                            screenWidthDp)),
+                                    minWidth: screenWidthDp,
+                                    height: textFieldHeight,
+                                    child: Text(
+                                      widget.register
+                                          ? 'สร้างบัญชี'
+                                          : 'เข้าสู่ระบบ',
+                                      style: TextStyle(
+                                        color: AppColors.blueButtonText,
+                                        fontSize: s45,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    onPressed: () {
+                                      authenInfo.region = 'th';
+                                      if (_key.currentState.validate()) {
+                                        _key.currentState.save();
+                                        widget.register
+                                            ? authService.signUpWithPhone(
+                                                context,
+                                                smsCode: value)
+                                            : loginMode == 'otp'
+                                                ? authService.signInWithPhone(
+                                                    context,
+                                                    smsCode: value)
+                                                : authService
+                                                    .signInWithPassword(context,
+                                                        password: value);
+                                      }
+                                    },
                                   ),
-                                  onTap: () {
-                                    authenInfo.region = 'th';
-                                    if (_key.currentState.validate()) {
-                                      _key.currentState.save();
-                                      widget.register
-                                          ? authService.signUpWithPhone(context,
-                                              smsCode: value)
-                                          : loginMode == 'otp'
-                                              ? authService.signInWithPhone(
-                                                  context,
-                                                  smsCode: value)
-                                              : authService.signInWithPassword(
-                                                  context,
-                                                  password: value);
-                                    }
-                                  },
                                 ),
+                                //
                                 widget.register
                                     ? SizedBox()
                                     : GestureDetector(

@@ -11,7 +11,7 @@ double screenWidthDp = ScreenUtil.screenWidthDp;
 double screenHeightDp = ScreenUtil.screenHeightDp;
 double statusBarHeight = ScreenUtil.statusBarHeight;
 double appBarHeight = 130.h;
-double textFieldHeight = 110.h;
+double textFieldHeight = 55;
 
 /* FontSize */
 double s7 = ScreenUtil().setSp(7.0);

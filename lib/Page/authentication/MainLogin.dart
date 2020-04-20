@@ -98,8 +98,8 @@ class _MainLoginState extends State<MainLogin> {
                           child: Container(
                             width: screenWidthDp,
                             margin: EdgeInsets.only(
-                              left: 70.w,
-                              right: 70.w,
+                              left: 50.w,
+                              right: 50.w,
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -198,50 +198,57 @@ class _MainLoginState extends State<MainLogin> {
                                                     left: 30.w,
                                                   ),
                                                   // color: Colors.red,
-                                                  child: TextFormField(
-                                                    maxLength: 10,
-                                                    // maxLines: 1,
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    inputFormatters: <
-                                                        TextInputFormatter>[
-                                                      WhitelistingTextInputFormatter
-                                                          .digitsOnly
-                                                    ],
-                                                    style: TextStyle(
-                                                      color: AppColors.white,
-                                                      fontSize: s40,
+                                                  child: Align(
+                                                    alignment: Alignment.center,
+                                                    child: TextFormField(
+                                                      maxLength: 10,
+                                                      // maxLines: 1,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      inputFormatters: <
+                                                          TextInputFormatter>[
+                                                        WhitelistingTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
+                                                      style: TextStyle(
+                                                        color: AppColors
+                                                            .textFieldInput,
+                                                        fontSize: s40,
+                                                      ),
+                                                      decoration:
+                                                          InputDecoration(
+                                                        errorStyle: TextStyle(
+                                                            fontSize: 0,
+                                                            height: 0),
+                                                        counterText: '',
+                                                        counterStyle: TextStyle(
+                                                            fontSize: 0),
+                                                        border:
+                                                            InputBorder.none,
+                                                        hintText:
+                                                            'หมายเลขโทรศัพท์',
+                                                        hintStyle: TextStyle(
+                                                            color: AppColors
+                                                                .hintText,
+                                                            fontSize: s40,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                      validator: (val) {
+                                                        return val.trim() == ''
+                                                            ? alert(
+                                                                infoTitle,
+                                                                "กรุณากรอกหมายเลขโทรศัพท์ให้ถูกต้อง",
+                                                                context)
+                                                            : null;
+                                                      },
+                                                      onSaved: (val) {
+                                                        value = val.trim();
+                                                        authenInfo.phone =
+                                                            val.trim();
+                                                      },
                                                     ),
-                                                    decoration: InputDecoration(
-                                                      errorStyle: TextStyle(
-                                                          fontSize: 0,
-                                                          height: 0),
-                                                      counterText: '',
-                                                      counterStyle: TextStyle(
-                                                          fontSize: 0),
-                                                      border: InputBorder.none,
-                                                      hintText:
-                                                          'หมายเลขโทรศัพท์',
-                                                      hintStyle: TextStyle(
-                                                          color:
-                                                              AppColors.white30,
-                                                          fontSize: s40,
-                                                          fontWeight: FontWeight
-                                                              .normal),
-                                                    ),
-                                                    validator: (val) {
-                                                      return val.trim() == ''
-                                                          ? alert(
-                                                              infoTitle,
-                                                              "กรุณากรอกหมายเลขโทรศัพท์ให้ถูกต้อง",
-                                                              context)
-                                                          : null;
-                                                    },
-                                                    onSaved: (val) {
-                                                      value = val.trim();
-                                                      authenInfo.phone =
-                                                          val.trim();
-                                                    },
                                                   ),
                                                 ),
                                               ),
@@ -260,69 +267,69 @@ class _MainLoginState extends State<MainLogin> {
                                                 screenWidthDp),
                                             color: AppColors.textField,
                                           ),
-                                          child: TextFormField(
-                                            controller: _pNameField,
-                                            style: TextStyle(
-                                              color: AppColors.white,
-                                              fontSize: s40,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                            decoration: InputDecoration(
-                                              errorStyle: TextStyle(
-                                                  fontSize: 0, height: 0),
-                                              border: InputBorder.none,
-                                              hintText: '@penname',
-                                              hintStyle: TextStyle(
-                                                color: AppColors.white30,
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: TextFormField(
+                                              controller: _pNameField,
+                                              style: TextStyle(
+                                                color: AppColors.textFieldInput,
                                                 fontSize: s40,
-                                                fontWeight: FontWeight.normal,
                                               ),
+                                              textAlign: TextAlign.center,
+                                              decoration: InputDecoration(
+                                                errorStyle: TextStyle(
+                                                    fontSize: 0, height: 0),
+                                                border: InputBorder.none,
+                                                hintText: '@penname',
+                                                hintStyle: TextStyle(
+                                                  color: AppColors.hintText,
+                                                  fontSize: s40,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                              ),
+                                              validator: (val) {
+                                                return val.trim() == ''
+                                                    ? alert(
+                                                        infoTitle,
+                                                        "กรุณากรอกนามปากกาให้ถูกต้อง",
+                                                        context)
+                                                    : null;
+                                              },
+                                              onSaved: (val) {
+                                                value = val.trim();
+                                                authenInfo.pName = val.trim();
+                                              },
                                             ),
-                                            validator: (val) {
-                                              return val.trim() == ''
-                                                  ? alert(
-                                                      infoTitle,
-                                                      "กรุณากรอกนามปากกาให้ถูกต้อง",
-                                                      context)
-                                                  : null;
-                                            },
-                                            onSaved: (val) {
-                                              value = val.trim();
-                                              authenInfo.pName = val.trim();
-                                            },
                                           ),
                                         ),
                                 ),
-                                GestureDetector(
-                                  child: Container(
-                                    width: screenWidthDp,
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    bottom: 25.h,
+                                  ),
+                                  child: MaterialButton(
+                                    color: AppColors.scrapblue,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            screenWidthDp)),
+                                    minWidth: screenWidthDp,
                                     height: textFieldHeight,
-                                    margin: EdgeInsets.only(
-                                      bottom: 25.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(screenWidthDp),
-                                      color: AppColors.blueButton,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'ดำเนินการต่อ',
-                                        style: TextStyle(
-                                          color: AppColors.blueButtonText,
-                                          fontSize: s45,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                    child: Text(
+                                      'ดำเนินการต่อ',
+                                      style: TextStyle(
+                                        color: AppColors.blueButtonText,
+                                        fontSize: s45,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    onPressed: () {
+                                      if (_key.currentState.validate()) {
+                                        _key.currentState.save();
+                                        authService.validator(context, value,
+                                            withPhone: loginMode == 'phone');
+                                      }
+                                    },
                                   ),
-                                  onTap: () {
-                                    if (_key.currentState.validate()) {
-                                      _key.currentState.save();
-                                      authService.validator(context, value,
-                                          withPhone: loginMode == 'phone');
-                                    }
-                                  },
                                 ),
                                 GestureDetector(
                                   child: Text(

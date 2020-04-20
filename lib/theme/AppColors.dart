@@ -16,10 +16,11 @@ class AppColors {
   static Color darkgrey = Color(0xff24292e);
 
   /* Form colors */
-  static Color textField = Color(0xff101010);
+  static Color textField = Color(0xff202020);
   static Color textFieldLabel = Colors.white;
-  static Color hintText = Colors.white30;
+  static Color hintText = Colors.white60;
   static Color textFieldInput = Colors.white;
+  static Color checkedbox = Color(0xff26A4FF);
 
   /* Divider colors */
   static Color divider = Colors.white60;

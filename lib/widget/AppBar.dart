@@ -32,8 +32,8 @@ class AppBarWithTitleState extends State<AppBarWithTitle> {
               children: <Widget>[
                 GestureDetector(
                   child: Container(
-                    width: 100.w,
-                    height: 75.h,
+                    width: 55,
+                    height: 40,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(screenWidthDp),
                         color: AppColors.white),
@@ -88,8 +88,8 @@ class AppBarWithArrow extends StatelessWidget {
               children: <Widget>[
                 GestureDetector(
                   child: Container(
-                    width: 100.w,
-                    height: 75.h,
+                    width: 55,
+                    height: 40,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(screenWidthDp),
                         color: AppColors.white),
@@ -121,8 +121,8 @@ class AppBarMainLogin extends StatelessWidget {
           height: 130.h,
           padding: EdgeInsets.only(
             top: 15.h,
-            right: 70.w,
-            left: 70.w,
+            right: 50.w,
+            left: 50.w,
             bottom: 15.h,
           ),
           child: Row(
