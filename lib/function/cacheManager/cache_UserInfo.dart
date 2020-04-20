@@ -78,7 +78,7 @@ class CacheUserInfo {
   }
 
   ///Create cache if file and userdata does not exist then get file
-  ///Get file if cache file and userdata already exist
+  ///Get file if cache file and userdata already exist 
   userInfo(String uid, BuildContext context, {Map info}) async {
     bool _hasFile = await hasFile();
     if (_hasFile == false)
