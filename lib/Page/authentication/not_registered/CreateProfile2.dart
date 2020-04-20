@@ -26,6 +26,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
   StreamSubscription loadStatus;
   var _passwordField = TextEditingController();
   var _genderField = TextEditingController();
+  final FocusNode _passwordFocus = FocusNode();
+  final FocusNode _genderFocus = FocusNode();
 
   DateTimePickerLocale _locale = DateTimePickerLocale.en_us;
   List<DateTimePickerLocale> _locales = DateTimePickerLocale.values;
@@ -73,6 +75,13 @@ class _CreateProfile2State extends State<CreateProfile2> {
         });
       },
     );
+  }
+
+  //fieldFocusChange for change focusnode of textfield
+  _fieldFocusChange(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
   }
 
   @override
@@ -213,8 +222,10 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                         ),
                                         GestureDetector(
                                           child: Text(
-                                            DateFormat('d/M/y')
-                                                .format(birthDay ?? now),
+                                            birthDay != null
+                                                ? DateFormat('d/M/y')
+                                                    .format(birthDay)
+                                                : 'วัน/เดือน/ปี',
                                             style: TextStyle(
                                               color: AppColors.scrapblue,
                                               fontSize: s60,
@@ -404,51 +415,6 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                             ],
                                           ),
                                         )
-                                        // Radio(
-                                        //   onChanged: (String ty) {
-                                        //     setState(() => gender = ty);
-                                        //     authenInfo.gender = ty;
-                                        //   },
-                                        //   value: 'male',
-                                        //   groupValue: gender,
-                                        //   activeColor: Color(0xff26A4FF),
-                                        // ),
-                                        // Text(
-                                        //   'ชาย',
-                                        //   style: TextStyle(
-                                        //       fontSize: 21,
-                                        //       color: Colors.white),
-                                        // ),
-                                        // Radio(
-                                        //   onChanged: (String ty) {
-                                        //     setState(() => gender = ty);
-                                        //     authenInfo.gender = ty;
-                                        //   },
-                                        //   value: 'female',
-                                        //   groupValue: gender,
-                                        //   activeColor: Color(0xff26A4FF),
-                                        // ),
-                                        // Text(
-                                        //   'หญิง',
-                                        //   style: TextStyle(
-                                        //       fontSize: 21,
-                                        //       color: Colors.white),
-                                        // ),
-                                        // Radio(
-                                        //   onChanged: (String ty) {
-                                        //     setState(() => gender = ty);
-                                        //     authenInfo.gender = ty;
-                                        //   },
-                                        //   value: 'other',
-                                        //   groupValue: gender,
-                                        //   activeColor: Color(0xff26A4FF),
-                                        // ),
-                                        // Text(
-                                        //   'อื่นๆ',
-                                        //   style: TextStyle(
-                                        //       fontSize: 21,
-                                        //       color: Colors.white),
-                                        // ),
                                       ],
                                     ),
                                     Row(
@@ -471,44 +437,66 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                                       left: 50.w,
                                                       right: 50.w,
                                                     ),
-                                                    child: TextFormField(
-                                                      style: TextStyle(
-                                                        color: AppColors
-                                                            .textFieldInput,
-                                                        fontSize: s40,
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: TextFormField(
+                                                        focusNode: _genderFocus,
+                                                        onFieldSubmitted:
+                                                            (term) {
+                                                          _passwordField.text ==
+                                                                  ''
+                                                              ? _fieldFocusChange(
+                                                                  context,
+                                                                  _genderFocus,
+                                                                  _passwordFocus)
+                                                              : null;
+                                                        },
+                                                        style: TextStyle(
+                                                          color: AppColors
+                                                              .textFieldInput,
+                                                          fontSize: s40,
+                                                        ),
+                                                        validator: ((val) {
+                                                          return val.trim() ==
+                                                                  ''
+                                                              ? alert(
+                                                                  infoTitle,
+                                                                  "กรุณาระบุเพศของคุณ",
+                                                                  context)
+                                                              : null;
+                                                        }),
+                                                        onChanged: (gen) {
+                                                          authenInfo.gender =
+                                                              gen.trim();
+                                                        },
+                                                        textInputAction:
+                                                            _passwordField
+                                                                        .text ==
+                                                                    ''
+                                                                ? TextInputAction
+                                                                    .next
+                                                                : TextInputAction
+                                                                    .done,
+                                                        decoration:
+                                                            InputDecoration(
+                                                                errorStyle:
+                                                                    TextStyle(
+                                                                        fontSize:
+                                                                            0,
+                                                                        height:
+                                                                            0),
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                                hintStyle:
+                                                                    TextStyle(
+                                                                  color: AppColors
+                                                                      .hintText,
+                                                                ),
+                                                                hintText:
+                                                                    'เพศ'),
                                                       ),
-                                                      validator: ((val) {
-                                                        return val.trim() == ''
-                                                            ? alert(
-                                                                infoTitle,
-                                                                "กรุณาระบุเพศของคุณ",
-                                                                context)
-                                                            : null;
-                                                      }),
-                                                      onChanged: (gen) {
-                                                        authenInfo.gender =
-                                                            gen.trim();
-                                                      },
-                                                      textInputAction:
-                                                          TextInputAction.done,
-                                                      decoration:
-                                                          InputDecoration(
-                                                              errorStyle:
-                                                                  TextStyle(
-                                                                      fontSize:
-                                                                          0,
-                                                                      height:
-                                                                          0),
-                                                              border:
-                                                                  InputBorder
-                                                                      .none,
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                color: AppColors
-                                                                    .hintText,
-                                                              ),
-                                                              hintText:
-                                                                  'ระบุเพศของคุณ'),
                                                     ),
                                                   ),
                                                 )
@@ -574,6 +562,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                         child: Align(
                                           alignment: Alignment.center,
                                           child: TextFormField(
+                                            focusNode: _passwordFocus,
                                             controller: _passwordField,
                                             obscureText: true,
                                             textInputAction:

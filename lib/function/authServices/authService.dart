@@ -15,6 +15,7 @@ import 'package:scrap/function/cacheManager/cache_UserInfo.dart';
 import 'package:scrap/function/others/resizeImage.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/provider/authen_provider.dart';
+import 'package:scrap/theme/ScreenUtil.dart';
 
 final fireStore = Firestore.instance;
 final fireAuth = FirebaseAuth.instance;
@@ -61,6 +62,58 @@ class AuthService {
   Future<String> getRegion(String uid) async {
     var doc = await fireStore.collection('Account').document(uid).get();
     return doc?.data['region'] ?? '';
+  }
+
+  final String errorTitle = "ข้อผิดพลาด";
+  final String infoTitle = "คำแนะนำ";
+
+  alert(String title, String warning, BuildContext context) {
+    load.add(false);
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "ตกลง",
+        style: TextStyle(
+          fontSize: s34,
+        ),
+      ),
+      onPressed: () {
+        // This closes the dialog. `context` means the BuildContext, which is
+        // available by default inside of a State object. If you are working
+        // with an AlertDialog in a StatelessWidget, then you would need to
+        // pass a reference to the BuildContext.
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: s40,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      content: Text(
+        warning,
+        style: TextStyle(
+          fontSize: s36,
+        ),
+      ),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+    return '';
   }
 
   ///warning dialog auto set [load] to false ,When was called

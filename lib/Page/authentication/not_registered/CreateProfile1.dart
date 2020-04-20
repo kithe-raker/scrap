@@ -64,9 +64,10 @@ class _CreateProfile1State extends State<CreateProfile1> {
       var data = docs.documents[0];
       docs.documents.length < 1 || data.documentID == user.uid
           ? register()
-          : authService.warn('นามนี้ได้ทำการลงทะเบียนไว้แล้ว', context);
+          : authService.alert(
+              errorTitle, 'นามปากกานี้ได้ทำการลงทะเบียนไว้แล้ว', context);
     } else
-      authService.warn('กรุณาเลือกรูปโปรไฟล์ของท่าน', context);
+      authService.alert(infoTitle, 'กรุณาเลือกรูปโปรไฟล์ของคุณ', context);
   }
 
   register() async {
