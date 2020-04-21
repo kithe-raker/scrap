@@ -74,6 +74,7 @@ class _TemporaryPageState extends State<TemporaryPage> {
                       onPressed: () async {
                         var data = await CacheUserInfo().getUserInfo(context);
                         print(data);
+                        setState(() {});
                       }),
                 ],
               ),

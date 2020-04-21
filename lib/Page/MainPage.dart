@@ -80,18 +80,18 @@ class _MainPageState extends State<MainPage> {
     return false;
   }
 
-  Future<bool> recentVersion() async {
+  bool oldVersion() {
     String recent = '1.1.0', incoming;
     bool isIOS = Platform.isIOS;
     isIOS
         ? incoming = appInfo['versions']['IOS']
         : incoming = appInfo['versions']['android'];
-    return true;
+    return false;
   }
 
-  Future<bool> isLogin() async {
+  Future<bool> isNotLogin() async {
     user = await fireAuth.currentUser();
-    return user != null;
+    return user == null;
   }
 
   Future<bool> notFinishProfile() async {
@@ -124,13 +124,13 @@ class _MainPageState extends State<MainPage> {
               onSuccess: (data) async {
                 await serverClose()
                     ? navigator(Sorry())
-                    : await recentVersion()
-                        ? await isLogin()
-                            ? await notFinishProfile()
+                    : oldVersion()
+                        ? navigator(Update())
+                        : await isNotLogin()
+                            ? navigator(MainLogin())
+                            : await notFinishProfile()
                                 ? navigator(CreateProfile1())
-                                : navigator(AuthenPage())
-                            : navigator(MainLogin())
-                        : navigator(Update());
+                                : navigator(AuthenPage());
               },
               loopAnimation: '1',
               until: () => Future.delayed(Duration(seconds: 1)),

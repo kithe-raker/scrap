@@ -175,7 +175,6 @@ class AuthService {
 
   ///Send OTP code for verified phone number
   ///[region] use for check country phone code of user
-  ///you can pass region to [region] if provider doesn't work well
   Future<void> phoneVerified(BuildContext context) async {
     final authenInfo = Provider.of<AuthenProvider>(context, listen: false);
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {};
