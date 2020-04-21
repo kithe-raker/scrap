@@ -7,7 +7,7 @@ import 'package:flutter_twitter/flutter_twitter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/authenPage/AuthenPage.dart';
+import 'package:scrap/Page/authentication/AuthenPage.dart';
 import 'package:scrap/Page/authentication/MainLogin.dart';
 import 'package:scrap/Page/authentication/PennameWithPassword.dart';
 import 'package:scrap/Page/authentication/PhoneWithOTP.dart';

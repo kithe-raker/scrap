@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
-import 'package:scrap/Page/authenPage/AuthenPage.dart';
+import 'package:scrap/Page/authentication/AuthenPage.dart';
 import 'package:scrap/Page/authentication/MainLogin.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/function/authServices/authService.dart';
