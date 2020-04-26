@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/authenPage/signIn/LoginPage.dart';
+import 'package:scrap/Page/authentication/MainLogin.dart';
 import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/function/cacheManager/cache_UserInfo.dart';
 import 'package:scrap/provider/authen_provider.dart';
@@ -40,14 +40,15 @@ class AuthenPage extends StatelessWidget {
                   RaisedButton(
                       child: Text('print data'),
                       onPressed: () async {
-                        print(await CacheUserInfo().getUserInfo());
+                        var data = await CacheUserInfo().getUserInfo();
+                        print(data);
                       }),
                 ],
               ),
             ),
           );
         } else {
-          return LoginPage();
+          return MainLogin();
         }
       },
     );

@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/HomePage.dart';
-import 'package:scrap/Page/profile/createProfile1.dart';
 import 'package:scrap/function/authServices/authService.dart';
 import 'package:scrap/widget/Loading.dart';
+
+import 'authentication/not_registered/CreateProfile1.dart';
 
 class MainStream extends StatefulWidget {
   @override

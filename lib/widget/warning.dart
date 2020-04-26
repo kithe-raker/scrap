@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/profile/Dropdown/ChangePhone.dart';
+import 'package:scrap/theme/ScreenUtil.dart';
 
 class Dg {
   warning(BuildContext context, String sub, String text) {
@@ -112,6 +113,79 @@ class Dg {
           );
         });
   }
+}
 
-  
+///warning dialog auto set [load] to false ,When was called
+warn(String warning, BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            height: MediaQuery.of(context).size.height / 6,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(warning),
+                RaisedButton(
+                    child: Text('ok'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    })
+              ],
+            ),
+          ),
+        );
+      });
+}
+
+final String errorTitle = "ข้อผิดพลาด";
+final String infoTitle = "คำแนะนำ";
+
+alert(String title, String warning, BuildContext context) {
+  // set up the button
+  Widget okButton = FlatButton(
+    child: Text(
+      "ตกลง",
+      style: TextStyle(
+        fontSize: s34,
+      ),
+    ),
+    onPressed: () {
+      // This closes the dialog. `context` means the BuildContext, which is
+      // available by default inside of a State object. If you are working
+      // with an AlertDialog in a StatelessWidget, then you would need to
+      // pass a reference to the BuildContext.
+      Navigator.pop(context);
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text(
+      title,
+      style: TextStyle(
+        fontSize: s40,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    content: Text(
+      warning,
+      style: TextStyle(
+        fontSize: s36,
+      ),
+    ),
+    actions: [
+      okButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+  return '';
 }
