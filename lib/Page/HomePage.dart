@@ -39,15 +39,8 @@ class _HomePageState extends State<HomePage> {
     Admob.initialize(AdmobService().getAdmobAppId());
     initUser();
     super.initState();
-    Admob.initialize("ca-app-pub-3612265554509092~5449650222");
-    FirebaseAdMob.instance.initialize(appId: "ca-app-pub-3612265554509092~5449650222");
+    FirebaseAdMob.instance.initialize(appId: AdmobService().getAdmobAppId());
     
-  }
-
-  BannerAd createBannerAd(){
-    return BannerAd(adUnitId: "ca-app-pub-3940256099942544/8691691433", size: AdSize.banner,listener: (MobileAdEvent event){
-      print("BannerAd $event");
-    });
   }
 
   initUser() async {
@@ -254,7 +247,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Container(
                       child: AdmobBanner(
-                          adUnitId: "ca-app-pub-3940256099942544/6300978111",
+                          adUnitId: AdmobService().getBannerAdId(),
                           adSize: AdmobBannerSize.FULL_BANNER),
                     )
                   ],
@@ -362,7 +355,7 @@ class _HomePageState extends State<HomePage> {
 
   scrapReseter(DocumentSnapshot data, String lastReset) async {
     DateTime now = DateTime.now();
-    String date = DateFormat('d/M/y').format(now);
+    String date = "20/04/1520";
     lastReset == date
         ? toast('คุณขอรับกระดาษได้แค่ 1 ครั้ง ต่อวัน')
         : warnClear(data);
@@ -391,7 +384,7 @@ class _HomePageState extends State<HomePage> {
                     FlatButton(
                       child: Text('ขอกระดาษใหม่'),
                       onPressed: () async {
-                        createBannerAd()..load()..show();
+                        InterstitialAd(adUnitId: AdmobService().getVideoAdId())..load()..show();
                         setState(() => loading = true);
                         await scrap.resetScrap(
                             data['scraps'], widget.doc['uid']);

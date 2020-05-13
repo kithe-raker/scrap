@@ -18,6 +18,15 @@ class AdmobService {
     }
     return null;
   }
+
+  String getVideoAdId(){
+    if (Platform.isIOS){
+      return 'ca-app-pub-3940256099942544/8691691433';
+    } else if (Platform.isAndroid) {
+      return 'ca-app-pub-3940256099942544/8691691433';
+    }
+    return null;
+  }
 }
 
 final ads = AdmobService();

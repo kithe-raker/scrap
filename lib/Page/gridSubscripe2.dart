@@ -37,8 +37,8 @@ class _GridSubscripe2State extends State<GridSubscripe2> {
     Size a = MediaQuery.of(context).size;
     return Container(
       margin: EdgeInsets.only(top: a.width / 80, left: a.width / 80),
-      width: a.width / 2.1,
-      height: a.width / 2.1,
+      width: a.width / 2.08,
+      height: a.width / 1.6,
       color: Colors.white,
     );
   }
