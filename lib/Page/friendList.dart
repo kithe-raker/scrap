@@ -413,6 +413,10 @@ class _FriendListState extends State<FriendList> {
                             height: a.width / 5,
                             child: ClipRRect(
                               child: CachedNetworkImage(
+                                errorWidget: (context, string, odject) {
+                                  return Image.asset('assets/userprofile.png',
+                                      fit: BoxFit.cover);
+                                },
                                 imageUrl: img,
                                 fit: BoxFit.cover,
                               ),
@@ -535,8 +539,7 @@ class _FriendListState extends State<FriendList> {
                       uid: widget.doc['uid'],
                       writer: widget.doc['id'],
                       thrownUID: accDoc['uid'],
-                      text: widget.data['text'],
-                      public: widget.data['public']);
+                      text: widget.data['text']);
                   toast('ปาใส่${accDoc['id']}แล้ว');
                 },
               )
@@ -721,6 +724,10 @@ class _AllFriendsState extends State<AllFriends> {
                           height: a.width / 4.8,
                           child: ClipRRect(
                             child: CachedNetworkImage(
+                              errorWidget: (context, string, odject) {
+                                return Image.asset('assets/userprofile.png',
+                                    fit: BoxFit.cover);
+                              },
                               imageUrl: img,
                               fit: BoxFit.cover,
                             ),

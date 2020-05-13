@@ -5,11 +5,10 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:scrap/function/randomLocation.dart';
 import 'package:scrap/function/scrapFilter.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
@@ -28,21 +27,22 @@ class MapScraps extends StatefulWidget {
 }
 
 class _MapScrapsState extends State<MapScraps> {
+  final random = Random();
   Position currentLocation;
+  StreamSubscription subLimit;
   int i = 0;
   String date, time;
+  PublishSubject<int> streamLimit = PublishSubject();
+  DocumentSnapshot recentScrap;
   bool loadMap = false;
   BitmapDescriptor _curcon, scrapIcon;
   bool checkPlatform = Platform.isIOS;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   GoogleMapController mapController;
-  var radius = BehaviorSubject<double>.seeded(0.1);
-  StreamSubscription subscription;
   DateTime now = DateTime.now();
   Set scpContent = {};
   Map randData = {};
-  Set picked = {};
   Scraps scrap = Scraps();
   final infoKey = GlobalKey();
   ScrapFilter filter = ScrapFilter();
@@ -54,8 +54,6 @@ class _MapScrapsState extends State<MapScraps> {
       date = DateFormat('d/M/y').format(now);
       currentLocation = widget.currentLocation;
       loadMap = true;
-      queryManagement();
-      loopRandomMarker(currentLocation);
       super.initState();
     }
   }
@@ -308,7 +306,7 @@ class _MapScrapsState extends State<MapScraps> {
 
   @override
   dispose() {
-    subscription?.cancel();
+    subLimit.cancel();
     super.dispose();
   }
 
@@ -338,30 +336,14 @@ class _MapScrapsState extends State<MapScraps> {
                           zoom: 18.5,
                           tilt: 90),
                       markers: Set<Marker>.of(markers.values),
-                      circles: Set<Circle>.of(circles.values),
                     )
                   : Center(
                       child: CircularProgressIndicator(),
                     ),
             ),
-          //  Positioned(left: -56, bottom: a.height / 3.6, child: slider())
+            //  Positioned(left: -56, bottom: a.height / 3.6, child: slider())
           ],
         ));
-  }
-
-  Widget slider() {
-    return Transform.rotate(
-        angle: -(pi / 2),
-        child: Slider(
-            value: zoom ?? 18.5,
-            onChanged: (value) {
-              setState(() => zoom = value);
-              cameraAnime2(mapController, value);
-              print(value);
-            },
-            divisions: 4,
-            max: 18.5,
-            min: 0));
   }
 
   cameraAnime2(GoogleMapController controller, double howClose) {
@@ -399,6 +381,8 @@ class _MapScrapsState extends State<MapScraps> {
     changeMapMode();
     if (this.mounted) {
       updateMap(currentLocation);
+      subLimit = streamLimit.listen((value) => addMoreScrap(value));
+      addMoreScrap(7);
     }
     Geolocator().getPositionStream().listen((location) {
       if (this.mounted) {
@@ -407,7 +391,7 @@ class _MapScrapsState extends State<MapScraps> {
     });
   }
 
-  loopRandomMarker(Position location) {
+  loopRandomMarker(GeoPoint location) {
     for (int i = scpContent.length; i < 3; i++) {
       randomScrap(location);
     }
@@ -415,59 +399,34 @@ class _MapScrapsState extends State<MapScraps> {
 
   updateMap(Position location) {
     userMarker(location.latitude, location.longitude);
-    _addCircle(100, location.latitude, location.longitude);
     _animateToUser(position: location);
-    _startQuery(position: location);
   }
 
-  randomScrap(Position location) {
-    final random = Random();
-    int con, type;
+  randomScrap(GeoPoint location) {
     Map randLocation = RandomLocation()
         .getLocation(lat: location.latitude, lng: location.longitude);
-    Firestore.instance.collection('Contents').getDocuments().then((docs) {
-      if (scpContent.length < 3) {
-        type = random.nextInt(docs.documents.length);
-        List randContens = docs.documents[type].data['Contents'];
-        con = random.nextInt(randContens.length);
-        String getContent = randContens[con];
-        scpContent.add(getContent);
-        randData[getContent] = {
-          'text': getContent,
-          'lat': randLocation['lat'],
-          'lng': randLocation['lng'],
-          'time': '$time  $date',
-        };
-        _addOfficial(
-            getContent, time, date, randLocation['lat'], randLocation['lng']);
-      }
-    });
+
+    if (scpContent.length < 3) {
+      _addOfficial(randLocation);
+    }
   }
 
   void _updateMarkers(List<DocumentSnapshot> documentList, Position position) {
-    markers.removeWhere((key, value) => !scpContent.contains(key.value));
     userMarker(position.latitude, position.longitude);
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
-      List read = data['read'] ?? [];
       GeoPoint loca = data['position']['geopoint'];
-      if (markers.length < 8) {
-        if (widget.collection.contains(data['id']) ||
-            data['uid'] == widget.uid ||
-            picked.contains(data['id']) ||
-            read.contains(widget.uid)) {
-        } else {
-          _addMarker(
-              data['id'],
-              data['uid'],
-              data['scrap']['user'],
-              data['scrap']['text'],
-              data['scrap']['timeStamp'],
-              loca.latitude,
-              loca.longitude);
-        }
-      } else {
-        subscription.pause();
+
+      if (data['uid'] != widget.uid) {
+        _addMarker(
+            data['id'],
+            data['uid'],
+            data['scrap']['user'],
+            data['scrap']['text'],
+            data['scrap']['time'],
+            // data['scrap']['timeStamp'],
+            loca.latitude,
+            loca.longitude);
       }
     });
   }
@@ -481,36 +440,30 @@ class _MapScrapsState extends State<MapScraps> {
             position == null ? pos.latitude : position.latitude,
             position == null ? pos.longitude : position.longitude,
           ),
-          zoom: 18.5,
+          zoom: 16.9,
           tilt: 90.0,
         )));
   }
 
-  queryManagement() {
-    if (subscription?.isPaused != null) {
-      subscription.isPaused && markers.length < 8
-          ? subscription.resume()
-          : subscription.pause();
-    }
-  }
-
-  _startQuery({Position position}) async {
+  addMoreScrap(int limit) async {
     var pos = await Geolocator().getCurrentPosition();
-    // Make a referece to firestore
-    var ref = Firestore.instance
-        .collection('Scraps')
-        .document('hatyai')
-        .collection('scrapsPosition');
-    GeoFirePoint center = Geoflutterfire().point(
-        latitude: position?.latitude ?? pos.latitude,
-        longitude: position?.longitude ?? pos.longitude);
-    // subscribe to query
-    subscription = radius.switchMap((rad) {
-      return Geoflutterfire().collection(collectionRef: ref).within(
-          center: center, radius: rad, field: 'position', strictMode: true);
-    }).listen((list) async {
-      _updateMarkers(list, position ?? pos);
-    });
+    var ref = recentScrap == null
+        ? Firestore.instance
+            .collection('Scraps/hatyai/test')
+            .orderBy('scrap.time', descending: true)
+            .limit(limit)
+        : Firestore.instance
+            .collection('Scraps/hatyai/test')
+            .orderBy('scrap.time', descending: true)
+            .startAfterDocument(recentScrap)
+            .limit(limit);
+    var doc = await ref.getDocuments();
+    _updateMarkers(doc.documents, pos);
+    if (doc.documents.length > 0) {
+      recentScrap = doc.documents.last;
+      var randIndex = random.nextInt(doc.documents.length);
+      loopRandomMarker(doc.documents[randIndex]['position']['geopoint']);
+    }
   }
 
   cameraAnime(GoogleMapController controller, double lat, double lng) {
@@ -518,20 +471,20 @@ class _MapScrapsState extends State<MapScraps> {
         target: LatLng(lat, lng), zoom: 18.5, bearing: 0.0, tilt: 90)));
   }
 
-  void _addOfficial(
-      String text, String time, String date, double lat, double lng) {
-    final MarkerId officialId = MarkerId(text);
+  void _addOfficial(Map randomLocation) {
+    var id = DateTime.now().millisecondsSinceEpoch;
+    final MarkerId officialId = MarkerId(id.toString());
+    scpContent.add(id.toString());
     final Marker marker = Marker(
       markerId: officialId,
-      position: LatLng(lat, lng),
+      position: LatLng(randomLocation['lat'], randomLocation['lng']),
       icon: scrapIcon,
       onTap: () {
         try {
           markers.remove(officialId);
-          picked.add(text);
-          scpContent.remove(text);
+          scpContent.remove(id);
           setState(() {});
-          dialog(text, 'สุ่มโดย Scrap', time, date, text);
+          // dialog(text, 'สุ่มโดย Scrap', time, date, text);
         } catch (e) {
           print(e.toString());
           error(context,
@@ -556,14 +509,14 @@ class _MapScrapsState extends State<MapScraps> {
       onTap: () async {
         try {
           markers.remove(markerId);
-          picked.add(id);
           setState(() {});
           dialog(text, writer, '${convTime.hour}:${convTime.minute}',
               '${convTime.day}/${convTime.month}/${convTime.year}', id);
-          addRead(id);
-          scrap.increaseTransaction(user, 'read');
-          increasHistTran(
-              user, '${convTime.year},${convTime.month},${convTime.day}', id);
+          // addRead(id);
+          // scrap.increaseTransaction(user, 'read');
+          // increasHistTran(
+          //     user, '${convTime.year},${convTime.month},${convTime.day}', id);
+          streamLimit.add(7 - markers.length + 3);
         } catch (e) {
           print(e.toString());
           error(context,
@@ -588,24 +541,6 @@ class _MapScrapsState extends State<MapScraps> {
     if (this.mounted) {
       setState(() {
         markers[markerId] = marker;
-      });
-    }
-  }
-
-  void _addCircle(double radius, double lat, double lng) {
-    final CircleId circleId = CircleId('circle_id');
-    final Circle circle = Circle(
-      circleId: circleId,
-      consumeTapEvents: true,
-      strokeColor: Color.fromRGBO(23, 23, 23, 0.4),
-      fillColor: Color.fromRGBO(67, 78, 80, 0.1),
-      strokeWidth: 4,
-      center: LatLng(lat, lng),
-      radius: radius,
-    );
-    if (this.mounted) {
-      setState(() {
-        circles[circleId] = circle;
       });
     }
   }

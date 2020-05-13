@@ -10,8 +10,7 @@ class Scraps {
       {@required String uid,
       @required String writer,
       @required String thrownUID,
-      @required String text,
-      @required bool public}) {
+      @required String text}) {
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
     String date = DateFormat('d/M/y').format(now);
@@ -24,15 +23,12 @@ class Scraps {
       'id': FieldValue.arrayUnion([uid]),
       'scraps': {
         uid: FieldValue.arrayUnion([
-          {
-            'text': text,
-            'writer': public ?? false ? writer : 'ไม่ระบุตัวตน',
-            'time': now
-          }
+          {'text': text, 'writer': writer, 'time': now}
         ])
       }
     }, merge: true);
-    notifaication(thrownUID, date, time, public, writer);
+    update(now.millisecondsSinceEpoch, uid);
+    notifaication(thrownUID, date, time, writer);
     updateHistory(uid, thrownUID);
     increaseTransaction(uid, 'written');
     increaseTransaction(thrownUID, 'threw');
@@ -49,15 +45,14 @@ class Scraps {
     });
   }
 
-  notifaication(
-      String who, String date, String time, bool public, String writer) {
+  notifaication(String who, String date, String time, String writer) {
     Firestore.instance.collection('Notifications').add({'uid': who});
     Firestore.instance
         .collection('Users')
         .document(who)
         .collection('notification')
         .add({
-      'writer': public ?? false ? writer : 'ไม่ระบุตัวตน',
+      'writer': writer,
       'date': date,
       'time': time,
       'timeStamp': FieldValue.serverTimestamp()
@@ -104,7 +99,7 @@ class Scraps {
     increaseTransaction(doc['uid'], 'written');
   }
 
-  update(String id, String uid) {
+  update(dynamic id, String uid) {
     Firestore.instance
         .collection('Users')
         .document(uid)

@@ -713,11 +713,11 @@ class _SearchState extends State<Search> {
                     Navigator.pop(context);
                     Navigator.pop(context);
                     await scraps.throwTo(
-                        uid: widget.doc['uid'],
-                        writer: widget.doc['id'],
-                        thrownUID: thrownUID,
-                        text: widget.data['text'],
-                        public: widget.data['public']);
+                      uid: widget.doc['uid'],
+                      writer: widget.doc['id'],
+                      thrownUID: thrownUID,
+                      text: widget.data['text'],
+                    );
                     toast('ปาใส่"$user"แล้ว');
                   }
                 },
@@ -738,6 +738,7 @@ class _SearchState extends State<Search> {
       'friendList': FieldValue.arrayUnion([uid])
     }, merge: true);
     await jsonConverter.addContent(
+        uid: uid,
         id: newFriend,
         imgUrl: img,
         joinD: join.runtimeType == String
