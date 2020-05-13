@@ -1,3 +1,4 @@
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/NotificationHistory.dart';
 import 'package:scrap/Page/addPlayer.dart';
@@ -39,6 +41,7 @@ class _HomePageState extends State<HomePage> {
       });
     });
     super.initState();
+    Admob.initialize("ca-app-pub-3612265554509092~5449650222");
   }
 
   @override
@@ -65,15 +68,15 @@ class _HomePageState extends State<HomePage> {
                 height: a.height / 1.1,
                 child: Container(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      Container(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                  scrapLeft(a),Container(
                         width: a.width / 7,
                         height: a.width / 7,
                         decoration: BoxDecoration(
                             boxShadow: [
                               BoxShadow(
-                                color: Color(0xff1a1a1a),
+                                color: Colors.white,
                                 blurRadius: 3.0,
                                 spreadRadius: 2.0,
                                 offset: Offset(
@@ -83,77 +86,38 @@ class _HomePageState extends State<HomePage> {
                               )
                             ],
                             borderRadius: BorderRadius.circular(a.width),
-                            color: Colors.white),
+                            color: Color(0xff26A4FF)),
                         child: IconButton(
-                          icon: Icon(Icons.pin_drop),
-                          color: Color(0xff26A4FF),
+                          icon: Icon(Icons.dashboard),
+                          color: Colors.white,
                           iconSize: a.width / 12,
                           onPressed: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddPlayer(),
+                                  builder: (context) => Gridsubscripe(),
                                 ));
                           },
                         ),
-                      ),
-                      SizedBox(
-                        width: a.width / 21,
-                      ),
-                      Container(
-                        width: a.width / 7,
-                        height: a.width / 7,
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0xff1a1a1a),
-                                blurRadius: 10.0,
-                                spreadRadius: 0.0,
-                                offset: Offset(
-                                  0.0,
-                                  2.0,
-                                ),
-                              )
-                            ],
-                            borderRadius: BorderRadius.circular(a.width),
-                            color: Color(0xff26A4FF)),
-                        child: IconButton(
-                          icon: Icon(Icons.refresh),
-                          color: Colors.white,
-                          iconSize: a.width / 15,
-                          onPressed: () {
-                            setState(() {});
-                            // selectDialog(context);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: a.height / 42,
-              left: a.width / 2.8,
-              child: InkWell(
+                      ),InkWell(
                 child: Container(
-                  width: a.width / 3.6,
-                  height: a.width / 3.6,
+                  width: a.width / 3.8,
+                  height: a.width / 3.8,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(a.width),
                       border: Border.all(
                           color: Colors.white38, width: a.width / 500)),
                   child: Container(
-                    margin: EdgeInsets.all(a.width / 35),
-                    width: a.width / 5,
-                    height: a.width / 5,
+                    margin: EdgeInsets.all(a.width / 40),
+                    width: a.width / 6,
+                    height: a.width / 6,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(a.width),
                         border: Border.all(color: Colors.white)),
                     child: Container(
-                      margin: EdgeInsets.all(a.width / 35),
-                      width: a.width / 5,
-                      height: a.width / 5,
+                      margin: EdgeInsets.all(a.width / 40),
+                      width: a.width / 6,
+                      height: a.width / 6,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(a.width),
                           color: Colors.white,
@@ -170,125 +134,145 @@ class _HomePageState extends State<HomePage> {
                   dialog();
                 },
               ),
+                ],),)
+              )
             ),
+           
             Positioned(
               top: 0,
               left: 0,
               child: Container(
-                // ส่วนของ แทบสีดำด้านบน
-                color: Colors.black,
                 width: a.width,
-                height: a.width / 5,
-                padding: EdgeInsets.only(
-                  top: a.height / 36,
-                  right: a.width / 20,
-                  left: a.width / 20,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    //Logo
+                child: Column(
+                  children: [
                     Container(
-                        margin: EdgeInsets.only(top: a.width / 90),
-                        height: a.width / 7,
-                        alignment: Alignment.center,
-                        child: Image.asset(
-                          'assets/SCRAP.png',
-                          width: a.width / 4,
-                        )),
-                    //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
-                    SizedBox(
-                      width: a.width / 5,
+                      // ส่วนของ แทบสีดำด้านบน
+                      color: Colors.black,
+                      width: a.width,
+                      height: a.width / 5,
+                      padding: EdgeInsets.only(
+                        top: a.height / 36,
+                        right: a.width / 20,
+                        left: a.width / 20,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          //Logo
+                          Container(
+                              margin: EdgeInsets.only(top: a.width / 90),
+                              height: a.width / 7,
+                              alignment: Alignment.center,
+                              child: Image.asset(
+                                'assets/SCRAP.png',
+                                width: a.width / 4,
+                              )),
+                          //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
+                          SizedBox(
+                            width: a.width / 5,
+                          ),
+                          Container(
+                              height: a.width / 5,
+                              alignment: Alignment.center,
+                              child: InkWell(
+                                child: Container(
+                                  width: a.width / 10,
+                                  height: a.width / 10,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    color: Colors.white,
+                                  ),
+                                  child: Icon(Icons.people,
+                                      color: Colors.black, size: a.width / 15),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => FriendList(
+                                                doc: widget.doc,
+                                              )));
+                                },
+                              )),
+                          Container(
+                              height: a.width / 5,
+                              alignment: Alignment.center,
+                              child: InkWell(
+                                child: Container(
+                                  width: a.width / 10,
+                                  height: a.width / 10,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    color: Colors.white,
+                                  ),
+                                  child: Icon(Icons.notifications_active,
+                                      color: Color(0xff26A4FF),
+                                      size: a.width / 15),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              NotificationHistory(
+                                                doc: widget.doc,
+                                              ))); //ไปยังหน้า NotificationHistory
+                                },
+                              )),
+                          Container(
+                              height: a.width / 5,
+                              alignment: Alignment.center,
+                              child: InkWell(
+                                child: Container(
+                                  width: a.width / 10,
+                                  height: a.width / 10,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    color: Colors.white,
+                                  ),
+                                  child: Icon(Icons.person,
+                                      color: Colors.black, size: a.width / 15),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Profile(
+                                                doc: widget.doc,
+                                              ))); //ไปยังหน้า Profile
+                                },
+                              )),
+                        ],
+                      ),
                     ),
                     Container(
-                        height: a.width / 5,
-                        alignment: Alignment.center,
-                        child: InkWell(
-                          child: Container(
-                            width: a.width / 10,
-                            height: a.width / 10,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(a.width),
-                              color: Colors.white,
-                            ),
-                            child: Icon(Icons.people,
-                                color: Colors.black, size: a.width / 15),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => FriendList(
-                                          doc: widget.doc,
-                                        )));
-                          },
-                        )),
-                    Container(
-                        height: a.width / 5,
-                        alignment: Alignment.center,
-                        child: InkWell(
-                          child: Container(
-                            width: a.width / 10,
-                            height: a.width / 10,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(a.width),
-                              color: Colors.white,
-                            ),
-                            child: Icon(Icons.notifications_active,
-                                color: Color(0xff26A4FF), size: a.width / 15),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => NotificationHistory(
-                                          doc: widget.doc,
-                                        ))); //ไปยังหน้า NotificationHistory
-                          },
-                        )),
-                    Container(
-                        height: a.width / 5,
-                        alignment: Alignment.center,
-                        child: InkWell(
-                          child: Container(
-                            width: a.width / 10,
-                            height: a.width / 10,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(a.width),
-                              color: Colors.white,
-                            ),
-                            child: Icon(Icons.person,
-                                color: Colors.black, size: a.width / 15),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Profile(
-                                          doc: widget.doc,
-                                        ))); //ไปยังหน้า Profile
-                          },
-                        )),
+                      child: AdmobBanner(
+                          adUnitId: "ca-app-pub-3940256099942544/6300978111",
+                          adSize: AdmobBannerSize.FULL_BANNER),
+                    )
                   ],
                 ),
               ),
             ),
-            Positioned(
-                // left: a.width/4.8,
-                width: a.width,
-                top: a.height / 7.2,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 1,
-                      ),
-                      scrapLeft(a),
-                      SizedBox(
-                        width: 1,
-                      )
-                    ])),
+            // Positioned(
+            //     // left: a.width/4.8,
+            //     width: a.width,
+            //     top: a.height / 7.2,
+            //     child: Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: <Widget>[
+            //           SizedBox(
+            //             width: 1,
+            //           ),
+            //           scrapLeft(a),
+            //           SizedBox(
+            //             width: 1,
+            //           )
+            //         ])),
           ],
         ),
       ),
@@ -296,6 +280,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget scrapLeft(Size scr) {
+    Size a = MediaQuery.of(context).size;
     return StreamBuilder(
       stream: Firestore.instance
           .collection('Users')
@@ -309,6 +294,7 @@ class _HomePageState extends State<HomePage> {
           int scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
           return InkWell(
             child: Container(
+              margin: EdgeInsets.only(left: a.width/20,right: a.width/20),
               padding: EdgeInsets.fromLTRB(scr.width / 24, scr.width / 36,
                   scr.width / 24, scr.width / 36),
               decoration: BoxDecoration(
@@ -335,10 +321,6 @@ class _HomePageState extends State<HomePage> {
                     )
                   : Row(
                       children: <Widget>[
-                        Image.asset('assets/papericon.png',
-                            width: scr.width / 13.2,
-                            height: scr.width / 13.2,
-                            fit: BoxFit.cover),
                         RichText(
                           text: TextSpan(
                             style: TextStyle(
@@ -346,7 +328,7 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.white,
                                 fontFamily: 'ThaiSans'),
                             children: <TextSpan>[
-                              TextSpan(text: ' กระดาษรายวัน '),
+                              TextSpan(text: ' เหลือกระดาษ '),
                               TextSpan(
                                   text: '$scraps',
                                   style: TextStyle(

@@ -44,6 +44,8 @@ dependencies:
   cached_network_image: ^2.0.0
   flutter_cache_manager: ^1.1.3
   flutter_screenutil: ^1.1.0
+  firebase_admob: ^0.9.0+1
+  admob_flutter: "^0.3.4"
 
 
   
