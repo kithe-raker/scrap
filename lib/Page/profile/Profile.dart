@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:scrap/Page/LoginPage.dart';
 
 import 'package:scrap/Page/setting/About.dart';
 import 'package:scrap/Page/setting/FeedbackPage.dart';
@@ -1465,7 +1466,8 @@ class _ProfileState extends State<Profile> {
       case Constans.SignOut:
         Auth auth = Provider.of(context).auth;
         await auth.signOut().then((value) {
-          Navigator.pop(context);
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => LoginPage()));
         });
         break;
       case Constans.History:

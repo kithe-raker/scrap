@@ -1,18 +1,18 @@
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MapScraps.dart';
-import 'package:scrap/Page/NotificationHistory.dart';
-import 'package:scrap/Page/addPlayer.dart';
 import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
+import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -26,23 +26,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String type, select, text;
+  String type, select, text, img;
   int scraps;
-  bool public;
+  bool public, initInfoFinish = false;
   var _key = GlobalKey<FormState>();
-  Position currentLocation;
   Scraps scrap = Scraps();
   JsonConverter jsonConverter = JsonConverter();
 
   @override
   void initState() {
-    Geolocator().getCurrentPosition().then((curlo) {
-      setState(() {
-        currentLocation = curlo;
-      });
-    });
+    Admob.initialize(ads.getAdmobAppId());
+    initUser();
     super.initState();
-    Admob.initialize("ca-app-pub-3612265554509092~5449650222");
+  }
+
+  initUser() async {
+    var data = await userinfo.readContents();
+    img = data['img'];
+    setState(() => initInfoFinish = true);
   }
 
   @override
@@ -59,89 +60,90 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.grey[900],
         body: Stack(
           children: <Widget>[
-            scrapPatt(a, context),
+            MapScraps(uid: widget.doc['uid']),
             Positioned(
-              bottom: 0,
-              child: Container(
-                padding: EdgeInsets.only(bottom: a.width / 10),
-                alignment: Alignment.bottomCenter,
-                width: a.width,
-                height: a.height / 1.1,
+                bottom: 0,
                 child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                  scrapLeft(a),Container(
-                        width: a.width / 7,
-                        height: a.width / 7,
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white,
-                                blurRadius: 3.0,
-                                spreadRadius: 2.0,
-                                offset: Offset(
-                                  0.0,
-                                  3.2,
-                                ),
-                              )
-                            ],
-                            borderRadius: BorderRadius.circular(a.width),
-                            color: Color(0xff26A4FF)),
-                        child: IconButton(
-                          icon: Icon(Icons.dashboard),
-                          color: Colors.white,
-                          iconSize: a.width / 12,
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Gridsubscripe(),
-                                ));
-                          },
-                        ),
-                      ),InkWell(
-                child: Container(
-                  width: a.width / 3.8,
-                  height: a.width / 3.8,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(a.width),
-                      border: Border.all(
-                          color: Colors.white38, width: a.width / 500)),
-                  child: Container(
-                    margin: EdgeInsets.all(a.width / 40),
-                    width: a.width / 6,
-                    height: a.width / 6,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(a.width),
-                        border: Border.all(color: Colors.white)),
+                    padding: EdgeInsets.only(bottom: a.width / 10),
+                    alignment: Alignment.bottomCenter,
+                    width: a.width,
+                    height: a.height / 1.1,
                     child: Container(
-                      margin: EdgeInsets.all(a.width / 40),
-                      width: a.width / 6,
-                      height: a.width / 6,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(a.width),
-                          color: Colors.white,
-                          border: Border.all(color: Colors.white)),
-                      child: Icon(
-                        Icons.create,
-                        size: a.width / 12,
-                        color: Colors.black,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          scrapLeft(a),
+                          Container(
+                            width: a.width / 7,
+                            height: a.width / 7,
+                            decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.white,
+                                      blurRadius: 3.0,
+                                      spreadRadius: 2.0,
+                                      offset: Offset(0.0, 3.2))
+                                ],
+                                borderRadius: BorderRadius.circular(a.width),
+                                color: Color(0xff26A4FF)),
+                            child: IconButton(
+                              icon: Icon(Icons.dashboard),
+                              color: Colors.white,
+                              iconSize: a.width / 12,
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Gridsubscripe(),
+                                    ));
+                              },
+                            ),
+                          ),
+                          InkWell(
+                            child: Container(
+                              width: a.width / 3.8,
+                              height: a.width / 3.8,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(a.width),
+                                  border: Border.all(
+                                      color: Colors.white38,
+                                      width: a.width / 500)),
+                              child: Container(
+                                margin: EdgeInsets.all(a.width / 40),
+                                width: a.width / 6,
+                                height: a.width / 6,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    border: Border.all(color: Colors.white)),
+                                child: Container(
+                                  margin: EdgeInsets.all(a.width / 40),
+                                  width: a.width / 6,
+                                  height: a.width / 6,
+                                  decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                      color: Colors.white,
+                                      border: Border.all(color: Colors.white)),
+                                  child: Icon(
+                                    Icons.create,
+                                    size: a.width / 12,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              if (scraps > 0) {
+                                dialog();
+                              } else
+                                toast('กระดาษคุณหมดแล้ว');
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                ),
-                onTap: () {
-                  if (scraps > 0) {
-                    dialog();
-                  } else
-                    toast('กระดาษคุณหมดแล้ว');
-                },
-              ),
-                ],),)
-              )
-            ),
-           
+                    ))),
+
             Positioned(
               top: 0,
               left: 0,
@@ -173,9 +175,7 @@ class _HomePageState extends State<HomePage> {
                                 width: a.width / 4,
                               )),
                           //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
-                          SizedBox(
-                            width: a.width / 5,
-                          ),
+                          SizedBox(width: a.width / 2.7),
                           Container(
                               height: a.width / 5,
                               alignment: Alignment.center,
@@ -195,35 +195,8 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => FriendList(
-                                                doc: widget.doc,
-                                              )));
-                                },
-                              )),
-                          Container(
-                              height: a.width / 5,
-                              alignment: Alignment.center,
-                              child: InkWell(
-                                child: Container(
-                                  width: a.width / 10,
-                                  height: a.width / 10,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
-                                    color: Colors.white,
-                                  ),
-                                  child: Icon(Icons.notifications_active,
-                                      color: Color(0xff26A4FF),
-                                      size: a.width / 15),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
                                           builder: (context) =>
-                                              NotificationHistory(
-                                                doc: widget.doc,
-                                              ))); //ไปยังหน้า NotificationHistory
+                                              FriendList(doc: widget.doc)));
                                 },
                               )),
                           Container(
@@ -234,20 +207,36 @@ class _HomePageState extends State<HomePage> {
                                   width: a.width / 10,
                                   height: a.width / 10,
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
-                                    color: Colors.white,
-                                  ),
-                                  child: Icon(Icons.person,
-                                      color: Colors.black, size: a.width / 15),
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          width: 1, color: Colors.white)),
+                                  child: initInfoFinish
+                                      ? ClipRRect(
+                                          child: CachedNetworkImage(
+                                              errorWidget:
+                                                  (context, string, odject) {
+                                                return Image.asset(
+                                                    'assets/userprofile.png',
+                                                    fit: BoxFit.cover);
+                                              },
+                                              imageUrl: img,
+                                              fit: BoxFit.cover),
+                                          borderRadius: BorderRadius.circular(
+                                              a.width / 10),
+                                        )
+                                      : Icon(Icons.person,
+                                          color: Colors.black,
+                                          size: a.width / 15),
                                 ),
                                 onTap: () {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => Profile(
-                                                doc: widget.doc,
-                                              ))); //ไปยังหน้า Profile
+                                              doc: widget
+                                                  .doc))); //ไปยังหน้า Profile
                                 },
                               )),
                         ],
@@ -298,7 +287,7 @@ class _HomePageState extends State<HomePage> {
           scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
           return InkWell(
             child: Container(
-              margin: EdgeInsets.only(left: a.width/20,right: a.width/20),
+              margin: EdgeInsets.only(left: a.width / 20, right: a.width / 20),
               padding: EdgeInsets.fromLTRB(scr.width / 24, scr.width / 36,
                   scr.width / 24, scr.width / 36),
               decoration: BoxDecoration(
@@ -439,28 +428,6 @@ class _HomePageState extends State<HomePage> {
                 scraps.add(scrap);
               } /Users/gPSC1TxFcXVVZ1nQOrPR2kX9SBU2/scraps/collection
             } */
-  scrapPatt(Size a, BuildContext context) {
-    return StreamBuilder(
-        stream: Firestore.instance
-            .collection('Users')
-            .document(widget.doc['uid'])
-            .collection('scraps')
-            .document('collection')
-            .snapshots(),
-        builder: (context, snap) {
-          if (snap.hasData && snap.connectionState == ConnectionState.active) {
-            return currentLocation == null
-                ? gpsCheck(a, 'กรุณาตรวจสอบ GPS ของคุณ')
-                : MapScraps(
-                    collection: snap?.data['id'] ?? [],
-                    currentLocation: currentLocation,
-                    uid: widget.doc['uid'],
-                  );
-          } else {
-            return gpsCheck(a, 'กรุณาตรวจสอบอินเทอร์เน็ตของคุณ');
-          }
-        });
-  }
 
   Widget gpsCheck(Size a, String text) {
     return Center(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -15,19 +16,15 @@ import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class MapScraps extends StatefulWidget {
-  final Position currentLocation;
   final String uid;
-  final List collection;
-  MapScraps(
-      {@required this.currentLocation,
-      @required this.uid,
-      @required this.collection});
+  MapScraps({@required this.uid});
   @override
   _MapScrapsState createState() => _MapScrapsState();
 }
 
 class _MapScrapsState extends State<MapScraps> {
   final random = Random();
+  final geoLocator = Geolocator();
   Position currentLocation;
   StreamSubscription subLimit;
   int i = 0;
@@ -46,13 +43,16 @@ class _MapScrapsState extends State<MapScraps> {
   Scraps scrap = Scraps();
   final infoKey = GlobalKey();
   ScrapFilter filter = ScrapFilter();
+  StreamSubscription streamLocation;
 
   @override
   void initState() {
     if (this.mounted) {
       time = DateFormat('Hm').format(now);
       date = DateFormat('d/M/y').format(now);
-      currentLocation = widget.currentLocation;
+      streamLocation = geoLocator
+          .getPositionStream()
+          .listen((event) => setState(() => currentLocation = event));
       loadMap = true;
       super.initState();
     }
@@ -307,6 +307,7 @@ class _MapScrapsState extends State<MapScraps> {
   @override
   dispose() {
     subLimit.cancel();
+    streamLocation.cancel();
     super.dispose();
   }
 
@@ -317,33 +318,65 @@ class _MapScrapsState extends State<MapScraps> {
     Size a = MediaQuery.of(context).size;
     _createMarkerImageFromAsset(context);
     _createScrapImageFromAsset(context);
-    return Scaffold(
-        backgroundColor: Colors.grey[900],
-        body: Stack(
+    return currentLocation == null
+        ? gpsCheck(a, 'กรุณาตรวจสอบ GPS ของคุณ')
+        : Scaffold(
+            backgroundColor: Colors.grey[900],
+            body: Stack(
+              children: <Widget>[
+                Container(
+                  color: Colors.grey[900],
+                  width: a.width,
+                  height: a.height,
+                  child: loadMap
+                      ? GoogleMap(
+                          myLocationButtonEnabled: false,
+                          myLocationEnabled: false,
+                          onMapCreated: onMapCreated,
+                          initialCameraPosition: CameraPosition(
+                              target: LatLng(currentLocation?.latitude ?? 0,
+                                  currentLocation?.longitude ?? 0),
+                              zoom: 18.5,
+                              tilt: 90),
+                          markers: Set<Marker>.of(markers.values),
+                        )
+                      : Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                ),
+                //  Positioned(left: -56, bottom: a.height / 3.6, child: slider())
+              ],
+            ));
+  }
+
+  Widget gpsCheck(Size a, String text) {
+    return Center(
+      child: Container(
+        width: a.width / 1.2,
+        height: a.width / 3.2,
+        child: Stack(
           children: <Widget>[
-            Container(
-              color: Colors.grey[900],
-              width: a.width,
-              height: a.height,
-              child: loadMap
-                  ? GoogleMap(
-                      myLocationButtonEnabled: false,
-                      myLocationEnabled: false,
-                      onMapCreated: onMapCreated,
-                      initialCameraPosition: CameraPosition(
-                          target: LatLng(currentLocation?.latitude ?? 0,
-                              currentLocation?.longitude ?? 0),
-                          zoom: 18.5,
-                          tilt: 90),
-                      markers: Set<Marker>.of(markers.values),
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(),
-                    ),
+            Center(
+              child: Container(
+                width: a.width / 3.2,
+                height: a.width / 3.2,
+                child: FlareActor(
+                  'assets/paper_loading.flr',
+                  animation: 'Untitled',
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            //  Positioned(left: -56, bottom: a.height / 3.6, child: slider())
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  text,
+                  style: TextStyle(fontSize: a.width / 16, color: Colors.white),
+                ))
           ],
-        ));
+        ),
+      ),
+    );
   }
 
   cameraAnime2(GoogleMapController controller, double howClose) {
@@ -384,9 +417,9 @@ class _MapScrapsState extends State<MapScraps> {
       subLimit = streamLimit.listen((value) => addMoreScrap(value));
       addMoreScrap(7);
     }
-    Geolocator().getPositionStream().listen((location) {
+    streamLocation.onData((position) {
       if (this.mounted) {
-        updateMap(location);
+        updateMap(position);
       }
     });
   }

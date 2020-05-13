@@ -308,6 +308,12 @@ class _ViewprofileState extends State<Viewprofile> {
                                                         BorderRadius.circular(
                                                             a.width),
                                                     child: CachedNetworkImage(
+                                                      errorWidget: (context,
+                                                          string, odject) {
+                                                        return Image.asset(
+                                                            'assets/userprofile.png',
+                                                            fit: BoxFit.cover);
+                                                      },
                                                       imageUrl:
                                                           info.data['img'],
                                                       fit: BoxFit.cover,
