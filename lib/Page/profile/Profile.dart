@@ -1246,8 +1246,7 @@ class _ProfileState extends State<Profile> {
                                         uid: widget.doc['uid'],
                                         writer: widget.doc['id'],
                                         thrownUID: id,
-                                        text: text2,
-                                        public: true);
+                                        text: text2);
                                   }
                                 }
                               }),

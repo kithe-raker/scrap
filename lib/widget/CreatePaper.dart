@@ -285,8 +285,7 @@ class _WriteScrapState extends State<WriteScrap> {
                                           uid: widget.uid,
                                           writer: widget.id,
                                           thrownUID: widget.thrownUID,
-                                          text: text,
-                                          public: public);
+                                          text: text);
                                     }
                                   }
                                 },

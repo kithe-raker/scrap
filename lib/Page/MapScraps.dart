@@ -457,7 +457,6 @@ class _MapScrapsState extends State<MapScraps> {
             .orderBy('scrap.time', descending: true)
             .startAfterDocument(recentScrap)
             .limit(limit);
-    // subscribe to query
     var doc = await ref.getDocuments();
     _updateMarkers(doc.documents, pos);
     if (doc.documents.length > 0) {

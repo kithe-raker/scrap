@@ -25,6 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String type, select, text;
+  int scraps;
   bool public;
   var _key = GlobalKey<FormState>();
   Position currentLocation;
@@ -167,7 +168,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 onTap: () {
-                  dialog();
+                  if (scraps > 0) {
+                    dialog();
+                  } else
+                    toast('กระดาษคุณหมดแล้ว');
                 },
               ),
             ),
@@ -306,7 +310,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapshot) {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.active) {
-          int scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
+          scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
           return InkWell(
             child: Container(
               padding: EdgeInsets.fromLTRB(scr.width / 24, scr.width / 36,
@@ -732,48 +736,51 @@ class _HomePageState extends State<HomePage> {
                                       onTap: () async {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          checkScrap();
+                                          toast('คุณได้ทิ้งกระดาษไว้แล้ว');
+                                          Navigator.pop(context);
+                                          await scrap.binScrap(
+                                              text, public, widget.doc);
                                         }
                                       },
                                     ),
-                                    //ปุ่มปาใส่
+                                    public == null || !public
+                                        ? SizedBox()
+                                        : InkWell(
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  left: a.width / 20),
+                                              width: a.width / 4.5,
+                                              height: a.width / 8,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          a.width)),
+                                              alignment: Alignment.center,
+                                              child: Text("ปาใส่",
+                                                  style: TextStyle(
+                                                      fontSize: a.width / 15,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ),
+                                            //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
+                                            onTap: () {
+                                              if (_key.currentState
+                                                  .validate()) {
+                                                _key.currentState.save();
 
-                                    InkWell(
-                                      child: Container(
-                                        margin:
-                                            EdgeInsets.only(left: a.width / 20),
-                                        width: a.width / 4.5,
-                                        height: a.width / 8,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(a.width)),
-                                        alignment: Alignment.center,
-                                        child: Text("ปาใส่",
-                                            style: TextStyle(
-                                                fontSize: a.width / 15,
-                                                fontWeight: FontWeight.bold)),
-                                      ),
-                                      //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                      onTap: () {
-                                        if (_key.currentState.validate()) {
-                                          _key.currentState.save();
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    FriendList(
-                                                  doc: widget.doc,
-                                                  data: {
-                                                    'text': text,
-                                                    'public': public
-                                                  },
-                                                ),
-                                              ));
-                                        }
-                                      },
-                                    )
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FriendList(
+                                                        doc: widget.doc,
+                                                        data: {'text': text},
+                                                      ),
+                                                    ));
+                                              }
+                                            })
                                   ],
                                 ),
                               )

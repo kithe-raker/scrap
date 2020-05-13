@@ -28,12 +28,10 @@ class _LoginPageState extends State<LoginPage> {
 
   login() async {
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _email, password: _password)
-          .then((value) async {
-        updateToken(value.user.uid);
-        await friendManager.initFriend(value.user.uid);
-      });
+      var account = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _email, password: _password);
+      updateToken(account.user.uid);
+      await friendManager.initFriend(account.user.uid);
     } catch (e) {
       setState(() {
         loading = false;
@@ -325,8 +323,6 @@ class _LoginPageState extends State<LoginPage> {
                                       loading = true;
                                     });
                                     await login();
-                                  } else {
-                                    print('nope');
                                   }
                                 }),
                             InkWell(
