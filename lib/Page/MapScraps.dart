@@ -88,7 +88,7 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   //sssss
-  void dialog(String text, String writer, String time, String date, String id) {
+  void dialog(String text, String writer, String time, String id) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
       Size a = MediaQuery.of(context).size;
@@ -149,7 +149,7 @@ class _MapScrapsState extends State<MapScraps> {
                                         style:
                                             TextStyle(fontSize: a.width / 25),
                                       ),
-                                      Text('เวลา : $time $date',
+                                      Text('เวลา : $time',
                                           style:
                                               TextStyle(fontSize: a.width / 25))
                                     ],
@@ -414,7 +414,9 @@ class _MapScrapsState extends State<MapScraps> {
     changeMapMode();
     if (this.mounted) {
       updateMap(currentLocation);
-      subLimit = streamLimit.listen((value) => addMoreScrap(value));
+      subLimit = streamLimit.listen((value) {
+        if (value > 0) addMoreScrap(value);
+      });
       addMoreScrap(7);
     }
     streamLocation.onData((position) {
@@ -543,8 +545,7 @@ class _MapScrapsState extends State<MapScraps> {
         try {
           markers.remove(markerId);
           setState(() {});
-          dialog(text, writer, '${convTime.hour}:${convTime.minute}',
-              '${convTime.day}/${convTime.month}/${convTime.year}', id);
+          dialog(text, writer, DateFormat('HH:mm d/M/y').format(convTime), id);
           // addRead(id);
           // scrap.increaseTransaction(user, 'read');
           // increasHistTran(

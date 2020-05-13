@@ -28,6 +28,13 @@ class UserInfo {
     Map data = json.decode(await file.readAsString());
     return data;
   }
+
+  Future<void> editProImage(String newUrl) async {
+    final file = await _localFile;
+    var data = await readContents();
+    data['img'] = newUrl;
+    await file.writeAsString(json.encode(data));
+  }
 }
 
 final userinfo = UserInfo();
