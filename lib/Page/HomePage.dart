@@ -1,5 +1,6 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   Position currentLocation;
   Scraps scrap = Scraps();
   JsonConverter jsonConverter = JsonConverter();
+  RewardedVideoAd videoAd = RewardedVideoAd.instance;
 
   @override
   void initState() {
@@ -43,6 +45,12 @@ class _HomePageState extends State<HomePage> {
     });
     super.initState();
     Admob.initialize("ca-app-pub-3612265554509092~5449650222");
+    FirebaseAdMob.instance.initialize(appId: "ca-app-pub-3612265554509092~5449650222");
+    videoAd.listener = (RewardedVideoAdEvent event,{String rewardType,int rewardAmount }){
+      if(event == RewardedVideoAdEvent.rewarded){
+    
+     }
+    };
   }
 
   @override
@@ -347,6 +355,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
             ),
+            //00
             onTap: () {
               scraps == 15
                   ? toast('กระดาษของคุณยังเต็มอยู่')
@@ -391,6 +400,7 @@ class _HomePageState extends State<HomePage> {
                     FlatButton(
                       child: Text('ขอกระดาษใหม่'),
                       onPressed: () async {
+                        videoAd..load(adUnitId: "ca-app-pub-3940256099942544/5224354917")..show();
                         setState(() => loading = true);
                         await scrap.resetScrap(
                             data['scraps'], widget.doc['uid']);
