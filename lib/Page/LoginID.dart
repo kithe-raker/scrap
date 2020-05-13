@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/mainstream.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/cacheManage/friendManager.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -42,16 +44,20 @@ class _LoginIDState extends State<LoginID> {
   }
 
   signIn(String email) async {
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: _password)
-        .then((auth) async {
-      updateToken(auth.user.uid);
-      await friendManager.initFriend(auth.user.uid);
-    });
+    var auth = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: _password);
+    updateToken(auth.user.uid);
+    await friendManager.initFriend(auth.user.uid);
+    var doc = await Firestore.instance
+        .collection('Users/${auth.user.uid}/info')
+        .document(auth.user.uid)
+        .get();
+    await userinfo.writeContent(doc: doc);
     setState(() {
       loading = false;
     });
-    Navigator.pop(context);
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => MainStream()));
   }
 
   updateToken(String uid) async {

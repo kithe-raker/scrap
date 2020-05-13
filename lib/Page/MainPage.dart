@@ -5,9 +5,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:scrap/Page/Auth.dart';
+import 'package:scrap/Page/LoginPage.dart';
 import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
+import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/services/ImgCacheManger.dart';
 import 'package:scrap/services/jsonConverter.dart';
@@ -83,7 +84,7 @@ class _MainPageState extends State<MainPage> {
       appInfo = doc;
     });
     final uid = await Provider.of(context).auth?.currentUser() ?? '';
-    return close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
+    return false; //close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }
 
   Future<bool> versionChecker() async {
@@ -92,8 +93,13 @@ class _MainPageState extends State<MainPage> {
     isIOS
         ? incoming = appInfo['versions']['IOS']
         : incoming = appInfo['versions']['android'];
-    final uid = await Provider.of(context).auth?.currentUser() ?? '';
-    return recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
+    final uid = await Provider.of(context).auth?.currentUser();
+    return true; // recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
+  }
+
+  Future<bool> isLogin() async {
+    final uid = await Provider.of(context).auth?.currentUser();
+    return uid != '';
   }
 
   @override
@@ -119,7 +125,9 @@ class _MainPageState extends State<MainPage> {
                 await serverChecker()
                     ? navigator(Sorry())
                     : await versionChecker()
-                        ? navigator(Authen())
+                        ? await isLogin()
+                            ? navigator(MainStream())
+                            : navigator(LoginPage())
                         : navigator(Update());
               },
               loopAnimation: '1',
@@ -135,8 +143,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   navigator(var where) {
-    Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => where));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => where));
   }
 }
 

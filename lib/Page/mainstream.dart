@@ -11,7 +11,6 @@ class MainStream extends StatefulWidget {
 }
 
 class _MainStreamState extends State<MainStream> {
-
   Stream<DocumentSnapshot> userStream(BuildContext context) async* {
     try {
       final uid = await Provider.of(context).auth.currentUser();
@@ -31,9 +30,7 @@ class _MainStreamState extends State<MainStream> {
           if (snap.hasData && snap.connectionState == ConnectionState.active) {
             return snap.data['id'] == null
                 ? CreateProfile1(uid: snap.data['uid'])
-                : HomePage(
-                    doc: snap.data,
-                  );
+                : HomePage(doc: snap.data);
           } else {
             return Loading();
           }

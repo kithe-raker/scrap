@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/LoginID.dart';
+import 'package:scrap/Page/mainstream.dart';
 
 import 'package:scrap/Page/signup/SignUpMail.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/cacheManage/friendManager.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -32,6 +34,13 @@ class _LoginPageState extends State<LoginPage> {
           .signInWithEmailAndPassword(email: _email, password: _password);
       updateToken(account.user.uid);
       await friendManager.initFriend(account.user.uid);
+      var doc = await Firestore.instance
+          .collection('Users/${account.user.uid}/info')
+          .document(account.user.uid)
+          .get();
+      await userinfo.writeContent(doc: doc);
+       Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => MainStream()));
     } catch (e) {
       setState(() {
         loading = false;
