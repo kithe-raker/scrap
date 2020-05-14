@@ -70,8 +70,10 @@ class _HomePageState extends State<HomePage> {
                     width: a.width,
                     height: a.height / 1.1,
                     child: Container(
+                      margin: EdgeInsets.only(
+                          left: a.width / 80, right: a.width / 80),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           scrapLeft(a),
                           Container(
@@ -80,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                             decoration: BoxDecoration(
                                 boxShadow: [
                                   BoxShadow(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       blurRadius: 3.0,
                                       spreadRadius: 2.0,
                                       offset: Offset(0.0, 3.2))
@@ -288,7 +290,6 @@ class _HomePageState extends State<HomePage> {
           scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
           return InkWell(
             child: Container(
-              margin: EdgeInsets.only(left: a.width / 20, right: a.width / 20),
               padding: EdgeInsets.fromLTRB(scr.width / 24, scr.width / 36,
                   scr.width / 24, scr.width / 36),
               decoration: BoxDecoration(
