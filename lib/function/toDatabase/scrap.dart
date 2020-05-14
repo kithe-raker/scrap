@@ -129,30 +129,14 @@ class Scraps {
     }, merge: true);
   }
 
-  resetScrap(List scraps, String uid) {
-    DateTime now = DateTime.now();
-    String date = DateFormat('d/M/y').format(now);
-    scraps.forEach((id) {
-      deleteScrap(id);
-    });
-    Firestore.instance
+  resetScrap(String uid) async {
+    await Firestore.instance
         .collection('Users')
         .document(uid)
         .collection('info')
         .document(uid)
-        .updateData({'lastReset': date, 'scraps': []});
+        .updateData({'scraps': []});
     toast('คุณได้รับกระดาษเพิ่มแล้ว');
-  }
-
-  deleteScrap(dynamic scrapID) {
-    if (scrapID.runtimeType is String) {
-      Firestore.instance
-          .collection('Scraps')
-          .document('hatyai')
-          .collection('scrapsPosition')
-          .document(scrapID)
-          .delete();
-    }
   }
 
   Future<bool> blocked(String uid, String thrownUID) async {

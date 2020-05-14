@@ -375,14 +375,23 @@ class _HomePageState extends State<HomePage> {
                     FlatButton(
                       child: Text('ขอกระดาษใหม่'),
                       onPressed: () async {
-                        InterstitialAd(adUnitId: AdmobService().getVideoAdId())
+                        setState(() => loading = true);
+                        InterstitialAd(
+                            adUnitId: AdmobService().getVideoAdId(),
+                            listener: (event) async {
+                              if (event == MobileAdEvent.impression) {
+                                await scrap.resetScrap(widget.doc['uid']);
+                                setState(() => loading = false);
+                                Navigator.pop(context);
+                              } else if (event == MobileAdEvent.failedToLoad ||
+                                  event == MobileAdEvent.leftApplication) {
+                                toast('เกิดข้อผิดพลาดกรุณาลองอีกครั้ง');
+                                setState(() => loading = false);
+                                Navigator.pop(context);
+                              }
+                            })
                           ..load()
                           ..show();
-                        setState(() => loading = true);
-                        await scrap.resetScrap(
-                            data['scraps'], widget.doc['uid']);
-                        setState(() => loading = false);
-                        Navigator.pop(context);
                       },
                     )
                   ],
