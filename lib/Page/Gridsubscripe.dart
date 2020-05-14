@@ -1,8 +1,6 @@
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/gridSubscirpe1.dart';
-import 'package:scrap/Page/gridSubscripe2.dart';
-import 'package:scrap/services/admob_service.dart';
+import 'package:scrap/Page/GridFollowing.dart';
+import 'package:scrap/Page/GridTopScrap.dart';
 
 class Gridsubscripe extends StatefulWidget {
   @override
@@ -11,19 +9,17 @@ class Gridsubscripe extends StatefulWidget {
 
 class _GridsubscripeState extends State<Gridsubscripe> {
   int page = 0;
+  var controller = PageController();
 
-  Widget pageBody(int selec) {
-    switch (selec) {
-      case 0:
-        return GridSubscripe1();
-        break;
-      case 1:
-        return GridSubscripe2();
-        break;
+  @override
+  void initState() {
+    super.initState();
+  }
 
-      default:
-        return GridSubscripe2();
-    }
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -56,14 +52,19 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                     InkWell(
                       child: Text(
                         "กำลังติดตาม",
-                        style: page == 0 ? TextStyle(
-                            color: Colors.white, fontSize: a.width / 20):TextStyle(
-                            color: Colors.white, fontSize: a.width / 20,fontWeight: FontWeight.bold),
+                        style: page != 0
+                            ? TextStyle(
+                                color: Colors.white, fontSize: a.width / 20)
+                            : TextStyle(
+                                color: Colors.white,
+                                fontSize: a.width / 20,
+                                fontWeight: FontWeight.bold),
                       ),
                       onTap: () {
-                        setState(() {
-                          page = 1;
-                        });
+                        if (controller.page != 0)
+                          controller.previousPage(
+                              duration: Duration(milliseconds: 120),
+                              curve: Curves.ease);
                       },
                     ),
                     Text(
@@ -74,14 +75,19 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                     InkWell(
                       child: Text(
                         "สแครปยอดนิยม",
-                        style: page == 1 ? TextStyle(
-                            color: Colors.white, fontSize: a.width / 20):TextStyle(
-                            color: Colors.white, fontSize: a.width / 20,fontWeight: FontWeight.bold),
+                        style: page != 1
+                            ? TextStyle(
+                                color: Colors.white, fontSize: a.width / 20)
+                            : TextStyle(
+                                color: Colors.white,
+                                fontSize: a.width / 20,
+                                fontWeight: FontWeight.bold),
                       ),
                       onTap: () {
-                        setState(() {
-                          page = 0;
-                        });
+                        if (controller.page != 1)
+                          controller.nextPage(
+                              duration: Duration(milliseconds: 120),
+                              curve: Curves.ease);
                       },
                     ),
                   ],
@@ -94,7 +100,13 @@ class _GridsubscripeState extends State<Gridsubscripe> {
               width: a.width,
               height: a.height,
               padding: EdgeInsets.only(top: a.width / 5),
-              child: pageBody(page))
+              child: PageView(
+                onPageChanged: (index) {
+                  setState(() => page = index);
+                },
+                controller: controller,
+                children: <Widget>[GridFollowing(), GridTopScrap()],
+              ))
         ],
       ),
     );

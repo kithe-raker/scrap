@@ -187,6 +187,9 @@ PODS:
     - FirebaseAnalytics (= 6.1.7)
   - Firebase/CoreOnly (6.14.0):
     - FirebaseCore (= 6.5.0)
+  - Firebase/Database (6.14.0):
+    - Firebase/CoreOnly
+    - FirebaseDatabase (~> 6.1.3)
   - Firebase/Firestore (6.14.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 1.8.2)
@@ -210,6 +213,9 @@ PODS:
     - Firebase/Core
     - Flutter
   - firebase_core_web (0.1.0):
+    - Flutter
+  - firebase_database (0.0.1):
+    - Firebase/Database
     - Flutter
   - firebase_messaging (0.0.1):
     - Firebase/Core
@@ -247,6 +253,10 @@ PODS:
     - GoogleUtilities/Logger (~> 6.5)
     - nanopb (~> 0.3.901)
   - FirebaseCoreDiagnosticsInterop (1.2.0)
+  - FirebaseDatabase (6.1.4):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 6.0)
+    - leveldb-library (~> 1.22)
   - FirebaseFirestore (1.8.3):
     - abseil/algorithm (= 0.20190808)
     - abseil/base (= 0.20190808)
@@ -381,6 +391,7 @@ DEPENDENCIES:
   - firebase_auth_web (from `.symlinks/plugins/firebase_auth_web/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_core_web (from `.symlinks/plugins/firebase_core_web/ios`)
+  - firebase_database (from `.symlinks/plugins/firebase_database/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
@@ -411,6 +422,7 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseCoreDiagnosticsInterop
+    - FirebaseDatabase
     - FirebaseFirestore
     - FirebaseInstanceID
     - FirebaseMessaging
@@ -445,6 +457,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_core_web:
     :path: ".symlinks/plugins/firebase_core_web/ios"
+  firebase_database:
+    :path: ".symlinks/plugins/firebase_database/ios"
   firebase_messaging:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   firebase_storage:
@@ -489,8 +503,9 @@ SPEC CHECKSUMS:
   firebase_admob: d8c2bc95b5e0069406280ce6adb816cdee6aa595
   firebase_auth: 1f46484071219159ad6c64d304af425ad7373052
   firebase_auth_web: 0955c07bcc06e84af76b9d4e32e6f31518f2d7de
-  firebase_core: 0c84455537bed6d6b5b8c2dd611ff1fbb1ea5cbd
+  firebase_core: 0d8be0e0d14c4902953aeb5ac5d7316d1fe4b978
   firebase_core_web: d501d8b946b60c8af265428ce483b0fff5ad52d1
+  firebase_database: ba12319259e324c8e52e5e4efc8c6f3d33da1ee3
   firebase_messaging: 73b3e7dd7b3b6a7e4bdac10d5295211ca4f87f90
   firebase_storage: cee2383f53c26690269ab667b4dbfe25452c6caa
   FirebaseAnalytics: f68b9f3f1241385129ae0a83b63627fc420c05e5
@@ -500,6 +515,7 @@ SPEC CHECKSUMS:
   FirebaseCore: 632e05cc5e1199d9147122c16d92305eb04c34bd
   FirebaseCoreDiagnostics: b59c024493a409f8aecba02c99928d0d8431d159
   FirebaseCoreDiagnosticsInterop: 296e2c5f5314500a850ad0b83e9e7c10b011a850
+  FirebaseDatabase: 0144e0706a4761f1b0e8679572eba8095ddb59be
   FirebaseFirestore: 52120e2833f804a874ba1a9f59aab864a8ae2286
   FirebaseInstanceID: ce993a3c3670a8f5d47ce371ac5d143c560608c5
   FirebaseMessaging: 089b7a4991425783384acc8bcefcd78c0af913bd

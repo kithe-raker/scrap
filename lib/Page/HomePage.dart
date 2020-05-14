@@ -33,14 +33,13 @@ class _HomePageState extends State<HomePage> {
   var _key = GlobalKey<FormState>();
   Scraps scrap = Scraps();
   JsonConverter jsonConverter = JsonConverter();
- 
+
   @override
   void initState() {
     Admob.initialize(AdmobService().getAdmobAppId());
     initUser();
     super.initState();
     FirebaseAdMob.instance.initialize(appId: AdmobService().getAdmobAppId());
-    
   }
 
   initUser() async {
@@ -343,7 +342,7 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               scraps == 15
                   ? toast('กระดาษของคุณยังเต็มอยู่')
-                  : scrapReseter(snapshot?.data, snapshot.data['lastReset']);
+                  : warnClear(snapshot?.data);
             },
           );
         } else {
@@ -351,14 +350,6 @@ class _HomePageState extends State<HomePage> {
         }
       },
     );
-  }
-
-  scrapReseter(DocumentSnapshot data, String lastReset) async {
-    DateTime now = DateTime.now();
-    String date = "20/04/1520";
-    lastReset == date
-        ? toast('คุณขอรับกระดาษได้แค่ 1 ครั้ง ต่อวัน')
-        : warnClear(data);
   }
 
   warnClear(DocumentSnapshot data) {
@@ -384,12 +375,23 @@ class _HomePageState extends State<HomePage> {
                     FlatButton(
                       child: Text('ขอกระดาษใหม่'),
                       onPressed: () async {
-                        InterstitialAd(adUnitId: AdmobService().getVideoAdId())..load()..show();
                         setState(() => loading = true);
-                        await scrap.resetScrap(
-                            data['scraps'], widget.doc['uid']);
-                        setState(() => loading = false);
-                        Navigator.pop(context);
+                        InterstitialAd(
+                            adUnitId: AdmobService().getVideoAdId(),
+                            listener: (event) async {
+                              if (event == MobileAdEvent.impression) {
+                                await scrap.resetScrap(widget.doc['uid']);
+                                setState(() => loading = false);
+                                Navigator.pop(context);
+                              } else if (event == MobileAdEvent.failedToLoad ||
+                                  event == MobileAdEvent.leftApplication) {
+                                toast('เกิดข้อผิดพลาดกรุณาลองอีกครั้ง');
+                                setState(() => loading = false);
+                                Navigator.pop(context);
+                              }
+                            })
+                          ..load()
+                          ..show();
                       },
                     )
                   ],

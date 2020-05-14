@@ -78,6 +78,12 @@ class JsonConverter {
     }
   }
 
+  Future<List> readFriendList() async {
+    final fileFriend = await _localFriendList;
+    List friendList = json.decode(await fileFriend.readAsString());
+    return friendList;
+  }
+
   Future<List> addContent(
       {String uid, String id, String imgUrl, String joinD}) async {
     try {
@@ -107,3 +113,5 @@ class JsonConverter {
     }
   }
 }
+
+final jsonConv = JsonConverter();
