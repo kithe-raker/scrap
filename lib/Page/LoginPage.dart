@@ -8,6 +8,7 @@ import 'package:scrap/Page/LoginID.dart';
 import 'package:scrap/Page/mainstream.dart';
 
 import 'package:scrap/Page/signup/SignUpMail.dart';
+import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/cacheManage/friendManager.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -32,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       var account = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: _email, password: _password);
+      cacheHistory.initHistory();
       updateToken(account.user.uid);
       await friendManager.initFriend(account.user.uid);
       var doc = await Firestore.instance
