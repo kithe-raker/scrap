@@ -306,7 +306,7 @@ class _HomePageState extends State<HomePage> {
           .collection('info')
           .document(widget.doc['uid'])
           .snapshots(),
-      builder: (context, snapshot) {
+      builder: (context, snapshot) {  
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.active) {
           scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
