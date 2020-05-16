@@ -1,6 +1,7 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/services/admob_service.dart';
@@ -14,6 +15,7 @@ class _GridTopScrapState extends State<GridTopScrap> {
   bool loading = true;
   List scraps = [];
   int lessPoint;
+  List<String> previosQuery = [];
   var controller = RefreshController();
 
   @override
@@ -64,12 +66,13 @@ class _GridTopScrapState extends State<GridTopScrap> {
       docId.add(value['id']);
       if (lessPoint > value['point'].abs()) lessPoint = value['point'].abs();
     });
-    if (docId.length > 1) {
+    if (docId.length > 1 && !listEquals(docId, previosQuery)) {
       print(docId);
       var docs = await Firestore.instance
           .collection('Scraps/hatyai/test2')
           .where(FieldPath.documentId, whereIn: docId)
           .getDocuments();
+      previosQuery = docId;
       scraps.addAll(docs.documents);
       scraps.add(lessPoint);
       setState(() => controller.loadComplete());

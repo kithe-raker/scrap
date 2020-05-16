@@ -8,6 +8,7 @@ import 'package:scrap/function/cacheManage/friendManager.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/function/cacheManage/HistoryUser.dart';
 
 class LoginID extends StatefulWidget {
   @override
@@ -46,6 +47,7 @@ class _LoginIDState extends State<LoginID> {
   signIn(String email) async {
     var auth = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: _password);
+    cacheHistory.initHistory();
     updateToken(auth.user.uid);
     await friendManager.initFriend(auth.user.uid);
     var doc = await Firestore.instance
