@@ -87,16 +87,39 @@ class _GridFollowingState extends State<GridFollowing> {
   Widget block(data) {
     Size a = MediaQuery.of(context).size;
     return GestureDetector(
-      child: Container(
-        width: a.width / 2.2,
-        height: (a.width / 2.1) * 1.21,
-        color: Colors.white,
-        child: Center(
-          child: Text(
-            DateFormat('d/M/y').format(data),
-            style: TextStyle(fontSize: 32),
+      child: Stack(
+        children: <Widget>[
+          Container(
+            width: a.width / 2.2,
+            height: (a.width / 2.1) * 1.21,
+            color: Colors.white,
+            child: Center(
+              child: Text(
+                DateFormat('d/M/y').format(data),
+                style: TextStyle(fontSize: 32),
+              ),
+            ),
           ),
-        ),
+          Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                margin: EdgeInsets.all(a.width/50),
+                alignment: Alignment.center,
+                width: a.width/7,
+                height: a.width/13,
+                decoration: BoxDecoration(
+                color: Color(0xff000000),borderRadius: BorderRadius.circular(a.width/80)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("1.2K",style: TextStyle(color:Colors.white,fontSize: a.width/30),),
+                    Icon(Icons.sms,color: Colors.white,)
+                  ],
+                ),
+              ),
+            ),
+        ],
       ),
       onTap: () {
         // controller.refreshCompleted();

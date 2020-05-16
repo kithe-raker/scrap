@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +8,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/friendList.dart';
@@ -16,6 +19,7 @@ import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/dropdown.dart';
 import 'package:scrap/widget/warning.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,6 +36,961 @@ class _HomePageState extends State<HomePage> {
   var _key = GlobalKey<FormState>();
   Scraps scrap = Scraps();
   JsonConverter jsonConverter = JsonConverter();
+
+  _showModalBottomSheet(context) {
+    Size a = MediaQuery.of(context).size;
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext context) {
+          Size a = MediaQuery.of(context).size;
+          return Stack(
+            children: <Widget>[
+              Container(
+                child: Container(
+                  width: a.width,
+                  height: a.width / 1.8,
+                  decoration: BoxDecoration(
+                      color: Color(0xff282828),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(a.width / 20),
+                        topRight: Radius.circular(a.width / 20),
+                      )),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                            top: a.width / 40, bottom: a.width / 15),
+                        width: a.width / 3,
+                        height: a.width / 50,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(a.width)),
+                      ),
+                      Container(
+                        width: a.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                InkWell(
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.only(bottom: a.width / 50),
+                                    width: a.width / 6,
+                                    height: a.width / 6,
+                                    child: Icon(
+                                      Icons.whatshot,
+                                      size: a.width / 13,
+                                      color: Color(0xffFF8F3A),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    _showdialogwhatshot(context);
+                                  },
+                                ),
+                                Text(
+                                  "เผากระดาษ",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              width: a.width / 10,
+                            ),
+                            InkWell(
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    margin:
+                                        EdgeInsets.only(bottom: a.width / 50),
+                                    width: a.width / 6,
+                                    height: a.width / 6,
+                                    child: Icon(
+                                      Icons.block,
+                                      size: a.width / 13,
+                                      color: Color(0xff8B8B8B),
+                                    ),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(a.width)),
+                                  ),
+                                  Text(
+                                    "บล็อคผู้ใช้",
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                ],
+                              ),
+                              onTap: () {
+                                _showdialogblock(context);
+                              },
+                            ),
+                            SizedBox(
+                              width: a.width / 10,
+                            ),
+                            InkWell(
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    margin:
+                                        EdgeInsets.only(bottom: a.width / 50),
+                                    width: a.width / 6,
+                                    height: a.width / 6,
+                                    child: Icon(
+                                      Icons.report_problem,
+                                      size: a.width / 13,
+                                      color: Color(0xff8B8B8B),
+                                    ),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(a.width)),
+                                  ),
+                                  Text(
+                                    "รายงาน",
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                ],
+                              ),
+                              onTap: () {
+                                _showdialogreport(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                child: AdmobBanner(
+                    adUnitId: AdmobService().getBannerAdId(),
+                    adSize: AdmobBannerSize.FULL_BANNER),
+              )
+            ],
+          );
+        });
+  }
+
+  void _showdialogblock(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          Size a = MediaQuery.of(context).size;
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              margin: EdgeInsets.only(
+                  top: a.width / 20,
+                  right: a.width / 20,
+                  left: a.width / 20,
+                  bottom: a.width / 5),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    width: a.width,
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          top: a.width / 20, bottom: a.width / 15),
+                      width: a.width / 12,
+                      height: a.width / 12,
+                      child: Center(
+                        child: Icon(
+                          Icons.clear,
+                          color: Colors.white,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(a.width)),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xff282828),
+                        borderRadius: BorderRadius.circular(a.width / 50)),
+                    width: a.width,
+                    padding: EdgeInsets.all(a.width / 50),
+                    height: a.height / 1.4,
+                    child: Scaffold(
+                      backgroundColor: Color(0xff282828),
+                      body: Container(
+                        width: a.width,
+                        height: a.height,
+                        padding: EdgeInsets.only(
+                            top: a.width / 10, bottom: a.width / 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.block,
+                                  color: Color(0xff8B8B8B),
+                                  size: a.width / 3,
+                                ),
+                                Text(
+                                  "บล็อคผู้ใช้",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: a.width / 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: <Widget>[
+                                Text(
+                                  "คุณต้องการบล็อคผู้ใช้รายนี้ไหม",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "คุณจะไม่เห็นสแครปจากผู้ใช้รายนี้อีกต่อไป",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "และยูเซอร์รายนี้จะไม่สามารถปาแครป",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "หาคุณได้ด้วย",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: <Widget>[
+                                RaisedButton(
+                                    color: Color(0xff797979),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                    ),
+                                    child: Container(
+                                      width: a.width / 3,
+                                      height: a.width / 8,
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "บล็อคจ่ะ",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: a.width / 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      _whatshot(context);
+                                    }),
+                                Text(
+                                  '\n"แน่ใจนะ"',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _showdialogwhatshot(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          Size a = MediaQuery.of(context).size;
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              margin: EdgeInsets.only(
+                  top: a.width / 20,
+                  right: a.width / 20,
+                  left: a.width / 20,
+                  bottom: a.width / 5),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    width: a.width,
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          top: a.width / 20, bottom: a.width / 15),
+                      width: a.width / 12,
+                      height: a.width / 12,
+                      child: Center(
+                        child: Icon(
+                          Icons.clear,
+                          color: Colors.white,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(a.width)),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xff282828),
+                        borderRadius: BorderRadius.circular(a.width / 50)),
+                    width: a.width,
+                    padding: EdgeInsets.all(a.width / 50),
+                    height: a.height / 1.4,
+                    child: Scaffold(
+                      backgroundColor: Color(0xff282828),
+                      body: Container(
+                        width: a.width,
+                        height: a.height,
+                        padding: EdgeInsets.only(
+                            top: a.width / 10, bottom: a.width / 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.whatshot,
+                                  color: Color(0xffFF8F3A),
+                                  size: a.width / 3,
+                                ),
+                                Text(
+                                  "เผากระดาษ",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: a.width / 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: <Widget>[
+                                Text(
+                                  "คุณต้องการเผาสแครปนี้ไหม",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "หากกดเผาสแครปนี้จะหายไป",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "รวมถึงสแครปบางส่วนในมือ",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "ของผู้เขียนด้วย",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: <Widget>[
+                                RaisedButton(
+                                    color: Color(0xff797979),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                    ),
+                                    child: Container(
+                                      width: a.width / 3,
+                                      height: a.width / 8,
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "เผาเลย",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: a.width / 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      _whatshot(context);
+                                    }),
+                                Text(
+                                  '\n"แน่ใจนะ"',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _whatshot(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          Size a = MediaQuery.of(context).size;
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Stack(
+                children: <Widget>[
+                  InkWell(
+                    child: Container(
+                      width: a.width,
+                      height: a.height,
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  Container(
+                    width: a.width,
+                    height: a.height,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.whatshot,
+                            size: a.width / 3,
+                            color: Color(0xffFF8F3A),
+                          ),
+                          Text(
+                            "สแครปนี้โดนเผาแล้ว !",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "ขอบคุณสำหรับการควบคุมเนื้อหา",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  dialogcontract() {
+    int ass = 0;
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            Size a = MediaQuery.of(context).size;
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                margin: EdgeInsets.only(
+                  top: a.width / 20,
+                  right: a.width / 20,
+                  left: a.width / 20,
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width: a.width,
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: a.width / 20, bottom: a.width / 15),
+                        width: a.width / 12,
+                        height: a.width / 12,
+                        child: Center(
+                          child: Icon(
+                            Icons.clear,
+                            color: Colors.white,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                            color: Colors.white24,
+                            borderRadius: BorderRadius.circular(a.width)),
+                      ),
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                            color: Color(0xff282828),
+                            borderRadius: BorderRadius.circular(a.width / 50)),
+                        width: a.width,
+                        padding: EdgeInsets.all(a.width / 50),
+                        height: a.height / 1.4,
+                        child: Scaffold(
+                            backgroundColor: Color(0xff282828),
+                            body: Column(
+                              children: <Widget>[
+                                Container(
+                                  width: a.width,
+                                  height: a.width / 8,
+                                  alignment: Alignment.topCenter,
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              width: a.width / 1000,
+                                              color: Colors.grey))),
+                                  child: Text(
+                                    "สัญญากับเรา",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: a.width / 15,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(a.width / 25),
+                                  child: SizedBox(
+                                    width: a.width,
+                                    child: Text(
+                                      "เพื่อสร้างชุมชนที่ดีขึ้นของสแครป คุณสัญญาว่าจะไม่ทำสิ่งเหล่านี้\n\n1.กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย\n2.ส่งข้อความสแครปไปยังผู้ใช้รายอื่น\n3.เขียนเนื้อหาที่ส่งเสริมความรุนแรง\n4.เขียนเนื้อหาที่มีการคุกคามทางเพศ\n\n* หากคณไม่ทำตามสัญญาดังกล่าวสแครปขอ อนุญาติให้ความร่วมมือกับหบ่วยงานทางกฎหมายมากเท่าที่เราจะทำได้",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: a.width / 18),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: a.width,
+                                  padding: EdgeInsets.all(a.width / 50),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Container(
+                                        width: a.width / 15,
+                                        height: a.width / 15,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                a.width / 50),
+                                            border: Border.all(
+                                                color: Colors.white)),
+                                        padding: EdgeInsets.all(a.width / 100),
+                                        child: ass == 0
+                                            ? InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    ass = 1;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  width: a.width / 25,
+                                                  height: a.width / 25,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width),
+                                                      color:
+                                                          Colors.transparent),
+                                                ),
+                                              )
+                                            : InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    ass = 0;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  width: a.width / 25,
+                                                  height: a.width / 25,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width),
+                                                      color: Color(0xff26A4FF)),
+                                                ),
+                                              ),
+                                      ),
+                                      Text(
+                                        "    ฉันได้อ่านและยอมรับ    ",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: a.width / 25),
+                                      ),
+                                      Text(
+                                        "นโยบายและข้อกำหนด",
+                                        style: TextStyle(
+                                            color: Color(0xff26A4FF),
+                                            fontWeight: FontWeight.bold,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            fontSize: a.width / 25),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ))),
+                    Container(
+                      width: a.width,
+                      alignment: Alignment.center,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: a.width / 20, bottom: a.width / 15),
+                        width: a.width / 5,
+                        height: a.width / 8,
+                        child: ass == 1
+                            ? RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(a.width),
+                                ),
+                                color: Color(0xff26A4FF),
+                                child: Container(
+                                    child: Text(
+                                  "ตกลง",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                })
+                            : RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(a.width),
+                                ),
+                                color: Colors.grey,
+                                child: Container(
+                                    child: Text(
+                                  "ตกลง",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                                onPressed: () {}),
+                        decoration: BoxDecoration(
+                            color: Colors.white24,
+                            borderRadius: BorderRadius.circular(a.width)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          });
+        });
+  }
+
+  void _showdialogreport(context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          int drop = 0;
+          String txt = "กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย";
+          return AlertDialog(
+              insetPadding: EdgeInsets.zero,
+              backgroundColor: Colors.transparent,
+              content: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                Size a = MediaQuery.of(context).size;
+                return Container(
+                  width: a.width,
+                  height: a.height,
+                  child: Stack(
+                    children: <Widget>[
+                      InkWell(
+                        child: Container(
+                          width: a.width,
+                          height: a.height,
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Container(
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              width: a.width,
+                              alignment: Alignment.centerRight,
+                              child: InkWell(
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      top: a.width / 20, bottom: a.width / 15),
+                                  width: a.width / 12,
+                                  height: a.width / 12,
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.clear,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white24,
+                                      borderRadius:
+                                          BorderRadius.circular(a.width)),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xff282828),
+                                  borderRadius:
+                                      BorderRadius.circular(a.width / 50)),
+                              width: a.width,
+                              padding: EdgeInsets.all(a.width / 50),
+                              height: a.height / 1.4,
+                              child: Scaffold(
+                                backgroundColor: Color(0xff282828),
+                                body: Container(
+                                    width: a.width,
+                                    height: a.height,
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Container(
+                                          width: a.width,
+                                          child: Column(
+                                            children: <Widget>[
+                                              InkWell(
+                                                  child: Container(
+                                                    height: a.width / 10,
+                                                    decoration: BoxDecoration(
+                                                        border: Border(
+                                                            bottom: BorderSide(
+                                                                width: a.width /
+                                                                    1000,
+                                                                color: Colors
+                                                                    .grey))),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          txt,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                        Icon(
+                                                            Icons
+                                                                .arrow_drop_down,
+                                                            color: Colors.white)
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    setState(() {
+                                                      drop = 1;
+                                                    });
+                                                  }),
+                                              drop == 1
+                                                  ? InkWell(
+                                                      child: SizedBox(
+                                                        width: a.width,
+                                                        child: Container(
+                                                          color: Colors.white,
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              InkWell(
+                                                                child:
+                                                                    Container(
+                                                                  height:
+                                                                      a.width /
+                                                                          10,
+                                                                  decoration: BoxDecoration(
+                                                                      border: Border(
+                                                                          bottom: BorderSide(
+                                                                              width: a.width / 1000,
+                                                                              color: Colors.black))),
+                                                                  child: Row(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Text(
+                                                                        "กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.black),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    txt =
+                                                                        "กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย";
+                                                                    drop = 0;
+                                                                  });
+                                                                },
+                                                              ),
+                                                              InkWell(
+                                                                child:
+                                                                    Container(
+                                                                  height:
+                                                                      a.width /
+                                                                          10,
+                                                                  decoration: BoxDecoration(
+                                                                      border: Border(
+                                                                          bottom: BorderSide(
+                                                                              width: a.width / 1000,
+                                                                              color: Colors.black))),
+                                                                  child: Row(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Text(
+                                                                        "ส่งข้อความสแปมไปยังผู้ใช้รายอื่น",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.black),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    txt =
+                                                                        "ส่งข้อความสแปมไปยังผู้ใช้รายอื่น";
+                                                                    drop = 0;
+                                                                  });
+                                                                },
+                                                              ),
+                                                              InkWell(
+                                                                child:
+                                                                    Container(
+                                                                  height:
+                                                                      a.width /
+                                                                          10,
+                                                                  decoration: BoxDecoration(
+                                                                      border: Border(
+                                                                          bottom: BorderSide(
+                                                                              width: a.width / 1000,
+                                                                              color: Colors.black))),
+                                                                  child: Row(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Text(
+                                                                        "เขียนเนื้อหาที่ส่งเสริมความรุนแรง",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.black),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    txt =
+                                                                        "เขียนเนื้อหาที่ส่งเสริมความรุนแรง";
+                                                                    drop = 0;
+                                                                  });
+                                                                },
+                                                              ),
+                                                              InkWell(
+                                                                child:
+                                                                    Container(
+                                                                  height:
+                                                                      a.width /
+                                                                          10,
+                                                                  decoration: BoxDecoration(
+                                                                      border: Border(
+                                                                          bottom: BorderSide(
+                                                                              width: a.width / 1000,
+                                                                              color: Colors.black))),
+                                                                  child: Row(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Text(
+                                                                        "เขียนเนื้อหาที่มีการคุกคามทางเพศ",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.black),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    txt =
+                                                                        "เขียนเนื้อหาที่มีการคุกคามทางเพศ";
+                                                                    drop = 0;
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          drop = 0;
+                                                        });
+                                                      },
+                                                    )
+                                                  : SizedBox()
+                                            ],
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Container(
+                                            margin:
+                                                EdgeInsets.all(a.width / 40),
+                                            width: a.width / 8,
+                                            height: a.width / 8,
+                                            alignment: Alignment.center,
+                                            child: Icon(
+                                              Icons.send,
+                                              color: Color(0xff26A4FF),
+                                            ),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        a.width)),
+                                          ),
+                                        )
+                                      ],
+                                    )),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }));
+        });
+  }
 
   @override
   void initState() {
@@ -94,11 +1053,12 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.white,
                               iconSize: a.width / 12,
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Gridsubscripe(),
-                                    ));
+                                _showModalBottomSheet(context);
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (context) => Gridsubscripe(),
+                                //     ));
                               },
                             ),
                           ),
@@ -178,7 +1138,30 @@ class _HomePageState extends State<HomePage> {
                                 width: a.width / 4,
                               )),
                           //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
-                          SizedBox(width: a.width / 2.7),
+                          SizedBox(width: a.width / 4.7),
+                          Container(
+                              height: a.width / 5,
+                              alignment: Alignment.center,
+                              child: InkWell(
+                                child: Container(
+                                  width: a.width / 10,
+                                  height: a.width / 10,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    color: Colors.pink,
+                                  ),
+                                  child: Icon(Icons.favorite,
+                                      color: Colors.white, size: a.width / 15),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              Gridfavorite()));
+                                },
+                              )),
                           Container(
                               height: a.width / 5,
                               alignment: Alignment.center,
@@ -284,7 +1267,7 @@ class _HomePageState extends State<HomePage> {
           .collection('info')
           .document(widget.doc['uid'])
           .snapshots(),
-      builder: (context, snapshot) {  
+      builder: (context, snapshot) {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.active) {
           scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
@@ -340,9 +1323,10 @@ class _HomePageState extends State<HomePage> {
             ),
             //00
             onTap: () {
-              scraps == 15
-                  ? toast('กระดาษของคุณยังเต็มอยู่')
-                  : warnClear(snapshot?.data);
+              dialogfinishpaper();
+              // scraps == 15 ? toast('กระดาษของคุณยังเต็มอยู่') : dialogvideo();
+              // // warnClear(snapshot?.data);
+              // dialogcontract();
             },
           );
         } else {
@@ -350,6 +1334,158 @@ class _HomePageState extends State<HomePage> {
         }
       },
     );
+  }
+
+  dialogvideo() {
+    bool loading = false;
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            Size a = MediaQuery.of(context).size;
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                margin: EdgeInsets.only(
+                    top: a.width / 20,
+                    right: a.width / 20,
+                    left: a.width / 20,
+                    bottom: a.width / 5),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width: a.width,
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: a.width / 20, bottom: a.width / 15),
+                        width: a.width / 12,
+                        height: a.width / 12,
+                        child: Center(
+                          child: Icon(
+                            Icons.clear,
+                            color: Colors.white,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                            color: Colors.white24,
+                            borderRadius: BorderRadius.circular(a.width)),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Color(0xff282828),
+                          borderRadius: BorderRadius.circular(a.width / 50)),
+                      width: a.width,
+                      padding: EdgeInsets.all(a.width / 50),
+                      height: a.height / 1.4,
+                      child: Scaffold(
+                        backgroundColor: Color(0xff282828),
+                        body: Center(
+                          child: Container(
+                            width: a.width,
+                            height: a.width,
+
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Container(
+                                      height: a.width / 3.5,
+                                      width: a.width / 3.5,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(a.width),
+                                          color: Color(0xff26A4FF)),
+                                      child: Icon(
+                                        Icons.play_arrow,
+                                        size: a.width / 5,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      "เติมกระดาษในคลังของคุณ",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: a.width / 15,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      "ดูวิดีโอเพื่อเติมกระดาษของคุณให้",
+                                      style: TextStyle(
+                                          color: Colors.white,fontSize: a.width / 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "เต็มคลัง สำหรับเขียนสแครป",
+                                      style: TextStyle(
+                                          color: Colors.white,fontSize: a.width / 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                RaisedButton(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                    ),
+                                    child: Container(
+                                      width: a.width / 3,
+                                      height: a.width / 8,
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "ดูเลย",
+                                        style: TextStyle(
+                                            color: Color(0xff26A4FF),
+                                            fontSize: a.width / 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      setState(() => loading = true);
+                                      InterstitialAd(
+                                          adUnitId:
+                                              AdmobService().getVideoAdId(),
+                                          listener: (event) async {
+                                            if (event ==
+                                                MobileAdEvent.impression) {
+                                              await scrap.resetScrap(
+                                                  widget.doc['uid']);
+                                              setState(() => loading = false);
+                                              Navigator.pop(context);
+                                            } else if (event ==
+                                                    MobileAdEvent
+                                                        .failedToLoad ||
+                                                event ==
+                                                    MobileAdEvent
+                                                        .leftApplication) {
+                                              toast(
+                                                  'เกิดข้อผิดพลาดกรุณาลองอีกครั้ง');
+                                              setState(() => loading = false);
+                                              Navigator.pop(context);
+                                            }
+                                          })
+                                        ..load()
+                                        ..show();
+                                    }),
+                              ],
+                            ), //ss
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          });
+        });
   }
 
   warnClear(DocumentSnapshot data) {
@@ -465,6 +1601,126 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+  
+  dialogfinishpaper() {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          Size a = MediaQuery.of(context).size;
+          return Scaffold(
+            body: Container(
+              width: a.width,
+              height: a.height,
+              color: Colors.black,
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    bottom: 0,
+                    child: AdmobBanner(
+                        adUnitId: AdmobService().getBannerAdId(),
+                        adSize: AdmobBannerSize.FULL_BANNER),),
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset(
+                          "assets/allpaper.png",
+                          width: a.width / 1.3,
+                        ),
+                        Container(
+                          width: a.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: a.width / 10,
+                              ),
+                              Text(
+                                "คุณได้รับการเติมกระดาษแล้ว",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 20,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: a.width / 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              InkWell(
+                                child: Container(
+                                    width: a.width / 3,
+                                    height: a.width / 8,
+                                    margin: EdgeInsets.only(right: a.width / 20),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(a.width)),
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(Icons.home,color: Color(0xff26A4FF),),
+                                        Text(
+                                          "หน้าหลัก",
+                                          style: TextStyle(
+                                              color: Color(0xff26A4FF),
+                                              fontSize: a.width / 15,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    )),
+                                onTap: () async {},
+                              ),
+                              InkWell(
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.only(left: a.width / 20),
+                                    width: a.width / 3,
+                                    height: a.width / 8,
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff26A4FF),
+                                        borderRadius:
+                                            BorderRadius.circular(a.width)),
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.create,
+                                          color: Colors.white,
+                                          size: a.width / 15,
+                                        ),
+                                        Text("เขียนเลย",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: a.width / 15,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                  ),
+                                  //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
+                                  onTap: () {}),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
 
   void dialog() {
     DateTime now = DateTime.now();
@@ -488,6 +1744,12 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {
                       Navigator.pop(context);
                     },
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: AdmobBanner(
+                        adUnitId: AdmobService().getBannerAdId(),
+                        adSize: AdmobBannerSize.FULL_BANNER),
                   ),
                   Container(
                     margin: EdgeInsets.only(
@@ -672,11 +1934,46 @@ class _HomePageState extends State<HomePage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     InkWell(
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              right: a.width / 20),
+                                          width: a.width / 4.5,
+                                          height: a.width / 8,
+                                          decoration: BoxDecoration(
+                                              color: Color(0xff26A4FF),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      a.width)),
+                                          alignment: Alignment.center,
+                                          child: Text("ปาใส่",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: a.width / 15,
+                                                  fontWeight: FontWeight.bold)),
+                                        ),
+                                        //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
+                                        onTap: () {
+                                          if (_key.currentState.validate()) {
+                                            _key.currentState.save();
+
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      FriendList(
+                                                    doc: widget.doc,
+                                                    data: {'text': text},
+                                                  ),
+                                                ));
+                                          }
+                                        }),
+                                    InkWell(
                                       child: Container(
                                           width: a.width / 4.5,
                                           height: a.width / 8,
                                           margin: EdgeInsets.only(
-                                              right: a.width / 20),
+                                              left: a.width / 20),
                                           decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
@@ -684,8 +1981,9 @@ class _HomePageState extends State<HomePage> {
                                                       a.width)),
                                           alignment: Alignment.center,
                                           child: Text(
-                                            "ทิ้งไว้",
+                                            "โยนไว้",
                                             style: TextStyle(
+                                                color: Color(0xff26A4FF),
                                                 fontSize: a.width / 15,
                                                 fontWeight: FontWeight.bold),
                                           )),
@@ -699,44 +1997,6 @@ class _HomePageState extends State<HomePage> {
                                         }
                                       },
                                     ),
-                                    public == null || !public
-                                        ? SizedBox()
-                                        : InkWell(
-                                            child: Container(
-                                              margin: EdgeInsets.only(
-                                                  left: a.width / 20),
-                                              width: a.width / 4.5,
-                                              height: a.width / 8,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          a.width)),
-                                              alignment: Alignment.center,
-                                              child: Text("ปาใส่",
-                                                  style: TextStyle(
-                                                      fontSize: a.width / 15,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                            ),
-                                            //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                            onTap: () {
-                                              if (_key.currentState
-                                                  .validate()) {
-                                                _key.currentState.save();
-
-                                                Navigator.pop(context);
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          FriendList(
-                                                        doc: widget.doc,
-                                                        data: {'text': text},
-                                                      ),
-                                                    ));
-                                              }
-                                            })
                                   ],
                                 ),
                               )
