@@ -1,11 +1,12 @@
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:scrap/Page/MainPage.dart';
-import 'package:scrap/Page/suppeople.dart';
-import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/services/auth.dart';
-import 'package:scrap/services/provider.dart' as prov;
+import 'package:scrap/services/provider.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+
+import 'Page/Auth.dart';
 
 const String testDevice = "34C215009965F34F";
 
@@ -23,20 +24,14 @@ class MyApp extends StatelessWidget {
   //this is new branch
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<AdsCounterProvider>.value(
-            value: AdsCounterProvider())
-      ],
-      child: prov.Provider(
-        auth: Auth(),
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Scrap.',
-            theme: ThemeData(
-                fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-            home: MainPage()),
-      ),
+    return Provider(
+      auth: Auth(),
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Scrap.',
+          theme: ThemeData(
+              fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
+          home: MainPage()),
     );
   }
 }

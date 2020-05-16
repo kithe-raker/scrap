@@ -1,6 +1,7 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/services/admob_service.dart';
+import 'dart:math' as math;
 
 class Gridfavorite extends StatefulWidget {
   @override
@@ -26,11 +27,11 @@ class _GridfavoriteState extends State<Gridfavorite> {
               children: <Widget>[
                 InkWell(
                   child: Container(
-                      width: a.width / 12,
+                      width: a.width / 25,
                       child: Image.asset(
-                        "assets/sss.png",
+                        "assets/Group 74.png",
                         fit: BoxFit.contain,
-                        width: a.width / 10,
+                        width: a.width / 12,
                       )),
                   onTap: () {
                     Navigator.pop(context);
@@ -49,7 +50,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
               ],
             ),
           ),
-          page == 1
+          page == 0
               ? Container(
                   width: a.width,
                   height: a.height,
@@ -67,7 +68,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                             block(),
                             block(),
                             block(),
-                          ]),
+                          ]),SizedBox(height: a.width/5)
                     ],
                   ),
                 )
@@ -84,25 +85,24 @@ class _GridfavoriteState extends State<Gridfavorite> {
                           child: Icon(
                             Icons.favorite,
                             size: a.width / 5,
-                            color: Colors.black,
+                            color: Colors.grey,
                           ),
                           decoration: BoxDecoration(
-                              color: Colors.grey,
+                              color: Color(0xff3C3C3C),
                               borderRadius: BorderRadius.circular(a.width)),
                         ),
-                        SizedBox(height: a.width/20,),
-                        Text("คุณยังไม่ได้ติดสแครปในวันนี้",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,fontSize: a.width/20)),
-                        Text("ลองกดหัวใจเพื่อการเคลื่อนไหว",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,fontSize: a.width/20)),
-                        Text("ในสแครปที่ดูสนใจสิ",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,fontSize: a.width/20))
+                        SizedBox(
+                          height: a.width / 20,
+                        ),
+                        text(
+                          "คุณยังไม่ได้ติดสแครปในวันนี้",
+                        ),
+                        text(
+                          "ลองกดหัวใจเพื่อการเคลื่อนไหว",
+                        ),
+                        text(
+                          "ในสแครปที่ดูสนใจสิ",
+                        )
                       ],
                     ),
                   )),
@@ -115,6 +115,15 @@ class _GridfavoriteState extends State<Gridfavorite> {
         ],
       ),
     );
+  }
+
+  Widget text(String textt) {
+    Size a = MediaQuery.of(context).size;
+    return Text(textt,
+        style: TextStyle(
+            color: Color(0xff3B3B3B),
+            fontWeight: FontWeight.bold,
+            fontSize: a.width / 15));
   }
 
   Widget block() {
@@ -137,24 +146,30 @@ class _GridfavoriteState extends State<Gridfavorite> {
             bottom: 0,
             right: 0,
             child: Container(
-              margin: EdgeInsets.all(a.width / 50),
+              margin: EdgeInsets.all(a.width / 45),
               alignment: Alignment.center,
-              width: a.width / 7,
+              width: a.width / 6,
               height: a.width / 13,
               decoration: BoxDecoration(
-                  color: Color(0xff000000),
+                  color: Color(0xff2D2D2F),
                   borderRadius: BorderRadius.circular(a.width / 80)),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Text(
                     "1.2K",
-                    style:
-                        TextStyle(color: Colors.white, fontSize: a.width / 30),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: a.width / 20),
                   ),
-                  Icon(
-                    Icons.sms,
-                    color: Colors.white,
+                  Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.rotationY(math.pi),
+                    child: Icon(
+                      Icons.sms,
+                      color: Colors.white,
+                    ),
                   )
                 ],
               ),

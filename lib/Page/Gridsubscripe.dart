@@ -37,9 +37,9 @@ class _GridsubscripeState extends State<Gridsubscripe> {
               children: [
                 InkWell(
                   child: Container(
-                      width: a.width / 12,
+                      width: a.width / 25,
                       child: Image.asset(
-                        "assets/sss.png",
+                        "assets/Group 74.png",
                         fit: BoxFit.contain,
                         width: a.width / 10,
                       )),

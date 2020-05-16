@@ -678,6 +678,8 @@ class _HomePageState extends State<HomePage> {
                                 )),
                                 onPressed: () {
                                   Navigator.pop(context);
+                                  dialogvideo();
+                                  
                                 })
                             : RaisedButton(
                                 shape: RoundedRectangleBorder(
@@ -1035,31 +1037,27 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           scrapLeft(a),
-                          Container(
-                            width: a.width / 7,
-                            height: a.width / 7,
-                            decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black,
-                                      blurRadius: 3.0,
-                                      spreadRadius: 2.0,
-                                      offset: Offset(0.0, 3.2))
-                                ],
-                                borderRadius: BorderRadius.circular(a.width),
-                                color: Color(0xff26A4FF)),
-                            child: IconButton(
-                              icon: Icon(Icons.dashboard),
-                              color: Colors.white,
-                              iconSize: a.width / 12,
-                              onPressed: () {
-                                _showModalBottomSheet(context);
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //       builder: (context) => Gridsubscripe(),
-                                //     ));
-                              },
+                          InkWell(
+                            onTap:(){Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Gridsubscripe(),
+                                    ));},
+                            child: Container(
+                              width: a.width / 7,
+                              height: a.width / 7,
+                              padding: EdgeInsets.all(a.width/25),
+                              decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.black,
+                                        blurRadius: 3.0,
+                                        spreadRadius: 2.0,
+                                        offset: Offset(0.0, 3.2))
+                                  ],
+                                  borderRadius: BorderRadius.circular(a.width),
+                                  color: Color(0xff26A4FF)),
+                              child: Container(width: a.width/50,child: Image.asset("assets/Group 71.png",width: a.width/12,),)
                             ),
                           ),
                           InkWell(
@@ -1345,10 +1343,10 @@ class _HomePageState extends State<HomePage> {
             ),
             //00
             onTap: () {
-              dialogfinishpaper();
-              // scraps == 15 ? toast('กระดาษของคุณยังเต็มอยู่') : dialogvideo();
-              // // warnClear(snapshot?.data);
-              // dialogcontract();
+              
+              scraps == 15 ? toast('กระดาษของคุณยังเต็มอยู่') : dialogcontract();
+              // warnClear(snapshot?.data);
+              
             },
           );
         } else {
@@ -1480,6 +1478,7 @@ class _HomePageState extends State<HomePage> {
                                               await scrap.resetScrap(
                                                   widget.doc['uid']);
                                               setState(() => loading = false);
+                                              dialogfinishpaper();
                                               Navigator.pop(context);
                                             } else if (event ==
                                                     MobileAdEvent

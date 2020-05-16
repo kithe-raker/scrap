@@ -137,11 +137,12 @@ class _SubpeopleState extends State<Subpeople> {
                                       bottom: BorderSide(
                                           color: Color(0xff292929)))),
                               padding: EdgeInsets.only(
-                                  left: a.width / 50, top: a.width / 50),
+                                  left: a.width / 50,),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Container(
+                                    
                                     child: Text(
                                       "ล่าสุดที่ปาใส่",
                                       style: TextStyle(
@@ -169,7 +170,7 @@ class _SubpeopleState extends State<Subpeople> {
                             Container(
                               width: a.width,
                               padding: EdgeInsets.only(
-                                  top: a.width / 30,
+                                  top: a.width / 20,
                                   left: a.width / 50,
                                   right: a.width / 50),
                               child: Column(
