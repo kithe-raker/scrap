@@ -32,8 +32,9 @@ class _GridsubscripeState extends State<Gridsubscripe> {
           Container(
             width: a.width,
             height: a.width / 5,
+            padding: EdgeInsets.only(top:a.width/50,left: a.width/20,right: a.width/20),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
                   child: Container(
