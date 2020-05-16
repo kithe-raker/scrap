@@ -39,7 +39,7 @@ class HistoryUser {
   }
 
   Future<List> readOnlyId({@required String field}) async {
-    List listId;
+    List listId =[];
     List data = await readHistory(field: field);
     data.forEach((element) => listId.add(element['id']));
     return listId;

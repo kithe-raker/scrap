@@ -1,20 +1,21 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
-import 'package:scrap/function/randomLocation.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/scrapFilter.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/admob_service.dart';
@@ -29,7 +30,6 @@ class MapScraps extends StatefulWidget {
 }
 
 class _MapScrapsState extends State<MapScraps> {
-  final random = Random();
   final geoLocator = Geolocator();
   Position currentLocation;
   StreamSubscription subLimit;
@@ -44,6 +44,7 @@ class _MapScrapsState extends State<MapScraps> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   GoogleMapController mapController;
+  FirebaseMessaging fcm = FirebaseMessaging();
   DateTime now = DateTime.now();
   Set ads = {};
   Map randData = {};
@@ -95,6 +96,7 @@ class _MapScrapsState extends State<MapScraps> {
         field: value + 1,
         'point': field == 'like' ? point + 1 : point + 3
       });
+      if (field == 'like') fcm.unsubscribeFromTopic(data.documentID);
     } else {
       history[field].add(data.documentID);
       cacheHistory.addHistory(data.documentID, data['scrap']['time'].toDate(),
@@ -108,6 +110,7 @@ class _MapScrapsState extends State<MapScraps> {
         field: value - 1,
         'point': field == 'like' ? point - 1 : point - 3
       });
+      if (field == 'like') fcm.subscribeToTopic(data.documentID);
     }
   }
 
@@ -140,15 +143,22 @@ class _MapScrapsState extends State<MapScraps> {
     );
   }
 
-  commentSheet() {
+  commentSheet(DocumentSnapshot scrapSnapshot,
+      {@required int commentCount, @required int point}) {
+    bool canSend = false;
+    List commentList = [];
+    var controller = RefreshController();
+    TextEditingController comment = TextEditingController();
+    CollectionReference ref = Firestore.instance.collection(
+        'Users/${scrapSnapshot['uid']}/scraps/${scrapSnapshot.documentID}/comments');
     return SizedBox(
         width: screenWidthDp,
-        height: screenHeightDp / 1.4,
+        height: screenHeightDp / 1.18,
         child: Scaffold(
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: false,
           body: Container(
-            margin: EdgeInsets.only(top: screenWidthDp/8.1),
+            margin: EdgeInsets.only(top: screenWidthDp / 8.1),
             decoration: BoxDecoration(
                 color: Color(0xff282828),
                 borderRadius: BorderRadius.only(
@@ -174,45 +184,80 @@ class _MapScrapsState extends State<MapScraps> {
                     )),
                 Expanded(
                   child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: screenWidthDp / 56),
-                    child: ListView(
-                      children: <Widget>[
-                        commentBox({
-                          'image':
-                              'https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?size=626&ext=jpg',
-                          'name': 'name',
-                          'comment': 'เม้นไงๆ'
-                        }),
-                        commentBox({
-                          'image':
-                              'https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?size=626&ext=jpg',
-                          'name': 'name',
-                          'comment': 'เม้นไงๆ'
-                        })
-                      ],
-                    ),
-                  ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidthDp / 56),
+                      child: FutureBuilder(
+                          future: ref
+                              .orderBy('timeStamp', descending: true)
+                              .limit(8)
+                              .getDocuments(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              commentList.addAll(snapshot.data.documents);
+                              return StatefulBuilder(
+                                  builder: (context, StateSetter setComment) {
+                                return SmartRefresher(
+                                    enablePullUp: true,
+                                    enablePullDown: true,
+                                    controller: controller,
+                                    onRefresh: () {
+                                      setComment(() {});
+                                      controller.refreshCompleted();
+                                    },
+                                    onLoading: () async {
+                                      var docs = await ref
+                                          .orderBy('timeStamp',
+                                              descending: true)
+                                          .startAfterDocument(commentList.last)
+                                          .limit(8)
+                                          .getDocuments();
+                                      if (docs.documents.length > 0) {
+                                        commentList.addAll(docs.documents);
+                                        setComment(() {});
+                                        controller.loadComplete();
+                                      } else {
+                                        controller.loadNoData();
+                                      }
+                                    },
+                                    child: ListView(
+                                        children: commentList
+                                            .map((doc) => commentBox(doc))
+                                            .toList()));
+                              });
+                            } else {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          })),
                 ),
-                Container(
-                    width: screenWidthDp,
-                    height: screenHeightDp / 12,
-                    decoration: BoxDecoration(
-                        color: Color(0xff282828),
-                        border: Border(
-                            top: BorderSide(
-                                color: Color(0xff414141), width: 1.2))),
-                    child: Row(
-                      children: <Widget>[
-                        SizedBox(width: screenWidthDp / 32),
-                        Expanded(
-                          child: Container(
+                StatefulBuilder(builder: (context, StateSetter setSheet) {
+                  comment.selection = TextSelection.fromPosition(
+                      TextPosition(offset: comment.text.length));
+                  return Container(
+                      width: screenWidthDp,
+                      height: screenHeightDp / 12,
+                      decoration: BoxDecoration(
+                          color: Color(0xff282828),
+                          border: Border(
+                              top: BorderSide(
+                                  color: Color(0xff414141), width: 1.2))),
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(width: screenWidthDp / 32),
+                          Expanded(
+                              child: Container(
                             height: screenHeightDp / 17.4,
                             padding: EdgeInsets.only(left: 10),
                             decoration: BoxDecoration(
                                 color: Color(0xff313131),
                                 borderRadius: BorderRadius.circular(8)),
                             child: TextField(
+                              controller: comment,
+                              onChanged: (val) {
+                                val.trim().length > 0
+                                    ? setSheet(() => canSend = true)
+                                    : setSheet(() => canSend = false);
+                                comment.text = val;
+                              },
                               decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: 'พิมพ์อะไรสักอย่างสิ',
@@ -220,25 +265,54 @@ class _MapScrapsState extends State<MapScraps> {
                                       color: Colors.white38,
                                       fontSize: s48,
                                       height: 0.72)),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: s48,
+                                  height: 0.72),
+                              textInputAction: TextInputAction.done,
+                              onSubmitted: (val) {
+                                addComment(
+                                    commentList, ref, scrapSnapshot.documentID,
+                                    comment: comment.text.trim(),
+                                    commentCount: commentCount,
+                                    point: point);
+                                comment.clear();
+                                setSheet(() => canSend = false);
+                                controller.requestRefresh();
+                              },
                             ),
+                          )),
+                          SizedBox(width: screenWidthDp / 32),
+                          GestureDetector(
+                            child: Icon(
+                              Icons.send,
+                              color: canSend
+                                  ? Color(0xff26A4FF)
+                                  : Color(0xff6C6C6C),
+                              size: s60,
+                            ),
+                            onTap: () {
+                              addComment(
+                                  commentList, ref, scrapSnapshot.documentID,
+                                  comment: comment.text,
+                                  commentCount: commentCount,
+                                  point: point);
+                              comment.clear();
+                              setSheet(() => canSend = false);
+                              controller.requestRefresh();
+                            },
                           ),
-                        ),
-                        SizedBox(width: screenWidthDp / 32),
-                        Icon(
-                          Icons.send,
-                          color: Color(0xff6C6C6C),
-                          size: s60,
-                        ),
-                        SizedBox(width: screenWidthDp / 32),
-                      ],
-                    ))
+                          SizedBox(width: screenWidthDp / 32),
+                        ],
+                      ));
+                })
               ],
             ),
           ),
         ));
   }
 
-  Widget commentBox(Map comment) {
+  Widget commentBox(dynamic comment) {
     return Container(
         child: ListTile(
       leading: ClipRRect(
@@ -249,16 +323,81 @@ class _MapScrapsState extends State<MapScraps> {
             width: screenWidthDp / 8.1,
             height: screenWidthDp / 8.1,
           )),
-      title: Text(
-        comment['name'],
-        style: TextStyle(
-            color: Colors.white, fontSize: s48, fontWeight: FontWeight.bold),
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: <Widget>[
+          Text(
+            '${comment['name']}',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: s48,
+                fontWeight: FontWeight.bold),
+          ),
+          Text(
+            ' ${readTimestamp(comment['timeStamp'])}',
+            style:
+                TextStyle(color: Colors.white, fontSize: s32, wordSpacing: 0.5),
+          )
+        ],
       ),
       subtitle: Text(
         comment['comment'],
         style: TextStyle(color: Colors.white, fontSize: s42, height: 0.9),
       ),
     ));
+  }
+
+  String readTimestamp(dynamic timestamp) {
+    var now = DateTime.now();
+    var format = DateFormat('HH:mm a');
+    var date =
+        timestamp.runtimeType == Timestamp ? timestamp.toDate() : timestamp;
+    var diff = now.difference(date);
+    var time = '';
+    if (diff.inDays < 1) {
+      if (diff.inSeconds <= 30) {
+        time = 'ไม่กี่วินาทีที่ผ่านมานี้';
+      } else if (diff.inSeconds <= 60) {
+        time = diff.inSeconds.toString() + ' วินาทีที่แล้ว';
+      } else if (diff.inMinutes < 5) {
+        time = 'เมื่อไม่นานมานี้';
+      } else if (diff.inMinutes < 60) {
+        time = diff.inMinutes.toString() + ' นาทีที่แล้ว';
+      } else {
+        time = diff.inHours.toString() + ' ชั่วโมงที่แล้ว';
+      }
+    } else if (diff.inDays < 7) {
+      diff.inDays == 1
+          ? time = 'เมื่อวานนี้'
+          : time = diff.inDays.toString() + ' วันที่แล้ว';
+    } else {
+      diff.inDays == 7 ? time = ' สัปดาที่แล้ว' : time = format.format(date);
+    }
+    return time;
+  }
+
+  addComment(List commentList, CollectionReference ref, String scrapId,
+      {@required String comment,
+      @required int commentCount,
+      @required int point}) async {
+    Map data = await userinfo.readContents();
+    commentList.insert(0, {
+      'name': data['name'],
+      'image': data['img'],
+      'comment': comment,
+      'timeStamp': DateTime.now()
+    });
+    ref.add({
+      'name': data['name'],
+      'image': data['img'],
+      'comment': comment,
+      'timeStamp': FieldValue.serverTimestamp()
+    });
+    FirebaseDatabase.instance
+        .reference()
+        .child('scraps/$scrapId')
+        .update({'comment': commentCount - 1, 'point': point - 2});
   }
 
   //sssss
@@ -373,7 +512,6 @@ class _MapScrapsState extends State<MapScraps> {
                               if (event.hasData &&
                                   event.connectionState ==
                                       ConnectionState.active) {
-                                print(data.documentID);
                                 var trans = event.data?.snapshot;
                                 return Row(
                                   mainAxisAlignment:
@@ -394,8 +532,14 @@ class _MapScrapsState extends State<MapScraps> {
                                                         'like', data.documentID)
                                                     ? Icons.favorite
                                                     : Icons.favorite_border,
-                                                background: Color(0xffFF4343),
-                                                iconColor: Colors.white),
+                                                background: inHistory(
+                                                        'like', data.documentID)
+                                                    ? Color(0xffFF4343)
+                                                    : Colors.white,
+                                                iconColor: inHistory(
+                                                        'like', data.documentID)
+                                                    ? Colors.white
+                                                    : Color(0xffFF4343)),
                                             onTap: () {
                                               updateScrapTrans(
                                                   'like',
@@ -409,11 +553,15 @@ class _MapScrapsState extends State<MapScraps> {
                                                 trans?.value['picked']
                                                     .abs()
                                                     .toString(),
-                                                iconColor: Color(0xff0099FF),
-                                                icon: inHistory('picked',
+                                                background: inHistory('picked',
                                                         data.documentID)
-                                                    ? Icons.move_to_inbox
-                                                    : Icons.inbox),
+                                                    ? Color(0xff0099FF)
+                                                    : Colors.white,
+                                                iconColor: inHistory('picked',
+                                                        data.documentID)
+                                                    ? Colors.white
+                                                    : Color(0xff0099FF),
+                                                icon: Icons.move_to_inbox),
                                             onTap: () {
                                               updateScrapTrans(
                                                   'picked',
@@ -424,17 +572,21 @@ class _MapScrapsState extends State<MapScraps> {
                                           ),
                                           GestureDetector(
                                             child: iconWithLabel(
-                                                trans?.value['point']
+                                                trans?.value['comment']
                                                     .abs()
                                                     .toString(),
                                                 iconColor: Color(0xff000000)
                                                     .withOpacity(0.83),
-                                                icon: Icons.message),
+                                                icon: Icons.sms),
                                             onTap: () {
                                               Scaffold.of(context)
                                                   .showBottomSheet(
                                                 (BuildContext context) =>
-                                                    commentSheet(),
+                                                    commentSheet(data,
+                                                        commentCount: trans
+                                                            .value['comment'],
+                                                        point: trans
+                                                            .value['point']),
                                                 backgroundColor:
                                                     Colors.transparent,
                                               );
@@ -746,7 +898,7 @@ class _MapScrapsState extends State<MapScraps> {
       subLimit = streamLimit.listen((value) {
         if (value > 0) addMoreScrap(value);
       });
-      addMoreScrap(7);
+      addMoreScrap(16);
     }
     streamLocation.onData((position) {
       if (this.mounted) {
@@ -755,24 +907,9 @@ class _MapScrapsState extends State<MapScraps> {
     });
   }
 
-  loopRandomMarker(GeoPoint location) {
-    for (int i = ads.length; i < 3; i++) {
-      randomScrap(location);
-    }
-  }
-
   updateMap(Position location) {
     userMarker(location.latitude, location.longitude);
     _animateToUser(position: location);
-  }
-
-  randomScrap(GeoPoint location) {
-    Map randLocation = RandomLocation()
-        .getLocation(lat: location.latitude, lng: location.longitude);
-
-    if (ads.length < 3) {
-      _addOfficial(randLocation);
-    }
   }
 
   void _updateMarkers(List<DocumentSnapshot> documentList, Position position) {
@@ -814,44 +951,15 @@ class _MapScrapsState extends State<MapScraps> {
             .startAfterDocument(recentScrap)
             .limit(limit);
     var doc = await ref.getDocuments();
-
     if (doc.documents.length > 0) {
       recentScrap = doc.documents.last;
       _updateMarkers(doc.documents, pos);
-      var randIndex = random.nextInt(doc.documents.length);
-      loopRandomMarker(doc.documents[randIndex]['position']['geopoint']);
     }
   }
 
   cameraAnime(GoogleMapController controller, double lat, double lng) {
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(lat, lng), zoom: 18.5, bearing: 0.0, tilt: 90)));
-  }
-
-  void _addOfficial(Map randomLocation) {
-    var id = DateTime.now().millisecondsSinceEpoch;
-    final MarkerId officialId = MarkerId(id.toString());
-    ads.add(id.toString());
-    final Marker marker = Marker(
-      markerId: officialId,
-      position: LatLng(randomLocation['lat'], randomLocation['lng']),
-      icon: scrapIcon,
-      onTap: () {
-        try {
-          markers.remove(officialId);
-          ads.remove(id);
-          setState(() {});
-          // dialog(text, 'สุ่มโดย Scrap', time, date, text);
-        } catch (e) {
-          print(e.toString());
-          error(context,
-              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
-        }
-      },
-    );
-    setState(() {
-      markers[officialId] = marker;
-    });
   }
 
   void _addMarker(
@@ -871,7 +979,7 @@ class _MapScrapsState extends State<MapScraps> {
           // scrap.increaseTransaction(writerUid, 'read');
           // increasHistTran(writerUid, '${date.year},${date.month},${date.day}',
           //     doc.documentID);
-          streamLimit.add(7 - allScrap.length);
+          streamLimit.add(16 - allScrap.length);
         } catch (e) {
           print(e.toString());
           error(context,
