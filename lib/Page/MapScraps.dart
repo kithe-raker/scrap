@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,12 +13,14 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/scrapFilter.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
+import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -31,8 +34,10 @@ class MapScraps extends StatefulWidget {
 
 class _MapScrapsState extends State<MapScraps> {
   final geoLocator = Geolocator();
+  final random = Random();
   Position currentLocation;
   StreamSubscription subLimit;
+  int adsRate = 0;
   int i = 0;
   String date, time;
   PublishSubject<int> streamLimit = PublishSubject();
@@ -62,9 +67,15 @@ class _MapScrapsState extends State<MapScraps> {
       streamLocation = geoLocator
           .getPositionStream()
           .listen((event) => setState(() => currentLocation = event));
+      randomAdsRate();
       initUserHistory();
       super.initState();
     }
+  }
+
+  void randomAdsRate() {
+    adsRate = 3;
+    adsRate += random.nextInt(2) + 1;
   }
 
   Future<void> initUserHistory() async {
@@ -402,6 +413,7 @@ class _MapScrapsState extends State<MapScraps> {
 
   //sssss
   void dialog(DocumentSnapshot doc) {
+    final counter = Provider.of<AdsCounterProvider>(context, listen: false);
     var data = doc;
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
@@ -409,323 +421,410 @@ class _MapScrapsState extends State<MapScraps> {
       return StatefulBuilder(builder: (context, StateSetter setDialog) {
         return Scaffold(
             backgroundColor: Colors.black,
-            body: Container(
-                margin: EdgeInsets.only(top: a.height / 16),
-                padding: EdgeInsets.symmetric(
-                    horizontal: (a.width - a.width / 1.04) / 2),
-                width: a.width,
-                height: a.height,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Stack(
-                        children: <Widget>[
-                          Container(
-                            child: Image.asset(
-                              'assets/paper-readed.png',
-                              width: a.width / 1.04,
-                              height: a.width / 1.04 * 1.115,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.only(left: 25, right: 25),
-                            height: a.width / 1.04 * 1.115,
-                            width: a.width / 1.04,
-                            child: Text(
-                              filter.censorString(data['scrap']['text']),
-                              style: TextStyle(
-                                height: 1.35,
-                                fontSize: s60,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Positioned(
-                            top: 12,
-                            right: 12,
-                            child: GestureDetector(
-                              child: Container(
-                                width: screenWidthDp / 16,
-                                height: screenWidthDp / 16,
-                                decoration: BoxDecoration(
-                                    color: Color(0xff000000).withOpacity(0.47),
-                                    borderRadius: BorderRadius.circular(
-                                        screenWidthDp / 18)),
-                                child: Icon(Icons.close,
-                                    color: Colors.white, size: s42),
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: screenWidthDp / 21),
-                      Container(
-                        width: a.width,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: screenWidthDp / 36),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  data['scrap']['user'] == 'ไม่ระบุตัวตน'
-                                      ? 'ใครบางคน'
-                                      : '@${data['scrap']['user']}',
-                                  style: TextStyle(
-                                      fontSize: s48,
-                                      height: 1.1,
-                                      color: data['scrap']['user'] ==
-                                              'ไม่ระบุตัวตน'
-                                          ? Colors.white
-                                          : Color(0xff26A4FF)),
-                                ),
-                                Text(
-                                    'เวลา : ${DateFormat('HH:mm').format(data['scrap']['time'].toDate())}',
-                                    style: TextStyle(
-                                        fontSize: s36,
-                                        height: 0.8,
-                                        color: Color(0xff969696)))
-                              ],
-                            ),
-                            Icon(Icons.more_horiz,
-                                color: Colors.white, size: s70)
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: screenWidthDp / 42),
-                      Divider(color: Color(0xff5D5D5D), thickness: 1.2),
-                      SizedBox(height: screenWidthDp / 46),
-                      SizedBox(
-                        width: a.width,
-                        height: screenHeightDp / 9.6,
-                        child: StreamBuilder(
-                            stream: scrapTransaction(data.documentID),
-                            builder: (context, AsyncSnapshot<Event> event) {
-                              if (event.hasData &&
-                                  event.connectionState ==
-                                      ConnectionState.active) {
-                                var trans = event.data?.snapshot;
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+            body: SafeArea(
+              child: Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: (a.width - a.width / 1.04) / 2),
+                  width: a.width,
+                  height: a.height,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        counter.count == adsRate
+                            ? Center(
+                                child: Text(
+                                'โฆษณา',
+                                style: TextStyle(
+                                    fontSize: s42,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ))
+                            : SizedBox(height: a.height / 42),
+                        counter.count == adsRate
+                            ? SizedBox(
+                                width: a.width / 1.04,
+                                height: a.width / 1.04 * 1.29,
+                                child: Stack(
                                   children: <Widget>[
                                     Container(
-                                      width: screenWidthDp / 2,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          GestureDetector(
-                                            child: iconWithLabel(
-                                                trans.value['like']
-                                                    .abs()
-                                                    .toString(),
-                                                icon: inHistory(
-                                                        'like', data.documentID)
-                                                    ? Icons.favorite
-                                                    : Icons.favorite_border,
-                                                background: inHistory(
-                                                        'like', data.documentID)
-                                                    ? Color(0xffFF4343)
-                                                    : Colors.white,
-                                                iconColor: inHistory(
-                                                        'like', data.documentID)
-                                                    ? Colors.white
-                                                    : Color(0xffFF4343)),
-                                            onTap: () {
-                                              updateScrapTrans(
-                                                  'like',
-                                                  trans.value['like'],
-                                                  trans.value['point'],
-                                                  data);
-                                            },
-                                          ),
-                                          GestureDetector(
-                                            child: iconWithLabel(
-                                                trans?.value['picked']
-                                                    .abs()
-                                                    .toString(),
-                                                background: inHistory('picked',
-                                                        data.documentID)
-                                                    ? Color(0xff0099FF)
-                                                    : Colors.white,
-                                                iconColor: inHistory('picked',
-                                                        data.documentID)
-                                                    ? Colors.white
-                                                    : Color(0xff0099FF),
-                                                icon: Icons.move_to_inbox),
-                                            onTap: () {
-                                              updateScrapTrans(
-                                                  'picked',
-                                                  trans.value['picked'],
-                                                  trans.value['point'],
-                                                  data);
-                                            },
-                                          ),
-                                          GestureDetector(
-                                            child: iconWithLabel(
-                                                trans?.value['comment']
-                                                    .abs()
-                                                    .toString(),
-                                                iconColor: Color(0xff000000)
-                                                    .withOpacity(0.83),
-                                                icon: Icons.sms),
-                                            onTap: () {
-                                              Scaffold.of(context)
-                                                  .showBottomSheet(
-                                                (BuildContext context) =>
-                                                    commentSheet(data,
-                                                        commentCount: trans
-                                                            .value['comment'],
-                                                        point: trans
-                                                            .value['point']),
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                              );
-                                            },
-                                          )
-                                          // Container(
-                                          //   decoration: BoxDecoration(
-                                          //       color: Colors.white,
-                                          //       borderRadius: BorderRadius.circular(a.width)),
-                                          //   child: Row(
-                                          //     mainAxisAlignment: MainAxisAlignment.center,
-                                          //     children: <Widget>[
-                                          //       writer != 'สุ่มโดย Scrap'
-                                          //           ? InkWell(
-                                          //               child: Container(
-                                          //                 margin: EdgeInsets.only(
-                                          //                     right: a.width / 42),
-                                          //                 width: a.width / 6,
-                                          //                 height: a.width / 6,
-                                          //                 child: Column(
-                                          //                     mainAxisAlignment:
-                                          //                         MainAxisAlignment.center,
-                                          //                     children: <Widget>[
-                                          //                       Icon(
-                                          //                         Icons.whatshot,
-                                          //                         color: Colors.grey[600],
-                                          //                         size: a.width / 14,
-                                          //                       ),
-                                          //                       Text(
-                                          //                         "เผา",
-                                          //                         style: TextStyle(
-                                          //                             color: Colors.grey[600],
-                                          //                             fontSize: a.width / 25),
-                                          //                       )
-                                          //                     ]),
-                                          //               ),
-                                          //               onTap: () async {
-                                          //                 await burn(id);
-                                          //                 Navigator.pop(context);
-                                          //                 Taoast().toast('คุณได้เผากระดาษไปแล้ว');
-                                          //               },
-                                          //             )
-                                          //           : SizedBox(),
-                                          //       InkWell(
-                                          //         child: Container(
-                                          //           margin: EdgeInsets.only(right: a.width / 40),
-                                          //           width: a.width / 6,
-                                          //           height: a.width / 6,
-                                          //           child: Column(
-                                          //               mainAxisAlignment:
-                                          //                   MainAxisAlignment.center,
-                                          //               children: <Widget>[
-                                          //                 Image.asset('assets/garbage_grey.png',
-                                          //                     width: a.width / 14,
-                                          //                     height: a.width / 14,
-                                          //                     fit: BoxFit.cover),
-                                          //                 Text(
-                                          //                   "ทิ้งไว้",
-                                          //                   style: TextStyle(
-                                          //                       color: Colors.grey[600],
-                                          //                       fontSize: a.width / 25),
-                                          //                 )
-                                          //               ]),
-                                          //         ),
-                                          //         onTap: () {
-                                          //           Navigator.pop(context);
-                                          //         },
-                                          //       ),
-                                          //       InkWell(
-                                          //         child: Container(
-                                          //           width: a.width / 6,
-                                          //           height: a.width / 6,
-                                          //           child: Column(
-                                          //               mainAxisAlignment:
-                                          //                   MainAxisAlignment.center,
-                                          //               children: <Widget>[
-                                          //                 Icon(
-                                          //                   Icons.save_alt,
-                                          //                   color: Colors.grey[600],
-                                          //                   size: a.width / 14,
-                                          //                 ),
-                                          //                 Text(
-                                          //                   "เก็บไว้",
-                                          //                   style: TextStyle(
-                                          //                       color: Colors.grey[600],
-                                          //                       fontSize: a.width / 25),
-                                          //                 )
-                                          //               ]),
-                                          //         ),
-                                          //         onTap: () async {
-                                          //           Navigator.pop(context);
-                                          //           await pickScrap(
-                                          //               id, text, '$time $date', writer);
-                                          //         },
-                                          //       ),
-                                          //     ],
-                                          //   ),
-                                          // ),
-                                        ],
-                                      ),
+                                      width: a.width / 1.04,
+                                      height: a.width / 1.04 * 1.29,
+                                      child: AdmobBanner(
+                                          adUnitId:
+                                              AdmobService().getBannerAdId(),
+                                          adSize: AdmobBannerSize.FULL_BANNER),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          right: screenWidthDp / 42),
-                                      child: GestureDetector(
-                                        child: iconWithLabel('ต่อไป',
-                                            iconColor: Color(0xff000000),
-                                            icon: Icons.forward),
-                                        onTap: () {
-                                          allScrap.remove(data);
-                                          markers.remove(
-                                              MarkerId(data.documentID));
-                                          if (allScrap.isNotEmpty &&
-                                              allScrap.length > 0) {
-                                            setDialog(
-                                                () => data = allScrap.first);
-                                            streamLimit
-                                                .add(7 - allScrap.length);
-                                          } else {
-                                            Taoast().toast('กระดาษหมดแล้ว');
-                                          }
-                                        },
-                                      ),
-                                    )
+                                    Positioned(
+                                        top: 12,
+                                        right: 12,
+                                        child: GestureDetector(
+                                            child: Container(
+                                              width: screenWidthDp / 16,
+                                              height: screenWidthDp / 16,
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xff000000)
+                                                      .withOpacity(0.47),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          screenWidthDp / 18)),
+                                              child: Icon(Icons.close,
+                                                  color: Colors.white,
+                                                  size: s42),
+                                            ),
+                                            onTap: () {
+                                              randomAdsRate();
+                                              counter.count = 0;
+                                              Navigator.pop(context);
+                                            }))
                                   ],
-                                );
-                              } else {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            }),
-                      ),
-                      SizedBox(height: screenWidthDp / 36),
-                      Expanded(
-                        child: AdmobBanner(
-                            adUnitId: AdmobService().getBannerAdId(),
-                            adSize: AdmobBannerSize.FULL_BANNER),
-                      )
-                    ])));
+                                ),
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Stack(
+                                    children: <Widget>[
+                                      Container(
+                                        child: Image.asset(
+                                          'assets/paper-readed.png',
+                                          width: a.width / 1.04,
+                                          height: a.width / 1.04 * 1.115,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      Container(
+                                        alignment: Alignment.center,
+                                        padding: EdgeInsets.only(
+                                            left: 25, right: 25),
+                                        height: a.width / 1.04 * 1.115,
+                                        width: a.width / 1.04,
+                                        child: Text(
+                                          filter.censorString(
+                                              data['scrap']['text']),
+                                          style: TextStyle(
+                                            height: 1.35,
+                                            fontSize: s60,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 12,
+                                        right: 12,
+                                        child: GestureDetector(
+                                          child: Container(
+                                            width: screenWidthDp / 16,
+                                            height: screenWidthDp / 16,
+                                            decoration: BoxDecoration(
+                                                color: Color(0xff000000)
+                                                    .withOpacity(0.47),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        screenWidthDp / 18)),
+                                            child: Icon(Icons.close,
+                                                color: Colors.white, size: s42),
+                                          ),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(height: screenWidthDp / 21),
+                                  Container(
+                                    width: a.width,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: screenWidthDp / 36),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              data['scrap']['user'] ==
+                                                      'ไม่ระบุตัวตน'
+                                                  ? 'ใครบางคน'
+                                                  : '@${data['scrap']['user']}',
+                                              style: TextStyle(
+                                                  fontSize: s48,
+                                                  height: 1.1,
+                                                  color: data['scrap']
+                                                              ['user'] ==
+                                                          'ไม่ระบุตัวตน'
+                                                      ? Colors.white
+                                                      : Color(0xff26A4FF)),
+                                            ),
+                                            Text(
+                                                'เวลา : ${DateFormat('HH:mm').format(data['scrap']['time'].toDate())}',
+                                                style: TextStyle(
+                                                    fontSize: s36,
+                                                    height: 0.8,
+                                                    color: Color(0xff969696)))
+                                          ],
+                                        ),
+                                        Icon(Icons.more_horiz,
+                                            color: Colors.white, size: s70)
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        SizedBox(height: screenWidthDp / 42),
+                        Divider(color: Color(0xff5D5D5D), thickness: 1.2),
+                        SizedBox(height: screenWidthDp / 46),
+                        SizedBox(
+                          width: a.width,
+                          height: screenHeightDp / 9.6,
+                          child: counter.count == adsRate
+                              ? Center(
+                                  child: GestureDetector(
+                                      child: iconWithLabel('ต่อไป',
+                                          iconColor: Color(0xff000000),
+                                          icon: Icons.forward),
+                                      onTap: () {
+                                        randomAdsRate();
+                                        counter.count = 0;
+                                        setDialog(() {});
+                                      }))
+                              : StreamBuilder(
+                                  stream: scrapTransaction(data.documentID),
+                                  builder:
+                                      (context, AsyncSnapshot<Event> event) {
+                                    if (event.hasData &&
+                                        event.connectionState ==
+                                            ConnectionState.active) {
+                                      var trans = event.data?.snapshot;
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Container(
+                                            width: screenWidthDp / 2,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: <Widget>[
+                                                GestureDetector(
+                                                  child: iconWithLabel(
+                                                      trans.value['like']
+                                                          .abs()
+                                                          .toString(),
+                                                      icon: inHistory('like',
+                                                              data.documentID)
+                                                          ? Icons.favorite
+                                                          : Icons
+                                                              .favorite_border,
+                                                      background: inHistory(
+                                                              'like',
+                                                              data.documentID)
+                                                          ? Color(0xffFF4343)
+                                                          : Colors.white,
+                                                      iconColor: inHistory(
+                                                              'like',
+                                                              data.documentID)
+                                                          ? Colors.white
+                                                          : Color(0xffFF4343)),
+                                                  onTap: () {
+                                                    updateScrapTrans(
+                                                        'like',
+                                                        trans.value['like'],
+                                                        trans.value['point'],
+                                                        data);
+                                                  },
+                                                ),
+                                                GestureDetector(
+                                                  child: iconWithLabel(
+                                                      trans?.value['picked']
+                                                          .abs()
+                                                          .toString(),
+                                                      background: inHistory(
+                                                              'picked',
+                                                              data.documentID)
+                                                          ? Color(0xff0099FF)
+                                                          : Colors.white,
+                                                      iconColor: inHistory(
+                                                              'picked',
+                                                              data.documentID)
+                                                          ? Colors.white
+                                                          : Color(0xff0099FF),
+                                                      icon:
+                                                          Icons.move_to_inbox),
+                                                  onTap: () {
+                                                    updateScrapTrans(
+                                                        'picked',
+                                                        trans.value['picked'],
+                                                        trans.value['point'],
+                                                        data);
+                                                  },
+                                                ),
+                                                GestureDetector(
+                                                  child: iconWithLabel(
+                                                      trans?.value['comment']
+                                                          .abs()
+                                                          .toString(),
+                                                      iconColor: Color(
+                                                              0xff000000)
+                                                          .withOpacity(0.83),
+                                                      icon: Icons.sms),
+                                                  onTap: () {
+                                                    Scaffold.of(context)
+                                                        .showBottomSheet(
+                                                      (BuildContext context) =>
+                                                          commentSheet(data,
+                                                              commentCount:
+                                                                  trans.value[
+                                                                      'comment'],
+                                                              point:
+                                                                  trans.value[
+                                                                      'point']),
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                    );
+                                                  },
+                                                )
+                                                // Container(
+                                                //   decoration: BoxDecoration(
+                                                //       color: Colors.white,
+                                                //       borderRadius: BorderRadius.circular(a.width)),
+                                                //   child: Row(
+                                                //     mainAxisAlignment: MainAxisAlignment.center,
+                                                //     children: <Widget>[
+                                                //       writer != 'สุ่มโดย Scrap'
+                                                //           ? InkWell(
+                                                //               child: Container(
+                                                //                 margin: EdgeInsets.only(
+                                                //                     right: a.width / 42),
+                                                //                 width: a.width / 6,
+                                                //                 height: a.width / 6,
+                                                //                 child: Column(
+                                                //                     mainAxisAlignment:
+                                                //                         MainAxisAlignment.center,
+                                                //                     children: <Widget>[
+                                                //                       Icon(
+                                                //                         Icons.whatshot,
+                                                //                         color: Colors.grey[600],
+                                                //                         size: a.width / 14,
+                                                //                       ),
+                                                //                       Text(
+                                                //                         "เผา",
+                                                //                         style: TextStyle(
+                                                //                             color: Colors.grey[600],
+                                                //                             fontSize: a.width / 25),
+                                                //                       )
+                                                //                     ]),
+                                                //               ),
+                                                //               onTap: () async {
+                                                //                 await burn(id);
+                                                //                 Navigator.pop(context);
+                                                //                 Taoast().toast('คุณได้เผากระดาษไปแล้ว');
+                                                //               },
+                                                //             )
+                                                //           : SizedBox(),
+                                                //       InkWell(
+                                                //         child: Container(
+                                                //           margin: EdgeInsets.only(right: a.width / 40),
+                                                //           width: a.width / 6,
+                                                //           height: a.width / 6,
+                                                //           child: Column(
+                                                //               mainAxisAlignment:
+                                                //                   MainAxisAlignment.center,
+                                                //               children: <Widget>[
+                                                //                 Image.asset('assets/garbage_grey.png',
+                                                //                     width: a.width / 14,
+                                                //                     height: a.width / 14,
+                                                //                     fit: BoxFit.cover),
+                                                //                 Text(
+                                                //                   "ทิ้งไว้",
+                                                //                   style: TextStyle(
+                                                //                       color: Colors.grey[600],
+                                                //                       fontSize: a.width / 25),
+                                                //                 )
+                                                //               ]),
+                                                //         ),
+                                                //         onTap: () {
+                                                //           Navigator.pop(context);
+                                                //         },
+                                                //       ),
+                                                //       InkWell(
+                                                //         child: Container(
+                                                //           width: a.width / 6,
+                                                //           height: a.width / 6,
+                                                //           child: Column(
+                                                //               mainAxisAlignment:
+                                                //                   MainAxisAlignment.center,
+                                                //               children: <Widget>[
+                                                //                 Icon(
+                                                //                   Icons.save_alt,
+                                                //                   color: Colors.grey[600],
+                                                //                   size: a.width / 14,
+                                                //                 ),
+                                                //                 Text(
+                                                //                   "เก็บไว้",
+                                                //                   style: TextStyle(
+                                                //                       color: Colors.grey[600],
+                                                //                       fontSize: a.width / 25),
+                                                //                 )
+                                                //               ]),
+                                                //         ),
+                                                //         onTap: () async {
+                                                //           Navigator.pop(context);
+                                                //           await pickScrap(
+                                                //               id, text, '$time $date', writer);
+                                                //         },
+                                                //       ),
+                                                //     ],
+                                                //   ),
+                                                // ),
+                                              ],
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                right: screenWidthDp / 42),
+                                            child: GestureDetector(
+                                              child: iconWithLabel('ต่อไป',
+                                                  iconColor: Color(0xff000000),
+                                                  icon: Icons.forward),
+                                              onTap: () {
+                                                counter.count += 1;
+                                                allScrap.remove(data);
+                                                markers.remove(
+                                                    MarkerId(data.documentID));
+                                                if (allScrap.isNotEmpty &&
+                                                    allScrap.length > 0) {
+                                                  setDialog(() =>
+                                                      data = allScrap.first);
+                                                  streamLimit
+                                                      .add(7 - allScrap.length);
+                                                } else {
+                                                  Taoast()
+                                                      .toast('กระดาษหมดแล้ว');
+                                                }
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    } else {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                  }),
+                        ),
+                        SizedBox(height: screenWidthDp / 36),
+                        Expanded(
+                          child: AdmobBanner(
+                              adUnitId: AdmobService().getBannerAdId(),
+                              adSize: AdmobBannerSize.FULL_BANNER),
+                        )
+                      ])),
+            ));
       });
     }));
   }
@@ -965,6 +1064,7 @@ class _MapScrapsState extends State<MapScraps> {
   void _addMarker(
       double lat, double lng, DocumentSnapshot doc, String writerUid) {
     final MarkerId markerId = MarkerId(doc.documentID);
+    final counter = Provider.of<AdsCounterProvider>(context, listen: false);
     var date = doc['scrap']['time'].toDate();
     final Marker marker = Marker(
       markerId: markerId,
@@ -976,6 +1076,7 @@ class _MapScrapsState extends State<MapScraps> {
           markers.remove(markerId);
           setState(() {});
           dialog(doc);
+          counter.count += 1;
           // scrap.increaseTransaction(writerUid, 'read');
           // increasHistTran(writerUid, '${date.year},${date.month},${date.day}',
           //     doc.documentID);
