@@ -19,7 +19,7 @@ import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/dropdown.dart';
+
 import 'package:scrap/widget/warning.dart';
 
 class HomePage extends StatefulWidget {
@@ -678,8 +678,8 @@ class _HomePageState extends State<HomePage> {
                                 )),
                                 onPressed: () {
                                   Navigator.pop(context);
-                                  dialogvideo();
-                                  
+                                  // dialogvideo();
+                                  dialogfinishpaper();
                                 })
                             : RaisedButton(
                                 shape: RoundedRectangleBorder(
@@ -1038,27 +1038,35 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           scrapLeft(a),
                           InkWell(
-                            onTap:(){Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Gridsubscripe(),
-                                    ));},
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Gridsubscripe(),
+                                  ));
+                            },
                             child: Container(
-                              width: a.width / 7,
-                              height: a.width / 7,
-                              padding: EdgeInsets.all(a.width/25),
-                              decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black,
-                                        blurRadius: 3.0,
-                                        spreadRadius: 2.0,
-                                        offset: Offset(0.0, 3.2))
-                                  ],
-                                  borderRadius: BorderRadius.circular(a.width),
-                                  color: Color(0xff26A4FF)),
-                              child: Container(width: a.width/50,child: Image.asset("assets/Group 71.png",width: a.width/12,),)
-                            ),
+                                width: a.width / 7,
+                                height: a.width / 7,
+                                padding: EdgeInsets.all(a.width / 25),
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.black,
+                                          blurRadius: 3.0,
+                                          spreadRadius: 2.0,
+                                          offset: Offset(0.0, 3.2))
+                                    ],
+                                    borderRadius:
+                                        BorderRadius.circular(a.width),
+                                    color: Color(0xff26A4FF)),
+                                child: Container(
+                                  width: a.width / 50,
+                                  child: Image.asset(
+                                    "assets/Group 71.png",
+                                    width: a.width / 12,
+                                  ),
+                                )),
                           ),
                           InkWell(
                             child: Container(
@@ -1096,7 +1104,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             onTap: () {
                               if (scraps > 0) {
-                                dialog();
+                                dialog1();
                               } else
                                 toast('กระดาษคุณหมดแล้ว');
                             },
@@ -1343,10 +1351,10 @@ class _HomePageState extends State<HomePage> {
             ),
             //00
             onTap: () {
-              
-              scraps == 15 ? toast('กระดาษของคุณยังเต็มอยู่') : dialogcontract();
+              scraps == 15
+                  ? toast('กระดาษของคุณยังเต็มอยู่')
+                  : dialogcontract();
               // warnClear(snapshot?.data);
-              
             },
           );
         } else {
@@ -1438,13 +1446,15 @@ class _HomePageState extends State<HomePage> {
                                     Text(
                                       "ดูวิดีโอเพื่อเติมกระดาษของคุณให้",
                                       style: TextStyle(
-                                          color: Colors.white,fontSize: a.width / 18,
+                                          color: Colors.white,
+                                          fontSize: a.width / 18,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
                                       "เต็มคลัง สำหรับเขียนสแครป",
                                       style: TextStyle(
-                                          color: Colors.white,fontSize: a.width / 18,
+                                          color: Colors.white,
+                                          fontSize: a.width / 18,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ],
@@ -1622,7 +1632,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-  
+
   dialogfinishpaper() {
     showDialog(
         context: context,
@@ -1639,7 +1649,8 @@ class _HomePageState extends State<HomePage> {
                     bottom: 0,
                     child: AdmobBanner(
                         adUnitId: AdmobService().getBannerAdId(),
-                        adSize: AdmobBannerSize.FULL_BANNER),),
+                        adSize: AdmobBannerSize.FULL_BANNER),
+                  ),
                   Container(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -1678,7 +1689,8 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                     width: a.width / 3,
                                     height: a.width / 8,
-                                    margin: EdgeInsets.only(right: a.width / 20),
+                                    margin:
+                                        EdgeInsets.only(right: a.width / 20),
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius:
@@ -1686,9 +1698,16 @@ class _HomePageState extends State<HomePage> {
                                     alignment: Alignment.center,
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
-                                        Icon(Icons.home,color: Color(0xff26A4FF),),
+                                        Container(
+                                            width: a.width / 25,
+                                            child: Image.asset(
+                                              "assets/Group 74.png",
+                                              color: Color(0xff26A4FF),
+                                              fit: BoxFit.contain,
+                                              width: a.width / 10,
+                                            )),
                                         Text(
                                           "หน้าหลัก",
                                           style: TextStyle(
@@ -1702,8 +1721,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               InkWell(
                                   child: Container(
-                                    margin:
-                                        EdgeInsets.only(left: a.width / 20),
+                                    margin: EdgeInsets.only(left: a.width / 20),
                                     width: a.width / 3,
                                     height: a.width / 8,
                                     decoration: BoxDecoration(
@@ -1713,7 +1731,7 @@ class _HomePageState extends State<HomePage> {
                                     alignment: Alignment.center,
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
                                         Icon(
                                           Icons.create,
@@ -1755,12 +1773,8 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   InkWell(
                     child: Container(
-                      child: Image.asset(
-                        './assets/bg.png',
-                        fit: BoxFit.cover,
-                        width: a.width,
-                        height: a.height,
-                      ),
+                      width: a.width,
+                      height: a.height,
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -1804,7 +1818,7 @@ class _HomePageState extends State<HomePage> {
                                                     BorderRadius.circular(
                                                         a.width / 50),
                                                 border: Border.all(
-                                                    color: Colors.white)),
+                                                    color: Colors.transparent)),
                                             child: Checkbox(
                                               value: public ?? false,
                                               onChanged: (bool value) {
@@ -1851,8 +1865,8 @@ class _HomePageState extends State<HomePage> {
                                     Container(
                                       child: Image.asset(
                                         'assets/paper-readed.png',
-                                        width: a.width / 1,
-                                        height: a.height / 1.2,
+                                        width: a.width / 1.04,
+                                        height: a.width / 1.04 * 1.115,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -1924,7 +1938,260 @@ class _HomePageState extends State<HomePage> {
                                                 color: Colors.transparent),
                                             border: InputBorder
                                                 .none, //สำหรับใหเส้นใต้หาย
-                                            hintText: 'เขียนข้อความบางอย่าง',
+                                            hintText:
+                                                'เขียนข้อความบางอย่างที่อยู่ในใจคุณ\nไม่ต้องห่วง มันจะหายไปใน 24 ชั่วโมง\n(แต่อย่าลืมสัญญาของเราล่ะ)',
+                                            hintStyle: TextStyle(
+                                              fontSize: a.width / 18,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          //หากไม่ได้กรอกจะขึ้น
+                                          validator: (val) {
+                                            return val.trim() == null ||
+                                                    val.trim() == ""
+                                                ? Taoast().toast(
+                                                    "ลองเขียนข้อความบางอย่างสิ")
+                                                : null;
+                                          },
+                                          //เนื้อหาท��่กรอกเข้าไปใน text
+                                          onChanged: (val) {
+                                            text = val;
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                    //)
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: a.width / 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    InkWell(
+                                      child: Container(
+                                          width: a.width / 4.5,
+                                          height: a.width / 8,
+                                          decoration: BoxDecoration(
+                                              color: Color(0xff26A4FF),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      a.width / 30)),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "โยนไว้",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: a.width / 15,
+                                                fontWeight: FontWeight.bold),
+                                          )),
+                                      onTap: () async {
+                                        if (_key.currentState.validate()) {
+                                          _key.currentState.save();
+                                          toast('คุณได้ทิ้งกระดาษไว้แล้ว');
+                                          Navigator.pop(context);
+                                          await scrap.binScrap(
+                                              text, public, widget.doc);
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          });
+        },
+        fullscreenDialog: true));
+  }
+
+  void dialog1() {
+    DateTime now = DateTime.now();
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) {
+          Size a = MediaQuery.of(context).size;
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            return Scaffold(
+              backgroundColor: Colors.black,
+              body: Stack(
+                children: <Widget>[
+                  InkWell(
+                    child: Container(
+                      width: a.width,
+                      height: a.height,
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: AdmobBanner(
+                        adUnitId: AdmobService().getBannerAdId(),
+                        adSize: AdmobBannerSize.FULL_BANNER),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                        top: a.height / 8,
+                        right: a.width / 20,
+                        left: 20,
+                        bottom: a.width / 8),
+                    child: ListView(
+                      children: <Widget>[
+                        Form(
+                          key: _key,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                width: a.height,
+                                alignment: Alignment.center,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
+                                    Container(
+                                      child: Row(
+                                        children: <Widget>[
+                                          Container(
+                                            width: a.width / 13,
+                                            height: a.width / 13,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        a.width / 50),
+                                                border: Border.all(
+                                                    color: Colors.transparent)),
+                                            child: Checkbox(
+                                              value: public ?? false,
+                                              onChanged: (bool value) {
+                                                setState(() {
+                                                  public = value;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          Container(
+                                            child: Text(
+                                              "\t" + "เปิดเผยตัวตน",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: a.width / 20),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    //ออกจาก��น้านี้
+                                    InkWell(
+                                      child: Icon(
+                                        Icons.clear,
+                                        size: a.width / 10,
+                                        color: Colors.white,
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              //ส่ว��ข���งกระดาษที่เขีย���
+                              Container(
+                                margin: EdgeInsets.only(top: a.width / 150),
+                                width: a.width / 1,
+                                height: a.height / 1.8,
+                                //ทำเป���น�������ั้นๆ
+                                child: Stack(
+                                  children: <Widget>[
+                                    //ช������้นที่ 1 ส่วนของก���ะดาษ
+                                    Container(
+                                      child: Image.asset(
+                                        'assets/paper-readed.png',
+                                        width: a.width / 1.04,
+                                        height: a.width / 1.04 * 1.115,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    //ชั้นที่ 2
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: a.width / 20,
+                                          top: a.width / 20),
+                                      width: a.width,
+                                      alignment: Alignment.topLeft,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          public ?? false
+                                              ? Row(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "เขียนโดย : ",
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                              a.width / 22,
+                                                          color: Colors.grey),
+                                                    ),
+                                                    Text("@${widget.doc['id']}",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                                a.width / 22,
+                                                            color: Color(
+                                                                0xff26A4FF)))
+                                                  ],
+                                                )
+                                              : Text(
+                                                  'เขียนโดย : ใครสักคน',
+                                                  style: TextStyle(
+                                                      fontSize: a.width / 22,
+                                                      color: Colors.grey),
+                                                ),
+                                          Text(
+                                              now.minute < 10
+                                                  ? 'เวลา: ${now.hour}:0${now.minute}'
+                                                  : 'เวลา: ${now.hour}:${now.minute}',
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: a.width / 22))
+                                        ],
+                                      ),
+                                    ),
+                                    //ชั้นที่ 3 เอาไว้สำหรับเขียนข้อความ
+                                    Container(
+                                      width: a.width,
+                                      height: a.height,
+                                      alignment: Alignment.center,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 25, right: 25),
+                                        width: a.width,
+                                        child: TextFormField(
+                                          maxLength: 250,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              height: 1.35,
+                                              fontSize: a.width / 14),
+                                          maxLines: null,
+                                          keyboardType: TextInputType.text,
+                                          decoration: InputDecoration(
+                                            counterText: "",
+                                            counterStyle: TextStyle(
+                                                color: Colors.transparent),
+                                            border: InputBorder
+                                                .none, //สำหรับใหเส้นใต้หาย
+                                            hintText:
+                                                'เขียนข้อความบางอย่างที่อยู่ในใจคุณ\nไม่ต้องห่วง มันจะหายไปใน 24 ชั่วโมง\n(แต่อย่าลืมสัญญาของเราล่ะ)',
                                             hintStyle: TextStyle(
                                               fontSize: a.width / 18,
                                               color: Colors.grey,
@@ -1956,19 +2223,17 @@ class _HomePageState extends State<HomePage> {
                                   children: <Widget>[
                                     InkWell(
                                         child: Container(
-                                          margin: EdgeInsets.only(
-                                              right: a.width / 20),
                                           width: a.width / 4.5,
                                           height: a.width / 8,
                                           decoration: BoxDecoration(
-                                              color: Color(0xff26A4FF),
+                                              color: Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      a.width)),
+                                                      a.width / 30)),
                                           alignment: Alignment.center,
                                           child: Text("ปาใส่",
                                               style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: Color(0xff26A4FF),
                                                   fontSize: a.width / 15,
                                                   fontWeight: FontWeight.bold)),
                                         ),
@@ -1989,35 +2254,6 @@ class _HomePageState extends State<HomePage> {
                                                 ));
                                           }
                                         }),
-                                    InkWell(
-                                      child: Container(
-                                          width: a.width / 4.5,
-                                          height: a.width / 8,
-                                          margin: EdgeInsets.only(
-                                              left: a.width / 20),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      a.width)),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "โยนไว้",
-                                            style: TextStyle(
-                                                color: Color(0xff26A4FF),
-                                                fontSize: a.width / 15,
-                                                fontWeight: FontWeight.bold),
-                                          )),
-                                      onTap: () async {
-                                        if (_key.currentState.validate()) {
-                                          _key.currentState.save();
-                                          toast('คุณได้ทิ้งกระดาษไว้แล้ว');
-                                          Navigator.pop(context);
-                                          await scrap.binScrap(
-                                              text, public, widget.doc);
-                                        }
-                                      },
-                                    ),
                                   ],
                                 ),
                               )

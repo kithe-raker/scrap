@@ -41,8 +41,13 @@ class _SubpeopleState extends State<Subpeople> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Icon(Icons.arrow_back,
-                                color: Colors.white, size: a.width / 15),
+                            InkWell(
+                              child: Icon(Icons.arrow_back,
+                                  color: Colors.white, size: a.width / 15),
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                            ),
                             Row(
                               children: <Widget>[
                                 Text(

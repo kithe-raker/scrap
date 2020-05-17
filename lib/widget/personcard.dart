@@ -102,12 +102,12 @@ class _Personcard1State extends State<Personcard1> {
             margin: EdgeInsets.only(top:a.width/30),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(a.width),
-                color: Color(0xff26A4FF)),
+                color: Colors.white),
             alignment: Alignment.center,
             child: Text(
               "ปาใส่",
               style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xff26A4FF),
                   fontWeight: FontWeight.bold,
                   fontSize: a.width / 20),
             ),
