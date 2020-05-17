@@ -60,42 +60,42 @@ class Scraps {
   }
 
   increaseTransaction(String uid, String key) {
-    Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .updateData({key: FieldValue.increment(1)});
+    // Firestore.instance
+    //     .collection('Users')
+    //     .document(uid)
+    //     .collection('info')
+    //     .document(uid)
+    //     .updateData({key: FieldValue.increment(1)});
+    //chage this fucking function too
   }
 
   binScrap(String text, bool public, DocumentSnapshot doc) async {
+    var now = DateTime.now();
+    var batch = Firestore.instance.batch();
     GeoFirePoint point;
     await Geolocator().getCurrentPosition().then((value) => point =
         Geoflutterfire()
             .point(latitude: value.latitude, longitude: value.longitude));
-    Firestore.instance
-        .collection('Scraps')
-        .document('hatyai')
-        .collection('scrapsPosition')
-        .add({}).then((value) {
-      Firestore.instance
-          .collection('Scraps')
-          .document('hatyai')
-          .collection('scrapsPosition')
-          .document(value.documentID)
-          .updateData({
-        'id': value.documentID,
-        'uid': doc['uid'],
-        'scrap': {
-          'text': text,
-          'user': public ?? false ? doc['id'] : 'ไม่ระบุตัวตน',
-          'timeStamp': FieldValue.serverTimestamp(),
-        },
-        'position': point.data
-      });
-      update(value.documentID, doc['uid']);
-      toHistory(doc['uid'], value.documentID, text);
-    });
+    var ref = Firestore.instance.collection(
+        'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
+    var docId = ref.document().documentID;
+    Map scrap = {
+      'id': docId,
+      'uid': doc['uid'],
+      'scrap': {
+        'text': text,
+        'user': public ?? false ? doc['id'] : 'ไม่ระบุตัวตน',
+        'timeStamp': FieldValue.serverTimestamp(),
+      },
+      'position': point.data
+    };
+    batch.setData(ref.document(docId), scrap);
+    batch.setData(
+        Firestore.instance
+            .collection('Users/${doc['uid']}/history')
+            .document(docId),
+        scrap);
+    update(docId, doc['uid']);
     increaseTransaction(doc['uid'], 'written');
   }
 
@@ -108,6 +108,7 @@ class Scraps {
         .updateData({
       'scraps': FieldValue.arrayUnion([id])
     });
+    //need to change structure
   }
 
   toHistory(String uid, String docID, String text) {

@@ -107,7 +107,10 @@ class _MapScrapsState extends State<MapScraps> {
         field: value + 1,
         'point': field == 'like' ? point + 1 : point + 3
       });
-      if (field == 'like') fcm.unsubscribeFromTopic(data.documentID);
+      if (field == 'like')
+        fcm.unsubscribeFromTopic(data.documentID);
+      else
+        pickScrap(data.data, cancel: true);
     } else {
       history[field].add(data.documentID);
       cacheHistory.addHistory(data.documentID, data['scrap']['time'].toDate(),
@@ -121,7 +124,10 @@ class _MapScrapsState extends State<MapScraps> {
         field: value - 1,
         'point': field == 'like' ? point - 1 : point - 3
       });
-      if (field == 'like') fcm.subscribeToTopic(data.documentID);
+      if (field == 'like')
+        fcm.subscribeToTopic(data.documentID);
+      else
+        pickScrap(data.data);
     }
   }
 
@@ -871,20 +877,24 @@ class _MapScrapsState extends State<MapScraps> {
     });
   }
 
-  pickScrap(String id, String text, String time, String writer) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(widget.uid)
-        .collection('scraps')
-        .document('collection')
-        .setData({
-      'id': FieldValue.arrayUnion([id]),
-      'scraps': {
-        id: FieldValue.arrayUnion([
-          {'text': text, 'time': time, 'writer': writer}
-        ])
-      }
-    }, merge: true);
+  pickScrap(Map scrap, {bool cancel = false}) {
+    if (cancel) {
+      Firestore.instance
+          .collection('Users')
+          .document(widget.uid)
+          .collection('scrapCollection')
+          .document(scrap['id'])
+          .delete();
+    } else {
+      scrap['picker'] = widget.uid;
+      scrap['timeStamp'] = FieldValue.serverTimestamp();
+      Firestore.instance
+          .collection('Users')
+          .document(widget.uid)
+          .collection('scrapCollection')
+          .document(scrap['id'])
+          .setData(scrap);
+    }
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/services/jsonConverter.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 
 class GridFollowing extends StatefulWidget {
   @override
@@ -24,8 +25,8 @@ class _GridFollowingState extends State<GridFollowing> {
   initScraps() async {
     friends = await jsonConv.readFriendList();
     var docs = await Firestore.instance
-        .collection('Scraps/hatyai/test2')
-        .where('uid', whereIn: friends)
+        .collectionGroup('scrapCollection')
+        .where('picker', whereIn: friends)
         .orderBy('timeStamp', descending: true)
         .limit(2)
         .getDocuments();
@@ -35,8 +36,8 @@ class _GridFollowingState extends State<GridFollowing> {
 
   loadMoreScrap() async {
     var docs = await Firestore.instance
-        .collection('Scraps/hatyai/test2')
-        .where('uid', whereIn: friends)
+        .collectionGroup('scrapCollection')
+        .where('picker', whereIn: friends)
         .orderBy('timeStamp', descending: true)
         .startAfterDocument(scraps.last)
         .limit(2)
@@ -61,26 +62,35 @@ class _GridFollowingState extends State<GridFollowing> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : SmartRefresher(
-              enablePullUp: true,
-              enablePullDown: false,
-              controller: controller,
-              onLoading: () {
-                loadMoreScrap();
-              },
-              child: Container(
-                margin:
-                    EdgeInsets.only(left: a.width / 42, right: a.width / 42),
-                width: a.width,
-                child: Wrap(
-                    spacing: a.width / 42,
-                    runSpacing: a.width / 42,
-                    alignment: WrapAlignment.center,
-                    children: scraps
-                        .map((scrap) => block(scrap['timeStamp'].toDate()))
-                        .toList()),
-              ),
-            ),
+          : scraps.length > 0
+              ? SmartRefresher(
+                  enablePullUp: true,
+                  enablePullDown: false,
+                  controller: controller,
+                  onLoading: () {
+                    loadMoreScrap();
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(
+                        left: a.width / 42, right: a.width / 42),
+                    width: a.width,
+                    child: Wrap(
+                        spacing: a.width / 42,
+                        runSpacing: a.width / 42,
+                        alignment: WrapAlignment.center,
+                        children: scraps
+                            .map((scrap) => block(scrap['timeStamp'].toDate()))
+                            .toList()),
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    'ไม่มีการเคลื่อนไหวในเพื่อนของคุณเลย',
+                    style: TextStyle(
+                      fontSize: s48,
+                        color: Colors.white70, fontWeight: FontWeight.bold),
+                  ),
+                ),
     );
   }
 

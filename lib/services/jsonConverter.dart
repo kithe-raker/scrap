@@ -81,7 +81,7 @@ class JsonConverter {
   Future<List> readFriendList() async {
     final fileFriend = await _localFriendList;
     List friendList = json.decode(await fileFriend.readAsString());
-    return friendList;
+    return friendList ?? [];
   }
 
   Future<List> addContent(

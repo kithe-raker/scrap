@@ -6,6 +6,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/friendList.dart';
@@ -630,10 +631,7 @@ class _HomePageState extends State<HomePage> {
                                                       fontSize: a.width / 22,
                                                       color: Colors.grey),
                                                 ),
-                                          Text(
-                                              now.minute < 10
-                                                  ? 'เวลา: ${now.hour}:0${now.minute}'
-                                                  : 'เวลา: ${now.hour}:${now.minute}',
+                                          Text(DateFormat('HH:mm').format(now),
                                               style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: a.width / 22))
@@ -694,71 +692,68 @@ class _HomePageState extends State<HomePage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     InkWell(
-                                      child: Container(
-                                          width: a.width / 4.5,
-                                          height: a.width / 8,
-                                          margin: EdgeInsets.only(
-                                              right: a.width / 20),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      a.width)),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "ทิ้งไว้",
-                                            style: TextStyle(
-                                                fontSize: a.width / 15,
-                                                fontWeight: FontWeight.bold),
-                                          )),
-                                      onTap: () async {
-                                        if (_key.currentState.validate()) {
-                                          _key.currentState.save();
-                                          toast('คุณได้ทิ้งกระดาษไว้แล้ว');
-                                          Navigator.pop(context);
-                                          await scrap.binScrap(
-                                              text, public, widget.doc);
-                                        }
-                                      },
-                                    ),
-                                    public == null || !public
-                                        ? SizedBox()
-                                        : InkWell(
-                                            child: Container(
-                                              margin: EdgeInsets.only(
-                                                  left: a.width / 20),
-                                              width: a.width / 4.5,
-                                              height: a.width / 8,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          a.width)),
-                                              alignment: Alignment.center,
-                                              child: Text("ปาใส่",
-                                                  style: TextStyle(
-                                                      fontSize: a.width / 15,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                            ),
-                                            //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                            onTap: () {
-                                              if (_key.currentState
-                                                  .validate()) {
-                                                _key.currentState.save();
-
-                                                Navigator.pop(context);
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          FriendList(
-                                                        doc: widget.doc,
-                                                        data: {'text': text},
-                                                      ),
-                                                    ));
-                                              }
-                                            })
+                                        child: Container(
+                                            width: a.width / 4.5,
+                                            height: a.width / 8,
+                                            margin: EdgeInsets.only(
+                                                right: a.width / 20),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        a.width)),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              "ทิ้งไว้",
+                                              style: TextStyle(
+                                                  fontSize: a.width / 15,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        onTap: () async {
+                                          if (_key.currentState.validate()) {
+                                            _key.currentState.save();
+                                            toast('คุณได้ทิ้งกระดาษไว้แล้ว');
+                                            Navigator.pop(context);
+                                            await scrap.binScrap(
+                                                text, public, widget.doc);
+                                          }
+                                        }),
+                                    // InkWell(
+                                    //   child: Container(
+                                    //     margin:
+                                    //         EdgeInsets.only(left: a.width / 20),
+                                    //     width: a.width / 4.5,
+                                    //     height: a.width / 8,
+                                    //     decoration: BoxDecoration(
+                                    //         color: Colors.white,
+                                    //         borderRadius:
+                                    //             BorderRadius.circular(a.width)),
+                                    //     alignment: Alignment.center,
+                                    //     child: Text("ปาใส่",
+                                    //         style: TextStyle(
+                                    //             fontSize: a.width / 15,
+                                    //             fontWeight: FontWeight.bold)),
+                                    //   ),
+                                    //   //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
+                                    //   onTap: () {
+                                    //     if (_key.currentState.validate()) {
+                                    //       _key.currentState.save();
+                                    //       Navigator.pop(context);
+                                    //       Navigator.push(
+                                    //           context,
+                                    //           MaterialPageRoute(
+                                    //             builder: (context) =>
+                                    //                 FriendList(
+                                    //               doc: widget.doc,
+                                    //               data: {
+                                    //                 'text': text,
+                                    //                 'public': public
+                                    //               },
+                                    //             ),
+                                    //           ));
+                                    //     }
+                                    //   },
+                                    // )
                                   ],
                                 ),
                               )
