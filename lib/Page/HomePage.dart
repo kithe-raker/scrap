@@ -715,7 +715,7 @@ class _HomePageState extends State<HomePage> {
           int drop = 0;
           String txt = "กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย";
           return AlertDialog(
-              insetPadding: EdgeInsets.zero,
+              //insetPadding: EdgeInsets.zero,
               backgroundColor: Colors.transparent,
               content: StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
