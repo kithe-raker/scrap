@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/services/admob_service.dart';
-
+import 'dart:math' as math;
 class GridTopScrap extends StatefulWidget {
   @override
   _GridTopScrapState createState() => _GridTopScrapState();
@@ -117,11 +117,48 @@ class _GridTopScrapState extends State<GridTopScrap> {
         width: a.width / 2.2,
         height: (a.width / 2.1) * 1.21,
         color: Colors.white,
-        child: Center(
-          child: Text(
-            data['text'],
-            style: TextStyle(fontSize: 32),
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              margin: EdgeInsets.all(a.width / 45),
+              alignment: Alignment.center,
+              width: a.width / 6,
+              height: a.width / 13,
+              decoration: BoxDecoration(
+                  color: Color(0xff2D2D2F),
+                  borderRadius: BorderRadius.circular(a.width / 80)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text(
+                    "1.2K",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: a.width / 20),
+                  ),
+                  Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.rotationY(math.pi),
+                    child: Icon(
+                      Icons.sms,
+                      color: Colors.white,
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
+            Center(
+              child: Text(
+                data['text'],
+                style: TextStyle(fontSize: 32),
+              ),
+            ),
+          ],
         ),
       ),
       onTap: () {},
