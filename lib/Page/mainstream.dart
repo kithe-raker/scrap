@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
+import 'package:scrap/function/realtimeDB/ConfigDatabase.dart';
 import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 
@@ -18,6 +19,12 @@ class _MainStreamState extends State<MainStream> {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  @override
+  void initState() {
+    confgiDB.initRTDB(context);
+    super.initState();
   }
 
   @override

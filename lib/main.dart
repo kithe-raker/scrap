@@ -10,6 +10,7 @@ import 'package:scrap/Page/GridFollowing.dart';
 
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/provider/AdsCounter.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart' as prov;
 import 'package:scrap/widget/personcard.dart';
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AdsCounterProvider>.value(
-            value: AdsCounterProvider())
+            value: AdsCounterProvider()),
+        ChangeNotifierProvider<RealtimeDB>.value(value: RealtimeDB())
       ],
       child: prov.Provider(
         auth: Auth(),

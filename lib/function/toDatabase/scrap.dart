@@ -95,6 +95,7 @@ class Scraps {
             .collection('Users/${doc['uid']}/history')
             .document(docId),
         scrap);
+    batch.commit();
     update(docId, doc['uid']);
     increaseTransaction(doc['uid'], 'written');
   }
