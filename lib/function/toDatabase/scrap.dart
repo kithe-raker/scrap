@@ -80,16 +80,17 @@ class Scraps {
       {@required String text, @required bool public}) async {
     final user = Provider.of<UserData>(context, listen: false);
     final db = Provider.of<RealtimeDB>(context, listen: false);
+    var allScrap = FirebaseDatabase(app: db.scrapAll);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
     var batch = Firestore.instance.batch();
-    GeoFirePoint point;
-    await Geolocator().getCurrentPosition().then((value) => point =
-        Geoflutterfire()
-            .point(latitude: value.latitude, longitude: value.longitude));
+    var location = await Geolocator().getCurrentPosition();
+    GeoFirePoint point = Geoflutterfire()
+        .point(latitude: location.latitude, longitude: location.longitude);
     var ref = Firestore.instance.collection(
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
+    var trans = {'comment': 0, 'like': 0, 'picked': 0, 'id': docId, 'point': 0};
     Map scrap = {
       'id': docId,
       'uid': doc['uid'],
@@ -107,11 +108,13 @@ class Scraps {
             .document(docId),
         scrap);
     batch.commit();
+    FirebaseDatabase.instance.reference().child('scraps/$docId').set(trans);
+    allScrap.reference().child('scraps/$docId').set(trans);
     userDb
         .reference()
         .child('users/${doc['uid']}')
         .update({'papers': user.papers - 1});
-    increaseTransaction(doc['uid'], 'written');
+    // increaseTransaction(doc['uid'], 'written');
   }
 
   toHistory(String uid, String docID, String text) {
