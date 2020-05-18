@@ -1178,29 +1178,6 @@ class _HomePageState extends State<HomePage> {
                                   decoration: BoxDecoration(
                                     borderRadius:
                                         BorderRadius.circular(a.width),
-                                    color: Colors.white,
-                                  ),
-                                  child: Icon(Icons.restore,
-                                      color: Colors.black, size: a.width / 15),
-                                ),
-                                onTap: () {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             FriendList(doc: widget.doc)));
-                                },
-                              )),
-                          Container(
-                              height: a.width / 5,
-                              alignment: Alignment.center,
-                              child: InkWell(
-                                child: Container(
-                                  width: a.width / 10,
-                                  height: a.width / 10,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
                                     color: Color(0xff26A4FF),
                                   ),
                                   child: Icon(Icons.people,

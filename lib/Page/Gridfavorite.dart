@@ -25,6 +25,8 @@ class _GridfavoriteState extends State<Gridfavorite> {
 
   initScrap() async {
     scraps = await cacheHistory.readHistory(field: 'like');
+    scraps.sort((a, b) => DateTime.parse(a['timeStamp'])
+        .compareTo(DateTime.parse(b['timeStamp'])));
     setState(() => loading = false);
   }
 
