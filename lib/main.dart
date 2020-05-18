@@ -5,6 +5,7 @@ import 'package:scrap/Page/MainPage.dart';
 
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart' as prov;
 
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<AdsCounterProvider>.value(
             value: AdsCounterProvider()),
-        ChangeNotifierProvider<RealtimeDB>.value(value: RealtimeDB())
+        ChangeNotifierProvider<RealtimeDB>.value(value: RealtimeDB()),
+        ChangeNotifierProvider<UserData>.value(value: UserData())
       ],
       child: prov.Provider(
         auth: Auth(),

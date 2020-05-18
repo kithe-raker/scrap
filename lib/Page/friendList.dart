@@ -535,7 +535,7 @@ class _FriendListState extends State<FriendList> {
               FlatButton(
                 child: Text('ตกลง'),
                 onPressed: () async {
-                  scraps.throwTo(
+                  scraps.throwTo(context,
                       uid: widget.doc['uid'],
                       writer: widget.doc['id'],
                       thrownUID: accDoc['uid'],

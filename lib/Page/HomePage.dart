@@ -4,11 +4,13 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MapScraps.dart';
@@ -16,6 +18,8 @@ import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -32,7 +36,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String type, select, text, img;
-  int scraps;
+  int papers;
   bool public, initInfoFinish = false;
   var _key = GlobalKey<FormState>();
   Scraps scrap = Scraps();
@@ -1069,7 +1073,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 )),
                           ),
-                          InkWell(
+                          GestureDetector(
                             child: Container(
                               width: a.width / 3.8,
                               height: a.width / 3.8,
@@ -1104,9 +1108,9 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             onTap: () {
-                              if (scraps > 0) {
+                              if (papers > 0)
                                 dialog1();
-                              } else
+                              else
                                 toast('กระดาษคุณหมดแล้ว');
                             },
                           ),
@@ -1265,17 +1269,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget scrapLeft(Size scr) {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    final user = Provider.of<UserData>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
     return StreamBuilder(
-      stream: Firestore.instance
-          .collection('Users')
-          .document(widget.doc['uid'])
-          .collection('info')
-          .document(widget.doc['uid'])
-          .snapshots(),
-      builder: (context, snapshot) {
+      stream:
+          userDb.reference().child('users/${widget.doc['uid']}/papers').onValue,
+      builder: (context, AsyncSnapshot<Event> snapshot) {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.active) {
-          scraps = 15 - (snapshot?.data['scraps']?.length ?? 0);
+          papers = snapshot.data.snapshot?.value ?? 15;
+          WidgetsBinding.instance.addPostFrameCallback(
+              (_) => user.papers = snapshot.data.snapshot?.value ?? 15);
           return GestureDetector(
             child: Container(
               padding: EdgeInsets.fromLTRB(scr.width / 24, scr.width / 36,
@@ -1286,15 +1291,12 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.black26,
                       blurRadius: 6.0,
                       spreadRadius: 3.0,
-                      offset: Offset(
-                        0.0,
-                        3.2,
-                      ),
+                      offset: Offset(0.0, 3.2),
                     )
                   ],
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(scr.width / 14.2)),
-              child: scraps < 1
+              child: papers < 1
                   ? Text(
                       'กระดาษของคุณหมดแล้ว',
                       style: TextStyle(
@@ -1313,7 +1315,7 @@ class _HomePageState extends State<HomePage> {
                             children: <TextSpan>[
                               TextSpan(text: ' เหลือกระดาษ '),
                               TextSpan(
-                                  text: '$scraps',
+                                  text: '$papers',
                                   style: TextStyle(
                                       fontSize: scr.width / 16,
                                       fontWeight: FontWeight.bold)),
@@ -1328,7 +1330,7 @@ class _HomePageState extends State<HomePage> {
             ),
             //00
             onTap: () {
-              scraps == 0 ? toast('กระดาษของคุณยังเต็มอยู่') : dialogvideo();
+              papers == 15 ? toast('กระดาษของคุณยังเต็มอยู่') : dialogvideo();
               // warnClear(snapshot?.data);
             },
           );
@@ -1471,7 +1473,8 @@ class _HomePageState extends State<HomePage> {
                                                 if (event ==
                                                     MobileAdEvent.impression) {
                                                   await scrap.resetScrap(
-                                                      widget.doc['uid']);
+                                                      context,
+                                                      uid: widget.doc['uid']);
                                                   setState(
                                                       () => loading = false);
                                                   Navigator.pop(context);
@@ -1501,57 +1504,6 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                ),
-                loading ? Loading() : SizedBox()
-              ],
-            );
-          });
-        });
-  }
-
-  warnClear(DocumentSnapshot data) {
-    bool loading = false;
-    showDialog(
-        context: context,
-        builder: (builder) {
-          return StatefulBuilder(builder: (context, StateSetter setState) {
-            return Stack(
-              children: <Widget>[
-                AlertDialog(
-                  backgroundColor: Colors.white,
-                  title: Text('คุณต้องขอกระดาษใหม่ใช่หรือไม่'),
-                  content: Text(
-                      'หลังจากขอกระดาษใหม่กระดาษที่คุณทิ้งไว้จะหายไปทั้งหมด'),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('ยกเลิก'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    FlatButton(
-                      child: Text('ขอกระดาษใหม่'),
-                      onPressed: () async {
-                        setState(() => loading = true);
-                        InterstitialAd(
-                            adUnitId: AdmobService().getVideoAdId(),
-                            listener: (event) async {
-                              if (event == MobileAdEvent.impression) {
-                                await scrap.resetScrap(widget.doc['uid']);
-                                setState(() => loading = false);
-                                Navigator.pop(context);
-                              } else if (event == MobileAdEvent.failedToLoad ||
-                                  event == MobileAdEvent.leftApplication) {
-                                toast('เกิดข้อผิดพลาดกรุณาลองอีกครั้ง');
-                                setState(() => loading = false);
-                                Navigator.pop(context);
-                              }
-                            })
-                          ..load()
-                          ..show();
-                      },
-                    )
-                  ],
                 ),
                 loading ? Loading() : SizedBox()
               ],

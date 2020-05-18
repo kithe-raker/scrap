@@ -7,13 +7,17 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/UserData.dart';
 
 class Scraps {
-  throwTo(
+  throwTo(BuildContext context,
       {@required String uid,
       @required String writer,
       @required String thrownUID,
       @required String text}) {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    final user = Provider.of<UserData>(context, listen: false);
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
     String date = DateFormat('d/M/y').format(now);
@@ -30,7 +34,7 @@ class Scraps {
         ])
       }
     }, merge: true);
-    update(now.millisecondsSinceEpoch, uid);
+    userDb.reference().child('users/$uid').update({'papers': user.papers - 1});
     notifaication(thrownUID, date, time, writer);
     updateHistory(uid, thrownUID);
     increaseTransaction(uid, 'written');
@@ -74,6 +78,7 @@ class Scraps {
 
   binScrap(DocumentSnapshot doc, BuildContext context,
       {@required String text, @required bool public}) async {
+    final user = Provider.of<UserData>(context, listen: false);
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
@@ -102,20 +107,11 @@ class Scraps {
             .document(docId),
         scrap);
     batch.commit();
-    update(docId, doc['uid']);
+    userDb
+        .reference()
+        .child('users/${doc['uid']}')
+        .update({'papers': user.papers - 1});
     increaseTransaction(doc['uid'], 'written');
-  }
-
-  update(dynamic id, String uid) {
-    Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .updateData({
-      'scraps': FieldValue.arrayUnion([id])
-    });
-    //need to change structure
   }
 
   toHistory(String uid, String docID, String text) {
@@ -137,13 +133,10 @@ class Scraps {
     }, merge: true);
   }
 
-  resetScrap(String uid) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .updateData({'scraps': []});
+  resetScrap(BuildContext context, {@required String uid}) async {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    await userDb.reference().child('users/$uid').update({'papers': 15});
     toast('คุณได้รับกระดาษเพิ่มแล้ว');
   }
 

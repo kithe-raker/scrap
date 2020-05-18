@@ -712,12 +712,11 @@ class _SearchState extends State<Search> {
                     Navigator.pop(context);
                     Navigator.pop(context);
                     Navigator.pop(context);
-                    await scraps.throwTo(
-                      uid: widget.doc['uid'],
-                      writer: widget.doc['id'],
-                      thrownUID: thrownUID,
-                      text: widget.data['text'],
-                    );
+                    await scraps.throwTo(context,
+                        uid: widget.doc['uid'],
+                        writer: widget.doc['id'],
+                        thrownUID: thrownUID,
+                        text: widget.data['text']);
                     toast('ปาใส่"$user"แล้ว');
                   }
                 },

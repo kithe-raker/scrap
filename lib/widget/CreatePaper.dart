@@ -281,7 +281,7 @@ class _WriteScrapState extends State<WriteScrap> {
                                     } else {
                                       Navigator.pop(context);
                                       scraps.toast('ปาใส่"${widget.tID}"แล้ว');
-                                      await scraps.throwTo(
+                                      await scraps.throwTo(context,
                                           uid: widget.uid,
                                           writer: widget.id,
                                           thrownUID: widget.thrownUID,
