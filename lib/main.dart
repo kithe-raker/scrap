@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/provider/AdsCounter.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart' as prov;
 import 'package:firebase_admob/firebase_admob.dart';
@@ -30,7 +31,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AdsCounterProvider>.value(
-            value: AdsCounterProvider())
+            value: AdsCounterProvider()),
+        ChangeNotifierProvider<RealtimeDB>.value(value: RealtimeDB())
       ],
       child: prov.Provider(
         auth: Auth(),
