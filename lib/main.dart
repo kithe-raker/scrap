@@ -1,16 +1,15 @@
-import 'package:admob_flutter/admob_flutter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart' as prov;
-import 'package:firebase_admob/firebase_admob.dart';
 
-import 'Page/Auth.dart';
+
+
 
 const String testDevice = "34C215009965F34F";
 
