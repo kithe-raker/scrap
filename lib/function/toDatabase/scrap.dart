@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
 
 class Scraps {
   throwTo(
@@ -69,7 +72,10 @@ class Scraps {
     //chage this fucking function too
   }
 
-  binScrap(String text, bool public, DocumentSnapshot doc) async {
+  binScrap(DocumentSnapshot doc, BuildContext context,
+      {@required String text, @required bool public}) async {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
     var batch = Firestore.instance.batch();
     GeoFirePoint point;
@@ -84,7 +90,7 @@ class Scraps {
       'uid': doc['uid'],
       'scrap': {
         'text': text,
-        'user': public ?? false ? doc['id'] : 'ไม่ระบุตัวตน',
+        'writer': public ?? false ? doc['id'] : 'ไม่ระบุตัวตน',
         'timeStamp': FieldValue.serverTimestamp(),
       },
       'position': point.data
