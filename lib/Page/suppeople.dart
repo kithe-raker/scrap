@@ -141,7 +141,7 @@ class _SubpeopleState extends State<Subpeople> {
                                             hintStyle: TextStyle(
                                                 fontSize: a.width / 18,
                                                 color: Colors.grey[600],
-                                                height: a.width / 130),
+                                                height: a.width / 150),
 
                                             // labelText: 'Life story',
                                           ),
