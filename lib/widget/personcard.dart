@@ -12,7 +12,7 @@ class _PersoncardState extends State<Personcard> {
     return Container(
       width: a.width,
       height: a.width / 5,
-      margin: EdgeInsets.only(bottom: a.width / 100),
+      margin: EdgeInsets.only(bottom: a.width / 100, left: a.width / 100),
       child: Row(
         children: <Widget>[
           Container(
@@ -28,6 +28,7 @@ class _PersoncardState extends State<Personcard> {
           Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text("@someone",
                     style: TextStyle(
@@ -60,7 +61,7 @@ class _Personcard1State extends State<Personcard1> {
     return Container(
       width: a.width,
       height: a.width / 5,
-      margin: EdgeInsets.only(bottom: a.width / 100),
+      margin: EdgeInsets.only(bottom: a.width / 100, left: a.width / 100),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +100,7 @@ class _Personcard1State extends State<Personcard1> {
           Container(
             width: a.width / 6,
             height: a.width / 10,
-            margin: EdgeInsets.only(top:a.width/30),
+            margin: EdgeInsets.only(top: a.width / 30),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(a.width),
                 color: Colors.white),
