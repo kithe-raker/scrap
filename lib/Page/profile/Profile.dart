@@ -1244,7 +1244,7 @@ class _ProfileState extends State<Profile> {
                                         : 'ปากลับใส่"$thrown"แล้ว');
                                     Navigator.pop(context);
                                     Navigator.pop(context);
-                                    scraps.throwTo(
+                                    scraps.throwTo(context,
                                         uid: widget.doc['uid'],
                                         writer: widget.doc['id'],
                                         thrownUID: id,

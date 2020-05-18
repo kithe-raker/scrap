@@ -1,16 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/UserData.dart';
 
 class Scraps {
-  throwTo(
+  throwTo(BuildContext context,
       {@required String uid,
       @required String writer,
       @required String thrownUID,
       @required String text}) {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    final user = Provider.of<UserData>(context, listen: false);
     DateTime now = DateTime.now();
     String time = DateFormat('Hm').format(now);
     String date = DateFormat('d/M/y').format(now);
@@ -27,7 +34,7 @@ class Scraps {
         ])
       }
     }, merge: true);
-    update(now.millisecondsSinceEpoch, uid);
+    userDb.reference().child('users/$uid').update({'papers': user.papers - 1});
     notifaication(thrownUID, date, time, writer);
     updateHistory(uid, thrownUID);
     increaseTransaction(uid, 'written');
@@ -69,22 +76,27 @@ class Scraps {
     //chage this fucking function too
   }
 
-  binScrap(String text, bool public, DocumentSnapshot doc) async {
+  binScrap(DocumentSnapshot doc, BuildContext context,
+      {@required String text, @required bool public}) async {
+    final user = Provider.of<UserData>(context, listen: false);
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var allScrap = FirebaseDatabase(app: db.scrapAll);
+    var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
     var batch = Firestore.instance.batch();
-    GeoFirePoint point;
-    await Geolocator().getCurrentPosition().then((value) => point =
-        Geoflutterfire()
-            .point(latitude: value.latitude, longitude: value.longitude));
+    var location = await Geolocator().getCurrentPosition();
+    GeoFirePoint point = Geoflutterfire()
+        .point(latitude: location.latitude, longitude: location.longitude);
     var ref = Firestore.instance.collection(
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
+    var trans = {'comment': 0, 'like': 0, 'picked': 0, 'id': docId, 'point': 0};
     Map scrap = {
       'id': docId,
       'uid': doc['uid'],
       'scrap': {
         'text': text,
-        'user': public ?? false ? doc['id'] : 'ไม่ระบุตัวตน',
+        'writer': public ?? false ? doc['id'] : 'ไม่ระบุตัวตน',
         'timeStamp': FieldValue.serverTimestamp(),
       },
       'position': point.data
@@ -96,20 +108,13 @@ class Scraps {
             .document(docId),
         scrap);
     batch.commit();
-    update(docId, doc['uid']);
-    increaseTransaction(doc['uid'], 'written');
-  }
-
-  update(dynamic id, String uid) {
-    Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .updateData({
-      'scraps': FieldValue.arrayUnion([id])
-    });
-    //need to change structure
+    FirebaseDatabase.instance.reference().child('scraps/$docId').set(trans);
+    allScrap.reference().child('scraps/$docId').set(trans);
+    userDb
+        .reference()
+        .child('users/${doc['uid']}')
+        .update({'papers': user.papers - 1});
+    // increaseTransaction(doc['uid'], 'written');
   }
 
   toHistory(String uid, String docID, String text) {
@@ -131,13 +136,10 @@ class Scraps {
     }, merge: true);
   }
 
-  resetScrap(String uid) async {
-    await Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document(uid)
-        .updateData({'scraps': []});
+  resetScrap(BuildContext context, {@required String uid}) async {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    await userDb.reference().child('users/$uid').update({'papers': 15});
     toast('คุณได้รับกระดาษเพิ่มแล้ว');
   }
 

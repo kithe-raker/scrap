@@ -96,7 +96,7 @@ class _MapScrapsState extends State<MapScraps> {
     return ref.once();
   }
 
-  void updateScrapTrans(String field, DocumentSnapshot doc) {
+  void updateScrapTrans(String field, DocumentSnapshot doc, {int comments}) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     var defaultDb = FirebaseDatabase.instance;
@@ -125,9 +125,7 @@ class _MapScrapsState extends State<MapScraps> {
         pickScrap(doc.data, cancel: true);
     } else {
       history[field].add(doc.documentID);
-      cacheHistory.addHistory(
-          doc.documentID, doc['scrap']['time'].toDate(), doc['scrap']['user'],
-          field: field);
+      cacheHistory.addHistory(doc, field: field, comments: comments);
       defaultDb.reference().child(ref).once().then((mutableData) {
         defaultDb.reference().child(ref).update({
           field: mutableData.value[field] - 1,
@@ -668,7 +666,9 @@ class _MapScrapsState extends State<MapScraps> {
                                                           ? ++like
                                                           : --like;
                                                       updateScrapTrans(
-                                                          'like', data);
+                                                          'like', data,
+                                                          comments: trans.value[
+                                                              'comment']);
 
                                                       setTrans(() {});
                                                     },

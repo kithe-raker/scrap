@@ -1,5 +1,9 @@
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/function/cacheManage/HistoryUser.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'dart:math' as math;
 
@@ -10,11 +14,25 @@ class Gridfavorite extends StatefulWidget {
 
 class _GridfavoriteState extends State<Gridfavorite> {
   int page = 0;
+  List scraps = [];
+  bool loading = true;
+
+  @override
+  void initState() {
+    initScrap();
+    super.initState();
+  }
+
+  initScrap() async {
+    scraps = await cacheHistory.readHistory(field: 'like');
+    scraps.sort((a, b) => DateTime.parse(a['timeStamp'])
+        .compareTo(DateTime.parse(b['timeStamp'])));
+    setState(() => loading = false);
+  }
 
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -58,11 +76,11 @@ class _GridfavoriteState extends State<Gridfavorite> {
                 ],
               ),
             ),
-            page == 0
+            scraps.length > 0
                 ? Container(
                     width: a.width,
                     height: a.height,
-                    margin: EdgeInsets.only(top: a.width / 5),
+                    margin: EdgeInsets.only(top: a.width / 5.4),
                     child: ListView(
                       physics: BouncingScrollPhysics(),
                       children: <Widget>[
@@ -70,14 +88,8 @@ class _GridfavoriteState extends State<Gridfavorite> {
                             spacing: a.width / 42,
                             runSpacing: a.width / 42,
                             alignment: WrapAlignment.center,
-                            children: [
-                              block('1'),
-                              block('1'),
-                              block('2'),
-                              block('1'),
-                              block('1'),
-                              block('1'),
-                            ]),
+                            children:
+                                scraps.map((scrap) => block(scrap)).toList()),
                         SizedBox(height: a.width / 5)
                       ],
                     ),
@@ -101,18 +113,10 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                 color: Color(0xff3C3C3C),
                                 borderRadius: BorderRadius.circular(a.width)),
                           ),
-                          SizedBox(
-                            height: a.width / 20,
-                          ),
-                          text(
-                            "คุณยังไม่ได้ติดสแครปในวันนี้",
-                          ),
-                          text(
-                            "ลองกดหัวใจเพื่อการเคลื่อนไหว",
-                          ),
-                          text(
-                            "ในสแครปที่ดูสนใจสิ",
-                          )
+                          SizedBox(height: a.width / 20),
+                          text("คุณยังไม่ได้ติดสแครปในวันนี้"),
+                          text("ลองกดหัวใจเพื่อการเคลื่อนไหว"),
+                          text("ในสแครปที่ดูสนใจสิ")
                         ],
                       ),
                     )),
@@ -137,122 +141,81 @@ class _GridfavoriteState extends State<Gridfavorite> {
             fontSize: a.width / 15));
   }
 
-  Widget block(String name) {
+  Widget block(Map data) {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+    int ments;
     Size a = MediaQuery.of(context).size;
-    if (name == '1') {
-      return GestureDetector(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              width: a.width / 2.2,
-              height: (a.width / 2.1) * 1.21,
-              color: Colors.white,
-              child: Center(
-                child: Text(
-                  "datata",
-                  style: TextStyle(fontSize: 32),
-                ),
+    return GestureDetector(
+      child: Stack(
+        children: <Widget>[
+          Container(
+            width: a.width / 2.2,
+            height: (a.width / 2.1) * 1.21,
+            color: Colors.white,
+            child: Center(
+              child: Text(
+                data['text'],
+                style: TextStyle(fontSize: 32),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                margin: EdgeInsets.all(a.width / 45),
-                alignment: Alignment.center,
-                width: a.width / 5.5,
-                height: a.width / 11,
-                decoration: BoxDecoration(
-                    color: Color(0xfff707070),
-                    borderRadius: BorderRadius.circular(a.width / 80)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      "1.2K",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: a.width / 20),
-                    ),
-                    Transform(
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: FutureBuilder(
+                future:
+                    scrapAll.reference().child('scraps/${data['id']}').once(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    ments = snapshot.data.value['comment'];
+                    return Container(
+                      margin: EdgeInsets.all(a.width / 45),
                       alignment: Alignment.center,
-                      transform: Matrix4.rotationY(math.pi),
-                      child: Icon(
-                        Icons.sms,
-                        color: Colors.white,
+                      width: a.width / 5.5,
+                      height: a.width / 11,
+                      decoration: BoxDecoration(
+                          color: ments == data['comments']
+                              ? Color(0xfff707070)
+                              : Color(0xfff0077CC),
+                          borderRadius: BorderRadius.circular(a.width / 80)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            '${ments.abs()}',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: a.width / 20),
+                          ),
+                          Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(math.pi),
+                            child: Icon(
+                              Icons.sms,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: a.width / 64)
+                        ],
                       ),
-                    ),
-                    Container(
-                      child: Text(' '),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        onTap: () {
-          // controller.refreshCompleted();
-        },
-      );
-    } else {
-      return GestureDetector(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              width: a.width / 2.2,
-              height: (a.width / 2.1) * 1.21,
-              color: Colors.white,
-              child: Center(
-                child: Text(
-                  "Kuay",
-                  style: TextStyle(fontSize: 32),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                margin: EdgeInsets.all(a.width / 45),
-                alignment: Alignment.center,
-                width: a.width / 5.5,
-                height: a.width / 11,
-                decoration: BoxDecoration(
-                    color: Color(0xfff0077CC),
-                    borderRadius: BorderRadius.circular(a.width / 80)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      "1.2K",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: a.width / 20),
-                    ),
-                    Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(math.pi),
-                      child: Icon(
-                        Icons.sms,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Container(
-                      child: Text(' '),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        onTap: () {
-          // controller.refreshCompleted();
-        },
-      );
-    }
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                }),
+          ),
+        ],
+      ),
+      onTap: () {
+        if (ments != null) {
+          cacheHistory.updateFollowingScrap(data['id'], ments);
+          scraps.firstWhere((scrap) => scrap['id'] == data['id'])['comments'] =
+              ments;
+          setState(() {});
+        }
+      },
+    );
   }
 }

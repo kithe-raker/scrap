@@ -583,7 +583,7 @@ class _ViewprofileState extends State<Viewprofile> {
                     Navigator.pop(context);
                     Navigator.pop(context);
                     Navigator.pop(context, true);
-                    await scraps.throwTo(
+                    await scraps.throwTo(context,
                         uid: widget.self['uid'],
                         thrownUID: thrownUID,
                         text: widget.data['text'],
@@ -782,11 +782,11 @@ class _ViewprofileState extends State<Viewprofile> {
                                     } else {
                                       Navigator.pop(context);
                                       Navigator.pop(context, true);
-                                      await scraps.throwTo(
-                                          uid: widget.self['uid'],
-                                          thrownUID: uid,
-                                          text: text,
-                                          writer: widget.self['id']);
+                                      // await scraps.throwTo(
+                                      //     uid: widget.self['uid'],
+                                      //     thrownUID: uid,
+                                      //     text: text,
+                                      //     writer: widget.self['id']);
                                       Taoast().toast('ปาใส่"$id"แล้ว');
                                     }
                                   }
