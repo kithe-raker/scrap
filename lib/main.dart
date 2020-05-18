@@ -5,9 +5,10 @@ import 'package:scrap/Page/GridFollowing.dart';
 import 'package:scrap/Page/GridTopScrap.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
+import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/GridFollowing.dart';
-
+import 'package:scrap/Page/allfollower.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';

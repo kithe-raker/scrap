@@ -2,6 +2,8 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/personcard.dart';
+import 'package:scrap/Page/allfollower.dart';
+import 'package:scrap/widget/personcard.dart';
 
 TextEditingController checktext = TextEditingController();
 
@@ -88,7 +90,7 @@ class _SubpeopleState extends State<Subpeople> {
                               fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
-                          height: a.width / 15,
+                          height: a.width / 30,
                         ),
                         page == 0
                             ? InkWell(
@@ -274,22 +276,32 @@ class _SubpeopleState extends State<Subpeople> {
                                                 fontSize: a.width / 15,
                                                 fontWeight: FontWeight.bold),
                                           ),
-                                          Row(
-                                            children: <Widget>[
-                                              Text(
-                                                "ทั้งหมด",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: a.width / 15,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Icon(
-                                                Icons.keyboard_arrow_right,
-                                                color: Colors.white,
-                                                size: a.width / 15,
-                                              )
-                                            ],
+                                          GestureDetector(
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  "ทั้งหมด",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: a.width / 15,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Icon(
+                                                  Icons.keyboard_arrow_right,
+                                                  color: Colors.white,
+                                                  size: a.width / 15,
+                                                )
+                                              ],
+                                            ),
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Allfollower()),
+                                              );
+                                            },
                                           )
                                         ],
                                       ),
