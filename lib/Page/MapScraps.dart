@@ -100,6 +100,7 @@ class _MapScrapsState extends State<MapScraps> {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     var defaultDb = FirebaseDatabase.instance;
+    // var userDb = FirebaseDatabase(app: db.userTransact);
     var ref = 'scraps/${doc.documentID}';
 
     if (inHistory(field, doc.documentID)) {

@@ -14,66 +14,30 @@ class Scraps {
       {@required String uid,
       @required String writer,
       @required String thrownUID,
+      @required bool public,
       @required String text}) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     final user = Provider.of<UserData>(context, listen: false);
-    DateTime now = DateTime.now();
-    String time = DateFormat('Hm').format(now);
-    String date = DateFormat('d/M/y').format(now);
-    Firestore.instance
+    var ref = Firestore.instance
         .collection('Users')
         .document(thrownUID)
-        .collection('scraps')
-        .document('recently')
-        .setData({
-      'id': FieldValue.arrayUnion([uid]),
-      'scraps': {
-        uid: FieldValue.arrayUnion([
-          {'text': text, 'writer': writer, 'time': now}
-        ])
+        .collection('scrapCrate');
+    var docId = ref.document().documentID;
+    ref.document(docId).setData({
+      'uid': uid,
+      'scrap': {
+        'text': text,
+        'writer': public ?? false ? writer : 'ไม่ระบุตัวตน',
+        'timeStamp': FieldValue.serverTimestamp()
       }
-    }, merge: true);
+    });
     userDb.reference().child('users/$uid').update({'papers': user.papers - 1});
-    notifaication(thrownUID, date, time, writer);
-    updateHistory(uid, thrownUID);
-    increaseTransaction(uid, 'written');
-    increaseTransaction(thrownUID, 'threw');
-  }
-
-  updateHistory(String uid, String thrown) {
-    Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document('searchHist')
-        .updateData({
-      'history': FieldValue.arrayUnion([thrown])
-    });
-  }
-
-  notifaication(String who, String date, String time, String writer) {
-    Firestore.instance.collection('Notifications').add({'uid': who});
-    Firestore.instance
-        .collection('Users')
-        .document(who)
-        .collection('notification')
-        .add({
-      'writer': writer,
-      'date': date,
-      'time': time,
-      'timeStamp': FieldValue.serverTimestamp()
-    });
-  }
-
-  increaseTransaction(String uid, String key) {
-    // Firestore.instance
-    //     .collection('Users')
-    //     .document(uid)
-    //     .collection('info')
-    //     .document(uid)
-    //     .updateData({key: FieldValue.increment(1)});
-    //chage this fucking function too
+    userDb.reference().child('users/$thrownUID/thrown').once().then((data) =>
+        userDb
+            .reference()
+            .child('users/$thrownUID')
+            .update({'thrown': data.value + 1}));
   }
 
   binScrap(DocumentSnapshot doc, BuildContext context,
@@ -115,25 +79,6 @@ class Scraps {
         .child('users/${doc['uid']}')
         .update({'papers': user.papers - 1});
     // increaseTransaction(doc['uid'], 'written');
-  }
-
-  toHistory(String uid, String docID, String text) {
-    DateTime now = DateTime.now();
-    String date = DateFormat('y,M,d').format(now);
-    String dateRef = DateFormat('yyyyMMdd').format(now);
-    Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('history')
-        .document(date)
-        .setData({
-      'scrapID': FieldValue.arrayUnion([docID]),
-      docID: 0,
-      'date': dateRef,
-      'Scraps': {
-        docID: {'text': text, 'time': now}
-      }
-    }, merge: true);
   }
 
   resetScrap(BuildContext context, {@required String uid}) async {
