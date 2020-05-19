@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-<<<<<<< HEAD
 import 'package:scrap/Page/GridFollowing.dart';
 import 'package:scrap/Page/GridTopScrap.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
@@ -11,15 +10,18 @@ import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/GridFollowing.dart';
 import 'package:scrap/Page/allfollower.dart';
 import 'package:scrap/Page/suppeople.dart';
-=======
-import 'package:scrap/Page/MainPage.dart';
-
->>>>>>> a927f1c68b221f67b2c9d72c208bd12678596561
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart' as prov;
+import 'package:scrap/widget/showdialogfinishpaper.dart';
+import 'package:scrap/widget/showdialogreport.dart';
+import 'package:scrap/widget/showdialogblock.dart';
+import 'package:scrap/widget/beforeburn.dart';
+import 'package:scrap/widget/burnt.dart';
+import 'package:scrap/widget/notburnt.dart';
+import 'package:scrap/widget/showcontract.dart';
 
 const String testDevice = "34C215009965F34F";
 

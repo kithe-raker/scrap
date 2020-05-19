@@ -67,8 +67,9 @@ void showAlert(BuildContext context) {
                                         ),
                                         Container(
                                           child: Text(
-                                            "\t" + "เปิดเผยตัวตน",
+                                            "\t" + "ไม่ระบุตัวตน",
                                             style: TextStyle(
+                                                fontWeight: FontWeight.bold,
                                                 color: Colors.white,
                                                 fontSize: a.width / 20),
                                           ),
@@ -173,7 +174,7 @@ void showAlert(BuildContext context) {
                                         child: Text("ปาใส่",
                                             style: TextStyle(
                                                 color: Color(0xff26A4FF),
-                                                fontSize: a.width / 15,
+                                                fontSize: a.width / 18,
                                                 fontWeight: FontWeight.bold)),
                                       ),
                                       //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
