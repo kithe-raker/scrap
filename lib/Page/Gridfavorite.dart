@@ -519,7 +519,11 @@ class _GridfavoriteState extends State<Gridfavorite> {
           Container(
             width: a.width / 2.2,
             height: (a.width / 2.1) * 1.21,
-            color: Colors.white,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                image: DecorationImage(
+                    image: AssetImage('assets/paper-readed.png'),
+                    fit: BoxFit.cover)),
             child: Center(
               child: Text(
                 data['text'],
