@@ -47,24 +47,24 @@ class HistoryUser {
     return listId;
   }
 
-  Future<void> addHistory(DocumentSnapshot doc,
+  Future<void> addHistory(DocumentSnapshot scrap,
       {@required String field, int comments}) async {
     final file = await _localFile;
     var map = await read();
     var cache = comments != null
         ? {
-            'id': doc.documentID,
-            'comments': comments,
-            'text': doc['scrap']['text'],
-            'writer': doc['scrap']['writer'],
+            'id': scrap.documentID,
+            'path': scrap.reference.parent().path,
             'when': DateFormat('yyyyMMdd HH:mm:ss').format(DateTime.now()),
+            'text': scrap['scrap']['text'],
             'timeStamp': DateFormat('yyyyMMdd HH:mm:ss')
-                .format(doc['scrap']['time'].toDate())
+                .format(scrap['scrap']['timeStamp'].toDate()),
+            'comments': comments
           }
         : {
-            'id': doc.documentID,
+            'id': scrap.documentID,
             'timeStamp': DateFormat('yyyyMMdd HH:mm:ss')
-                .format(doc['scrap']['time'].toDate())
+                .format(scrap['scrap']['timeStamp'].toDate())
           };
     map[field].add(cache);
     await file.writeAsString(json.encode(map));

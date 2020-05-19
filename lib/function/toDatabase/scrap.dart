@@ -1,15 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/services/provider.dart' as prov;
 
 class Scraps {
+  final FirebaseMessaging fcm = FirebaseMessaging();
+
   throwTo(BuildContext context,
       {@required String uid,
       @required String writer,
@@ -81,6 +86,83 @@ class Scraps {
     // increaseTransaction(doc['uid'], 'written');
   }
 
+  void updateScrapTrans(
+      String field, DocumentSnapshot scrap, BuildContext context,
+      {int comments}) async {
+    Map<String, List> history = {};
+    history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
+    history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
+    final uid = await prov.Provider.of(context).auth.currentUser();
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+    var defaultDb = FirebaseDatabase.instance;
+    // var userDb = FirebaseDatabase(app: db.userTransact);
+    var ref = 'scraps/${scrap.documentID}';
+
+    if (history[field].contains(scrap.documentID)) {
+      cacheHistory.removeHistory(field, scrap.documentID);
+      scrapAll.reference().child(ref).once().then((mutableData) {
+        defaultDb.reference().child(ref).update({
+          field: mutableData.value[field] + 1,
+          'point': field == 'like'
+              ? mutableData.value['point'] + 1
+              : mutableData.value['point'] + 3
+        });
+        scrapAll.reference().child(ref).update({
+          field: mutableData.value[field] + 1,
+          'point': field == 'like'
+              ? mutableData.value['point'] + 1
+              : mutableData.value['point'] + 3
+        });
+      });
+      if (field == 'like')
+        fcm.unsubscribeFromTopic(scrap.documentID);
+      else
+        pickScrap(scrap.data, uid, cancel: true);
+    } else {
+      cacheHistory.addHistory(scrap, field: field, comments: comments);
+      defaultDb.reference().child(ref).once().then((mutableData) {
+        defaultDb.reference().child(ref).update({
+          field: mutableData.value[field] - 1,
+          'point': field == 'like'
+              ? mutableData.value['point'] - 1
+              : mutableData.value['point'] - 3
+        });
+        scrapAll.reference().child(ref).update({
+          field: mutableData.value[field] - 1,
+          'point': field == 'like'
+              ? mutableData.value['point'] - 1
+              : mutableData.value['point'] - 3
+        });
+      });
+
+      if (field == 'like')
+        fcm.subscribeToTopic(scrap.documentID);
+      else
+        pickScrap(scrap.data, uid);
+    }
+  }
+
+  pickScrap(Map scrap, String uid, {bool cancel = false}) {
+    if (cancel) {
+      Firestore.instance
+          .collection('Users')
+          .document(uid)
+          .collection('scrapCollection')
+          .document(scrap['id'])
+          .delete();
+    } else {
+      scrap['picker'] = uid;
+      scrap['timeStamp'] = FieldValue.serverTimestamp();
+      Firestore.instance
+          .collection('Users')
+          .document(uid)
+          .collection('scrapCollection')
+          .document(scrap['id'])
+          .setData(scrap);
+    }
+  }
+
   resetScrap(BuildContext context, {@required String uid}) async {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
@@ -115,3 +197,5 @@ class Scraps {
         fontSize: 16.0);
   }
 }
+
+final scrap = Scraps();
