@@ -3,10 +3,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:admob_flutter/admob_flutter.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,10 +12,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
-import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/scrapFilter.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/AdsCounter.dart';
@@ -25,6 +21,8 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/sheets/CommentSheet.dart';
+import 'package:scrap/widget/sheets/MapSheet.dart';
 
 class MapScraps extends StatefulWidget {
   final String uid;
@@ -50,7 +48,6 @@ class _MapScrapsState extends State<MapScraps> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   GoogleMapController mapController;
-  FirebaseMessaging fcm = FirebaseMessaging();
   DateTime now = DateTime.now();
   Set ads = {};
   Map randData = {};
@@ -96,59 +93,6 @@ class _MapScrapsState extends State<MapScraps> {
     return ref.once();
   }
 
-  void updateScrapTrans(String field, DocumentSnapshot doc, {int comments}) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var defaultDb = FirebaseDatabase.instance;
-    // var userDb = FirebaseDatabase(app: db.userTransact);
-    var ref = 'scraps/${doc.documentID}';
-
-    if (inHistory(field, doc.documentID)) {
-      history[field].remove(doc.documentID);
-      cacheHistory.removeHistory(field, doc.documentID);
-      scrapAll.reference().child(ref).once().then((mutableData) {
-        defaultDb.reference().child(ref).update({
-          field: mutableData.value[field] + 1,
-          'point': field == 'like'
-              ? mutableData.value['point'] + 1
-              : mutableData.value['point'] + 3
-        });
-        scrapAll.reference().child(ref).update({
-          field: mutableData.value[field] + 1,
-          'point': field == 'like'
-              ? mutableData.value['point'] + 1
-              : mutableData.value['point'] + 3
-        });
-      });
-      if (field == 'like')
-        fcm.unsubscribeFromTopic(doc.documentID);
-      else
-        pickScrap(doc.data, cancel: true);
-    } else {
-      history[field].add(doc.documentID);
-      cacheHistory.addHistory(doc, field: field, comments: comments);
-      defaultDb.reference().child(ref).once().then((mutableData) {
-        defaultDb.reference().child(ref).update({
-          field: mutableData.value[field] - 1,
-          'point': field == 'like'
-              ? mutableData.value['point'] - 1
-              : mutableData.value['point'] - 3
-        });
-        scrapAll.reference().child(ref).update({
-          field: mutableData.value[field] - 1,
-          'point': field == 'like'
-              ? mutableData.value['point'] - 1
-              : mutableData.value['point'] - 3
-        });
-      });
-
-      if (field == 'like')
-        fcm.subscribeToTopic(doc.documentID);
-      else
-        pickScrap(doc.data);
-    }
-  }
-
   error(BuildContext context, String sub) {
     showDialog(
       context: context,
@@ -178,277 +122,17 @@ class _MapScrapsState extends State<MapScraps> {
     );
   }
 
-  commentSheet(DocumentSnapshot scrapSnapshot) {
-    bool canSend = false;
-    List commentList = [];
-    var controller = RefreshController();
-    TextEditingController comment = TextEditingController();
-    CollectionReference ref = Firestore.instance.collection(
-        'Users/${scrapSnapshot['uid']}/scraps/${scrapSnapshot.documentID}/comments');
-    return SizedBox(
-        width: screenWidthDp,
-        height: screenHeightDp / 1.18,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: false,
-          body: Container(
-            margin: EdgeInsets.only(top: screenWidthDp / 8.1),
-            decoration: BoxDecoration(
-                color: Color(0xff282828),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24))),
-            child: Column(
-              children: <Widget>[
-                Align(
-                    alignment: Alignment.topCenter,
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(top: 12, bottom: 4),
-                          width: screenWidthDp / 3.2,
-                          height: screenHeightDp / 81,
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.circular(screenHeightDp / 42),
-                            color: Color(0xff929292),
-                          ),
-                        )
-                      ],
-                    )),
-                Expanded(
-                  child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: screenWidthDp / 56),
-                      child: FutureBuilder(
-                          future: ref
-                              .orderBy('timeStamp', descending: true)
-                              .limit(8)
-                              .getDocuments(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              commentList.addAll(snapshot.data.documents);
-                              return StatefulBuilder(
-                                  builder: (context, StateSetter setComment) {
-                                return SmartRefresher(
-                                    enablePullUp: true,
-                                    enablePullDown: true,
-                                    controller: controller,
-                                    onRefresh: () {
-                                      setComment(() {});
-                                      controller.refreshCompleted();
-                                    },
-                                    onLoading: () async {
-                                      var docs = await ref
-                                          .orderBy('timeStamp',
-                                              descending: true)
-                                          .startAfterDocument(commentList.last)
-                                          .limit(8)
-                                          .getDocuments();
-                                      if (docs.documents.length > 0) {
-                                        commentList.addAll(docs.documents);
-                                        setComment(() {});
-                                        controller.loadComplete();
-                                      } else {
-                                        controller.loadNoData();
-                                      }
-                                    },
-                                    child: ListView(
-                                        children: commentList
-                                            .map((doc) => commentBox(doc))
-                                            .toList()));
-                              });
-                            } else {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                          })),
-                ),
-                StatefulBuilder(builder: (context, StateSetter setSheet) {
-                  comment.selection = TextSelection.fromPosition(
-                      TextPosition(offset: comment.text.length));
-                  return Container(
-                      width: screenWidthDp,
-                      height: screenHeightDp / 12,
-                      decoration: BoxDecoration(
-                          color: Color(0xff282828),
-                          border: Border(
-                              top: BorderSide(
-                                  color: Color(0xff414141), width: 1.2))),
-                      child: Row(
-                        children: <Widget>[
-                          SizedBox(width: screenWidthDp / 32),
-                          Expanded(
-                              child: Container(
-                            height: screenHeightDp / 17.4,
-                            padding: EdgeInsets.only(left: 10),
-                            decoration: BoxDecoration(
-                                color: Color(0xff313131),
-                                borderRadius: BorderRadius.circular(8)),
-                            child: TextField(
-                              controller: comment,
-                              onChanged: (val) {
-                                val.trim().length > 0
-                                    ? setSheet(() => canSend = true)
-                                    : setSheet(() => canSend = false);
-                                comment.text = val;
-                              },
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'พิมพ์อะไรสักอย่างสิ',
-                                  hintStyle: TextStyle(
-                                      color: Colors.white38,
-                                      fontSize: s48,
-                                      height: 0.72)),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: s48,
-                                  height: 0.72),
-                              textInputAction: TextInputAction.done,
-                              onSubmitted: (val) {
-                                addComment(
-                                    commentList, ref, scrapSnapshot.documentID,
-                                    comment: comment.text.trim());
-                                comment.clear();
-                                setSheet(() => canSend = false);
-                                controller.requestRefresh();
-                              },
-                            ),
-                          )),
-                          SizedBox(width: screenWidthDp / 32),
-                          GestureDetector(
-                            child: Icon(
-                              Icons.send,
-                              color: canSend
-                                  ? Color(0xff26A4FF)
-                                  : Color(0xff6C6C6C),
-                              size: s60,
-                            ),
-                            onTap: () {
-                              addComment(
-                                  commentList, ref, scrapSnapshot.documentID,
-                                  comment: comment.text);
-                              comment.clear();
-                              setSheet(() => canSend = false);
-                              controller.requestRefresh();
-                            },
-                          ),
-                          SizedBox(width: screenWidthDp / 32),
-                        ],
-                      ));
-                })
-              ],
-            ),
-          ),
-        ));
-  }
-
-  Widget commentBox(dynamic comment) {
-    return Container(
-        child: ListTile(
-      leading: ClipRRect(
-          borderRadius: BorderRadius.circular(screenWidthDp),
-          child: CachedNetworkImage(
-            imageUrl: comment['image'],
-            fit: BoxFit.cover,
-            width: screenWidthDp / 8.1,
-            height: screenWidthDp / 8.1,
-          )),
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
-        children: <Widget>[
-          Text(
-            '${comment['name']}',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: s48,
-                fontWeight: FontWeight.bold),
-          ),
-          Text(
-            ' ${readTimestamp(comment['timeStamp'])}',
-            style:
-                TextStyle(color: Colors.white, fontSize: s32, wordSpacing: 0.5),
-          )
-        ],
-      ),
-      subtitle: Text(
-        comment['comment'],
-        style: TextStyle(color: Colors.white, fontSize: s42, height: 0.9),
-      ),
-    ));
-  }
-
-  String readTimestamp(dynamic timestamp) {
-    var now = DateTime.now();
-    var format = DateFormat('HH:mm a');
-    var date =
-        timestamp.runtimeType == Timestamp ? timestamp.toDate() : timestamp;
-    var diff = now.difference(date);
-    var time = '';
-    if (diff.inDays < 1) {
-      if (diff.inSeconds <= 30) {
-        time = 'ไม่กี่วินาทีที่ผ่านมานี้';
-      } else if (diff.inSeconds <= 60) {
-        time = diff.inSeconds.toString() + ' วินาทีที่แล้ว';
-      } else if (diff.inMinutes < 5) {
-        time = 'เมื่อไม่นานมานี้';
-      } else if (diff.inMinutes < 60) {
-        time = diff.inMinutes.toString() + ' นาทีที่แล้ว';
-      } else {
-        time = diff.inHours.toString() + ' ชั่วโมงที่แล้ว';
-      }
-    } else if (diff.inDays < 7) {
-      diff.inDays == 1
-          ? time = 'เมื่อวานนี้'
-          : time = diff.inDays.toString() + ' วันที่แล้ว';
-    } else {
-      diff.inDays == 7 ? time = ' สัปดาที่แล้ว' : time = format.format(date);
-    }
-    return time;
-  }
-
-  addComment(List commentList, CollectionReference ref, String scrapId,
-      {@required String comment}) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var defaultDb = FirebaseDatabase.instance;
-    var refChild = 'scraps/$scrapId';
-
-    Map data = await userinfo.readContents();
-    commentList.insert(0, {
-      'name': data['name'],
-      'image': data['img'],
-      'comment': comment,
-      'timeStamp': DateTime.now()
-    });
-    ref.add({
-      'name': data['name'],
-      'image': data['img'],
-      'comment': comment,
-      'timeStamp': FieldValue.serverTimestamp()
-    });
-
-    scrapAll.reference().child(refChild).once().then((mutableData) {
-      defaultDb.reference().child(refChild).update({
-        'comment': mutableData.value['comment'] - 1,
-        'point': mutableData.value['point'] - 2
-      });
-      scrapAll.reference().child(refChild).update({
-        'comment': mutableData.value['comment'] - 1,
-        'point': mutableData.value['point'] - 2
-      });
-    });
-  }
-
   //sssss
   void dialog(DocumentSnapshot doc) {
     final counter = Provider.of<AdsCounterProvider>(context, listen: false);
+    final _scaffoldKey = GlobalKey<ScaffoldState>();
     var data = doc;
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
       Size a = MediaQuery.of(context).size;
       return StatefulBuilder(builder: (context, StateSetter setDialog) {
         return Scaffold(
+            key: _scaffoldKey,
             backgroundColor: Colors.black,
             body: SafeArea(
               child: Container(
@@ -513,54 +197,68 @@ class _MapScrapsState extends State<MapScraps> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Stack(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Image.asset(
-                                          'assets/paper-readed.png',
-                                          width: a.width / 1.04,
+                                  GestureDetector(
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Container(
+                                          child: Image.asset(
+                                            'assets/paper-readed.png',
+                                            width: a.width / 1.04,
+                                            height: a.width / 1.04 * 1.115,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        Container(
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.only(
+                                              left: 25, right: 25),
                                           height: a.width / 1.04 * 1.115,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Container(
-                                        alignment: Alignment.center,
-                                        padding: EdgeInsets.only(
-                                            left: 25, right: 25),
-                                        height: a.width / 1.04 * 1.115,
-                                        width: a.width / 1.04,
-                                        child: Text(
-                                          filter.censorString(
-                                              data['scrap']['text']),
-                                          style: TextStyle(
-                                            height: 1.35,
-                                            fontSize: s60,
+                                          width: a.width / 1.04,
+                                          child: Text(
+                                            data['scrap']['text'],
+                                            style: TextStyle(
+                                              height: 1.35,
+                                              fontSize: s60,
+                                            ),
+                                            textAlign: TextAlign.center,
                                           ),
-                                          textAlign: TextAlign.center,
                                         ),
-                                      ),
-                                      Positioned(
-                                        top: 12,
-                                        right: 12,
-                                        child: GestureDetector(
-                                          child: Container(
-                                            width: screenWidthDp / 16,
-                                            height: screenWidthDp / 16,
-                                            decoration: BoxDecoration(
-                                                color: Color(0xff000000)
-                                                    .withOpacity(0.47),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        screenWidthDp / 18)),
-                                            child: Icon(Icons.close,
-                                                color: Colors.white, size: s42),
+                                        Positioned(
+                                          top: 12,
+                                          right: 12,
+                                          child: GestureDetector(
+                                            child: Container(
+                                              width: screenWidthDp / 16,
+                                              height: screenWidthDp / 16,
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xff000000)
+                                                      .withOpacity(0.47),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          screenWidthDp / 18)),
+                                              child: Icon(Icons.close,
+                                                  color: Colors.white,
+                                                  size: s42),
+                                            ),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
                                           ),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
+                                        )
+                                      ],
+                                    ),
+                                    onDoubleTap: () {
+                                      _scaffoldKey.currentState.showBottomSheet(
+                                        (context) => MapSheet(
+                                          position: LatLng(
+                                              data['position']['geopoint']
+                                                  .latitude,
+                                              data['position']['geopoint']
+                                                  .longitude),
                                         ),
-                                      )
-                                    ],
+                                        backgroundColor: Colors.transparent,
+                                      );
+                                    },
                                   ),
                                   SizedBox(height: screenWidthDp / 21),
                                   Container(
@@ -662,15 +360,20 @@ class _MapScrapsState extends State<MapScraps> {
                                                             : Color(
                                                                 0xffFF4343)),
                                                     onTap: () {
-                                                      inHistory('like',
-                                                              data.documentID)
-                                                          ? ++like
-                                                          : --like;
-                                                      updateScrapTrans(
-                                                          'like', data,
+                                                      if (inHistory('like',
+                                                          data.documentID)) {
+                                                        ++like;
+                                                        history['like'].remove(
+                                                            data.documentID);
+                                                      } else {
+                                                        --like;
+                                                        history['like'].add(
+                                                            data.documentID);
+                                                      }
+                                                      scrap.updateScrapTrans(
+                                                          'like', data, context,
                                                           comments: trans.value[
                                                               'comment']);
-
                                                       setTrans(() {});
                                                     },
                                                   ),
@@ -690,13 +393,21 @@ class _MapScrapsState extends State<MapScraps> {
                                                         icon: Icons
                                                             .move_to_inbox),
                                                     onTap: () {
-                                                      inHistory('picked',
-                                                              data.documentID)
-                                                          ? ++pick
-                                                          : --pick;
-                                                      updateScrapTrans(
-                                                          'picked', data);
-
+                                                      if (inHistory('picked',
+                                                          data.documentID)) {
+                                                        ++pick;
+                                                        history['picked']
+                                                            .remove(data
+                                                                .documentID);
+                                                      } else {
+                                                        --pick;
+                                                        history['picked'].add(
+                                                            data.documentID);
+                                                      }
+                                                      scrap.updateScrapTrans(
+                                                          'picked',
+                                                          data,
+                                                          context);
                                                       setTrans(() {});
                                                     },
                                                   ),
@@ -714,7 +425,9 @@ class _MapScrapsState extends State<MapScraps> {
                                                           .showBottomSheet(
                                                         (BuildContext
                                                                 context) =>
-                                                            commentSheet(data),
+                                                            CommentSheet(
+                                                                scrapSnapshot:
+                                                                    data),
                                                         backgroundColor:
                                                             Colors.transparent,
                                                       );
@@ -903,26 +616,6 @@ class _MapScrapsState extends State<MapScraps> {
         .updateData({
       'burned': FieldValue.arrayUnion([widget.uid])
     });
-  }
-
-  pickScrap(Map scrap, {bool cancel = false}) {
-    if (cancel) {
-      Firestore.instance
-          .collection('Users')
-          .document(widget.uid)
-          .collection('scrapCollection')
-          .document(scrap['id'])
-          .delete();
-    } else {
-      scrap['picker'] = widget.uid;
-      scrap['timeStamp'] = FieldValue.serverTimestamp();
-      Firestore.instance
-          .collection('Users')
-          .document(widget.uid)
-          .collection('scrapCollection')
-          .document(scrap['id'])
-          .setData(scrap);
-    }
   }
 
   @override
