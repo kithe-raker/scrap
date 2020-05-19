@@ -1,79 +1,48 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/services/provider.dart' as prov;
 
 class Scraps {
+  final FirebaseMessaging fcm = FirebaseMessaging();
+
   throwTo(BuildContext context,
       {@required String uid,
       @required String writer,
       @required String thrownUID,
+      @required bool public,
       @required String text}) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     final user = Provider.of<UserData>(context, listen: false);
-    DateTime now = DateTime.now();
-    String time = DateFormat('Hm').format(now);
-    String date = DateFormat('d/M/y').format(now);
-    Firestore.instance
+    var ref = Firestore.instance
         .collection('Users')
         .document(thrownUID)
-        .collection('scraps')
-        .document('recently')
-        .setData({
-      'id': FieldValue.arrayUnion([uid]),
-      'scraps': {
-        uid: FieldValue.arrayUnion([
-          {'text': text, 'writer': writer, 'time': now}
-        ])
+        .collection('scrapCrate');
+    var docId = ref.document().documentID;
+    ref.document(docId).setData({
+      'uid': uid,
+      'scrap': {
+        'text': text,
+        'writer': public ?? false ? writer : 'ไม่ระบุตัวตน',
+        'timeStamp': FieldValue.serverTimestamp()
       }
-    }, merge: true);
+    });
     userDb.reference().child('users/$uid').update({'papers': user.papers - 1});
-    notifaication(thrownUID, date, time, writer);
-    updateHistory(uid, thrownUID);
-    increaseTransaction(uid, 'written');
-    increaseTransaction(thrownUID, 'threw');
-  }
-
-  updateHistory(String uid, String thrown) {
-    Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('info')
-        .document('searchHist')
-        .updateData({
-      'history': FieldValue.arrayUnion([thrown])
-    });
-  }
-
-  notifaication(String who, String date, String time, String writer) {
-    Firestore.instance.collection('Notifications').add({'uid': who});
-    Firestore.instance
-        .collection('Users')
-        .document(who)
-        .collection('notification')
-        .add({
-      'writer': writer,
-      'date': date,
-      'time': time,
-      'timeStamp': FieldValue.serverTimestamp()
-    });
-  }
-
-  increaseTransaction(String uid, String key) {
-    // Firestore.instance
-    //     .collection('Users')
-    //     .document(uid)
-    //     .collection('info')
-    //     .document(uid)
-    //     .updateData({key: FieldValue.increment(1)});
-    //chage this fucking function too
+    userDb.reference().child('users/$thrownUID/thrown').once().then((data) =>
+        userDb
+            .reference()
+            .child('users/$thrownUID')
+            .update({'thrown': data.value + 1}));
   }
 
   binScrap(DocumentSnapshot doc, BuildContext context,
@@ -117,23 +86,81 @@ class Scraps {
     // increaseTransaction(doc['uid'], 'written');
   }
 
-  toHistory(String uid, String docID, String text) {
-    DateTime now = DateTime.now();
-    String date = DateFormat('y,M,d').format(now);
-    String dateRef = DateFormat('yyyyMMdd').format(now);
-    Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('history')
-        .document(date)
-        .setData({
-      'scrapID': FieldValue.arrayUnion([docID]),
-      docID: 0,
-      'date': dateRef,
-      'Scraps': {
-        docID: {'text': text, 'time': now}
-      }
-    }, merge: true);
+  void updateScrapTrans(
+      String field, DocumentSnapshot scrap, BuildContext context,
+      {int comments}) async {
+    Map<String, List> history = {};
+    history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
+    history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
+    final uid = await prov.Provider.of(context).auth.currentUser();
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+    var defaultDb = FirebaseDatabase.instance;
+    // var userDb = FirebaseDatabase(app: db.userTransact);
+    var ref = 'scraps/${scrap.documentID}';
+
+    if (history[field].contains(scrap.documentID)) {
+      cacheHistory.removeHistory(field, scrap.documentID);
+      scrapAll.reference().child(ref).once().then((mutableData) {
+        defaultDb.reference().child(ref).update({
+          field: mutableData.value[field] + 1,
+          'point': field == 'like'
+              ? mutableData.value['point'] + 1
+              : mutableData.value['point'] + 3
+        });
+        scrapAll.reference().child(ref).update({
+          field: mutableData.value[field] + 1,
+          'point': field == 'like'
+              ? mutableData.value['point'] + 1
+              : mutableData.value['point'] + 3
+        });
+      });
+      if (field == 'like')
+        fcm.unsubscribeFromTopic(scrap.documentID);
+      else
+        pickScrap(scrap.data, uid, cancel: true);
+    } else {
+      cacheHistory.addHistory(scrap, field: field, comments: comments);
+      defaultDb.reference().child(ref).once().then((mutableData) {
+        defaultDb.reference().child(ref).update({
+          field: mutableData.value[field] - 1,
+          'point': field == 'like'
+              ? mutableData.value['point'] - 1
+              : mutableData.value['point'] - 3
+        });
+        scrapAll.reference().child(ref).update({
+          field: mutableData.value[field] - 1,
+          'point': field == 'like'
+              ? mutableData.value['point'] - 1
+              : mutableData.value['point'] - 3
+        });
+      });
+
+      if (field == 'like')
+        fcm.subscribeToTopic(scrap.documentID);
+      else
+        pickScrap(scrap.data, uid);
+    }
+  }
+
+  pickScrap(Map scrap, String uid, {bool cancel = false}) {
+    if (cancel) {
+      Firestore.instance
+          .collection('Users')
+          .document(uid)
+          .collection('scrapCollection')
+          .document(scrap['id'])
+          .delete();
+    } else {
+      scrap['picker'] = uid;
+      scrap['timeStamp'] = FieldValue.serverTimestamp();
+      Firestore.instance
+          .collection('Users')
+          .document(uid)
+          .collection('scrapCollection')
+          .document(scrap['id'])
+          .setData(scrap);
+    }
   }
 
   resetScrap(BuildContext context, {@required String uid}) async {
@@ -170,3 +197,5 @@ class Scraps {
         fontSize: 16.0);
   }
 }
+
+final scrap = Scraps();

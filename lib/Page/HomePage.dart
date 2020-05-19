@@ -493,9 +493,7 @@ class _HomePageState extends State<HomePage> {
                   ? Text(
                       'กระดาษของคุณหมดแล้ว',
                       style: TextStyle(
-                        fontSize: scr.width / 18,
-                        color: Colors.white,
-                      ),
+                          fontSize: scr.width / 18, color: Colors.white),
                     )
                   : Row(
                       children: <Widget>[
