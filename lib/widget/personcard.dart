@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/widget/thrown.dart';
 
 class Personcard extends StatefulWidget {
   @override
@@ -81,6 +82,7 @@ class _Personcard1State extends State<Personcard1> {
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text("@someone",
                         style: TextStyle(
@@ -97,22 +99,27 @@ class _Personcard1State extends State<Personcard1> {
               )
             ],
           ),
-          Container(
-            width: a.width / 6,
-            height: a.width / 10,
-            margin: EdgeInsets.only(top: a.width / 30),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(a.width),
-                color: Colors.white),
-            alignment: Alignment.center,
-            child: Text(
-              "ปาใส่",
-              style: TextStyle(
-                  color: Color(0xff26A4FF),
-                  fontWeight: FontWeight.bold,
-                  fontSize: a.width / 20),
+          GestureDetector(
+            child: Container(
+              width: a.width / 6,
+              height: a.width / 10,
+              margin: EdgeInsets.only(top: a.width / 30, right: a.width / 50),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(a.width),
+                  color: Colors.white),
+              alignment: Alignment.center,
+              child: Text(
+                "ปาใส่",
+                style: TextStyle(
+                    color: Color(0xff26A4FF),
+                    fontWeight: FontWeight.bold,
+                    fontSize: a.width / 20),
+              ),
             ),
-          )
+            onTap: () {
+              showAlert(context);
+            },
+          ),
         ],
       ),
     );

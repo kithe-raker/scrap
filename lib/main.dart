@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
+import 'package:scrap/Page/GridFollowing.dart';
+import 'package:scrap/Page/GridTopScrap.dart';
+import 'package:scrap/Page/Gridfavorite.dart';
+import 'package:scrap/Page/Gridsubscripe.dart';
+import 'package:scrap/Page/HomePage.dart';
+import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/Page/GridFollowing.dart';
+import 'package:scrap/Page/allfollower.dart';
+import 'package:scrap/Page/suppeople.dart';
+=======
 import 'package:scrap/Page/MainPage.dart';
 
+>>>>>>> a927f1c68b221f67b2c9d72c208bd12678596561
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
