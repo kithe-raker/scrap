@@ -267,7 +267,7 @@ packages:
       name: fluttertoast
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.3"
+    version: "4.0.1"
   geoflutterfire:
     dependency: "direct main"
     description:

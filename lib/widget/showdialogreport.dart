@@ -7,6 +7,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -22,10 +23,204 @@ import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/showdialogfinishpaper.dart';
 import 'package:scrap/widget/warning.dart';
 import 'package:scrap/widget/showdialogreport.dart';
+
+/*class Report_DropDownButton extends StatefulWidget {
+  @override
+  _Report_DropDownButtonState createState() => _Report_DropDownButtonState();
+}
+
+class _Report_DropDownButtonState extends State<Report_DropDownButton> {
+  dynamic dropdownValue = 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ';
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<dynamic>(
+        value: dropdownValue,
+
+        // style: TextStyle(
+        //   color: Colors.white,
+        //   fontSize: s36
+        // ),
+        dropdownColor: Color(0xff1a1a1a),
+        icon: Icon(Icons.arrow_drop_down),
+        //dropdownColor: Color(0xff1a1a1a),
+        iconSize: s60,
+        //elevation: 16,
+        //style: TextStyle(color: Colors.deepPurple),
+        // underline: Container(
+        //   height: 2,
+        //   color: Colors.deepPurpleAccent,
+        // ),
+        onChanged: (dynamic newValue) {
+          setState(
+            () {
+              dropdownValue = newValue;
+
+              // if (dropdownValue == ' สาธารณะ') {
+              //   private = false;
+              // } else if (dropdownValue == ' ส่วนตัว') {
+              //   private = true;
+              // }
+            },
+          );
+        },
+        items: <dynamic>[
+          'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ',
+          'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ',
+          'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ',
+          'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ',
+        ].map<DropdownMenuItem<dynamic>>((dynamic value) {
+          if (value == 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ') {
+            return DropdownMenuItem<dynamic>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: s54,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else if (value == 'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ') {
+            return DropdownMenuItem<dynamic>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: s54,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else if (value == 'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ') {
+            return DropdownMenuItem<dynamic>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: s54,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else if (value == 'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ') {
+            return DropdownMenuItem<dynamic>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: s54,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else {}
+        }).toList(),
+      ),
+    );
+  }
+}*/
+class Report_DropDownButton extends StatefulWidget {
+  @override
+  _Report_DropDownButtonState createState() => _Report_DropDownButtonState();
+}
+
+class _Report_DropDownButtonState extends State<Report_DropDownButton> {
+  dynamic dropdownValue = 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ';
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<dynamic>(
+        value: dropdownValue,
+        // style: TextStyle(
+        //   color: Colors.white,
+        //   fontSize: s36
+        // ),
+        dropdownColor: Color(0xfff282828),
+        icon: Icon(Icons.arrow_drop_down),
+        iconSize: s60,
+        //elevation: 16,
+        //style: TextStyle(color: Colors.deepPurple),
+        // underline: Container(
+        //   height: 2,
+        //   color: Colors.deepPurpleAccent,
+        // ),
+        onChanged: (dynamic newValue) {
+          setState(
+            () {
+              dropdownValue = newValue;
+
+              // if (dropdownValue == ' สาธารณะ') {
+              //   private = false;
+              // } else if (dropdownValue == ' ส่วนตัว') {
+              //   private = true;
+              // }
+            },
+          );
+        },
+        items: <dynamic>[
+          'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ',
+          'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ',
+          'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ',
+          'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ',
+        ].map<DropdownMenuItem<dynamic>>((dynamic value) {
+          if (value == 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ') {
+            return DropdownMenuItem<dynamic>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: s54,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else if (value == 'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ') {
+            return DropdownMenuItem<dynamic>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: s54,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else if (value == 'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ') {
+            return DropdownMenuItem<dynamic>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: s54,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else if (value == 'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ') {
+            return DropdownMenuItem<dynamic>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: s54,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else {}
+        }).toList(),
+      ),
+    );
+  }
+}
 
 class Showreport extends StatefulWidget {
   @override
@@ -35,12 +230,14 @@ class Showreport extends StatefulWidget {
 class _ShowreportState extends State<Showreport> {
   @override
   Widget build(BuildContext context) {
+    screenutilInit(context);
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       body: Center(
         child: InkWell(
           child: Text('Report'),
           onTap: () {
-            _showdialogreport(context);
+            showDialogReport(context);
           },
         ),
       ),
@@ -48,315 +245,312 @@ class _ShowreportState extends State<Showreport> {
   }
 }
 
-void _showdialogreport(BuildContext context) {
+void showDialogReport(BuildContext context) {
+  Size a = MediaQuery.of(context).size;
   showDialog(
       context: context,
       builder: (BuildContext context) {
-        String txt = "กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย";
-        int drop = 0;
-        Size a = MediaQuery.of(context).size;
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          Size a = MediaQuery.of(context).size;
-          return Scaffold(
-            body: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: Container(
-                    margin: EdgeInsets.only(
-                        top: a.width / 15,
-                        right: a.width / 20,
-                        left: a.width / 20,
-                        bottom: a.width / 2),
-                    child: ListView(children: <Widget>[
-                      Container(
-                        // color: Colors.grey,
-                        alignment: Alignment.centerRight,
-                        child: InkWell(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              top: a.width / 40,
-                              bottom: a.width / 20,
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    height: 32,
+                    width: 32,
+                    margin: EdgeInsets.symmetric(
+                      horizontal: (screenWidthDp - (screenWidthDp / 1.1)) / 2,
+                      vertical: 15,
+                    ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(500),
+                        color: Color(0xffffffff)),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.blue,
+                      size: s48,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              height: screenHeightDp / 1.7,
+              width: screenWidthDp / 1.1,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(50))),
+              /* decoration: BoxDecoration(
+                //  color: Color(0xff1a1a1a),
+                borderRadius: BorderRadius.circular(5),
+              ),*/
+              child: Stack(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: a.width / 100),
+                    child: Scaffold(
+                      backgroundColor: Colors.transparent,
+                      resizeToAvoidBottomPadding: false,
+                      body: Container(
+                        decoration: BoxDecoration(
+                            color: Color(0xfff282828),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(7.0))),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Report_DropDownButton(),
                             ),
-                            width: a.width / 12,
-                            height: a.width / 12,
-                            child: Center(
-                              child: Icon(
-                                Icons.cancel,
-                                color: Color(0xfffFFFFFF),
-                                size: a.width / 13,
+
+                            Container(
+                              /*  margin: EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),*/
+                              padding: EdgeInsets.only(
+                                  top: a.width / 100, left: a.width / 50),
+                              child: TextField(
+                                style: TextStyle(
+                                    fontSize: s52, color: Colors.white),
+                                minLines: 5,
+                                maxLines: 5,
+                                decoration: InputDecoration(
+                                  // fillColor: Colors.redAccent,
+                                  // filled: true,
+                                  border: InputBorder.none,
+                                  hintText: 'รายงานเจ้าของสแครปรายนี้',
+                                  hintStyle: TextStyle(
+                                    fontSize: s54,
+                                    height: 0.08,
+                                    color: Colors.white30,
+                                  ),
+                                ),
                               ),
                             ),
-                            decoration: BoxDecoration(
-                                color: Colors.white24,
-                                borderRadius: BorderRadius.circular(a.width)),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                      Container(
-                        //height: a.height,
-                        decoration: BoxDecoration(
-                            color: Color(0xffff282828),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        child: Column(
-                          children: <Widget>[
+
                             Container(
-                                width: a.width,
-                                height: a.height,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Container(
-                                      width: a.width,
-                                      child: Column(
-                                        children: <Widget>[
-                                          InkWell(
-                                              child: Container(
-                                                height: a.width / 9,
-                                                decoration: BoxDecoration(
-                                                    border: Border(
-                                                        bottom: BorderSide(
-                                                            width:
-                                                                a.width / 1000,
-                                                            color:
-                                                                Colors.grey))),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      txt,
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                              a.width / 18,
-                                                          color: Colors.white),
-                                                    ),
-                                                    Icon(Icons.arrow_drop_down,
-                                                        color: Colors.white)
-                                                  ],
-                                                ),
-                                              ),
-                                              onTap: () {
-                                                setState(() {
-                                                  drop = 1;
-                                                });
-                                              }),
-                                          drop == 1
-                                              ? InkWell(
-                                                  child: SizedBox(
-                                                    width: a.width,
-                                                    child: Container(
-                                                      color: Colors.white,
-                                                      child: Column(
-                                                        children: <Widget>[
-                                                          InkWell(
-                                                            child: Container(
-                                                              height:
-                                                                  a.width / 10,
-                                                              decoration: BoxDecoration(
-                                                                  color: Color(
-                                                                      0xffff282828),
-                                                                  border: Border(
-                                                                      bottom: BorderSide(
-                                                                          width: a.width /
-                                                                              1000,
-                                                                          color:
-                                                                              Colors.grey))),
-                                                              child: Row(
-                                                                children: <
-                                                                    Widget>[
-                                                                  Text(
-                                                                    "\t\t\tกล่าวอ้างถึงบุคคลที่สามในทางเสียหาย",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            a.width /
-                                                                                18,
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            onTap: () {
-                                                              setState(() {
-                                                                txt =
-                                                                    "กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย";
-                                                                drop = 0;
-                                                              });
-                                                            },
-                                                          ),
-                                                          InkWell(
-                                                            child: Container(
-                                                              height:
-                                                                  a.width / 10,
-                                                              decoration: BoxDecoration(
-                                                                  color: Color(
-                                                                      0xffff282828),
-                                                                  border: Border(
-                                                                      bottom: BorderSide(
-                                                                          width: a.width /
-                                                                              1000,
-                                                                          color:
-                                                                              Colors.grey))),
-                                                              child: Row(
-                                                                children: <
-                                                                    Widget>[
-                                                                  Text(
-                                                                    "\t\tส่งข้อความสแปมไปยังผู้ใช้รายอื่น",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            a.width /
-                                                                                18,
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            onTap: () {
-                                                              setState(() {
-                                                                txt =
-                                                                    "ส่งข้อความสแปมไปยังผู้ใช้รายอื่น";
-                                                                drop = 0;
-                                                              });
-                                                            },
-                                                          ),
-                                                          InkWell(
-                                                            child: Container(
-                                                              height:
-                                                                  a.width / 10,
-                                                              decoration: BoxDecoration(
-                                                                  color: Color(
-                                                                      0xffff282828),
-                                                                  border: Border(
-                                                                      bottom: BorderSide(
-                                                                          width: a.width /
-                                                                              1000,
-                                                                          color:
-                                                                              Colors.grey))),
-                                                              child: Row(
-                                                                children: <
-                                                                    Widget>[
-                                                                  Text(
-                                                                    "\t\tเขียนเนื้อหาที่ส่งเสริมความรุนแรง",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            a.width /
-                                                                                18,
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            onTap: () {
-                                                              setState(() {
-                                                                txt =
-                                                                    "เขียนเนื้อหาที่ส่งเสริมความรุนแรง";
-                                                                drop = 0;
-                                                              });
-                                                            },
-                                                          ),
-                                                          InkWell(
-                                                            child: Container(
-                                                              height:
-                                                                  a.width / 10,
-                                                              decoration: BoxDecoration(
-                                                                  color: Color(
-                                                                      0xffff282828),
-                                                                  border: Border(
-                                                                      bottom: BorderSide(
-                                                                          width: a.width /
-                                                                              1000,
-                                                                          color:
-                                                                              Colors.grey))),
-                                                              child: Row(
-                                                                children: <
-                                                                    Widget>[
-                                                                  Text(
-                                                                    "\t\tเขียนเนื้อหาที่มีการคุกคามทางเพศ",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            a.width /
-                                                                                18,
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            onTap: () {
-                                                              setState(() {
-                                                                txt =
-                                                                    "เขียนเนื้อหาที่มีการคุกคามทางเพศ";
-                                                                drop = 0;
-                                                              });
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  onTap: () {
-                                                    setState(() {
-                                                      drop = 0;
-                                                    });
-                                                  },
-                                                )
-                                              : SizedBox(),
-                                          Container(
-                                            padding: EdgeInsets.only(
-                                                left: a.width / 50),
-                                            child: TextField(
-                                              textAlign: TextAlign.justify,
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                              minLines: 10,
-                                              maxLines: 10,
-                                              decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  hintStyle: TextStyle(
-                                                      color:
-                                                          Color(0xfff656565)),
-                                                  hintText:
-                                                      '\tรายงานเจ้าของสแครปรายนี้'),
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                              padding: EdgeInsets.only(
+                                  left: a.width / 1.4, top: a.width / 2.8),
+                              child: Container(
+                                /* margin: EdgeInsets.symmetric(
+                                horizontal: a.width / 25,
+                                vertical: a.width / 40,
+                              ),*/
+
+                                width: a.width / 8,
+                                height: a.width / 8,
+                                // alignment: Alignment.center,
+                                child: IconButton(
+                                    icon: Icon(
+                                      Icons.send,
+                                      color: Color(0xff26A4FF),
                                     ),
-                                    Positioned(
-                                      top: a.width / 0.95,
-                                      right: 0,
-                                      //bottom: a.height / 10,
-                                      // right: 0,
-                                      child: Container(
-                                        margin: EdgeInsets.all(a.width / 40),
-                                        width: a.width / 8,
-                                        height: a.width / 8,
-                                        alignment: Alignment.center,
-                                        child: IconButton(
-                                            icon: Icon(
-                                              Icons.send,
-                                              color: Color(0xff26A4FF),
-                                            ),
-                                            onPressed: () {}),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(a.width)),
-                                      ),
-                                    ),
-                                  ],
-                                )),
+                                    onPressed: () {}),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                              ),
+                            ),
+
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.end,
+                            //   children: [
+                            //     Container(
+                            //       height: 80,
+                            //       width: 80,
+                            //       margin: EdgeInsets.only(
+                            //         right: 5,
+                            //         bottom: 5,
+                            //       ),
+                            //       decoration: BoxDecoration(
+                            //         color: Colors.white,
+                            //         borderRadius:
+                            //             BorderRadius.circular(screenHeightDp),
+                            //       ),
+                            //       child: IconButton(
+                            //           icon: Icon(
+                            //             Icons.send,
+                            //             size: 50,
+                            //             color: Colors.blue,
+                            //           ),
+                            //           onPressed: () {}),
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ),
-                    ]))),
-          );
-        });
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      vertical: screenHeightDp / 18,
+                    ),
+                    child: Divider(
+                      color: Color(0xff383838),
+                      thickness: 2,
+                      indent: 5,
+                      endIndent: 5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
       });
 }
+
+//Report_DropDownButton()
+
+/*void showDialogReport(BuildContext context) {
+  Size a = MediaQuery.of(context).size;
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    height: 32,
+                    width: 32,
+                    margin: EdgeInsets.symmetric(
+                      horizontal: (screenWidthDp - (screenWidthDp / 1.1)) / 2,
+                      vertical: 15,
+                    ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(500),
+                        color: Color(0xffffffff)),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.grey,
+                      size: s48,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              height: screenHeightDp / 1.7,
+              width: screenWidthDp / 1.1,
+              decoration: BoxDecoration(
+                color: Color(0xff1a1a1a),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Stack(
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      vertical: screenWidthDp / 50,
+                    ),
+                    child: Scaffold(
+                      // backgroundColor: Color(0xff1a1a1a),
+                      // backgroundColor: Colors.red,
+                      body: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Center(
+                              child: Report_DropDownButton(),
+                            ),
+                            // Row(
+                            //   children: [
+                            //     // Text(
+                            //     //   'ถึงผู้พัฒนา',
+                            //     //   style: TextStyle(
+                            //     //     fontSize: s60,
+                            //     //     color: Colors.white,
+                            //     //   ),
+                            //     // ),
+                            //     //DropDownButton<<<<<<<<<<<<<<<<<<<<<<<
+                            //     //Report_DropDownButton(),
+                            //   ],
+                            // ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              child: TextField(
+                                style: TextStyle(
+                                    fontSize: s25, color: Colors.white),
+                                minLines: 17,
+                                maxLines: 17,
+                                decoration: InputDecoration(
+                                  // fillColor: Colors.redAccent,
+                                  // filled: true,
+                                  border: InputBorder.none,
+                                  hintText: 'รายงานเจ้าของสแครปรายนี้',
+                                  hintStyle: TextStyle(
+                                    fontSize: s54,
+                                    height: 0.08,
+                                    color: Colors.white30,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Positioned(
+                                  top: a.width / 0.95,
+                                  right: 0,
+                                  //bottom: a.height / 10,
+                                  // right: 0,
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: a.width / 25,
+                                      vertical: a.width / 40,
+                                    ),
+                                    width: a.width / 8,
+                                    height: a.width / 8,
+                                    alignment: Alignment.center,
+                                    child: IconButton(
+                                        icon: Icon(
+                                          Icons.send,
+                                          color: Color(0xff26A4FF),
+                                        ),
+                                        onPressed: () {}),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(a.width)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      vertical: screenHeightDp / 18,
+                    ),
+                    child: Divider(
+                      //color: Color(0xff383838),
+                      color: Colors.black,
+                      thickness: 2,
+                      indent: 5,
+                      endIndent: 5,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        );
+      });
+}*/

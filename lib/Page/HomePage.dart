@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -682,7 +681,7 @@ class _HomePageState extends State<HomePage> {
         msg: text,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
-        timeInSecForIos: 1,
+        // timeInSecForIos: 1,
         backgroundColor: Colors.white60,
         textColor: Colors.black,
         fontSize: 16.0);
