@@ -9,6 +9,7 @@ import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/services/admob_service.dart';
+import 'package:scrap/widget/CountDownText.dart';
 import 'dart:math' as math;
 
 import 'package:scrap/widget/ScreenUtil.dart';
@@ -32,14 +33,26 @@ class _GridfavoriteState extends State<Gridfavorite> {
   }
 
   initScrap() async {
-    scraps = await cacheHistory.readHistory(field: 'like');
+    scraps = await cacheHistory.readHistory(field: 'like') ?? [];
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
-    scraps.sort((a, b) => DateTime.parse(a['timeStamp'])
-        .compareTo(DateTime.parse(b['timeStamp'])));
+    if (scraps.length > 1) {
+      scraps.sort((a, b) =>
+          DateTime.parse(a['when']).compareTo(DateTime.parse(b['when'])));
+    }
     setState(() => loading = false);
   }
 
+  bool isExpired(DocumentSnapshot data) {
+    DateTime startTime = data['scrap']['time'].toDate();
+    return DateTime(startTime.year, startTime.month, startTime.day + 1,
+            startTime.hour, startTime.second)
+        .difference(DateTime.now())
+        .isNegative;
+  }
+
+  ///0.000012
+  ///0.000312
   Future<DataSnapshot> scrapTransaction(String docId) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
@@ -173,12 +186,10 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                         ? Colors.white
                                                         : Color(0xff26A4FF)),
                                               ),
-                                              Text(
-                                                  'เวลา : ${DateFormat('HH:mm').format(scrap['timeStamp'].toDate())}',
-                                                  style: TextStyle(
-                                                      fontSize: s36,
-                                                      height: 0.8,
-                                                      color: Color(0xff969696)))
+                                              CountDownText(
+                                                  startTime: data['scrap']
+                                                          ['time']
+                                                      .toDate())
                                             ],
                                           ),
                                           Icon(Icons.more_horiz,
@@ -250,24 +261,29 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                         : Color(0xffFF4343)),
                                                 onTap: () {
                                                   if (docData != null) {
-                                                    if (inHistory(
-                                                        'like', doc['id'])) {
-                                                      ++like;
-                                                      history['like']
-                                                          .remove(doc['id']);
+                                                    if (isExpired(docData)) {
+                                                      scrap.toast(
+                                                          'แสครปนี้ย่อยสลายแล้ว');
                                                     } else {
-                                                      --like;
-                                                      history['like']
-                                                          .add(doc['id']);
-                                                    }
-                                                    scrap.updateScrapTrans(
-                                                        'like',
-                                                        docData,
-                                                        context,
-                                                        comments: trans
-                                                            .value['comment']);
+                                                      if (inHistory(
+                                                          'like', doc['id'])) {
+                                                        ++like;
+                                                        history['like']
+                                                            .remove(doc['id']);
+                                                      } else {
+                                                        --like;
+                                                        history['like']
+                                                            .add(doc['id']);
+                                                      }
+                                                      scrap.updateScrapTrans(
+                                                          'like',
+                                                          docData,
+                                                          context,
+                                                          comments: trans.value[
+                                                              'comment']);
 
-                                                    setTrans(() {});
+                                                      setTrans(() {});
+                                                    }
                                                   }
                                                 },
                                               ),
@@ -285,21 +301,26 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                     icon: Icons.move_to_inbox),
                                                 onTap: () {
                                                   if (docData != null) {
-                                                    if (inHistory(
-                                                        'picked', doc['id'])) {
-                                                      ++pick;
-                                                      history['picked']
-                                                          .remove(doc['id']);
+                                                    if (isExpired(docData)) {
+                                                      scrap.toast(
+                                                          'แสครปนี้ย่อยสลายแล้ว');
                                                     } else {
-                                                      --pick;
-                                                      history['picked']
-                                                          .add(doc['id']);
+                                                      if (inHistory('picked',
+                                                          doc['id'])) {
+                                                        ++pick;
+                                                        history['picked']
+                                                            .remove(doc['id']);
+                                                      } else {
+                                                        --pick;
+                                                        history['picked']
+                                                            .add(doc['id']);
+                                                      }
+                                                      scrap.updateScrapTrans(
+                                                          'picked',
+                                                          docData,
+                                                          context);
+                                                      setTrans(() {});
                                                     }
-                                                    scrap.updateScrapTrans(
-                                                        'picked',
-                                                        docData,
-                                                        context);
-                                                    setTrans(() {});
                                                   }
                                                 },
                                               ),

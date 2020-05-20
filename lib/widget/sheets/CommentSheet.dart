@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
@@ -38,6 +39,59 @@ class _CommentSheetState extends State<CommentSheet> {
     super.dispose();
   }
 
+  bool isExpired(List commentList, CollectionReference ref, String scrapId,
+      {@required String comment}) {
+    DateTime startTime = scrapSnapshot['scrap']['time'].toDate();
+    if (DateTime(startTime.year, startTime.month, startTime.day + 1,
+            startTime.hour, startTime.second)
+        .difference(DateTime.now())
+        .isNegative) {
+      return true;
+    } else {
+      addComment(commentList, ref, scrapId, comment: comment);
+      return false;
+    }
+  }
+
+  addComment(List commentList, CollectionReference ref, String scrapId,
+      {@required String comment}) async {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    final scrapAll = FirebaseDatabase(app: db.scrapAll);
+    final userDb = FirebaseDatabase(app: db.userTransact);
+    final defaultDb = FirebaseDatabase.instance;
+    var refChild = 'scraps/$scrapId';
+
+    Map data = await userinfo.readContents();
+    commentList.insert(0, {
+      'name': data['name'],
+      'image': data['img'],
+      'comment': comment,
+      'timeStamp': DateTime.now()
+    });
+    ref.add({
+      'name': data['name'],
+      'image': data['img'],
+      'comment': comment,
+      'timeStamp': FieldValue.serverTimestamp()
+    });
+
+    scrapAll.reference().child(refChild).once().then((mutableData) {
+      defaultDb.reference().child(refChild).update({
+        'comment': mutableData.value['comment'] - 1,
+        'point': mutableData.value['point'] - 2
+      });
+      scrapAll.reference().child(refChild).update({
+        'comment': mutableData.value['comment'] - 1,
+        'point': mutableData.value['point'] - 2
+      });
+    });
+    userDb.reference().child('users/${scrapSnapshot['uid']}/att').once().then(
+        (data) => userDb
+            .reference()
+            .child('users/${scrapSnapshot['uid']}/att')
+            .update({'att': data.value + 2}));
+  }
+
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
@@ -60,19 +114,15 @@ class _CommentSheetState extends State<CommentSheet> {
                 children: <Widget>[
                   Align(
                       alignment: Alignment.topCenter,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(top: 12, bottom: 4),
-                            width: screenWidthDp / 3.2,
-                            height: screenHeightDp / 81,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(screenHeightDp / 42),
-                              color: Color(0xff929292),
-                            ),
-                          )
-                        ],
+                      child: Container(
+                        margin: EdgeInsets.only(top: 12, bottom: 4),
+                        width: screenWidthDp / 3.2,
+                        height: screenHeightDp / 81,
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(screenHeightDp / 42),
+                          color: Color(0xff929292),
+                        ),
                       )),
                   Expanded(
                     child: Padding(
@@ -150,7 +200,7 @@ class _CommentSheetState extends State<CommentSheet> {
                                   val.trim().length > 0
                                       ? setSheet(() => canSend = true)
                                       : setSheet(() => canSend = false);
-                                  comment.text = val;
+                                  comment.text = val.trim();
                                 },
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
@@ -165,12 +215,15 @@ class _CommentSheetState extends State<CommentSheet> {
                                     height: 0.72),
                                 textInputAction: TextInputAction.done,
                                 onSubmitted: (val) {
-                                  addComment(commentList, ref,
+                                  if (isExpired(commentList, ref,
                                       scrapSnapshot.documentID,
-                                      comment: comment.text.trim());
-                                  comment.clear();
-                                  setSheet(() => canSend = false);
-                                  controller.requestRefresh();
+                                      comment: comment.text)) {
+                                    scrap.toast('แสครปนี้ย่อยสลายแล้ว');
+                                  } else {
+                                    comment.clear();
+                                    setSheet(() => canSend = false);
+                                    controller.requestRefresh();
+                                  }
                                 },
                               ),
                             )),
@@ -184,12 +237,15 @@ class _CommentSheetState extends State<CommentSheet> {
                                 size: s60,
                               ),
                               onTap: () {
-                                addComment(
+                                if (isExpired(
                                     commentList, ref, scrapSnapshot.documentID,
-                                    comment: comment.text);
-                                comment.clear();
-                                setSheet(() => canSend = false);
-                                controller.requestRefresh();
+                                    comment: comment.text)) {
+                                  scrap.toast('แสครปนี้ย่อยสลายแล้ว');
+                                } else {
+                                  comment.clear();
+                                  setSheet(() => canSend = false);
+                                  controller.requestRefresh();
+                                }
                               },
                             ),
                             SizedBox(width: screenWidthDp / 32),
@@ -201,39 +257,6 @@ class _CommentSheetState extends State<CommentSheet> {
             )),
       ),
     );
-  }
-
-  addComment(List commentList, CollectionReference ref, String scrapId,
-      {@required String comment}) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var defaultDb = FirebaseDatabase.instance;
-    var refChild = 'scraps/$scrapId';
-
-    Map data = await userinfo.readContents();
-    commentList.insert(0, {
-      'name': data['name'],
-      'image': data['img'],
-      'comment': comment,
-      'timeStamp': DateTime.now()
-    });
-    ref.add({
-      'name': data['name'],
-      'image': data['img'],
-      'comment': comment,
-      'timeStamp': FieldValue.serverTimestamp()
-    });
-
-    scrapAll.reference().child(refChild).once().then((mutableData) {
-      defaultDb.reference().child(refChild).update({
-        'comment': mutableData.value['comment'] - 1,
-        'point': mutableData.value['point'] - 2
-      });
-      scrapAll.reference().child(refChild).update({
-        'comment': mutableData.value['comment'] - 1,
-        'point': mutableData.value['point'] - 2
-      });
-    });
   }
 
   Widget commentBox(dynamic comment) {
@@ -255,13 +278,13 @@ class _CommentSheetState extends State<CommentSheet> {
             '${comment['name']}',
             style: TextStyle(
                 color: Colors.white,
-                fontSize: s48,
+                fontSize: s42,
                 fontWeight: FontWeight.bold),
           ),
           Text(
             ' ${readTimestamp(comment['timeStamp'])}',
             style:
-                TextStyle(color: Colors.white, fontSize: s32, wordSpacing: 0.5),
+                TextStyle(color: Colors.white, fontSize: s42, wordSpacing: 0.5),
           )
         ],
       ),
