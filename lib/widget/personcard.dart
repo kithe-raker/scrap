@@ -117,7 +117,7 @@ class _Personcard1State extends State<Personcard1> {
               ),
             ),
             onTap: () {
-              showAlert(context);
+              writerScrap(context);
             },
           ),
         ],

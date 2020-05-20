@@ -10,20 +10,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/scrapFilter.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
+import 'package:scrap/widget/thrown.dart';
 
 class MapScraps extends StatefulWidget {
   final String uid;
@@ -38,7 +41,7 @@ class _MapScrapsState extends State<MapScraps> {
   Position currentLocation;
   StreamSubscription subLimit;
   int adsRate = 0;
-  int i = 0;
+  int i = 0, papers;
   PublishSubject<int> streamLimit = PublishSubject();
   DocumentSnapshot recentScrap;
   List<DocumentSnapshot> allScrap = [];
@@ -686,9 +689,255 @@ class _MapScrapsState extends State<MapScraps> {
                         )
                       : Center(child: CircularProgressIndicator()),
                 ),
+                Positioned(bottom: 0, child: bottomButton())
                 //  Positioned(left: -56, bottom: a.height / 3.6, child: slider())
               ],
             ));
+  }
+
+  Widget bottomButton() {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    final user = Provider.of<UserData>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    return Container(
+        padding: EdgeInsets.only(bottom: screenWidthDp / 10),
+        alignment: Alignment.bottomCenter,
+        width: screenWidthDp,
+        height: screenHeightDp / 1.1,
+        child: Container(
+          margin: EdgeInsets.only(
+              left: screenWidthDp / 80, right: screenWidthDp / 80),
+          child: StreamBuilder(
+            stream:
+                userDb.reference().child('users/${widget.uid}/papers').onValue,
+            builder: (context, AsyncSnapshot<Event> snapshot) {
+              if (snapshot.hasData) {
+                papers = snapshot.data.snapshot?.value ?? 15;
+                WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => user.papers = snapshot.data.snapshot?.value ?? 15);
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    GestureDetector(
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(
+                            screenWidthDp / 24,
+                            screenWidthDp / 36,
+                            screenWidthDp / 24,
+                            screenWidthDp / 36),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 6.0,
+                                spreadRadius: 3.0,
+                                offset: Offset(0.0, 3.2),
+                              )
+                            ],
+                            color: Colors.black,
+                            borderRadius:
+                                BorderRadius.circular(screenWidthDp / 14.2)),
+                        child: papers < 1
+                            ? Text(
+                                'กระดาษของคุณหมดแล้ว',
+                                style: TextStyle(
+                                    fontSize: screenWidthDp / 18,
+                                    color: Colors.white),
+                              )
+                            : Row(
+                                children: <Widget>[
+                                  RichText(
+                                    text: TextSpan(
+                                      style: TextStyle(
+                                          fontSize: screenWidthDp / 18,
+                                          color: Colors.white,
+                                          fontFamily: 'ThaiSans'),
+                                      children: <TextSpan>[
+                                        TextSpan(text: ' เหลือกระดาษ '),
+                                        TextSpan(
+                                            text: '$papers',
+                                            style: TextStyle(
+                                                fontSize: screenWidthDp / 16,
+                                                fontWeight: FontWeight.bold)),
+                                        TextSpan(
+                                          text: ' แผ่น',
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      onTap: () {
+                        papers == 15
+                            ? scrap.toast('กระดาษของคุณยังเต็มอยู่')
+                            : dialogvideo(context, widget.uid);
+                      },
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Gridsubscripe(),
+                            ));
+                      },
+                      child: Container(
+                          width: screenWidthDp / 7,
+                          height: screenWidthDp / 7,
+                          padding: EdgeInsets.all(screenWidthDp / 25),
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 3.0,
+                                    spreadRadius: 2.0,
+                                    offset: Offset(0.0, 3.2))
+                              ],
+                              borderRadius:
+                                  BorderRadius.circular(screenWidthDp),
+                              color: Color(0xff26A4FF)),
+                          child: Container(
+                            width: screenWidthDp / 50,
+                            child: Image.asset(
+                              "assets/Group 71.png",
+                              width: screenWidthDp / 12,
+                            ),
+                          )),
+                    ),
+                    GestureDetector(
+                      child: Container(
+                        width: screenWidthDp / 3.8,
+                        height: screenWidthDp / 3.8,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(screenWidthDp),
+                            border: Border.all(
+                                color: Colors.white38,
+                                width: screenWidthDp / 500)),
+                        child: Container(
+                          margin: EdgeInsets.all(screenWidthDp / 40),
+                          width: screenWidthDp / 6,
+                          height: screenWidthDp / 6,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(screenWidthDp),
+                              border: Border.all(color: Colors.white)),
+                          child: Container(
+                            margin: EdgeInsets.all(screenWidthDp / 40),
+                            width: screenWidthDp / 6,
+                            height: screenWidthDp / 6,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(screenWidthDp),
+                                color: Colors.white,
+                                border: Border.all(color: Colors.white)),
+                            child: Icon(
+                              Icons.create,
+                              size: screenWidthDp / 12,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        if (papers > 0)
+                          writerScrap(context,
+                              latLng: LatLng(currentLocation.latitude,
+                                  currentLocation.longitude));
+                        else
+                          scrap.toast('กระดาษคุณหมดแล้ว');
+                      },
+                    )
+                  ],
+                );
+              } else {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                        padding: EdgeInsets.fromLTRB(
+                            screenWidthDp / 24,
+                            screenWidthDp / 36,
+                            screenWidthDp / 24,
+                            screenWidthDp / 36),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 6.0,
+                                spreadRadius: 3.0,
+                                offset: Offset(0.0, 3.2),
+                              )
+                            ],
+                            color: Colors.black,
+                            borderRadius:
+                                BorderRadius.circular(screenWidthDp / 14.2)),
+                        child: Text(
+                          ' กำลังโหลกระดาษ... ',
+                          style: TextStyle(
+                              letterSpacing: 1.2,
+                              fontSize: screenWidthDp / 18,
+                              color: Colors.white),
+                        )),
+                    Container(
+                        width: screenWidthDp / 7,
+                        height: screenWidthDp / 7,
+                        padding: EdgeInsets.all(screenWidthDp / 25),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 3.0,
+                                  spreadRadius: 2.0,
+                                  offset: Offset(0.0, 3.2))
+                            ],
+                            borderRadius: BorderRadius.circular(screenWidthDp),
+                            color: Color(0xff26A4FF)),
+                        child: Container(
+                          width: screenWidthDp / 50,
+                          child: Image.asset(
+                            "assets/Group 71.png",
+                            width: screenWidthDp / 12,
+                          ),
+                        )),
+                    Container(
+                      width: screenWidthDp / 3.8,
+                      height: screenWidthDp / 3.8,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(screenWidthDp),
+                          border: Border.all(
+                              color: Colors.white38,
+                              width: screenWidthDp / 500)),
+                      child: Container(
+                        margin: EdgeInsets.all(screenWidthDp / 40),
+                        width: screenWidthDp / 6,
+                        height: screenWidthDp / 6,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(screenWidthDp),
+                            border: Border.all(color: Colors.white)),
+                        child: Container(
+                          margin: EdgeInsets.all(screenWidthDp / 40),
+                          width: screenWidthDp / 6,
+                          height: screenWidthDp / 6,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(screenWidthDp),
+                              color: Colors.white,
+                              border: Border.all(color: Colors.white)),
+                          child: Icon(
+                            Icons.create,
+                            size: screenWidthDp / 12,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              }
+            },
+          ),
+        ));
   }
 
   Widget gpsCheck(Size a, String text) {
