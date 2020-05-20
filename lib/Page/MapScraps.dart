@@ -19,6 +19,7 @@ import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/services/admob_service.dart';
+import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
@@ -38,7 +39,6 @@ class _MapScrapsState extends State<MapScraps> {
   StreamSubscription subLimit;
   int adsRate = 0;
   int i = 0;
-  String date, time;
   PublishSubject<int> streamLimit = PublishSubject();
   DocumentSnapshot recentScrap;
   List<DocumentSnapshot> allScrap = [];
@@ -48,7 +48,6 @@ class _MapScrapsState extends State<MapScraps> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   GoogleMapController mapController;
-  DateTime now = DateTime.now();
   Set ads = {};
   Map randData = {};
   Map<String, List> history = {};
@@ -60,8 +59,6 @@ class _MapScrapsState extends State<MapScraps> {
   @override
   void initState() {
     if (this.mounted) {
-      time = DateFormat('Hm').format(now);
-      date = DateFormat('d/M/y').format(now);
       streamLocation = geoLocator
           .getPositionStream()
           .listen((event) => setState(() => currentLocation = event));
@@ -122,7 +119,14 @@ class _MapScrapsState extends State<MapScraps> {
     );
   }
 
-  //sssss
+  bool isExpired(DocumentSnapshot data) {
+    DateTime startTime = data['scrap']['time'].toDate();
+    return DateTime(startTime.year, startTime.month, startTime.day + 1,
+            startTime.hour, startTime.second)
+        .difference(DateTime.now())
+        .isNegative;
+  }
+
   void dialog(DocumentSnapshot doc) {
     final counter = Provider.of<AdsCounterProvider>(context, listen: false);
     final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -287,12 +291,9 @@ class _MapScrapsState extends State<MapScraps> {
                                                       ? Colors.white
                                                       : Color(0xff26A4FF)),
                                             ),
-                                            Text(
-                                                'เวลา : ${DateFormat('HH:mm').format(data['scrap']['time'].toDate())}',
-                                                style: TextStyle(
-                                                    fontSize: s36,
-                                                    height: 0.8,
-                                                    color: Color(0xff969696)))
+                                            CountDownText(
+                                                startTime: data['scrap']['time']
+                                                    .toDate())
                                           ],
                                         ),
                                         Icon(Icons.more_horiz,
@@ -360,21 +361,30 @@ class _MapScrapsState extends State<MapScraps> {
                                                             : Color(
                                                                 0xffFF4343)),
                                                     onTap: () {
-                                                      if (inHistory('like',
-                                                          data.documentID)) {
-                                                        ++like;
-                                                        history['like'].remove(
-                                                            data.documentID);
+                                                      if (isExpired(data)) {
+                                                        scrap.toast(
+                                                            'แสครปนี้ย่อยสลายแล้ว');
                                                       } else {
-                                                        --like;
-                                                        history['like'].add(
-                                                            data.documentID);
+                                                        scrap.updateScrapTrans(
+                                                            'like',
+                                                            data,
+                                                            context,
+                                                            comments:
+                                                                trans.value[
+                                                                    'comment']);
+                                                        if (inHistory('like',
+                                                            data.documentID)) {
+                                                          ++like;
+                                                          history['like']
+                                                              .remove(data
+                                                                  .documentID);
+                                                        } else {
+                                                          --like;
+                                                          history['like'].add(
+                                                              data.documentID);
+                                                        }
+                                                        setTrans(() {});
                                                       }
-                                                      scrap.updateScrapTrans(
-                                                          'like', data, context,
-                                                          comments: trans.value[
-                                                              'comment']);
-                                                      setTrans(() {});
                                                     },
                                                   ),
                                                   GestureDetector(
@@ -393,22 +403,43 @@ class _MapScrapsState extends State<MapScraps> {
                                                         icon: Icons
                                                             .move_to_inbox),
                                                     onTap: () {
-                                                      if (inHistory('picked',
-                                                          data.documentID)) {
-                                                        ++pick;
-                                                        history['picked']
-                                                            .remove(data
-                                                                .documentID);
+                                                      if (isExpired(data)) {
+                                                        scrap.toast(
+                                                            'แสครปนี้ย่อยสลายแล้ว');
                                                       } else {
-                                                        --pick;
-                                                        history['picked'].add(
-                                                            data.documentID);
+                                                        scrap.updateScrapTrans(
+                                                            'picked',
+                                                            data,
+                                                            context);
+                                                        if (inHistory('picked',
+                                                            data.documentID)) {
+                                                          ++pick;
+                                                          history['picked']
+                                                              .remove(data
+                                                                  .documentID);
+                                                        } else {
+                                                          --pick;
+                                                          history['picked'].add(
+                                                              data.documentID);
+                                                        }
+                                                        setTrans(() {});
                                                       }
-                                                      scrap.updateScrapTrans(
-                                                          'picked',
-                                                          data,
-                                                          context);
-                                                      setTrans(() {});
+                                                      // if (inHistory('picked',
+                                                      //     data.documentID)) {
+                                                      //   ++pick;
+                                                      //   history['picked']
+                                                      //       .remove(data
+                                                      //           .documentID);
+                                                      // } else {
+                                                      //   --pick;
+                                                      //   history['picked'].add(
+                                                      //       data.documentID);
+                                                      // }
+                                                      // scrap.updateScrapTrans(
+                                                      //     'picked',
+                                                      //     data,
+                                                      //     context);
+                                                      // setTrans(() {});
                                                     },
                                                   ),
                                                   GestureDetector(
@@ -698,15 +729,6 @@ class _MapScrapsState extends State<MapScraps> {
         bearing: 0.0,
         tilt: 90)));
   }
-  /*
-         Set id = {};
-            List scraps = [];
-            for (var usersID in snap.data['id']) {
-              id.add(usersID);
-              for (var scrap in snap.data['scraps'][usersID]) {
-                scraps.add(scrap);
-              }
-            } */
 
   changeMapMode() {
     getJsonFile("assets/mapStyle.json").then(setMapStyle);
@@ -796,7 +818,6 @@ class _MapScrapsState extends State<MapScraps> {
       double lat, double lng, DocumentSnapshot doc, String writerUid) {
     final MarkerId markerId = MarkerId(doc.documentID);
     final counter = Provider.of<AdsCounterProvider>(context, listen: false);
-    var date = doc['scrap']['time'].toDate();
     final Marker marker = Marker(
       markerId: markerId,
       position: LatLng(lat, lng),
@@ -808,9 +829,6 @@ class _MapScrapsState extends State<MapScraps> {
           setState(() {});
           dialog(doc);
           counter.count += 1;
-          // scrap.increaseTransaction(writerUid, 'read');
-          // increasHistTran(writerUid, '${date.year},${date.month},${date.day}',
-          //     doc.documentID);
           streamLimit.add(16 - allScrap.length);
         } catch (e) {
           print(e.toString());

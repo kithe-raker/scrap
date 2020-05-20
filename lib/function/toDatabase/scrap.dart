@@ -96,7 +96,7 @@ class Scraps {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     var defaultDb = FirebaseDatabase.instance;
-    // var userDb = FirebaseDatabase(app: db.userTransact);
+    var userDb = FirebaseDatabase(app: db.userTransact);
     var ref = 'scraps/${scrap.documentID}';
 
     if (history[field].contains(scrap.documentID)) {
@@ -115,6 +115,14 @@ class Scraps {
               : mutableData.value['point'] + 3
         });
       });
+
+      userDb.reference().child('users/${scrap['uid']}/att').once().then(
+          (data) => userDb
+              .reference()
+              .child('users/${scrap['uid']}/att')
+              .update(
+                  {'att': field == 'like' ? data.value - 1 : data.value - 3}));
+
       if (field == 'like')
         fcm.unsubscribeFromTopic(scrap.documentID);
       else
@@ -135,12 +143,21 @@ class Scraps {
               : mutableData.value['point'] - 3
         });
       });
+      userDb.reference().child('users/${scrap['uid']}/att').once().then(
+          (data) => userDb
+              .reference()
+              .child('users/${scrap['uid']}/att')
+              .update(
+                  {'att': field == 'like' ? data.value + 1 : data.value + 3}));
 
       if (field == 'like')
         fcm.subscribeToTopic(scrap.documentID);
       else
         pickScrap(scrap.data, uid);
     }
+    // } else {
+    //   toast('แสครปนี้ย่อยสลายแล้ว');
+    // }
   }
 
   pickScrap(Map scrap, String uid, {bool cancel = false}) {
