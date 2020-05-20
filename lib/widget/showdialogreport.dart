@@ -143,7 +143,7 @@ class _Report_DropDownButtonState extends State<Report_DropDownButton> {
         //   color: Colors.white,
         //   fontSize: s36
         // ),
-        //dropdownColor: Color(0xff1a1a1a),
+        dropdownColor: Color(0xfff282828),
         icon: Icon(Icons.arrow_drop_down),
         iconSize: s60,
         //elevation: 16,
@@ -283,47 +283,41 @@ void showDialogReport(BuildContext context) {
               height: screenHeightDp / 1.7,
               width: screenWidthDp / 1.1,
               decoration: BoxDecoration(
-                color: Color(0xff1a1a1a),
+                  borderRadius: BorderRadius.all(Radius.circular(50))),
+              /* decoration: BoxDecoration(
+                //  color: Color(0xff1a1a1a),
                 borderRadius: BorderRadius.circular(5),
-              ),
+              ),*/
               child: Stack(
                 children: [
                   Container(
-                    margin: EdgeInsets.symmetric(
-                      vertical: screenWidthDp / 50,
-                    ),
+                    padding: EdgeInsets.only(top: a.width / 100),
                     child: Scaffold(
-                      backgroundColor: Color(0xff1a1a1a),
+                      backgroundColor: Colors.transparent,
                       resizeToAvoidBottomPadding: false,
-                      body: Center(
+                      body: Container(
+                        decoration: BoxDecoration(
+                            color: Color(0xfff282828),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(7.0))),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Center(
+                            Container(
                               child: Report_DropDownButton(),
                             ),
-                            // Row(
-                            //   children: [
-                            //     // Text(
-                            //     //   'ถึงผู้พัฒนา',
-                            //     //   style: TextStyle(
-                            //     //     fontSize: s60,
-                            //     //     color: Colors.white,
-                            //     //   ),
-                            //     // ),
-                            //     //DropDownButton<<<<<<<<<<<<<<<<<<<<<<<
-                            //     //Report_DropDownButton(),
-                            //   ],
-                            // ),
+
                             Container(
-                              margin: EdgeInsets.symmetric(
+                              /*  margin: EdgeInsets.symmetric(
                                 horizontal: 8,
-                              ),
+                              ),*/
+                              padding: EdgeInsets.only(
+                                  top: a.width / 100, left: a.width / 50),
                               child: TextField(
                                 style: TextStyle(
                                     fontSize: s52, color: Colors.white),
-                                minLines: 3,
-                                maxLines: 3,
+                                minLines: 5,
+                                maxLines: 5,
                                 decoration: InputDecoration(
                                   // fillColor: Colors.redAccent,
                                   // filled: true,
@@ -337,36 +331,32 @@ void showDialogReport(BuildContext context) {
                                 ),
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Positioned(
-                                  top: a.width / 0.95,
-                                  right: 0,
-                                  //bottom: a.height / 10,
-                                  // right: 0,
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: a.width / 25,
-                                      vertical: a.width / 40,
+
+                            Container(
+                              padding: EdgeInsets.only(
+                                  left: a.width / 1.4, top: a.width / 2.8),
+                              child: Container(
+                                /* margin: EdgeInsets.symmetric(
+                                horizontal: a.width / 25,
+                                vertical: a.width / 40,
+                              ),*/
+
+                                width: a.width / 8,
+                                height: a.width / 8,
+                                // alignment: Alignment.center,
+                                child: IconButton(
+                                    icon: Icon(
+                                      Icons.send,
+                                      color: Color(0xff26A4FF),
                                     ),
-                                    width: a.width / 8,
-                                    height: a.width / 8,
-                                    alignment: Alignment.center,
-                                    child: IconButton(
-                                        icon: Icon(
-                                          Icons.send,
-                                          color: Color(0xff26A4FF),
-                                        ),
-                                        onPressed: () {}),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(a.width)),
-                                  ),
-                                ),
-                              ],
+                                    onPressed: () {}),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                              ),
                             ),
+
                             // Row(
                             //   mainAxisAlignment: MainAxisAlignment.end,
                             //   children: [
@@ -407,7 +397,7 @@ void showDialogReport(BuildContext context) {
                       indent: 5,
                       endIndent: 5,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

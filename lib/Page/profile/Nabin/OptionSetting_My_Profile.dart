@@ -322,7 +322,7 @@ class OptionSetting extends StatefulWidget {
 class _OptionSettingState extends State<OptionSetting> {
   Widget appbar_OptionSetting(BuildContext context) {
     return Container(
-      height: appBarHeight,
+      height: appBarHeight / 1.35,
       width: screenWidthDp,
       margin: EdgeInsets.symmetric(
         horizontal: screenWidthDp / 100,
@@ -364,6 +364,7 @@ class _OptionSettingState extends State<OptionSetting> {
     screenutilInit(context);
     return Scaffold(
       //backgroundColor: Colors.black,
+      //resizeToAvoidBottomPadding: false,
       body: Stack(
         children: [
           Container(
@@ -438,16 +439,16 @@ class _OptionSettingState extends State<OptionSetting> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: appBarHeight * 3,
-                ),
+                /* SizedBox(
+                  height: appBarHeight * 1,
+                ),*/
                 Column(
                   children: [
                     Text(
                       'SCRAP.',
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 52,
+                          fontSize: s70 * 1.5,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
@@ -458,7 +459,28 @@ class _OptionSettingState extends State<OptionSetting> {
                 ),
               ],
             ),
-          )
+          ),
+          /*  Positioned(
+            bottom: 0,
+            left: appBarHeight,
+            child: Container(
+              child: Column(
+                children: [
+                  Text(
+                    'SCRAP.',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: s70 * 1.5,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'version 2.0.1\n\n',
+                    style: TextStyle(color: Colors.white, fontSize: s58),
+                  ),
+                ],
+              ),
+            ),
+          )*/
         ],
       ),
     );
@@ -761,6 +783,7 @@ class _HistoryScrap_MyProfileState extends State<HistoryScrap_MyProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      resizeToAvoidBottomPadding: false,
       body: SafeArea(
         child: Stack(
           children: <Widget>[
@@ -906,8 +929,10 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.black,
+      resizeToAvoidBottomPadding: false,
       body: Stack(
         children: [
           Column(
@@ -943,18 +968,26 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                           ),
                         ],
                       ),
-                      TextField(
-                        minLines: 18,
-                        maxLines: 18,
-                        decoration: InputDecoration(
-                          // fillColor: Colors.redAccent,
-                          // filled: true,
-                          border: InputBorder.none,
-                          hintText: 'แจ้งรายละเอียดเกี่ยวกับปัญหา',
-                          hintStyle: TextStyle(
-                            fontSize: s48,
-                            height: 0.08,
-                            color: Colors.white30,
+                      Container(
+                        /*  margin: EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),*/
+                        /*  padding: EdgeInsets.only(
+                            top: a.width / 100, left: a.width / 50),*/
+                        child: TextField(
+                          style: TextStyle(fontSize: s52, color: Colors.white),
+                          minLines: 10,
+                          maxLines: 10,
+                          decoration: InputDecoration(
+                            // fillColor: Colors.redAccent,
+                            // filled: true,
+                            border: InputBorder.none,
+                            hintText: 'แจ้งรายละเอียดเกี่ยวกับปัญหา',
+                            hintStyle: TextStyle(
+                              fontSize: s54,
+                              height: 0.08,
+                              color: Colors.white30,
+                            ),
                           ),
                         ),
                       ),
@@ -1015,7 +1048,7 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
           ),
           Container(
             margin: EdgeInsets.symmetric(
-              vertical: screenHeightDp / 4.8,
+              vertical: screenHeightDp / 5.2,
             ),
             child: Divider(
               color: Color(0xff383838),

@@ -50,11 +50,7 @@ dependencies:
   firebase_core: ^0.4.4+3
   pull_to_refresh: ^1.5.8
   provider: ^4.0.4
-<<<<<<< HEAD
-  
-=======
   countdown: ^0.1.0
->>>>>>> ee0bbdc1f0b32507669b26d417f1d6bbc72aed81
 
   
 dev_dependencies:
