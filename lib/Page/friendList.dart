@@ -553,7 +553,7 @@ class _FriendListState extends State<FriendList> {
         msg: text,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
-        timeInSecForIos: 1,
+        //timeInSecForIos: 1,
         backgroundColor: Colors.white60,
         textColor: Colors.black,
         fontSize: 16.0);
