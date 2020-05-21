@@ -36,6 +36,7 @@ void showPopup(BuildContext context) {
                     resizeToAvoidBottomPadding: false,
                     body: Container(
                       width: screenWidthDp,
+                      height: appBarHeight * 3.65,
                       decoration: BoxDecoration(
                           color: Color(0xff1a1a1a),
                           borderRadius: BorderRadius.all(Radius.circular(4.0))),
@@ -51,14 +52,27 @@ void showPopup(BuildContext context) {
                                     fontSize: s52,
                                     fontWeight: FontWeight.bold),
                               ),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.cancel,
-                                    color: Colors.blue,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  })
+                              Container(
+                                padding:
+                                    EdgeInsets.only(right: appBarHeight / 10),
+                                child: GestureDetector(
+                                    child: Container(
+                                      height: appBarHeight / 2.8,
+                                      width: appBarHeight / 2.8,
+                                      decoration: BoxDecoration(
+                                          color: Color(0xfff000000),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(appBarHeight))),
+                                      child: Icon(
+                                        Icons.clear,
+                                        color: Colors.blue,
+                                        size: s42,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    }),
+                              ),
                             ],
                           ),
                           Divider(
@@ -76,10 +90,10 @@ void showPopup(BuildContext context) {
                             child: TextField(
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: s38,
+                                fontSize: s48,
                               ),
-                              minLines: 7,
-                              maxLines: 7,
+                              minLines: 4,
+                              maxLines: 4,
                               maxLength: 60,
                               decoration: InputDecoration(
                                 counterText: '',
@@ -89,11 +103,11 @@ void showPopup(BuildContext context) {
                                 alignLabelWithHint: true,
                                 hintText: 'เขียนข้อความของคุณ',
                                 hintStyle: TextStyle(
-                                    fontSize: s48,
-                                    height: 0.08,
-                                    color: Colors.white30
-                                    //color: AppColors.textFieldInput
-                                    ),
+                                  fontSize: s48,
+                                  height: 0.08,
+                                  color: Color(0xfffA2A2A2),
+                                  //color: AppColors.textFieldInput
+                                ),
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.black12,
@@ -115,23 +129,24 @@ void showPopup(BuildContext context) {
                               },
                             ),
                             width: appBarHeight * 4,
-                            height: appBarHeight * 3.2,
+                            height: appBarHeight * 2.3,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
                               Container(
                                 width: screenWidthDp / 5,
+                                height: appBarHeight / 2.3,
                                 decoration: BoxDecoration(
                                     color: Colors.black54,
                                     borderRadius:
                                         BorderRadius.circular(screenHeightDp)),
                                 child: Center(
                                   child: Text(
-                                    ' ' + _charCount.toString() + '/60 ',
+                                    ' ' + _charCount.toString() + '\t/\t60 ',
                                     style: TextStyle(
                                       color: Colors.white30,
-                                      fontSize: s60,
+                                      fontSize: s42,
                                     ),
                                   ),
                                 ),
@@ -142,17 +157,22 @@ void showPopup(BuildContext context) {
                               InkWell(
                                 onTap: () {},
                                 child: Container(
-                                  width: screenWidthDp / 5,
+                                  padding: EdgeInsets.fromLTRB(
+                                      appBarHeight / 3,
+                                      appBarHeight / 25,
+                                      appBarHeight / 3,
+                                      appBarHeight / 25),
                                   decoration: BoxDecoration(
-                                      color: Colors.blue,
+                                      color: Color(0xfff26A4FF),
                                       borderRadius: BorderRadius.circular(
                                           screenHeightDp)),
                                   child: Center(
                                     child: Text(
-                                      ' เพิ่ม ',
+                                      'เพิ่ม',
                                       style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                         color: Colors.white,
-                                        fontSize: s60,
+                                        fontSize: s48,
                                       ),
                                     ),
                                   ),
@@ -166,147 +186,6 @@ void showPopup(BuildContext context) {
                   ),
                 ),
               )
-              /* Container(
-                    margin: EdgeInsets.only(
-                      left: 10,
-                      right: 10,
-                      bottom: 10,
-                    ),
-                    child: Scaffold(
-                      backgroundColor: Color(0xff1a1a1a),
-                      body: ListView(
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'เพิ่มสเตตัส',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: s40,
-                                  //fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              Container(
-                                /*  height: 32,
-                                width: 32,*/
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(500),
-                                    color: Colors.black),
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Icon(
-                                    Icons.close,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                              )
-                              // IconButton(
-                              //     icon: Icon(Icons.close),
-                              //     onPressed: () {
-
-                              //     }),
-                            ],
-                          ),
-                          Container(
-                            height: screenHeightDp / 5,
-                            width: screenWidthDp / 1.1,
-                            //color: Colors.redAccent,
-                            child: TextField(
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s38,
-                              ),
-                              minLines: 5,
-                              maxLines: 5,
-                              maxLength: 60,
-                              decoration: InputDecoration(
-                                counterText: '',
-                                filled: true,
-                                fillColor: Color(0xff222222),
-                                border: InputBorder.none,
-                                alignLabelWithHint: true,
-                                hintText: 'เขียนข้อความของคุณ',
-                                hintStyle: TextStyle(
-                                    fontSize: s48,
-                                    height: 0.08,
-                                    color: Colors.white30
-                                    //color: AppColors.textFieldInput
-                                    ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.black12,
-                                  ),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
-                                    color: Colors.black12,
-                                  ),
-                                ),
-                              ),
-                              onChanged: (String value) {
-                                a(() {
-                                  _charCount = value.length;
-                                  print(_charCount);
-                                });
-                              },
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                width: screenWidthDp / 5,
-                                decoration: BoxDecoration(
-                                    color: Colors.black54,
-                                    borderRadius:
-                                        BorderRadius.circular(screenHeightDp)),
-                                child: Center(
-                                  child: Text(
-                                    ' ' + _charCount.toString() + '/60 ',
-                                    style: TextStyle(
-                                      color: Colors.white30,
-                                      fontSize: s60,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {},
-                                child: Container(
-                                  width: screenWidthDp / 5,
-                                  decoration: BoxDecoration(
-                                      color: Colors.blue,
-                                      borderRadius: BorderRadius.circular(
-                                          screenHeightDp)),
-                                  child: Center(
-                                    child: Text(
-                                      ' เพิ่ม ',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: s60,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),*/
-              /*  Container(
-                    margin: EdgeInsets.symmetric(vertical: screenHeightDp / 25),
-                    child: Divider(
-                      color: Colors.white38,
-                    ),
-                  )*/
             ],
           );
         });
@@ -618,6 +497,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                     ),
                   ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
@@ -635,7 +515,10 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                         ),
                       ),
                     ],
-                  )
+                  ),
+                  SizedBox(
+                    width: appBarHeight / 15,
+                  ),
                 ],
               ),
             ),
@@ -680,7 +563,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                   ),
                 ),
                 Container(
-                  height: screenHeightDp / 3.7,
+                  height: screenHeightDp / 3.85,
                   margin: EdgeInsets.symmetric(
                     horizontal: 12,
                   ),
@@ -994,30 +877,29 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Positioned(
-                            top: a.width / 0.95,
-                            right: 0,
-                            //bottom: a.height / 10,
-                            // right: 0,
+                          GestureDetector(
+                            onTap: () {},
                             child: Container(
+                              padding: EdgeInsets.only(left: appBarHeight / 15),
                               margin: EdgeInsets.symmetric(
                                 horizontal: a.width / 40,
                                 vertical: a.width / 40,
                               ),
                               width: a.width / 8,
                               height: a.width / 8,
-                              alignment: Alignment.center,
-                              child: IconButton(
-                                  icon: Icon(
-                                    Icons.send,
-                                    color: Color(0xff26A4FF),
-                                  ),
-                                  onPressed: () {}),
+                              //alignment: Alignment.center,
+                              child: Icon(
+                                Icons.send,
+                                color: Color(0xff26A4FF),
+                                size: s60 * 0.8,
+                              ),
+
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(a.width)),
                             ),
                           ),
+
                           // Container(
                           //   height: 80,
                           //   width: 80,
@@ -1083,8 +965,8 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
           Row(
             children: [
               Container(
-                height: 60,
-                width: 60,
+                height: 55,
+                width: 55,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(screenHeightDp),
@@ -1129,17 +1011,40 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: ListView(
-        children: [
-          appbar_ListOptionSetting(context, Icons.block, ' ประวัติการบล็อค'),
-          blockUser(' @someone'),
-          blockUser(' @someone'),
-          blockUser(' @someone'),
-          blockUser(' @someone'),
-        ],
-      ),
-    );
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Positioned(
+                child: appbar_ListOptionSetting(
+                    context, Icons.block, ' ประวัติการบล็อค'),
+              ),
+              Positioned(
+                //top: appBarHeight / 1.35,
+                child: Container(
+                  padding: EdgeInsets.only(top: appBarHeight / 1.35),
+                  child: ListView(
+                    physics: BouncingScrollPhysics(),
+                    children: [
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                      blockUser(' @someone'),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }
 

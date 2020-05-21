@@ -25,6 +25,7 @@ import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/burnt.dart';
 import 'package:scrap/widget/notburnt.dart';
 import 'package:scrap/widget/showcontract.dart';
+import 'package:scrap/widget/peoplethrowpaper.dart';
 
 const String testDevice = "34C215009965F34F";
 
@@ -56,7 +57,7 @@ class MyApp extends StatelessWidget {
             title: 'Scrap.',
             theme: ThemeData(
                 fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-            home: My_Profile()),
+            home: Other_Profile()),
       ),
     );
   }

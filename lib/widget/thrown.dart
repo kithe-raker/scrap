@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:scrap/widget/ScreenUtil.dart';
+
 //ฟังก์ชั่นปากระดาษ
 bool public = false;
 void showAlert(BuildContext context) {
@@ -79,10 +81,17 @@ void showAlert(BuildContext context) {
                                   ),
                                   //ออกจากหน้าปากระดาษ
                                   InkWell(
-                                    child: Icon(
-                                      Icons.cancel,
-                                      size: a.width / 15,
-                                      color: Color(0xfff707070),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Color(0xfff707070),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(50))),
+                                      child: Icon(
+                                        Icons.clear,
+                                        size: a.width / 15,
+                                        //color: Color(0xfff707070),
+                                        color: Colors.white,
+                                      ),
                                     ),
                                     onTap: () {
                                       Navigator.pop(context);
@@ -100,15 +109,19 @@ void showAlert(BuildContext context) {
                               child: Stack(
                                 children: <Widget>[
                                   //รูปกระดาษ
-                                  Container(
-                                    child: Image.asset(
-                                      'assets/paper-readed.png',
-                                      width: a.width / 1.04,
-                                      height: a.width / 1.04 * 1.115,
-                                      fit: BoxFit.cover,
+                                  Center(
+                                    child: Container(
+                                      child: Image.asset(
+                                        'assets/paper-readed.png',
+                                        width: a.width / 1.04,
+                                        height: a.width / 1.04 * 1.115,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-
+                                  /*  SizedBox(
+                                    height: appBarHeight / 10,
+                                  ),*/
                                   Container(
                                     width: a.width,
                                     height: a.height,

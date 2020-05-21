@@ -103,21 +103,24 @@ class _Other_ProfileState extends State<Other_Profile> {
                         height: appBarHeight / 5,
                       ),
                       Text(
-                        '@Mike',
+                        '@MIKE',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: s70,
+                          fontSize: s60,
                         ),
                       ),
+                      SizedBox(
+                        height: appBarHeight / 10,
+                      ),
                       Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: screenWidthDp / 4,
-                        ),
+                        /*margin: EdgeInsets.symmetric(
+                          horizontal: screenWidthDp / 40,
+                        ),*/
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             dataProfile(15, 'เก็บไว้'),
-                            dataProfile(41, 'คนให้ความสนใจ'),
+                            dataProfile(41, 'ผู้ติดตาม'),
                             dataProfile(31, 'โดนปาใส่'),
                           ],
                         ),
@@ -125,12 +128,16 @@ class _Other_ProfileState extends State<Other_Profile> {
                       Container(
                         height: screenHeightDp / 100,
                       ),
+                      SizedBox(
+                        height: appBarHeight / 10,
+                      ),
                       Container(
-                        width: appBarHeight * 4,
+                        width: appBarHeight * 4.5,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Container(
+                              width: appBarHeight * 1.55,
                               child: GestureDetector(
                                 onTap: () {},
                                 //color: Colors.grey,
@@ -147,23 +154,25 @@ class _Other_ProfileState extends State<Other_Profile> {
                                   ),
                                   child: Text(
                                     'ติดตาม',
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                       color: Color(0xfff26A4FF),
-                                      fontSize: s40,
+                                      fontSize: s52,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                             SizedBox(
-                              width: appBarHeight / 10,
+                              width: appBarHeight / 6,
                             ),
                             Container(
                               child: GestureDetector(
                                 onTap: () {},
                                 //color: Colors.grey,
                                 child: Container(
-                                  width: appBarHeight * 1.2,
+                                  width: appBarHeight * 1.55,
                                   padding: EdgeInsets.fromLTRB(
                                       appBarHeight / 5,
                                       appBarHeight / 50,
@@ -181,7 +190,8 @@ class _Other_ProfileState extends State<Other_Profile> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Color(0xfff26A4FF),
-                                      fontSize: s40,
+                                      fontSize: s52,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -193,12 +203,13 @@ class _Other_ProfileState extends State<Other_Profile> {
                       Container(
                         height: screenHeightDp / 40,
                       ),
+
                       Container(
                         margin: EdgeInsets.symmetric(
                           horizontal: screenWidthDp / 30,
                         ),
                         child: Text(
-                          '“ยุบพรรคอนาคตใหม่แต่ยุบคนไทย\nไม่ได้หรอกไอตู่หน้าโง่”',
+                          '“ยุบพรรคอนาคตใหม่แต่ยุบคนไทย\nไม่ได้หรอก\tไอตู่หน้าโง่”',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: s40,

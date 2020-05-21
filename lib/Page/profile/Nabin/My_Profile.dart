@@ -105,21 +105,21 @@ class _My_ProfileState extends State<My_Profile> {
                           height: appBarHeight / 5,
                         ),
                         Text(
-                          '@name',
+                          '@vinatsataporn',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: s70,
+                            fontSize: s60,
                           ),
                         ),
                         SizedBox(
                           height: appBarHeight / 10,
                         ),
                         Container(
-                          margin: EdgeInsets.symmetric(
+                          /*  margin: EdgeInsets.symmetric(
                             horizontal: screenWidthDp / 4,
-                          ),
+                          ),*/
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               dataProfile(15, 'เก็บไว้'),
                               dataProfile(41, 'แอทเทนชัน'),
@@ -570,19 +570,26 @@ Widget adsContainer() {
 //name = [เก็บไว้, คนให้ความสนใจ, โดนปาใส่]
 Widget dataProfile(int n, String name) {
   return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
     children: <Widget>[
-      Text(
-        '$n',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: s70,
+      Container(
+        height: appBarHeight / 1.8,
+        child: Text(
+          '$n',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
         ),
       ),
-      Text(
-        name,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: s36,
+      Container(
+        child: Text(
+          name,
+          style: TextStyle(
+            color: Color(0xfff727272),
+            fontWeight: FontWeight.bold,
+            fontSize: s36,
+          ),
         ),
       ),
     ],
