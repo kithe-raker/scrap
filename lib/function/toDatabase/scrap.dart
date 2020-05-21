@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -57,8 +56,6 @@ class Scraps {
     var allScrap = FirebaseDatabase(app: db.scrapAll);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
-    var auth = await FirebaseAuth.instance.currentUser();
-    var uid = auth.uid;
     var batch = Firestore.instance.batch();
     GeoFirePoint defaultPoint = Geoflutterfire().point(
         latitude: defaultLocation.latitude,
@@ -69,16 +66,16 @@ class Scraps {
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
     var trans = {
-      'uid': uid,
+      'uid': user.uid,
       'comment': 0,
       'like': 0,
       'picked': 0,
       'id': docId,
       'point': 0
     };
-    Map scrap = {
+    Map<String, dynamic> scrap = {
       'id': docId,
-      'uid': uid,
+      'uid': user.uid,
       'scrap': {
         'text': scrapData.text,
         'writer': scrapData.public ? user.id : 'ไม่ระบุตัวตน',
@@ -89,17 +86,21 @@ class Scraps {
     };
     batch.setData(ref.document(docId), scrap);
     batch.setData(
-        Firestore.instance.collection('Users/$uid/history').document(docId),
+        Firestore.instance
+            .collection('Users/${user.uid}/history')
+            .document(docId),
         scrap);
 
     FirebaseDatabase.instance.reference().child('scraps/$docId').set(trans);
     allScrap.reference().child('scraps/$docId').set(trans);
     userDb
         .reference()
-        .child('users/${user.id}')
+        .child('users/${user.uid}')
         .update({'papers': user.papers - 1});
     await batch.commit();
     loading.add(false);
+    toast('คุณโยนกระดาษไปที่คุณเลือกแล้ว');
+    Navigator.pop(context);
   }
 
   void updateScrapTrans(
