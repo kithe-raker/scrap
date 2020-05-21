@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 import 'package:scrap/function/toDatabase/scrap.dart';
+import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/SelectPosition.dart';
 
 //ฟังก์ชั่นปากระดาษ
-bool public = false;
 void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
-  String text;
   var _key = GlobalKey<FormState>();
+  bool public = false;
+  final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
   showDialog(
       context: context,
       builder: (context) {
@@ -62,11 +64,11 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                           child: Checkbox(
                                             tristate: false,
                                             activeColor: Color(0xfff707070),
-                                            value: public ?? false,
+                                            value: public,
                                             onChanged: (bool value) {
-                                              setState(() {
-                                                public = value;
-                                              });
+                                              scrapData.public = value;
+                                              public = value;
+                                              setState(() {});
                                             },
                                           ),
                                         ),
@@ -151,7 +153,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                                 : null;
                                           },
                                           onSaved: (val) {
-                                            text = val;
+                                            scrapData.text = val.trim();
                                           },
                                         ),
                                       ),
@@ -193,10 +195,6 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                                     SelectPosition(
                                                         defaultLatLng:
                                                             latLng)));
-                                      // scrap.toast('คุณได้ทิ้งกระดาษไว้แล้ว');
-                                      // Navigator.pop(context);
-                                      // await scrap.binScrap(
-                                      //     text, public, widget.doc);
                                     }
                                   }),
                             ),

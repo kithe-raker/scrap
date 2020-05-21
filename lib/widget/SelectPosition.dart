@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 
 class SelectPosition extends StatefulWidget {
   final LatLng defaultLatLng;
@@ -18,17 +20,27 @@ class _SelectPositionState extends State<SelectPosition> {
   GoogleMapController controller;
   BitmapDescriptor scrapIcon, _curIcon;
   GoogleMapController mapController;
+  StreamSubscription loadStream;
+  bool loading = false;
 
   @override
   void initState() {
+    loadStream =
+        scrap.loading.listen((value) => setState(() => loading = value));
     initLocation();
     super.initState();
   }
 
-  initLocation() {
+  void initLocation() {
     location = widget.defaultLatLng;
     scrapLocation = LatLng(
         widget.defaultLatLng.latitude, widget.defaultLatLng.longitude + 0.0001);
+  }
+
+  @override
+  void dispose() {
+    loadStream.cancel();
+    super.dispose();
   }
 
   @override
@@ -70,9 +82,7 @@ class _SelectPositionState extends State<SelectPosition> {
                 'แตะค้างที่ "แสครป" ของคุณเพื่อเลือกตำแน่ง',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    wordSpacing: 0.1,
-                    fontSize: s46,
-                    color: Colors.white),
+                    wordSpacing: 0.1, fontSize: s46, color: Colors.white),
               ),
             ),
           ),
@@ -138,13 +148,15 @@ class _SelectPositionState extends State<SelectPosition> {
                       ),
                     ),
                     onTap: () {
-                      print(widget.defaultLatLng);
+                      scrap.binScrap(context,
+                          location: scrapLocation, defaultLocation: location);
                     },
                   ),
                 ),
               ],
             ),
-          )
+          ),
+          loading ? Loading() : SizedBox()
         ],
       ),
     );

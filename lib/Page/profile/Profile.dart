@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,8 +13,6 @@ import 'package:scrap/Page/profile/Dropdown/editProfile.dart';
 import 'package:scrap/Page/setting/blockingList.dart';
 import 'package:scrap/Page/setting/History.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
-import 'package:scrap/services/auth.dart';
-import 'package:scrap/services/provider.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/LongPaper.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -1465,7 +1464,7 @@ class _ProfileState extends State<Profile> {
             context, MaterialPageRoute(builder: (context) => About()));
         break;
       case Constans.SignOut:
-        Auth auth = Provider.of(context).auth;
+        var auth = FirebaseAuth.instance;
         await auth.signOut().then((value) {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => LoginPage()));
