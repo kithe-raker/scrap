@@ -7,6 +7,8 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 
+import 'widget/announce.dart';
+
 const String testDevice = "34C215009965F34F";
 
 void main() {
