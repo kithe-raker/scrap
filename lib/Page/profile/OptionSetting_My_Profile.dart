@@ -697,22 +697,18 @@ class _HistoryScrap_MyProfileState extends State<HistoryScrap_MyProfile> {
 
 //Grid กระดาษ
 Widget wrap() {
-  return Column(
-    children: [
-      Wrap(
-        direction: Axis.horizontal,
-        alignment: WrapAlignment.start,
-        children: <Widget>[
-          Paper_Widget(),
-          Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
-        ],
-      ),
+  return Wrap(
+    direction: Axis.horizontal,
+    alignment: WrapAlignment.center,
+    children: <Widget>[
+      Paper_Widget(),
+      Paper_Widget(),
+      TimeOut_Paper_Widget(),
+      TimeOut_Paper_Widget(),
+      TimeOut_Paper_Widget(),
+      TimeOut_Paper_Widget(),
+      TimeOut_Paper_Widget(),
+      TimeOut_Paper_Widget(),
     ],
   );
 }

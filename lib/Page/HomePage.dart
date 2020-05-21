@@ -29,153 +29,153 @@ class _HomePageState extends State<HomePage> {
   Scraps scrap = Scraps();
   JsonConverter jsonConverter = JsonConverter();
 
-  _showModalBottomSheet(context) {
-    Size a = MediaQuery.of(context).size;
-    showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        context: context,
-        builder: (BuildContext context) {
-          Size a = MediaQuery.of(context).size;
-          return Stack(
-            children: <Widget>[
-              Container(
-                child: Container(
-                  width: a.width,
-                  height: a.width / 1.8,
-                  decoration: BoxDecoration(
-                      color: Color(0xff282828),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(a.width / 20),
-                        topRight: Radius.circular(a.width / 20),
-                      )),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(
-                            top: a.width / 40, bottom: a.width / 15),
-                        width: a.width / 3,
-                        height: a.width / 50,
-                        decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(a.width)),
-                      ),
-                      Container(
-                        width: a.width,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                InkWell(
-                                  child: Container(
-                                    margin:
-                                        EdgeInsets.only(bottom: a.width / 50),
-                                    width: a.width / 6,
-                                    height: a.width / 6,
-                                    child: Icon(
-                                      Icons.whatshot,
-                                      size: a.width / 13,
-                                      color: Color(0xffFF8F3A),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(a.width),
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    //ต้องแก้
-                                    //  _showdialogwhatshot(context);
-                                  },
-                                ),
-                                Text(
-                                  "เผากระดาษ",
-                                  style: TextStyle(color: Colors.white),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              width: a.width / 10,
-                            ),
-                            InkWell(
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    margin:
-                                        EdgeInsets.only(bottom: a.width / 50),
-                                    width: a.width / 6,
-                                    height: a.width / 6,
-                                    child: Icon(
-                                      Icons.block,
-                                      size: a.width / 13,
-                                      color: Color(0xff8B8B8B),
-                                    ),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(a.width)),
-                                  ),
-                                  Text(
-                                    "บล็อคผู้ใช้",
-                                    style: TextStyle(color: Colors.white),
-                                  )
-                                ],
-                              ),
-                              onTap: () {
-                                //ต้องแก้
-                                //   _showdialogblock(context);
-                              },
-                            ),
-                            SizedBox(
-                              width: a.width / 10,
-                            ),
-                            InkWell(
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    margin:
-                                        EdgeInsets.only(bottom: a.width / 50),
-                                    width: a.width / 6,
-                                    height: a.width / 6,
-                                    child: Icon(
-                                      Icons.report_problem,
-                                      size: a.width / 13,
-                                      color: Color(0xff8B8B8B),
-                                    ),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(a.width)),
-                                  ),
-                                  Text(
-                                    "รายงาน",
-                                    style: TextStyle(color: Colors.white),
-                                  )
-                                ],
-                              ),
-                              onTap: () {
-                                //ต้องแก้
-                                // _showdialogreport(context);
-                                // _showdialogreport(context);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                child: AdmobBanner(
-                    adUnitId: AdmobService().getBannerAdId(),
-                    adSize: AdmobBannerSize.FULL_BANNER),
-              )
-            ],
-          );
-        });
-  }
+  // _showModalBottomSheet(context) {
+  //   Size a = MediaQuery.of(context).size;
+  //   showModalBottomSheet(
+  //       backgroundColor: Colors.transparent,
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         Size a = MediaQuery.of(context).size;
+  //         return Stack(
+  //           children: <Widget>[
+  //             Container(
+  //               child: Container(
+  //                 width: a.width,
+  //                 height: a.width / 1.8,
+  //                 decoration: BoxDecoration(
+  //                     color: Color(0xff282828),
+  //                     borderRadius: BorderRadius.only(
+  //                       topLeft: Radius.circular(a.width / 20),
+  //                       topRight: Radius.circular(a.width / 20),
+  //                     )),
+  //                 child: Column(
+  //                   children: <Widget>[
+  //                     Container(
+  //                       margin: EdgeInsets.only(
+  //                           top: a.width / 40, bottom: a.width / 15),
+  //                       width: a.width / 3,
+  //                       height: a.width / 50,
+  //                       decoration: BoxDecoration(
+  //                           color: Colors.grey,
+  //                           borderRadius: BorderRadius.circular(a.width)),
+  //                     ),
+  //                     Container(
+  //                       width: a.width,
+  //                       child: Row(
+  //                         mainAxisAlignment: MainAxisAlignment.center,
+  //                         children: <Widget>[
+  //                           Column(
+  //                             children: <Widget>[
+  //                               InkWell(
+  //                                 child: Container(
+  //                                   margin:
+  //                                       EdgeInsets.only(bottom: a.width / 50),
+  //                                   width: a.width / 6,
+  //                                   height: a.width / 6,
+  //                                   child: Icon(
+  //                                     Icons.whatshot,
+  //                                     size: a.width / 13,
+  //                                     color: Color(0xffFF8F3A),
+  //                                   ),
+  //                                   decoration: BoxDecoration(
+  //                                     color: Colors.white,
+  //                                     borderRadius:
+  //                                         BorderRadius.circular(a.width),
+  //                                   ),
+  //                                 ),
+  //                                 onTap: () {
+  //                                   //ต้องแก้
+  //                                   //  _showdialogwhatshot(context);
+  //                                 },
+  //                               ),
+  //                               Text(
+  //                                 "เผากระดาษ",
+  //                                 style: TextStyle(color: Colors.white),
+  //                               )
+  //                             ],
+  //                           ),
+  //                           SizedBox(
+  //                             width: a.width / 10,
+  //                           ),
+  //                           InkWell(
+  //                             child: Column(
+  //                               children: <Widget>[
+  //                                 Container(
+  //                                   margin:
+  //                                       EdgeInsets.only(bottom: a.width / 50),
+  //                                   width: a.width / 6,
+  //                                   height: a.width / 6,
+  //                                   child: Icon(
+  //                                     Icons.block,
+  //                                     size: a.width / 13,
+  //                                     color: Color(0xff8B8B8B),
+  //                                   ),
+  //                                   decoration: BoxDecoration(
+  //                                       color: Colors.white,
+  //                                       borderRadius:
+  //                                           BorderRadius.circular(a.width)),
+  //                                 ),
+  //                                 Text(
+  //                                   "บล็อคผู้ใช้",
+  //                                   style: TextStyle(color: Colors.white),
+  //                                 )
+  //                               ],
+  //                             ),
+  //                             onTap: () {
+  //                               //ต้องแก้
+  //                               //   _showdialogblock(context);
+  //                             },
+  //                           ),
+  //                           SizedBox(
+  //                             width: a.width / 10,
+  //                           ),
+  //                           InkWell(
+  //                             child: Column(
+  //                               children: <Widget>[
+  //                                 Container(
+  //                                   margin:
+  //                                       EdgeInsets.only(bottom: a.width / 50),
+  //                                   width: a.width / 6,
+  //                                   height: a.width / 6,
+  //                                   child: Icon(
+  //                                     Icons.report_problem,
+  //                                     size: a.width / 13,
+  //                                     color: Color(0xff8B8B8B),
+  //                                   ),
+  //                                   decoration: BoxDecoration(
+  //                                       color: Colors.white,
+  //                                       borderRadius:
+  //                                           BorderRadius.circular(a.width)),
+  //                                 ),
+  //                                 Text(
+  //                                   "รายงาน",
+  //                                   style: TextStyle(color: Colors.white),
+  //                                 )
+  //                               ],
+  //                             ),
+  //                             onTap: () {
+  //                               //ต้องแก้
+  //                               // _showdialogreport(context);
+  //                               // _showdialogreport(context);
+  //                             },
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //             Positioned(
+  //               bottom: 0,
+  //               child: AdmobBanner(
+  //                   adUnitId: AdmobService().getBannerAdId(),
+  //                   adSize: AdmobBannerSize.FULL_BANNER),
+  //             )
+  //           ],
+  //         );
+  //       });
+  // }
 
   @override
   void initState() {
@@ -322,8 +322,8 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => Profile(
-                                              doc: null))); //ไปยังหน้า Profile
+                                          builder: (context) =>
+                                              Profile())); //ไปยังหน้า Profile
                                 },
                               )),
                         ],

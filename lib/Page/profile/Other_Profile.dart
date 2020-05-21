@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+<<<<<<< HEAD:lib/Page/profile/Nabin/Other_Profile.dart
 import 'package:scrap/widget/Ads.dart';
 import 'My_Profile.dart';
+=======
+
+>>>>>>> 1984dafbcdc2006f41dadbb82b83d29178cc8174:lib/Page/profile/Other_Profile.dart
 import 'OptionSetting_My_Profile.dart';
 
 bool value = false;

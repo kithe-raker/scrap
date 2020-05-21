@@ -12,6 +12,7 @@ import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
+<<<<<<< HEAD
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/widget/announce.dart';
 import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
@@ -24,6 +25,10 @@ import 'package:scrap/widget/notburnt.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/thrown.dart';
+=======
+
+import 'widget/announce.dart';
+>>>>>>> 1984dafbcdc2006f41dadbb82b83d29178cc8174
 
 const String testDevice = "34C215009965F34F";
 
@@ -55,7 +60,11 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
+<<<<<<< HEAD
           home: Paperstranger()),
+=======
+          home: MainPage()),
+>>>>>>> 1984dafbcdc2006f41dadbb82b83d29178cc8174
     );
   }
 }

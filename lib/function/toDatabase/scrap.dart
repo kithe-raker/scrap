@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -57,8 +56,6 @@ class Scraps {
     var allScrap = FirebaseDatabase(app: db.scrapAll);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
-    var auth = await FirebaseAuth.instance.currentUser();
-    var uid = auth.uid;
     var batch = Firestore.instance.batch();
     GeoFirePoint defaultPoint = Geoflutterfire().point(
         latitude: defaultLocation.latitude,
@@ -69,16 +66,16 @@ class Scraps {
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
     var trans = {
-      'uid': uid,
+      'uid': user.uid,
       'comment': 0,
       'like': 0,
       'picked': 0,
       'id': docId,
       'point': 0
     };
-    Map scrap = {
+    Map<String, dynamic> scrap = {
       'id': docId,
-      'uid': uid,
+      'uid': user.uid,
       'scrap': {
         'text': scrapData.text,
         'writer': scrapData.public ? user.id : 'ไม่ระบุตัวตน',
@@ -89,17 +86,21 @@ class Scraps {
     };
     batch.setData(ref.document(docId), scrap);
     batch.setData(
-        Firestore.instance.collection('Users/$uid/history').document(docId),
+        Firestore.instance
+            .collection('Users/${user.uid}/history')
+            .document(docId),
         scrap);
 
     FirebaseDatabase.instance.reference().child('scraps/$docId').set(trans);
     allScrap.reference().child('scraps/$docId').set(trans);
     userDb
         .reference()
-        .child('users/${user.id}')
+        .child('users/${user.uid}')
         .update({'papers': user.papers - 1});
     await batch.commit();
     loading.add(false);
+    toast('คุณโยนกระดาษไปที่คุณเลือกแล้ว');
+    Navigator.pop(context);
   }
 
   void updateScrapTrans(
@@ -142,7 +143,7 @@ class Scraps {
       if (field == 'like')
         fcm.unsubscribeFromTopic(scrap.documentID);
       else
-        pickScrap(scrap.data, user.uid, cancel: true);
+        pickScrap(scrap.data, user.uid, context, cancel: true);
     } else {
       cacheHistory.addHistory(scrap, field: field, comments: comments);
       defaultDb.reference().child(ref).once().then((mutableData) {
@@ -169,14 +170,19 @@ class Scraps {
       if (field == 'like')
         fcm.subscribeToTopic(scrap.documentID);
       else
-        pickScrap(scrap.data, user.uid);
+        pickScrap(scrap.data, user.uid, context);
     }
     // } else {
     //   toast('แสครปนี้ย่อยสลายแล้ว');
     // }
   }
 
-  pickScrap(Map scrap, String uid, {bool cancel = false}) {
+  pickScrap(Map scrap, String uid, BuildContext context,
+      {bool cancel = false}) async {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    var ref = userDb.reference().child('users/$uid');
+    var trans = await ref.child('pick').once();
     if (cancel) {
       Firestore.instance
           .collection('Users')
@@ -184,6 +190,7 @@ class Scraps {
           .collection('scrapCollection')
           .document(scrap['id'])
           .delete();
+      ref.update({'pick': trans.value - 1});
     } else {
       scrap['picker'] = uid;
       scrap['timeStamp'] = FieldValue.serverTimestamp();
@@ -193,6 +200,7 @@ class Scraps {
           .collection('scrapCollection')
           .document(scrap['id'])
           .setData(scrap);
+      ref.update({'pick': trans.value + 1});
     }
   }
 

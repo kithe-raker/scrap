@@ -68,7 +68,6 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                             activeColor: Color(0xfff707070),
                                             value: public,
                                             onChanged: (bool value) {
-                                              scrapData.public = value;
                                               public = value;
                                               setState(() {});
                                             },
@@ -126,10 +125,14 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                       ),
                                     ),
                                   ),
+<<<<<<< HEAD
 
                                   Positioned(
                                       child: Container(
                                     //color: Colors.red,
+=======
+                                  Container(
+>>>>>>> 1984dafbcdc2006f41dadbb82b83d29178cc8174
                                     width: a.width,
                                     height: a.height,
                                     alignment: Alignment.center,
@@ -206,7 +209,9 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                   onTap: () {
                                     if (_key.currentState.validate()) {
                                       _key.currentState.save();
-                                      if (!isThrow)
+                                      scrapData.public = public;
+                                      if (!isThrow) {
+                                        Navigator.pop(context);
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -214,6 +219,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                                     SelectPosition(
                                                         defaultLatLng:
                                                             latLng)));
+                                      }
                                     }
                                   }),
                             ),
