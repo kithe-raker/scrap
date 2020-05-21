@@ -143,7 +143,7 @@ class Scraps {
       if (field == 'like')
         fcm.unsubscribeFromTopic(scrap.documentID);
       else
-        pickScrap(scrap.data, user.uid, cancel: true);
+        pickScrap(scrap.data, user.uid, context, cancel: true);
     } else {
       cacheHistory.addHistory(scrap, field: field, comments: comments);
       defaultDb.reference().child(ref).once().then((mutableData) {
@@ -170,14 +170,19 @@ class Scraps {
       if (field == 'like')
         fcm.subscribeToTopic(scrap.documentID);
       else
-        pickScrap(scrap.data, user.uid);
+        pickScrap(scrap.data, user.uid, context);
     }
     // } else {
     //   toast('แสครปนี้ย่อยสลายแล้ว');
     // }
   }
 
-  pickScrap(Map scrap, String uid, {bool cancel = false}) {
+  pickScrap(Map scrap, String uid, BuildContext context,
+      {bool cancel = false}) async {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    var ref = userDb.reference().child('users/$uid');
+    var trans = await ref.child('pick').once();
     if (cancel) {
       Firestore.instance
           .collection('Users')
@@ -185,6 +190,7 @@ class Scraps {
           .collection('scrapCollection')
           .document(scrap['id'])
           .delete();
+      ref.update({'pick': trans.value - 1});
     } else {
       scrap['picker'] = uid;
       scrap['timeStamp'] = FieldValue.serverTimestamp();
@@ -194,6 +200,7 @@ class Scraps {
           .collection('scrapCollection')
           .document(scrap['id'])
           .setData(scrap);
+      ref.update({'pick': trans.value + 1});
     }
   }
 

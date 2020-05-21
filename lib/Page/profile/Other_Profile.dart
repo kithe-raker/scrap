@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
-import 'My_Profile.dart';
 import 'OptionSetting_My_Profile.dart';
 
 bool value = false;
