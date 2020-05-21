@@ -29,103 +29,6 @@ import 'package:scrap/widget/showdialogfinishpaper.dart';
 import 'package:scrap/widget/warning.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 
-/*class Report_DropDownButton extends StatefulWidget {
-  @override
-  _Report_DropDownButtonState createState() => _Report_DropDownButtonState();
-}
-
-class _Report_DropDownButtonState extends State<Report_DropDownButton> {
-  dynamic dropdownValue = 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ';
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButtonHideUnderline(
-      child: DropdownButton<dynamic>(
-        value: dropdownValue,
-
-        // style: TextStyle(
-        //   color: Colors.white,
-        //   fontSize: s36
-        // ),
-        dropdownColor: Color(0xff1a1a1a),
-        icon: Icon(Icons.arrow_drop_down),
-        //dropdownColor: Color(0xff1a1a1a),
-        iconSize: s60,
-        //elevation: 16,
-        //style: TextStyle(color: Colors.deepPurple),
-        // underline: Container(
-        //   height: 2,
-        //   color: Colors.deepPurpleAccent,
-        // ),
-        onChanged: (dynamic newValue) {
-          setState(
-            () {
-              dropdownValue = newValue;
-
-              // if (dropdownValue == ' สาธารณะ') {
-              //   private = false;
-              // } else if (dropdownValue == ' ส่วนตัว') {
-              //   private = true;
-              // }
-            },
-          );
-        },
-        items: <dynamic>[
-          'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ',
-          'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ',
-          'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ',
-          'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ',
-        ].map<DropdownMenuItem<dynamic>>((dynamic value) {
-          if (value == 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else if (value == 'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else if (value == 'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else if (value == 'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else {}
-        }).toList(),
-      ),
-    );
-  }
-}*/
 class Report_DropDownButton extends StatefulWidget {
   @override
   _Report_DropDownButtonState createState() => _Report_DropDownButtonState();
@@ -139,29 +42,13 @@ class _Report_DropDownButtonState extends State<Report_DropDownButton> {
     return DropdownButtonHideUnderline(
       child: DropdownButton<dynamic>(
         value: dropdownValue,
-        // style: TextStyle(
-        //   color: Colors.white,
-        //   fontSize: s36
-        // ),
         dropdownColor: Color(0xfff282828),
         icon: Icon(Icons.arrow_drop_down),
         iconSize: s60,
-        //elevation: 16,
-        //style: TextStyle(color: Colors.deepPurple),
-        // underline: Container(
-        //   height: 2,
-        //   color: Colors.deepPurpleAccent,
-        // ),
         onChanged: (dynamic newValue) {
           setState(
             () {
               dropdownValue = newValue;
-
-              // if (dropdownValue == ' สาธารณะ') {
-              //   private = false;
-              // } else if (dropdownValue == ' ส่วนตัว') {
-              //   private = true;
-              // }
             },
           );
         },

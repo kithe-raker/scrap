@@ -86,10 +86,17 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                   ),
                                   //ออกจากหน้าปากระดาษ
                                   InkWell(
-                                    child: Icon(
-                                      Icons.cancel,
-                                      size: a.width / 15,
-                                      color: Color(0xfff707070),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Color(0xfff707070),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(50))),
+                                      child: Icon(
+                                        Icons.clear,
+                                        size: a.width / 15,
+                                        //color: Color(0xfff707070),
+                                        color: Colors.white,
+                                      ),
                                     ),
                                     onTap: () {
                                       Navigator.pop(context);
@@ -107,12 +114,14 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                               child: Stack(
                                 children: <Widget>[
                                   //รูปกระดาษ
-                                  Container(
-                                    child: Image.asset(
-                                      'assets/paper-readed.png',
-                                      width: a.width / 1.04,
-                                      height: a.width / 1.04 * 1.115,
-                                      fit: BoxFit.cover,
+                                  Center(
+                                    child: Container(
+                                      child: Image.asset(
+                                        'assets/paper-readed.png',
+                                        width: a.width / 1.04,
+                                        height: a.width / 1.04 * 1.115,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                   Container(
