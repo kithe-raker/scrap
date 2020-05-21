@@ -1,18 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
-import 'package:scrap/services/provider.dart' as prov;
+import 'package:scrap/provider/WriteScrapProvider.dart';
 
 class Scraps {
+  PublishSubject<bool> loading = PublishSubject();
   final FirebaseMessaging fcm = FirebaseMessaging();
 
   throwTo(BuildContext context,
@@ -45,45 +48,58 @@ class Scraps {
             .update({'thrown': data.value + 1}));
   }
 
-  binScrap(DocumentSnapshot doc, BuildContext context,
-      {@required String text, @required bool public}) async {
+  binScrap(BuildContext context,
+      {@required LatLng location, @required LatLng defaultLocation}) async {
+    loading.add(true);
+    final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var allScrap = FirebaseDatabase(app: db.scrapAll);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
+    var auth = await FirebaseAuth.instance.currentUser();
+    var uid = auth.uid;
     var batch = Firestore.instance.batch();
-    var location = await Geolocator().getCurrentPosition();
+    GeoFirePoint defaultPoint = Geoflutterfire().point(
+        latitude: defaultLocation.latitude,
+        longitude: defaultLocation.longitude);
     GeoFirePoint point = Geoflutterfire()
         .point(latitude: location.latitude, longitude: location.longitude);
     var ref = Firestore.instance.collection(
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
-    var trans = {'comment': 0, 'like': 0, 'picked': 0, 'id': docId, 'point': 0};
+    var trans = {
+      'uid': uid,
+      'comment': 0,
+      'like': 0,
+      'picked': 0,
+      'id': docId,
+      'point': 0
+    };
     Map scrap = {
       'id': docId,
-      'uid': doc['uid'],
+      'uid': uid,
       'scrap': {
-        'text': text,
-        'writer': public ?? false ? doc['id'] : 'ไม่ระบุตัวตน',
+        'text': scrapData.text,
+        'writer': scrapData.public ? user.id : 'ไม่ระบุตัวตน',
         'timeStamp': FieldValue.serverTimestamp(),
       },
-      'position': point.data
+      'position': point.data,
+      'default': defaultPoint.data
     };
     batch.setData(ref.document(docId), scrap);
     batch.setData(
-        Firestore.instance
-            .collection('Users/${doc['uid']}/history')
-            .document(docId),
+        Firestore.instance.collection('Users/$uid/history').document(docId),
         scrap);
-    batch.commit();
+
     FirebaseDatabase.instance.reference().child('scraps/$docId').set(trans);
     allScrap.reference().child('scraps/$docId').set(trans);
     userDb
         .reference()
-        .child('users/${doc['uid']}')
+        .child('users/${user.id}')
         .update({'papers': user.papers - 1});
-    // increaseTransaction(doc['uid'], 'written');
+    await batch.commit();
+    loading.add(false);
   }
 
   void updateScrapTrans(
@@ -92,7 +108,7 @@ class Scraps {
     Map<String, List> history = {};
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
-    final uid = await prov.Provider.of(context).auth.currentUser();
+    final user = Provider.of<UserData>(context, listen: false);
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     var defaultDb = FirebaseDatabase.instance;
@@ -126,7 +142,7 @@ class Scraps {
       if (field == 'like')
         fcm.unsubscribeFromTopic(scrap.documentID);
       else
-        pickScrap(scrap.data, uid, cancel: true);
+        pickScrap(scrap.data, user.uid, cancel: true);
     } else {
       cacheHistory.addHistory(scrap, field: field, comments: comments);
       defaultDb.reference().child(ref).once().then((mutableData) {
@@ -153,7 +169,7 @@ class Scraps {
       if (field == 'like')
         fcm.subscribeToTopic(scrap.documentID);
       else
-        pickScrap(scrap.data, uid);
+        pickScrap(scrap.data, user.uid);
     }
     // } else {
     //   toast('แสครปนี้ย่อยสลายแล้ว');

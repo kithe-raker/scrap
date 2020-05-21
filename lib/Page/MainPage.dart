@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/services/ImgCacheManger.dart';
 import 'package:scrap/services/jsonConverter.dart';
-import 'package:scrap/services/provider.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -67,7 +67,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future onTapMessage(String payload) async {
-    final uid = await Provider.of(context).auth.currentUser();
+    final auth = await FirebaseAuth.instance.currentUser();
+    var uid = auth.uid;
     await Firestore.instance.collection('Users').document(uid).get().then(
         (data) => Navigator.push(context,
             MaterialPageRoute(builder: (context) => Profile(doc: data))));
@@ -83,7 +84,6 @@ class _MainPageState extends State<MainPage> {
       close = doc.data['close'];
       appInfo = doc;
     });
-    final uid = await Provider.of(context).auth?.currentUser() ?? '';
     return false; //close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }
 
@@ -93,13 +93,12 @@ class _MainPageState extends State<MainPage> {
     isIOS
         ? incoming = appInfo['versions']['IOS']
         : incoming = appInfo['versions']['android'];
-    final uid = await Provider.of(context).auth?.currentUser();
     return true; // recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }
 
   Future<bool> isLogin() async {
-    final uid = await Provider.of(context).auth?.currentUser();
-    return uid != '';
+    final auth = await FirebaseAuth.instance.currentUser();
+    return auth != null;
   }
 
   @override
@@ -143,7 +142,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   navigator(var where) {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => where));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => where));
   }
 }
 

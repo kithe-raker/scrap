@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/GridFollowing.dart';
-import 'package:scrap/Page/GridTopScrap.dart';
-import 'package:scrap/Page/Gridfavorite.dart';
-import 'package:scrap/Page/Gridsubscripe.dart';
-import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/MainPage.dart';
-import 'package:scrap/Page/GridFollowing.dart';
-import 'package:scrap/Page/allfollower.dart';
-import 'package:scrap/Page/profile/Nabin/My_Profile.dart';
-import 'package:scrap/Page/profile/Nabin/Other_Profile.dart';
-import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
+<<<<<<< HEAD
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart' as prov;
 import 'package:scrap/widget/announce.dart';
@@ -27,6 +17,9 @@ import 'package:scrap/widget/burnt.dart';
 import 'package:scrap/widget/notburnt.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
+=======
+import 'package:scrap/provider/WriteScrapProvider.dart';
+>>>>>>> 627e15db0e804a928c65fced2143d296090cf4a7
 
 const String testDevice = "34C215009965F34F";
 
@@ -49,8 +42,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AdsCounterProvider>.value(
             value: AdsCounterProvider()),
         ChangeNotifierProvider<RealtimeDB>.value(value: RealtimeDB()),
-        ChangeNotifierProvider<UserData>.value(value: UserData())
+        ChangeNotifierProvider<UserData>.value(value: UserData()),
+        ChangeNotifierProvider<WriteScrapProvider>.value(
+            value: WriteScrapProvider())
       ],
+<<<<<<< HEAD
       child: prov.Provider(
         auth: Auth(),
         child: MaterialApp(
@@ -60,6 +56,14 @@ class MyApp extends StatelessWidget {
                 fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
             home: Announce()),
       ),
+=======
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Scrap.',
+          theme: ThemeData(
+              fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
+          home: MainPage()),
+>>>>>>> 627e15db0e804a928c65fced2143d296090cf4a7
     );
   }
 }

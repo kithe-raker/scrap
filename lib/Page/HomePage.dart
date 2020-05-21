@@ -1,31 +1,30 @@
 import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/warning.dart';
 
 class HomePage extends StatefulWidget {
-  final DocumentSnapshot doc;
-  HomePage({@required this.doc});
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String type, select, text, img;
+  String type, select, text;
   bool public = false, initInfoFinish = false;
   Scraps scrap = Scraps();
   JsonConverter jsonConverter = JsonConverter();
@@ -187,14 +186,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   initUser() async {
+    final user = Provider.of<UserData>(context, listen: false);
     var data = await userinfo.readContents();
-    img = data['img'];
+    user.img = data['img'];
+    user.id = data['id'];
     setState(() => initInfoFinish = true);
   }
 
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
+    final user = Provider.of<UserData>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
         Dg().warnDialog(context, 'คุณต้องการออกจากScrapใช่หรือไม่', () {
@@ -206,7 +208,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.grey[900],
         body: Stack(
           children: <Widget>[
-            MapScraps(uid: widget.doc['uid']),
+            MapScraps(uid: user.uid),
             Positioned(
               top: 0,
               left: 0,
@@ -282,7 +284,7 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              FriendList(doc: widget.doc)));
+                                              FriendList(doc: null)));
                                 },
                               )),
                           Container(
@@ -307,7 +309,7 @@ class _HomePageState extends State<HomePage> {
                                                     'assets/userprofile.png',
                                                     fit: BoxFit.cover);
                                               },
-                                              imageUrl: img,
+                                              imageUrl: user.img,
                                               fit: BoxFit.cover),
                                           borderRadius: BorderRadius.circular(
                                               a.width / 10),
@@ -321,8 +323,7 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => Profile(
-                                              doc: widget
-                                                  .doc))); //ไปยังหน้า Profile
+                                              doc: null))); //ไปยังหน้า Profile
                                 },
                               )),
                         ],

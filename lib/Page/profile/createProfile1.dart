@@ -2,12 +2,12 @@ import 'dart:io'; //ref from creatProfile
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/Page/profile/createProfile2.dart';
 
 class CreateProfile1 extends StatefulWidget {
-  final String uid;
-  CreateProfile1({@required this.uid});
   @override
   _CreateProfile1State createState() => _CreateProfile1State();
 }
@@ -52,6 +52,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
   @override
   Widget build(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
+    final user = Provider.of<UserData>(context, listen: false);
     return WillPopScope(
       onWillPop: () =>
           warning('คุณต้องการออกจากหน้านี้ใช่หรือไม่', function: () {
@@ -250,7 +251,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                             MaterialPageRoute(
                                                                 builder: (context) =>
                                                                     CreateProfile2(
-                                                                        uid: widget
+                                                                        uid: user
                                                                             .uid,
                                                                         pro: {
                                                                           'img':

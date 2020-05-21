@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:scrap/Page/Auth.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/warning.dart';
@@ -107,8 +106,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
         loading = true;
       });
       await addData(widget.uid);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Authen()));
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => Authen()));
     } catch (e) {
       setState(() {
         loading = false;

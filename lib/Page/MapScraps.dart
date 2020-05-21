@@ -642,14 +642,15 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   burn(String scrapID) async {
-    await Firestore.instance
-        .collection('Scraps')
-        .document('hatyai')
-        .collection('scrapsPosition')
-        .document(scrapID)
-        .updateData({
-      'burned': FieldValue.arrayUnion([widget.uid])
-    });
+    // await Firestore.instance
+    //     .collection('Scraps')
+    //     .document('hatyai')
+    //     .collection('scrapsPosition')
+    //     .document(scrapID)
+    //     .updateData({
+    //   'burned': FieldValue.arrayUnion([widget.uid])
+    // });
+    //change this structure
   }
 
   @override
