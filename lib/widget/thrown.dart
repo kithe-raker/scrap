@@ -124,12 +124,9 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                       ),
                                     ),
                                   ),
-<<<<<<< HEAD
                                   /*  SizedBox(
                                     height: appBarHeight / 10,
                                   ),*/
-=======
->>>>>>> 4086d6a5961dc921b90aeecce1af1ae9e324f379
                                   Container(
                                     width: a.width,
                                     height: a.height,

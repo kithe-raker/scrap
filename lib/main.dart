@@ -18,6 +18,7 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/services/provider.dart' as prov;
+import 'package:scrap/widget/announce.dart';
 import 'package:scrap/widget/showdialogfinishpaper.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/showdialogblock.dart';
@@ -57,7 +58,7 @@ class MyApp extends StatelessWidget {
             title: 'Scrap.',
             theme: ThemeData(
                 fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-            home: Other_Profile()),
+            home: Announce()),
       ),
     );
   }
