@@ -125,14 +125,10 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                       ),
                                     ),
                                   ),
-<<<<<<< HEAD
 
                                   Positioned(
                                       child: Container(
                                     //color: Colors.red,
-=======
-                                  Container(
->>>>>>> 1984dafbcdc2006f41dadbb82b83d29178cc8174
                                     width: a.width,
                                     height: a.height,
                                     alignment: Alignment.center,

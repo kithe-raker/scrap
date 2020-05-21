@@ -3,9 +3,11 @@ import 'dart:ui';
 import 'package:scrap/widget/Ads.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:scrap/Page/profile/Nabin/OptionSetting_My_Profile.dart';
+
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../OptionSetting_My_Profile.dart';
 
 //หน้าโปรไฟล์ของฉัน
 class My_Profile extends StatefulWidget {
@@ -316,8 +318,8 @@ class _My_ProfileState extends State<My_Profile> {
                             },
                             controller: controller,
                             children: [
-                              wrap(),
-                              wrap2(),
+                              /* wrap(),
+                              wrap2(),*/
                             ],
                           ),
                         ),

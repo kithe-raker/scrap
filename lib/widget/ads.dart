@@ -18,9 +18,10 @@ class _AdsState extends State<Ads> {
             height: appBarHeight / 1.2,
             width: screenWidthDp,
             color: Colors.grey,
-            child: Center(
+            child: //Image.asset('assets/adsgoogle.jpg'),
+                Center(
               child: Text(
-                'Google ADS',
+                'Google Kuay',
                 style: TextStyle(fontSize: 48, color: Colors.white),
               ),
             ),
