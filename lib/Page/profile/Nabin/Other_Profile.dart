@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-
+import 'package:scrap/widget/Ads.dart';
 import 'My_Profile.dart';
 import 'OptionSetting_My_Profile.dart';
 
@@ -340,7 +340,11 @@ class _Other_ProfileState extends State<Other_Profile> {
                 child: Container(
                   child: appbar_OtherProfile(context),
                 )),
-            adsContainer(),
+            Positioned(
+                bottom: 0,
+                child: Container(
+                  child: Ads(),
+                )),
           ],
         ),
       ),
@@ -454,12 +458,11 @@ void showButtonSheet(context) {
                   ),
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  adsContainer(),
-                ],
-              ),
+              Positioned(
+                  bottom: 0,
+                  child: Container(
+                    child: Ads(),
+                  )),
             ],
           ),
         );

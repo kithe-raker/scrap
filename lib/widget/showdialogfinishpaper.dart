@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:scrap/widget/Ads.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -40,7 +40,7 @@ class _ShowfinishpaperState extends State<Showfinishpaper> {
       child: Scaffold(
         body: Center(
           child: InkWell(
-            child: Text('data'),
+            child: Text('Paper'),
             onTap: () {
               dialogfinishpaper(context);
             },
@@ -94,7 +94,7 @@ void dialogfinishpaper(BuildContext context) {
                               "คุณได้รับการเติมกระดาษแล้ว",
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: a.width / 15,
+                                  fontSize: a.width / 13,
                                   fontWeight: FontWeight.bold),
                             )
                           ],
@@ -107,8 +107,8 @@ void dialogfinishpaper(BuildContext context) {
                           children: <Widget>[
                             GestureDetector(
                               child: Container(
-                                  width: a.width / 3.5,
-                                  height: a.width / 7.5,
+                                  width: a.width / 2.85,
+                                  height: a.width / 7.3,
                                   //   margin: EdgeInsets.only(right: a.width / 20),
                                   decoration: BoxDecoration(
                                       color: Colors.white,
@@ -119,7 +119,7 @@ void dialogfinishpaper(BuildContext context) {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Container(
-                                          width: a.width / 15 / 1.5,
+                                          width: a.width / 15,
                                           child: Image.asset(
                                             "assets/Group 74.png",
                                             color: Color(0xff26A4FF),
@@ -130,7 +130,7 @@ void dialogfinishpaper(BuildContext context) {
                                         "\tหน้าหลัก",
                                         style: TextStyle(
                                             color: Color(0xff26A4FF),
-                                            fontSize: a.width / 15 / 1.5,
+                                            fontSize: a.width / 15 / 1.2,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -142,8 +142,8 @@ void dialogfinishpaper(BuildContext context) {
                             InkWell(
                                 child: Container(
                                   margin: EdgeInsets.only(left: a.width / 20),
-                                  width: a.width / 3.5,
-                                  height: a.width / 7.5,
+                                  width: a.width / 2.85,
+                                  height: a.width / 7.3,
                                   decoration: BoxDecoration(
                                       color: Color(0xff26A4FF),
                                       borderRadius:
@@ -155,12 +155,12 @@ void dialogfinishpaper(BuildContext context) {
                                       Icon(
                                         Icons.create,
                                         color: Colors.white,
-                                        size: a.width / 15 / 1.5,
+                                        size: a.width / 15,
                                       ),
                                       Text("\tเขียนเลย",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: a.width / 15 / 1.5,
+                                              fontSize: a.width / 15 / 1.2,
                                               fontWeight: FontWeight.bold)),
                                     ],
                                   ),
@@ -173,6 +173,11 @@ void dialogfinishpaper(BuildContext context) {
                     ],
                   ),
                 ),
+                Positioned(
+                    bottom: 0,
+                    child: Container(
+                      child: Ads(),
+                    )),
               ],
             ),
           ),

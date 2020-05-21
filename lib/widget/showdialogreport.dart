@@ -134,35 +134,39 @@ class _ShowreportState extends State<Showreport> {
 
 void showDialogReport(BuildContext context) {
   Size a = MediaQuery.of(context).size;
+  screenutilInit(context);
   showDialog(
       context: context,
       builder: (BuildContext context) {
         return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            SizedBox(
+              height: appBarHeight,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 32,
-                    width: 32,
-                    margin: EdgeInsets.symmetric(
-                      horizontal: (screenWidthDp - (screenWidthDp / 1.1)) / 2,
-                      vertical: 15,
-                    ),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(500),
-                        color: Color(0xffffffff)),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.blue,
-                      size: s48,
-                    ),
-                  ),
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(
+                      right: appBarHeight / 4, bottom: appBarHeight / 5),
+                  child: GestureDetector(
+                      child: Container(
+                        height: appBarHeight / 2.8,
+                        width: appBarHeight / 2.8,
+                        decoration: BoxDecoration(
+                            color: Color(0xfffFFFFFF).withOpacity(0.24),
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(appBarHeight))),
+                        child: Icon(
+                          Icons.clear,
+                          color: Colors.white,
+                          size: s42,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      }),
                 ),
               ],
             ),
@@ -171,10 +175,6 @@ void showDialogReport(BuildContext context) {
               width: screenWidthDp / 1.1,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(50))),
-              /* decoration: BoxDecoration(
-                //  color: Color(0xff1a1a1a),
-                borderRadius: BorderRadius.circular(5),
-              ),*/
               child: Stack(
                 children: [
                   Container(
@@ -193,7 +193,6 @@ void showDialogReport(BuildContext context) {
                             Container(
                               child: Report_DropDownButton(),
                             ),
-
                             Container(
                               /*  margin: EdgeInsets.symmetric(
                                 horizontal: 8,
@@ -218,57 +217,38 @@ void showDialogReport(BuildContext context) {
                                 ),
                               ),
                             ),
-
-                            Container(
-                              padding: EdgeInsets.only(
-                                  left: a.width / 1.4, top: a.width / 2.8),
-                              child: Container(
-                                /* margin: EdgeInsets.symmetric(
-                                horizontal: a.width / 25,
-                                vertical: a.width / 40,
-                              ),*/
-
-                                width: a.width / 8,
-                                height: a.width / 8,
-                                // alignment: Alignment.center,
-                                child: IconButton(
-                                    icon: Icon(
+                            SizedBox(
+                              height: appBarHeight * 1.75,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    padding: EdgeInsets.only(
+                                        left: appBarHeight / 15),
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: a.width / 40,
+                                      vertical: a.width / 40,
+                                    ),
+                                    width: a.width / 8,
+                                    height: a.width / 8,
+                                    //alignment: Alignment.center,
+                                    child: Icon(
                                       Icons.send,
                                       color: Color(0xff26A4FF),
+                                      size: s60 * 0.8,
                                     ),
-                                    onPressed: () {}),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.circular(a.width)),
-                              ),
-                            ),
 
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.end,
-                            //   children: [
-                            //     Container(
-                            //       height: 80,
-                            //       width: 80,
-                            //       margin: EdgeInsets.only(
-                            //         right: 5,
-                            //         bottom: 5,
-                            //       ),
-                            //       decoration: BoxDecoration(
-                            //         color: Colors.white,
-                            //         borderRadius:
-                            //             BorderRadius.circular(screenHeightDp),
-                            //       ),
-                            //       child: IconButton(
-                            //           icon: Icon(
-                            //             Icons.send,
-                            //             size: 50,
-                            //             color: Colors.blue,
-                            //           ),
-                            //           onPressed: () {}),
-                            //     ),
-                            //   ],
-                            // ),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(a.width)),
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),
@@ -292,152 +272,3 @@ void showDialogReport(BuildContext context) {
         );
       });
 }
-
-//Report_DropDownButton()
-
-/*void showDialogReport(BuildContext context) {
-  Size a = MediaQuery.of(context).size;
-  showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 32,
-                    width: 32,
-                    margin: EdgeInsets.symmetric(
-                      horizontal: (screenWidthDp - (screenWidthDp / 1.1)) / 2,
-                      vertical: 15,
-                    ),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(500),
-                        color: Color(0xffffffff)),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.grey,
-                      size: s48,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              height: screenHeightDp / 1.7,
-              width: screenWidthDp / 1.1,
-              decoration: BoxDecoration(
-                color: Color(0xff1a1a1a),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Stack(
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      vertical: screenWidthDp / 50,
-                    ),
-                    child: Scaffold(
-                      // backgroundColor: Color(0xff1a1a1a),
-                      // backgroundColor: Colors.red,
-                      body: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Center(
-                              child: Report_DropDownButton(),
-                            ),
-                            // Row(
-                            //   children: [
-                            //     // Text(
-                            //     //   'ถึงผู้พัฒนา',
-                            //     //   style: TextStyle(
-                            //     //     fontSize: s60,
-                            //     //     color: Colors.white,
-                            //     //   ),
-                            //     // ),
-                            //     //DropDownButton<<<<<<<<<<<<<<<<<<<<<<<
-                            //     //Report_DropDownButton(),
-                            //   ],
-                            // ),
-                            Container(
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: TextField(
-                                style: TextStyle(
-                                    fontSize: s25, color: Colors.white),
-                                minLines: 17,
-                                maxLines: 17,
-                                decoration: InputDecoration(
-                                  // fillColor: Colors.redAccent,
-                                  // filled: true,
-                                  border: InputBorder.none,
-                                  hintText: 'รายงานเจ้าของสแครปรายนี้',
-                                  hintStyle: TextStyle(
-                                    fontSize: s54,
-                                    height: 0.08,
-                                    color: Colors.white30,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Positioned(
-                                  top: a.width / 0.95,
-                                  right: 0,
-                                  //bottom: a.height / 10,
-                                  // right: 0,
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: a.width / 25,
-                                      vertical: a.width / 40,
-                                    ),
-                                    width: a.width / 8,
-                                    height: a.width / 8,
-                                    alignment: Alignment.center,
-                                    child: IconButton(
-                                        icon: Icon(
-                                          Icons.send,
-                                          color: Color(0xff26A4FF),
-                                        ),
-                                        onPressed: () {}),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(a.width)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      vertical: screenHeightDp / 18,
-                    ),
-                    child: Divider(
-                      //color: Color(0xff383838),
-                      color: Colors.black,
-                      thickness: 2,
-                      indent: 5,
-                      endIndent: 5,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        );
-      });
-}*/

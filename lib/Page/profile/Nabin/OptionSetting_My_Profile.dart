@@ -128,7 +128,7 @@ void showPopup(BuildContext context) {
                                 });
                               },
                             ),
-                            width: appBarHeight * 4,
+                            width: appBarHeight * 4.2,
                             height: appBarHeight * 2.3,
                           ),
                           Row(
@@ -489,8 +489,8 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    height: screenWidthDp / 3.5,
-                    width: screenWidthDp / 3.5,
+                    height: screenWidthDp / 4,
+                    width: screenWidthDp / 4,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(screenHeightDp),
@@ -852,11 +852,6 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                         ],
                       ),
                       Container(
-                        /*  margin: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),*/
-                        /*  padding: EdgeInsets.only(
-                            top: a.width / 100, left: a.width / 50),*/
                         child: TextField(
                           style: TextStyle(fontSize: s52, color: Colors.white),
                           minLines: 10,
@@ -899,27 +894,6 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                                   borderRadius: BorderRadius.circular(a.width)),
                             ),
                           ),
-
-                          // Container(
-                          //   height: 80,
-                          //   width: 80,
-                          //   margin: EdgeInsets.only(
-                          //     right: 5,
-                          //     bottom: 5,
-                          //   ),
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.white,
-                          //     borderRadius:
-                          //         BorderRadius.circular(screenHeightDp),
-                          //   ),
-                          //   child: IconButton(
-                          //       icon: Icon(
-                          //         Icons.send,
-                          //         size: 50,
-                          //         color: Colors.blue,
-                          //       ),
-                          //       onPressed: () {}),
-                          // ),
                         ],
                       )
                     ],
@@ -975,7 +949,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
               Text(
                 username,
                 style: TextStyle(
-                  fontSize: s48,
+                  fontSize: s42,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1026,18 +1000,11 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
                   child: ListView(
                     physics: BouncingScrollPhysics(),
                     children: [
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
-                      blockUser(' @someone'),
+                      blockUser(' @somename'),
+                      blockUser(' @somename'),
+                      blockUser(' @somename'),
+                      blockUser(' @somename'),
+                      blockUser(' @somename'),
                     ],
                   ),
                 ),

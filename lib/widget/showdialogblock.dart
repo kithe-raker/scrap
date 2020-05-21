@@ -107,7 +107,7 @@ void _showdialogblock(context) {
                               Icon(
                                 Icons.block,
                                 color: Color(0xff8B8B8B),
-                                size: a.width / 3,
+                                size: a.width / 2.5,
                               ),
                               Text(
                                 "บล๊อคผู้ใช้",

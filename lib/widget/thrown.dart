@@ -6,6 +6,7 @@ import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/SelectPosition.dart';
+import 'package:scrap/widget/Ads.dart';
 
 //ฟังก์ชั่นปากระดาษ
 void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
@@ -16,6 +17,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
       context: context,
       builder: (context) {
         Size a = MediaQuery.of(context).size;
+        screenutilInit(context);
         return StatefulBuilder(builder: (context, StateSetter setState) {
           return Scaffold(
             backgroundColor: Colors.black,
@@ -124,24 +126,26 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                       ),
                                     ),
                                   ),
-<<<<<<< HEAD
-                                  /*  SizedBox(
-                                    height: appBarHeight / 10,
-                                  ),*/
-=======
->>>>>>> 627e15db0e804a928c65fced2143d296090cf4a7
-                                  Container(
+
+                                  Positioned(
+                                      child: Container(
+                                    //color: Colors.red,
                                     width: a.width,
                                     height: a.height,
                                     alignment: Alignment.center,
                                     child: Container(
-                                      padding:
-                                          EdgeInsets.only(left: 25, right: 25),
-                                      width: a.width,
+                                      // color: Colors.red,
+                                      padding: EdgeInsets.only(
+                                        left: 25,
+                                        right: 25,
+                                      ),
+                                      // width: a.width,
                                       child: Form(
                                         key: _key,
                                         child: TextFormField(
                                           maxLength: 250,
+                                          textAlignVertical:
+                                              TextAlignVertical.center,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               height: 1.35,
@@ -155,7 +159,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                             border: InputBorder
                                                 .none, //สำหรับให้เส้นใต้หาย
                                             hintText:
-                                                'เขียนข้อความบางอย่างที่อยู่ในใจคุณ\nไม่ต้องห่วง มันจะหายไปใน 24 ชั่วโมง\n(แต่อย่าลืมสัญญาของเราล่ะ)',
+                                                'เขียนบางอย่างที่คุณอยากบอก',
                                             hintStyle: TextStyle(
                                               fontSize: a.width / 18,
                                               color: Colors.grey,
@@ -173,7 +177,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                         ),
                                       ),
                                     ),
-                                  )
+                                  )),
                                 ],
                               ),
                             ),
@@ -183,7 +187,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                               child: GestureDetector(
                                   child: Container(
                                     width: a.width / 4.5,
-                                    height: a.width / 10,
+                                    height: a.width / 9,
                                     decoration: BoxDecoration(
                                         color: isThrow
                                             ? Colors.white
@@ -223,14 +227,33 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                 Positioned(
                     bottom: 0,
                     child: Container(
-                      height: a.width / 6.4,
-                      width: a.width,
-                      child: Image.network(
-                          'https://www.fluxcreative.com.au/images/blog/facebook-advertising.png'),
+                      child: Ads(),
                     )),
               ],
             ),
           );
         });
       });
+}
+
+class Throwpaper extends StatefulWidget {
+  @override
+  _ThrowpaperState createState() => _ThrowpaperState();
+}
+
+class _ThrowpaperState extends State<Throwpaper> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+          child: Center(
+        child: GestureDetector(
+          child: Text('Throw'),
+          onTap: () {
+            writerScrap(context, isThrow: true);
+          },
+        ),
+      )),
+    );
+  }
 }

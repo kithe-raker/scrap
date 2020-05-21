@@ -1,16 +1,11 @@
 import 'dart:developer';
 import 'dart:ui';
-
+import 'package:scrap/widget/Ads.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:scrap/Page/profile/Nabin/OptionSetting_My_Profile.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-/* 
-List Problem ( control+F => showPopup(context) / wrap() )
-- void showPopup(context) -> TextField : ขยายขนาดไม่ได้
-- wrap() : ต้องเปลี่ยนเป็น "ตารางสแครปยอดนิยมและจากคนที่เราติดตาม" ตามใน XD
-*/
 
 //หน้าโปรไฟล์ของฉัน
 class My_Profile extends StatefulWidget {
@@ -135,7 +130,7 @@ class _My_ProfileState extends State<My_Profile> {
                             'ไม่รู้อะไร',
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: s48,
+                                fontSize: s42,
                                 fontStyle: FontStyle.italic),
                           ),
                           onPressed: () {
@@ -342,7 +337,11 @@ class _My_ProfileState extends State<My_Profile> {
                 child: Container(
                   child: appbar_Profile(context, ''),
                 )),
-            adsContainer(),
+            Positioned(
+                bottom: 0,
+                child: Container(
+                  child: Ads(),
+                )),
           ],
         ),
       ),
@@ -470,31 +469,6 @@ class _My_ProfileState extends State<My_Profile> {
                                   ),
                                 ],
                               ),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.end,
-                              //   children: [
-                              //     Container(
-                              //       height: 80,
-                              //       width: 80,
-                              //       margin: EdgeInsets.only(
-                              //         right: 5,
-                              //         bottom: 5,
-                              //       ),
-                              //       decoration: BoxDecoration(
-                              //         color: Colors.white,
-                              //         borderRadius:
-                              //             BorderRadius.circular(screenHeightDp),
-                              //       ),
-                              //       child: IconButton(
-                              //           icon: Icon(
-                              //             Icons.send,
-                              //             size: 50,
-                              //             color: Colors.blue,
-                              //           ),
-                              //           onPressed: () {}),
-                              //     ),
-                              //   ],
-                              // ),
                             ],
                           ),
                         ),
