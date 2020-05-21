@@ -29,8 +29,34 @@ import 'package:scrap/widget/showdialogfinishpaper.dart';
 import 'package:scrap/widget/warning.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 
-class Announce extends StatelessWidget {
+class Announce extends StatefulWidget {
   @override
+  _AnnounceState createState() => _AnnounceState();
+}
+String publisher = "test";
+String content = "test2";
+
+class _AnnounceState extends State<Announce> {
+ callAnnouncement() async {
+    await Firestore.instance
+    .collection("App")
+    .document("info")
+    .collection("Announcement")
+    .getDocuments()
+    .then((allDoc){
+      allDoc.documents.forEach((doc) { 
+        publisher = doc.data['publisher'];
+        content = doc.data['content'];
+        setState(() {
+        });
+      });
+    });
+  }
+  @override
+  void initState() {
+    callAnnouncement();
+    super.initState();
+  }
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
@@ -76,7 +102,7 @@ void _showdialogannounce(context) {
                           // mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
                             Text(
-                              '\nประกาศจากสแครป',
+                              '$publisher',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: a.width / 20 * 1.2,
@@ -87,7 +113,7 @@ void _showdialogannounce(context) {
                               child: Container(),
                             ),
                             Text(
-                              '\nเนื่องจากสแครปมีการปรับปรุง\nฐานข้อมูลผู้ใช้งานใหม่ในสแครปเวอร์ชัน 2.0.0\nผู้ใช้ท่านใดที่เคยสร้างบัญชีในสแครปเวอร์ชันที่\nผ่านมาบัญชีผู้ใช้งานเดิมจะไม่สามารถ\nใช้งานได้ในเวอร์ชันปัจจุบัน\nแอปพลิเคชันสแครปจึงขอประทานอภัยมา ณ ที่นี้ \n',
+                              content,
                               style: TextStyle(
                                   fontSize: a.width / 25 * 1.2,
                                   color: Colors.white,
