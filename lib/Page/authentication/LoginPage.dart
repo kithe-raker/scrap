@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:ui';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/authentication/LoginID.dart';
 import 'package:scrap/Page/authentication/OTPScreen.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/friendManager.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -16,111 +19,27 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String _email, _password, token;
   bool loading = false;
   var _key = GlobalKey<FormState>();
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FriendManager friendManager = FriendManager();
-
-  // login() async {
-  //   try {
-  //     var account = await FirebaseAuth.instance
-  //         .signInWithEmailAndPassword(email: _email, password: _password);
-  //     cacheHistory.initHistory();
-  //     updateToken(account.user.uid);
-  //     await friendManager.initFriend(account.user.uid);
-  //     var doc = await Firestore.instance
-  //         .collection('Users/${account.user.uid}/info')
-  //         .document(account.user.uid)
-  //         .get();
-  //     await userinfo.writeContent(doc: doc);
-  //      Navigator.pushReplacement(
-  //       context, MaterialPageRoute(builder: (context) => MainStream()));
-  //   } catch (e) {
-  //     setState(() {
-  //       loading = false;
-  //     });
-  //     switch (e.toString()) {
-  //       case 'PlatformException(ERROR_INVALID_EMAIL, The email address is badly formatted., null)':
-  //         Dg().warning(
-  //           context,
-  //           'กรุณาตรวจสอบ"อีเมล"ของท่าน',
-  //           "ขออภัยการเข้าสู่ระบบผิดพลาด",
-  //         );
-  //         break;
-  //       case 'PlatformException(ERROR_USER_NOT_FOUND, There is no user record corresponding to this identifier. The user may have been deleted., null)':
-  //         Dg().warning(
-  //           context,
-  //           'ไม่พบบัญชีผู้ใช้กรุณาตรวจสอบใหม่',
-  //           "ขออภัยการเข้าสู่ระบบผิดพลาด",
-  //         );
-  //         break;
-  //       case 'PlatformException(ERROR_WRONG_PASSWORD, The password is invalid or the user does not have a password., null)':
-  //         Dg().warning(
-  //           context,
-  //           'กรุณาตรวจสอบรหัสผ่านของท่าน',
-  //           "ขออภัยการเข้าสู่ระบบผิดพลาด",
-  //         );
-  //         break;
-  //       case "'package:firebase_auth/src/firebase_auth.dart': Failed assertion: line 224 pos 12: 'email != null': is not true.":
-  //         Dg().warning(
-  //           context,
-  //           'กรุณากรอกอีเมลและรหัสผ่าน',
-  //           "ขออภัยการเข้าสู่ระบบผิดพลาด",
-  //         );
-  //         break;
-  //       default:
-  //         Dg().warning(
-  //           context,
-  //           'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อต่ออินเทอร์เน็ต',
-  //           "ขออภัยการเข้าสู่ระบบผิดพลาด",
-  //         );
-  //         break;
-  //     }
-  //     print(e.toString());
-  //   }
-  // }
-
-  // updateToken(String uid) async {
-  //   await Firestore.instance
-  //       .collection('Users')
-  //       .document(uid)
-  //       .collection('token')
-  //       .getDocuments()
-  //       .then((docs) async {
-  //     List data = docs.documents;
-  //     if (data[0].documentID != token) {
-  //       await Firestore.instance
-  //           .collection('Users')
-  //           .document(uid)
-  //           .collection('token')
-  //           .document(data[0].documentID)
-  //           .delete();
-  //       await Firestore.instance
-  //           .collection('Users')
-  //           .document(uid)
-  //           .collection('token')
-  //           .document(token)
-  //           .setData({'token': token});
-  //     }
-  //   });
-  // }
-
-  void getToken() {
-    firebaseMessaging.getToken().then((String tken) {
-      assert(tken != null);
-      token = tken;
-    });
-  }
+  StreamSubscription loadStatus;
 
   @override
   void initState() {
-    getToken();
+    loadStatus =
+        authService.loading.listen((value) => setState(() => loading = value));
     super.initState();
   }
 
   @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     return Scaffold(
       backgroundColor: Colors.black,
@@ -211,6 +130,9 @@ class _LoginPageState extends State<LoginPage> {
                                           color:
                                               Colors.white.withOpacity(0.24)),
                                       hintText: 'เบอร์โทร 10 หลัก'),
+                                  onSaved: (val) {
+                                    user.phone = val.trim();
+                                  },
                                 ),
                               ),
                             ),
@@ -245,10 +167,8 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: () {
                         var curState = _key.currentState;
                         if (curState.validate()) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => OTPScreen()));
+                          curState.save();
+                          authService.phoneAuthentication(context);
                         }
                         // Navigator.push(
                         //     context,
@@ -267,10 +187,11 @@ class _LoginPageState extends State<LoginPage> {
                               fontWeight: FontWeight.w600),
                         ),
                         onTap: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginID()));
+                          authService.signOut(context);
+                          // Navigator.pushReplacement(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => LoginID()));
                         }),
                   ],
                 ),

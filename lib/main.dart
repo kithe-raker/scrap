@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/profile/Nabin/My_Profile.dart';
 
 import 'package:scrap/Page/profile/creatProfile.dart';
@@ -60,7 +61,11 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
+<<<<<<< HEAD
           home: Gridfavorite()),
+=======
+          home: LoginPage()),
+>>>>>>> 2f4b6cc27cce8849ce8560b6fcb0674af609dd70
     );
   }
 }
