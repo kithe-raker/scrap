@@ -6,7 +6,7 @@ import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/profile/Nabin/My_Profile.dart';
-import 'package:scrap/Page/profile/Nabin/Other_Profile.dart';
+
 import 'package:scrap/Page/profile/creatProfile.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
 import 'package:scrap/Page/profile/createProfile2.dart';
@@ -27,6 +27,9 @@ import 'package:scrap/widget/notburnt.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/thrown.dart';
+import 'package:scrap/widget/wrap.dart';
+import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/Page/profile/OptionSetting_My_Profile.dart';
 
 const String testDevice = "34C215009965F34F";
 
@@ -58,7 +61,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: LoginPage()),
+          home: OptionSetting()),
     );
   }
 }

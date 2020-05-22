@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:scrap/widget/wrap.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -68,8 +68,8 @@ class _ProfileState extends State<Profile> {
   }
 
   initUser() async {
-    var data = await userinfo.readContents();
-    profile = data;
+    // var data = await userinfo.readContents();
+    //  profile = data;
     setState(() => initInfoFinish = true);
   }
 
@@ -355,8 +355,8 @@ class _ProfileState extends State<Profile> {
                               },
                               controller: controller,
                               children: [
-                                wrap(),
-                                wrap2(),
+                                Wrapblock(),
+                                Wrapblock(),
                               ],
                             ),
                           ),
