@@ -1,5 +1,5 @@
 import 'dart:wasm';
-
+import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
@@ -21,174 +21,178 @@ void showPopup(BuildContext context) {
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (BuildContext context, StateSetter a) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                height: screenHeightDp / 2,
-                width: screenWidthDp / 1.1,
-                /*   decoration: BoxDecoration(
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  height: screenHeightDp / 2,
+                  width: screenWidthDp / 1.1,
+                  /*   decoration: BoxDecoration(
                     //  color: Color(0xff1a1a1a),
                     /* color: Colors.black,
                   borderRadius: BorderRadius.circular(5),*/
                     ),*/
-                child: Container(
-                  child: Scaffold(
-                    backgroundColor: Colors.transparent,
-                    resizeToAvoidBottomPadding: false,
-                    body: Container(
-                      width: screenWidthDp,
-                      height: appBarHeight * 3.65,
-                      decoration: BoxDecoration(
-                          color: Color(0xff1a1a1a),
-                          borderRadius: BorderRadius.all(Radius.circular(4.0))),
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                '\t\tเพิ่มสเตตัส',
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize: s52,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Container(
-                                padding:
-                                    EdgeInsets.only(right: appBarHeight / 10),
-                                child: GestureDetector(
-                                    child: Container(
-                                      height: appBarHeight / 2.8,
-                                      width: appBarHeight / 2.8,
-                                      decoration: BoxDecoration(
-                                          color: Color(0xfff000000),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(appBarHeight))),
-                                      child: Icon(
-                                        Icons.clear,
-                                        color: Colors.blue,
-                                        size: s42,
+                  child: Container(
+                    child: Scaffold(
+                      backgroundColor: Colors.transparent,
+                      resizeToAvoidBottomPadding: false,
+                      body: Container(
+                        width: screenWidthDp,
+                        height: appBarHeight * 3.65,
+                        decoration: BoxDecoration(
+                            color: Color(0xff1a1a1a),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(4.0))),
+                        child: Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  '\t\tเพิ่มสเตตัส',
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: s52,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Container(
+                                  padding:
+                                      EdgeInsets.only(right: appBarHeight / 10),
+                                  child: GestureDetector(
+                                      child: Container(
+                                        height: appBarHeight / 2.8,
+                                        width: appBarHeight / 2.8,
+                                        decoration: BoxDecoration(
+                                            color: Color(0xfff000000),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(appBarHeight))),
+                                        child: Icon(
+                                          Icons.clear,
+                                          color: Colors.blue,
+                                          size: s42,
+                                        ),
                                       ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    }),
-                              ),
-                            ],
-                          ),
-                          Divider(
-                            height: 5.0,
-                            color: Color(0xfff707070),
-                          ),
-                          SizedBox(
-                            height: appBarHeight / 5,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                // color: Colors.green,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4.0))),
-                            child: TextField(
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s48,
-                              ),
-                              minLines: 4,
-                              maxLines: 4,
-                              maxLength: 60,
-                              decoration: InputDecoration(
-                                counterText: '',
-                                filled: true,
-                                fillColor: Color(0xff222222),
-                                border: InputBorder.none,
-                                alignLabelWithHint: true,
-                                hintText: 'เขียนข้อความของคุณ',
-                                hintStyle: TextStyle(
-                                  fontSize: s48,
-                                  height: 0.08,
-                                  color: Color(0xfffA2A2A2),
-                                  //color: AppColors.textFieldInput
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      }),
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.black12,
-                                  ),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
-                                    color: Colors.black12,
-                                  ),
-                                ),
-                              ),
-                              onChanged: (String value) {
-                                a(() {
-                                  _charCount = value.length;
-                                  print(_charCount);
-                                });
-                              },
+                              ],
                             ),
-                            width: appBarHeight * 4.2,
-                            height: appBarHeight * 2.3,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              Container(
-                                width: screenWidthDp / 5,
-                                height: appBarHeight / 2.3,
-                                decoration: BoxDecoration(
-                                    color: Colors.black54,
-                                    borderRadius:
-                                        BorderRadius.circular(screenHeightDp)),
-                                child: Center(
-                                  child: Text(
-                                    ' ' + _charCount.toString() + '\t/\t60 ',
-                                    style: TextStyle(
-                                      color: Colors.white30,
-                                      fontSize: s42,
+                            Divider(
+                              height: 5.0,
+                              color: Color(0xfff707070),
+                            ),
+                            SizedBox(
+                              height: appBarHeight / 5,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  // color: Colors.green,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(4.0))),
+                              child: TextField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: s48,
+                                ),
+                                minLines: 4,
+                                maxLines: 4,
+                                maxLength: 60,
+                                decoration: InputDecoration(
+                                  counterText: '',
+                                  filled: true,
+                                  fillColor: Color(0xff222222),
+                                  border: InputBorder.none,
+                                  alignLabelWithHint: true,
+                                  hintText: 'เขียนข้อความของคุณ',
+                                  hintStyle: TextStyle(
+                                    fontSize: s48,
+                                    height: 0.08,
+                                    color: Color(0xfffA2A2A2),
+                                    //color: AppColors.textFieldInput
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.black12,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    borderSide: BorderSide(
+                                      color: Colors.black12,
                                     ),
                                   ),
                                 ),
+                                onChanged: (String value) {
+                                  a(() {
+                                    _charCount = value.length;
+                                    print(_charCount);
+                                  });
+                                },
                               ),
-                              SizedBox(
-                                width: appBarHeight,
-                              ),
-                              InkWell(
-                                onTap: () {},
-                                child: Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      appBarHeight / 3,
-                                      appBarHeight / 25,
-                                      appBarHeight / 3,
-                                      appBarHeight / 25),
+                              width: appBarHeight * 4.2,
+                              height: appBarHeight * 2.3,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Container(
+                                  width: screenWidthDp / 5,
+                                  height: appBarHeight / 2.3,
                                   decoration: BoxDecoration(
-                                      color: Color(0xfff26A4FF),
+                                      color: Colors.black54,
                                       borderRadius: BorderRadius.circular(
                                           screenHeightDp)),
                                   child: Center(
                                     child: Text(
-                                      'เพิ่ม',
+                                      ' ' + _charCount.toString() + '\t/\t60 ',
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontSize: s48,
+                                        color: Colors.white30,
+                                        fontSize: s42,
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                SizedBox(
+                                  width: appBarHeight,
+                                ),
+                                InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    padding: EdgeInsets.fromLTRB(
+                                        appBarHeight / 3,
+                                        appBarHeight / 25,
+                                        appBarHeight / 3,
+                                        appBarHeight / 25),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xfff26A4FF),
+                                        borderRadius: BorderRadius.circular(
+                                            screenHeightDp)),
+                                    child: Center(
+                                      child: Text(
+                                        'เพิ่ม',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: s48,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           );
         });
       });
@@ -669,6 +673,9 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                       ),
                     ),
                   ],
+                ),
+                SizedBox(
+                  height: appBarHeight / 9,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
