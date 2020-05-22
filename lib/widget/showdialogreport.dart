@@ -19,6 +19,7 @@ import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/services/jsonConverter.dart';
@@ -39,6 +40,7 @@ class _Report_DropDownButtonState extends State<Report_DropDownButton> {
 
   @override
   Widget build(BuildContext context) {
+
     return DropdownButtonHideUnderline(
       child: DropdownButton<dynamic>(
         value: dropdownValue,
@@ -48,6 +50,8 @@ class _Report_DropDownButtonState extends State<Report_DropDownButton> {
         onChanged: (dynamic newValue) {
           setState(
             () {
+              final report = Provider.of<Report>(context, listen: false);
+              report.topic = newValue;
               dropdownValue = newValue;
             },
           );
@@ -134,6 +138,27 @@ class _ShowreportState extends State<Showreport> {
 
 void showDialogReport(BuildContext context) {
   Size a = MediaQuery.of(context).size;
+  final report = Provider.of<Report>(context, listen: false);
+
+  getDate(){
+    var now  = DateTime.now();
+    return DateFormat('yyyy-MM-dd').format(now);
+  }
+
+  updateData() async {
+    await Firestore.instance
+    .collection("Report")
+    .document(getDate())
+    .collection("reportUser")
+    .document()
+    .setData({
+      "topic":report.topic,
+      "reporter":"wait for provider",
+      "reported":"wait for provider",
+      "text":report.reportText,
+      "timestamp":DateTime.now().millisecondsSinceEpoch
+    });
+  }
   screenutilInit(context);
   showDialog(
       context: context,
@@ -200,6 +225,10 @@ void showDialogReport(BuildContext context) {
                               padding: EdgeInsets.only(
                                   top: a.width / 100, left: a.width / 50),
                               child: TextField(
+                                onChanged: (str){
+                                  final report = Provider.of<Report>(context, listen: false);
+                                  report.reportText = str;
+                                },
                                 style: TextStyle(
                                     fontSize: s52, color: Colors.white),
                                 minLines: 5,
@@ -224,7 +253,9 @@ void showDialogReport(BuildContext context) {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    updateData();
+                                  },
                                   child: Container(
                                     padding: EdgeInsets.only(
                                         left: appBarHeight / 15),

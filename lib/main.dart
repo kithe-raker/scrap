@@ -14,6 +14,7 @@ import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/services/auth.dart';
 import 'package:scrap/widget/announce.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AdsCounterProvider>.value(
             value: AdsCounterProvider()),
         ChangeNotifierProvider<RealtimeDB>.value(value: RealtimeDB()),
+        ChangeNotifierProvider<Report>.value(value: Report()),
         ChangeNotifierProvider<UserData>.value(value: UserData()),
         ChangeNotifierProvider<WriteScrapProvider>.value(
             value: WriteScrapProvider())
@@ -58,7 +60,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: LoginPage()),
+          home: Showreport()),
     );
   }
 }
