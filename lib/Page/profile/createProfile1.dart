@@ -52,28 +52,41 @@ class _CreateProfile1State extends State<CreateProfile1> {
 
   Widget next() {
     Size scr = MediaQuery.of(context).size;
-    if (checkpass.text != '' && checkpass.text != null) {
+    if (checkpass.text != '' &&
+        checkpass.text != null &&
+        checkid.text != '' &&
+        checkid.text != null) {
       return Container(
-        // margin: EdgeInsets.only(top: scr.width / 16),
-        padding: EdgeInsets.all(appBarHeight / 20),
-        width: scr.width / 1.5,
-        height: scr.height / 15,
-        decoration: BoxDecoration(
-            color: Color(0xff26A4FE),
-            borderRadius: BorderRadius.all(Radius.circular(7))),
-        child: Text(
-          'ต่อไป',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: s70,
-              fontWeight: FontWeight.w900,
-              color: Color(0xfffFFFFFF)),
+        child: GestureDetector(
+          child: Container(
+            // margin: EdgeInsets.only(top: scr.width / 16),
+            padding: EdgeInsets.all(appBarHeight / 7),
+            width: scr.width / 1.5,
+            height: scr.height / 15,
+            decoration: BoxDecoration(
+                color: Color(0xff26A4FE),
+                borderRadius: BorderRadius.all(Radius.circular(7))),
+            child: Text(
+              'ต่อไป',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: s52,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xfffFFFFFF)),
+            ),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CreateProfile2()),
+            );
+          },
         ),
       );
     } else {
       return Container(
         // margin: EdgeInsets.only(top: scr.width / 16),
-        padding: EdgeInsets.all(appBarHeight / 20),
+        padding: EdgeInsets.all(appBarHeight / 7),
         width: scr.width / 1.5,
         height: scr.height / 15,
         decoration: BoxDecoration(
@@ -83,7 +96,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
           'ต่อไป',
           textAlign: TextAlign.center,
           style: TextStyle(
-              fontSize: s70,
+              fontSize: s52,
               fontWeight: FontWeight.w900,
               color: Color(0xfffFFFFFF).withOpacity(0.38)),
         ),
@@ -96,6 +109,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
   @override
   Widget build(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
+    screenutilInit(context);
     final user = Provider.of<UserData>(context, listen: false);
     return WillPopScope(
       onWillPop: () =>
@@ -154,19 +168,21 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       MainAxisAlignment.center,
                                                   children: <Widget>[
                                                     Icon(
-                                                      Icons.camera,
-                                                      size: scr.width / 10,
-                                                      color: Color(0xfff000000)
+                                                      Icons.person,
+                                                      size: scr.width / 5,
+                                                      color: Color(0xfffffffff)
                                                           .withOpacity(0.37),
                                                     ),
                                                     Text(
                                                       'เพิ่มรูป',
                                                       style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: s42,
-                                                          color: Color(
-                                                              0xfff434343)),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: s42,
+                                                        color: Color(
+                                                                0xfffffffff)
+                                                            .withOpacity(0.37),
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -227,6 +243,16 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                           "กรุณาใส่ไอดีของท่าน")
                                                       : null;
                                                 }),
+                                                onChanged: (val) {
+                                                  checkid.text = val.trim();
+                                                  checkid.selection =
+                                                      TextSelection.fromPosition(
+                                                          TextPosition(
+                                                              offset: checkid
+                                                                  .text
+                                                                  .length));
+                                                  setState(() {});
+                                                },
                                                 onSaved: (gId) =>
                                                     gId.trim()[0] == '@'
                                                         ? id = gId
@@ -256,6 +282,8 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                   fontWeight: FontWeight.w900,
                                                 ),
                                                 obscureText: true,
+                                                //autofocus: false,
+                                                //obscureText: true,
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
                                                   hintText: 'password',
@@ -268,7 +296,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                 controller: checkpass,
                                                 onChanged: (val2) {
                                                   checkpass.text = val2.trim();
-
                                                   checkpass.selection =
                                                       TextSelection.fromPosition(
                                                           TextPosition(

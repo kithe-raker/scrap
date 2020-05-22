@@ -5,7 +5,6 @@ import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/profile/Nabin/My_Profile.dart';
-
 import 'package:scrap/Page/profile/Nabin/Other_Profile.dart';
 import 'package:scrap/Page/profile/creatProfile.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';

@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/warning.dart';
+
+bool checkpromise = false;
 
 class CreateProfile2 extends StatefulWidget {
   final String uid;
@@ -21,6 +24,78 @@ class _CreateProfile2State extends State<CreateProfile2> {
   DateTime now = DateTime.now(), bDay;
   String genders, selectYear;
   bool loading = false;
+
+  Widget finished() {
+    return Container(
+      child: GestureDetector(
+        onTap: () {
+          print('success');
+        },
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.only(top: appBarHeight / 10),
+            decoration: BoxDecoration(
+                color: Color(0xfff26A4FE),
+                borderRadius: BorderRadius.all(Radius.circular(7))),
+            height: appBarHeight / 1.7,
+            width: appBarHeight * 3.2,
+            child: Text(
+              'เสร็จสิ้น',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: s48,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget unfinished() {
+    return Container(
+      child: GestureDetector(
+        onTap: () {
+          print('Kuay');
+          if (bDay != now) {
+            _formKey.currentState.save();
+            setState(() {
+              loading = true;
+            });
+            //await creatProfile();
+          } else {
+            bDay == now ? Taoast().toast('อย่าลืมเลือกวันเกิดของคุณ') : null;
+          }
+        },
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.only(top: appBarHeight / 10),
+            decoration: BoxDecoration(
+                color: Color(0xfff515151),
+                borderRadius: BorderRadius.all(Radius.circular(7))),
+            height: appBarHeight / 1.7,
+            width: appBarHeight * 3.2,
+            child: Text(
+              'เสร็จสิ้น',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: s48,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget finish() {
+    if (genders != null && checkpromise != false && bDay != now) {
+      return finished();
+    } else
+      return unfinished();
+  }
 
   @override
   void initState() {
@@ -119,6 +194,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
   @override
   Widget build(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
+    screenutilInit(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -128,25 +204,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: scr.width / 20, left: scr.width / 20),
-                    child: InkWell(
-                      child: Container(
-                        width: scr.width / 7,
-                        height: scr.width / 10,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(scr.width),
-                            color: Colors.white),
-                        child: Icon(Icons.arrow_back,
-                            color: Colors.black, size: scr.width / 15),
-                      ),
-                      onTap: () {
-                        Navigator.pop(
-                          context,
-                        );
-                      },
-                    ),
+                  Container(
+                    height: appBarHeight,
                   ),
                   Padding(
                     padding: EdgeInsets.only(
@@ -192,16 +251,20 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                     fontSize: scr.width / 8),
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                // mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
-                                  IconButton(
-                                    padding: EdgeInsets.all(0),
-                                    iconSize: scr.width / 9,
-                                    icon: Icon(Icons.date_range),
-                                    color: Color(0xff26A4FF),
-                                    onPressed: () => _selectDate(context),
+                                  GestureDetector(
+                                    onTap: () => _selectDate(context),
+                                    child: Icon(
+                                      Icons.date_range,
+                                      size: scr.width / 12,
+                                      color: Color(0xff26A4FF),
+                                    ),
                                   ),
-                                  FlatButton(
+                                  SizedBox(
+                                    width: appBarHeight / 10,
+                                  ),
+                                  GestureDetector(
                                     child: Text(
                                       DateFormat('d/M/y').format(bDay),
                                       style: TextStyle(
@@ -209,7 +272,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                         color: Color(0xff26A4FF),
                                       ),
                                     ),
-                                    onPressed: () => _selectDate(context),
+                                    onTap: () => _selectDate(context),
                                   )
                                 ],
                               ),
@@ -223,13 +286,16 @@ class _CreateProfile2State extends State<CreateProfile2> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                'เพศของคุณ',
+                                'เพศ',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: scr.width / 8),
                               ),
                               Row(
                                 children: <Widget>[
+                                  SizedBox(
+                                    width: appBarHeight / 10,
+                                  ),
                                   Radio(
                                     onChanged: (String ty) {
                                       setState(() => genders = ty);
@@ -241,8 +307,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                   Text(
                                     'ชาย',
                                     style: TextStyle(
-                                        fontSize: scr.width / 10,
-                                        color: Colors.white),
+                                        fontSize: s60, color: Colors.white),
                                   ),
                                   Radio(
                                     onChanged: (String ty) {
@@ -255,13 +320,8 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                   Text(
                                     'หญิง',
                                     style: TextStyle(
-                                        fontSize: scr.width / 10,
-                                        color: Colors.white),
+                                        fontSize: s60, color: Colors.white),
                                   ),
-                                ],
-                              ),
-                              Row(
-                                children: <Widget>[
                                   Radio(
                                     onChanged: (String ty) {
                                       setState(() => genders = ty);
@@ -273,37 +333,55 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                   Text(
                                     'อื่นๆ',
                                     style: TextStyle(
-                                        fontSize: scr.width / 10,
-                                        color: Colors.white),
+                                        fontSize: s60, color: Colors.white),
                                   ),
-                                  SizedBox(width: scr.width / 30),
-                                  genders == ''
-                                      ? Expanded(
-                                          child: TextFormField(
-                                          style: TextStyle(
-                                              fontSize: scr.width / 12,
-                                              color: Colors.white),
-                                          onSaved: (gen) =>
-                                              genders = gen.trim(),
-                                          textInputAction: TextInputAction.next,
-                                          decoration: InputDecoration(
-                                            hintText: 'ระบุ',
-                                            hintStyle: TextStyle(
-                                                color: Colors.grey[400]),
-                                          ),
-                                        ))
-                                      : SizedBox(width: scr.width / 20),
-                                  SizedBox(width: scr.width / 10),
                                 ],
                               ),
                             ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: scr.height / 15),
-                            child: MaterialButton(
-                              child: Text('เสร็จสิน',
+                          SizedBox(
+                            height: appBarHeight / 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Checkbox(
+                                value: checkpromise,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    checkpromise = value;
+                                  });
+                                },
+                              ),
+                              Text(
+                                'ฉันได้อ่านและยอมรับ\t',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: s42,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                'นโยบายและข้อกำหนด',
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    color: Color(0xfff26A4FF),
+                                    fontSize: s42,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: appBarHeight / 2),
+                          finish(),
+                          /* Padding(
+                            padding: EdgeInsets.only(top: appBarHeight / 2.5),
+                            child: 
+                            
+                            
+                            MaterialButton(
+                              child: Text('เสร็จสิ้น',
                                   style: TextStyle(
-                                    fontSize: scr.width / 12,
+                                    fontSize: scr.width / 15,
                                     color: Color(0xfffffffff),
                                     fontWeight: FontWeight.w800,
                                   )),
@@ -327,10 +405,10 @@ class _CreateProfile2State extends State<CreateProfile2> {
                               height: 60,
                               textColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                          ),
+                          ),*/
                         ],
                       ),
                     ),
