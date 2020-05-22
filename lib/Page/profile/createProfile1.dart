@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/Page/profile/createProfile2.dart';
 
 class CreateProfile1 extends StatefulWidget {
   @override
@@ -15,13 +14,21 @@ class CreateProfile1 extends StatefulWidget {
 
 class _CreateProfile1State extends State<CreateProfile1> {
   var _formKey = GlobalKey<FormState>();
-  String id, pass;
+  TextEditingController id = TextEditingController();
+  TextEditingController password = TextEditingController();
+  String pass;
   File image;
   bool loading = false;
 
   @override
   void initState() {
+    initID();
     super.initState();
+  }
+
+  initID() {
+    final user = Provider.of<UserData>(context, listen: false);
+    id.text = user.id;
   }
 
   sendCam() async {
@@ -52,7 +59,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
 
   Widget next() {
     Size scr = MediaQuery.of(context).size;
-    if (checkpass.text != '' && checkpass.text != null) {
+    if (password.text != '' && id.text != '') {
       return Container(
         // margin: EdgeInsets.only(top: scr.width / 16),
         padding: EdgeInsets.all(appBarHeight / 20),
@@ -91,8 +98,13 @@ class _CreateProfile1State extends State<CreateProfile1> {
     }
   }
 
-  TextEditingController checkid = TextEditingController();
-  TextEditingController checkpass = TextEditingController();
+  @override
+  void dispose() {
+    id.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
@@ -134,7 +146,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                InkWell(
+                                GestureDetector(
                                   child: Container(
                                     width: scr.width / 2.4,
                                     height: scr.width / 2.4,
@@ -205,6 +217,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       BorderRadius.all(
                                                           Radius.circular(7))),
                                               child: TextFormField(
+                                                controller: id,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: Colors.white,
@@ -220,19 +233,13 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       color: Color(0xffFFFFFF)
                                                           .withOpacity(0.15)),
                                                 ),
-                                                validator: ((val) {
-                                                  return val.trim() == null ||
-                                                          val.trim() == ''
-                                                      ? Taoast().toast(
-                                                          "กรุณาใส่ไอดีของท่าน")
-                                                      : null;
-                                                }),
-                                                onSaved: (gId) =>
-                                                    gId.trim()[0] == '@'
-                                                        ? id = gId
-                                                            .trim()
-                                                            .substring(1)
-                                                        : id = gId.trim(),
+                                                onChanged: (gId) {
+                                                  var trim = gId.trim();
+                                                  trim[0] == '@'
+                                                      ? id.text =
+                                                          trim.substring(1)
+                                                      : id.text = trim;
+                                                },
                                                 textInputAction:
                                                     TextInputAction.done,
                                               ),
@@ -249,6 +256,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       BorderRadius.all(
                                                           Radius.circular(7))),
                                               child: TextFormField(
+                                                controller: password,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: Colors.white,
@@ -265,14 +273,12 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       color: Color(0xffFFFFFF)
                                                           .withOpacity(0.15)),
                                                 ),
-                                                controller: checkpass,
                                                 onChanged: (val2) {
-                                                  checkpass.text = val2.trim();
-
-                                                  checkpass.selection =
+                                                  password.text = val2.trim();
+                                                  password.selection =
                                                       TextSelection.fromPosition(
                                                           TextPosition(
-                                                              offset: checkpass
+                                                              offset: password
                                                                   .text
                                                                   .length));
                                                   setState(() {});

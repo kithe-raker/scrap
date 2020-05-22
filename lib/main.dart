@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/profile/Nabin/My_Profile.dart';
 
 import 'package:scrap/Page/profile/Nabin/Other_Profile.dart';
@@ -58,7 +59,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: CreateProfile1()),
+          home: LoginPage()),
     );
   }
 }
