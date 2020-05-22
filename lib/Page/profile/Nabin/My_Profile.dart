@@ -3,7 +3,8 @@ import 'dart:ui';
 import 'package:scrap/widget/Ads.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:scrap/widget/block.dart';
+import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -318,6 +319,8 @@ class _My_ProfileState extends State<My_Profile> {
                             },
                             controller: controller,
                             children: [
+                              Wrapblock(),
+                              Wrapblock(),
                               /* wrap(),
                               wrap2(),*/
                             ],

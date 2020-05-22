@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
-
+import 'package:scrap/widget/wrap.dart';
 import 'OptionSetting_My_Profile.dart';
 
 bool value = false;
@@ -323,8 +323,8 @@ class _Other_ProfileState extends State<Other_Profile> {
                           },
                           controller: controller,
                           children: [
-                            wrap(),
-                            wrap2(),
+                            Wrapblock(),
+                            Wrapblock(),
                           ],
                         ),
                       ),
