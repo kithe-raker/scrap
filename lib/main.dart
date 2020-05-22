@@ -61,11 +61,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-<<<<<<< HEAD
-          home: Gridfavorite()),
-=======
-          home: LoginPage()),
->>>>>>> 2f4b6cc27cce8849ce8560b6fcb0674af609dd70
+          home: OptionSetting()),
     );
   }
 }

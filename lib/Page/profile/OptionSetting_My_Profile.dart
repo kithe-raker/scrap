@@ -318,6 +318,36 @@ class _OptionSettingState extends State<OptionSetting> {
                         ),
                       ),
                     ),
+                    //ออกจากระบบ
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: EdgeInsets.only(left: appBarHeight / 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: appBarHeight / 1.5,
+                                  child: Icon(
+                                    Icons.exit_to_app,
+                                    color: Colors.white,
+                                    size: s70,
+                                  ),
+                                ),
+                                Text(
+                                  'ออกจากระบบ',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: s60),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 /* SizedBox(
