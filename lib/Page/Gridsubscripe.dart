@@ -111,8 +111,8 @@ class _GridsubscripeState extends State<Gridsubscripe> {
       child: Stack(
         children: <Widget>[
           Container(
-            width: a.width / 2.2,
-            height: (a.width / 2.1) * 1.21,
+            height: 407 / a.width * 150,
+            width: 365 / a.width * 150,
             color: Colors.white,
             child: Center(
               child: Text(

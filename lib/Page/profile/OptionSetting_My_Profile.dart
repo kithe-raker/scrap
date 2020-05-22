@@ -3,7 +3,7 @@ import 'dart:wasm';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
-
+import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
 /* 
@@ -692,7 +692,7 @@ class _HistoryScrap_MyProfileState extends State<HistoryScrap_MyProfile> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        wrap(),
+                        Wrapblock(),
                       ],
                     ),
                   ],

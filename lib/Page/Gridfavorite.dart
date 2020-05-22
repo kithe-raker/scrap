@@ -490,6 +490,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
+                            padding: EdgeInsets.only(top: appBarHeight / 10),
                             width: a.width / 3.2,
                             height: a.width / 3.2,
                             child: Icon(
@@ -538,8 +539,8 @@ class _GridfavoriteState extends State<Gridfavorite> {
       child: Stack(
         children: <Widget>[
           Container(
-            width: a.width / 2.2,
-            height: (a.width / 2.1) * 1.21,
+            height: 407 / a.width * 165,
+            width: 365 / a.width * 165,
             decoration: BoxDecoration(
                 color: Colors.white,
                 image: DecorationImage(

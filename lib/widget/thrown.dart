@@ -86,7 +86,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                     ),
                                   ),
                                   //ออกจากหน้าปากระดาษ
-                                  InkWell(
+                                  /*  InkWell(
                                     child: Container(
                                       decoration: BoxDecoration(
                                           color: Color(0xfff707070),
@@ -102,7 +102,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                     onTap: () {
                                       Navigator.pop(context);
                                     },
-                                  ),
+                                  ),*/
                                 ],
                               ),
                             ),
@@ -180,44 +180,77 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                 ],
                               ),
                             ),
-                            Container(
-                              margin: EdgeInsets.symmetric(
-                                  vertical: screenWidthDp / 21),
-                              child: GestureDetector(
-                                  child: Container(
-                                    width: a.width / 4.5,
-                                    height: a.width / 9,
-                                    decoration: BoxDecoration(
-                                        color: isThrow
-                                            ? Colors.white
-                                            : Color(0xff26A4FF),
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    alignment: Alignment.center,
-                                    child: Text(isThrow ? "ปาใส่" : 'โยนไว้',
-                                        style: TextStyle(
-                                            color: isThrow
-                                                ? Color(0xff26A4FF)
-                                                : Colors.white,
-                                            fontSize: a.width / 18,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  onTap: () {
-                                    if (_key.currentState.validate()) {
-                                      _key.currentState.save();
-                                      scrapData.public = public;
-                                      if (!isThrow) {
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: screenWidthDp / 21),
+                                  child: GestureDetector(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Color(0xfff333333),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                        width: a.width / 4.2,
+                                        height: a.width / 8,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          'ยกเลิก',
+                                          style: TextStyle(
+                                              color: Color(0xfffD8D8D8),
+                                              fontSize: a.width / 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      onTap: () {
                                         Navigator.pop(context);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SelectPosition(
-                                                        defaultLatLng:
-                                                            latLng)));
-                                      }
-                                    }
-                                  }),
+                                      }),
+                                ),
+                                SizedBox(
+                                  width: appBarHeight / 2.8,
+                                ),
+                                Container(
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: screenWidthDp / 21),
+                                  child: GestureDetector(
+                                      child: Container(
+                                        width: a.width / 4.2,
+                                        height: a.width / 8,
+                                        decoration: BoxDecoration(
+                                            color: isThrow
+                                                ? Colors.white
+                                                : Color(0xff26A4FF),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                            isThrow ? "ปาใส่" : 'โยนไว้',
+                                            style: TextStyle(
+                                                color: isThrow
+                                                    ? Color(0xff26A4FF)
+                                                    : Colors.white,
+                                                fontSize: a.width / 18,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      onTap: () {
+                                        if (_key.currentState.validate()) {
+                                          _key.currentState.save();
+                                          scrapData.public = public;
+                                          if (!isThrow) {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        SelectPosition(
+                                                            defaultLatLng:
+                                                                latLng)));
+                                          }
+                                        }
+                                      }),
+                                ),
+                              ],
                             ),
                           ],
                         ),
