@@ -490,21 +490,21 @@ class _GridfavoriteState extends State<Gridfavorite> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: a.width / 3,
-                            height: a.width / 3,
+                            width: a.width / 3.2,
+                            height: a.width / 3.2,
                             child: Icon(
                               Icons.favorite,
-                              size: a.width / 5,
-                              color: Colors.grey,
+                              size: a.width / 6,
+                              color: Color(0xfffFFFFFF).withOpacity(0.11),
                             ),
                             decoration: BoxDecoration(
                                 color: Color(0xff3C3C3C),
                                 borderRadius: BorderRadius.circular(a.width)),
                           ),
                           SizedBox(height: a.width / 20),
-                          text("คุณยังไม่ได้ติดสแครปในวันนี้"),
-                          text("ลองกดหัวใจเพื่อการเคลื่อนไหว"),
-                          text("ในสแครปที่ดูสนใจสิ")
+                          text("คุณยังไม่ได้ติดตามสแครปในวันนี้"),
+                          text("ลองกดหัวใจเพื่อดูการเคลื่อนไหว"),
+                          text("ในสแครปที่คุณสนใจสิ")
                         ],
                       ),
                     )),
@@ -524,7 +524,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
     Size a = MediaQuery.of(context).size;
     return Text(textt,
         style: TextStyle(
-            color: Color(0xff3B3B3B),
+            color: Color(0xfffFFFFFF).withOpacity(0.51),
             fontWeight: FontWeight.bold,
             fontSize: a.width / 15));
   }

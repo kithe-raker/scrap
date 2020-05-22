@@ -23,6 +23,7 @@ import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/showdialogfinishpaper.dart';
 import 'package:scrap/widget/warning.dart';
@@ -57,6 +58,7 @@ void dialogcontract(context) {
       builder: (builder) {
         return StatefulBuilder(builder: (context, StateSetter setState) {
           Size a = MediaQuery.of(context).size;
+          screenutilInit(context);
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
@@ -92,7 +94,7 @@ void dialogcontract(context) {
                           borderRadius: BorderRadius.circular(a.width / 50)),
                       width: a.width,
                       padding: EdgeInsets.all(a.width / 50),
-                      height: a.height / 1.4,
+                      height: a.height / 1.5,
                       child: Scaffold(
                           backgroundColor: Color(0xff282828),
                           body: Column(
@@ -123,134 +125,35 @@ void dialogcontract(context) {
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: a.width / 18),
+                                        fontSize: a.width / 20),
                                   ),
                                 ),
                               ),
-                              Container(
-                                width: a.width,
-                                padding: EdgeInsets.all(a.width / 20),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      width: a.width / 15,
-                                      height: a.width / 15,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              a.width / 50),
-                                          border:
-                                              Border.all(color: Colors.white)),
-                                      padding: EdgeInsets.all(a.width / 100),
-                                      child: ass == 0
-                                          ? InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  ass = 1;
-                                                });
-                                              },
-                                              child: Container(
-                                                width: a.width / 25,
-                                                height: a.width / 25,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            a.width),
-                                                    color: Colors.transparent),
-                                              ),
-                                            )
-                                          : InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  ass = 0;
-                                                });
-                                              },
-                                              child: Container(
-                                                width: a.width / 25,
-                                                height: a.width / 25,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            a.width),
-                                                    color: Color(0xff26A4FF)),
-                                              ),
-                                            ),
-                                    ),
-                                    Text(
-                                      "  ฉันได้อ่านและยอมรับ ",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: a.width / 22),
-                                    ),
-                                    Text(
-                                      "นโยบายและข้อกำหนด",
-                                      style: TextStyle(
-                                          color: Color(0xff26A4FF),
-                                          fontWeight: FontWeight.bold,
-                                          decoration: TextDecoration.underline,
-                                          fontSize: a.width / 22),
-                                    )
-                                  ],
-                                ),
+                              SizedBox(
+                                height: appBarHeight / 2,
                               ),
                               Container(
-                                // padding: EdgeInsets.only(bottom: 0),
-                                width: a.width,
-                                height: a.width / 15,
-                                child: Text(
-                                  '“ สำเนียงส่อภาษา กริยาส่อสกุล 🙂”',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: a.width / 20),
-                                  textAlign: TextAlign.center,
+                                padding: EdgeInsets.fromLTRB(
+                                    appBarHeight / 2,
+                                    appBarHeight / 22,
+                                    appBarHeight / 2,
+                                    appBarHeight / 22),
+                                decoration: BoxDecoration(
+                                    color: Color(0xfff27A4FF),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(23))),
+                                child: GestureDetector(
+                                  child: Text(
+                                    'สัญญา',
+                                    style: TextStyle(
+                                        color: Color(0xfffFFFFFF),
+                                        fontSize: s52,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ),
                             ],
                           ))),
-                  Container(
-                    width: a.width,
-                    alignment: Alignment.center,
-                    child: Container(
-                      margin: EdgeInsets.only(
-                          top: a.width / 20, bottom: a.width / 15),
-                      width: a.width / 5,
-                      height: a.width / 8,
-                      child: ass == 1
-                          ? RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(a.width),
-                              ),
-                              color: Color(0xff26A4FF),
-                              child: Container(
-                                  child: Text(
-                                "ตกลง",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                // dialogvideo();
-                                dialogfinishpaper(context);
-                              })
-                          : RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(a.width),
-                              ),
-                              color: Colors.grey,
-                              child: Container(
-                                  child: Text(
-                                "ตกลง",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                              onPressed: () {}),
-                      decoration: BoxDecoration(
-                          color: Colors.white24,
-                          borderRadius: BorderRadius.circular(a.width)),
-                    ),
-                  ),
                 ],
               ),
             ),

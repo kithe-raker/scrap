@@ -65,14 +65,13 @@ void dialogvideo(BuildContext context, String uid) {
                               height: a.width,
 
                               child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Column(
                                     children: <Widget>[
                                       Container(
-                                        height: a.width / 3.5,
-                                        width: a.width / 3.5,
+                                        height: a.width / 3.3,
+                                        width: a.width / 3.3,
                                         decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(a.width),
@@ -84,7 +83,7 @@ void dialogvideo(BuildContext context, String uid) {
                                         ),
                                       ),
                                       SizedBox(
-                                        height: a.width / 100,
+                                        height: a.width / 25,
                                       ),
                                       Text(
                                         "เติมกระดาษในคลัง",
@@ -92,6 +91,9 @@ void dialogvideo(BuildContext context, String uid) {
                                             color: Colors.white,
                                             fontSize: a.width / 15,
                                             fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        height: a.width / 15,
                                       ),
                                     ],
                                   ),
@@ -113,6 +115,9 @@ void dialogvideo(BuildContext context, String uid) {
                                       ),
                                     ],
                                   ),
+                                  SizedBox(
+                                    height: a.width / 15,
+                                  ),
                                   RaisedButton(
                                       color: Colors.white,
                                       shape: RoundedRectangleBorder(
@@ -120,8 +125,8 @@ void dialogvideo(BuildContext context, String uid) {
                                             BorderRadius.circular(a.width),
                                       ),
                                       child: Container(
-                                        width: a.width / 4.5,
-                                        height: a.width / 8,
+                                        width: a.width / 4.3,
+                                        height: a.width / 9,
                                         alignment: Alignment.center,
                                         child: Text(
                                           "ดูเลย",
@@ -174,4 +179,25 @@ void dialogvideo(BuildContext context, String uid) {
           );
         });
       });
+}
+
+class VideoDialog extends StatefulWidget {
+  @override
+  _VideoDialogState createState() => _VideoDialogState();
+}
+
+class _VideoDialogState extends State<VideoDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: InkWell(
+          child: Text('Video'),
+          onTap: () {
+            dialogvideo(context, 'uid');
+          },
+        ),
+      ),
+    );
+  }
 }
