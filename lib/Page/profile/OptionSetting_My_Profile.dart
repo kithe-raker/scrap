@@ -1,6 +1,8 @@
 import 'dart:wasm';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/authentication/LoginPage.dart';
 
 import 'package:scrap/widget/ScreenUtil.dart';
 
@@ -323,12 +325,21 @@ class _OptionSettingState extends State<OptionSetting> {
                 ),*/
                 Column(
                   children: [
-                    Text(
-                      'SCRAP.',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: s70 * 1.5,
-                          fontWeight: FontWeight.bold),
+                    GestureDetector(
+                      child: Text(
+                        'SCRAP.',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: s70 * 1.5,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onTap: () async {
+                        await FirebaseAuth.instance.signOut();
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()));
+                      },
                     ),
                     Text(
                       'version 2.0.1\n\n',
