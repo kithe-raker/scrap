@@ -187,11 +187,11 @@ class _LoginPageState extends State<LoginPage> {
                               fontWeight: FontWeight.w600),
                         ),
                         onTap: () {
-                          authService.signOut(context);
-                          // Navigator.pushReplacement(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => LoginID()));
+                          // authService.signOut(context);
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginID()));
                         }),
                   ],
                 ),

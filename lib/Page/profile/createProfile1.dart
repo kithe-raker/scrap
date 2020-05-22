@@ -1,10 +1,12 @@
-import 'dart:io'; 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/profile/createProfile2.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 
@@ -17,13 +19,15 @@ class _CreateProfile1State extends State<CreateProfile1> {
   var _formKey = GlobalKey<FormState>();
   TextEditingController id = TextEditingController();
   TextEditingController password = TextEditingController();
-  String pass;
   File image;
+  StreamSubscription loadStatus;
   bool loading = false;
 
   @override
   void initState() {
     initID();
+    loadStatus =
+        authService.loading.listen((value) => setState(() => loading = value));
     super.initState();
   }
 
@@ -48,71 +52,11 @@ class _CreateProfile1State extends State<CreateProfile1> {
     }
   }
 
-  Future<bool> hasAccount(String user) async {
-    final QuerySnapshot users = await Firestore.instance
-        .collection('Users')
-        .where('id', isEqualTo: user)
-        .limit(1)
-        .getDocuments();
-    final List<DocumentSnapshot> doc = users.documents;
-    return doc.length == 1;
-  }
-
-  Widget next() {
-    Size scr = MediaQuery.of(context).size;
-    if (password.text != '' && id.text != '') {
-      return Container(
-        child: GestureDetector(
-          child: Container(
-            // margin: EdgeInsets.only(top: scr.width / 16),
-            padding: EdgeInsets.all(appBarHeight / 7),
-            width: scr.width / 1.5,
-            height: scr.height / 15,
-            decoration: BoxDecoration(
-                color: Color(0xff26A4FE),
-                borderRadius: BorderRadius.all(Radius.circular(7))),
-            child: Text(
-              'ต่อไป',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: s52,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xfffFFFFFF)),
-            ),
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CreateProfile2()),
-            );
-          },
-        ),
-      );
-    } else {
-      return Container(
-        // margin: EdgeInsets.only(top: scr.width / 16),
-        padding: EdgeInsets.all(appBarHeight / 7),
-        width: scr.width / 1.5,
-        height: scr.height / 15,
-        decoration: BoxDecoration(
-            color: Color(0xff515151),
-            borderRadius: BorderRadius.all(Radius.circular(7))),
-        child: Text(
-          'ต่อไป',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: s52,
-              fontWeight: FontWeight.w900,
-              color: Color(0xfffFFFFFF).withOpacity(0.38)),
-        ),
-      );
-    }
-  }
-
   @override
   void dispose() {
     id.dispose();
     password.dispose();
+    loadStatus.cancel();
     super.dispose();
   }
 
@@ -120,14 +64,10 @@ class _CreateProfile1State extends State<CreateProfile1> {
   Widget build(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
     screenutilInit(context);
-    final user = Provider.of<UserData>(context, listen: false);
     return WillPopScope(
-      onWillPop: () =>
-          warning('คุณต้องการออกจากหน้านี้ใช่หรือไม่', function: () {
-        Navigator.pop(context);
-        Navigator.pop(context);
-      }),
+      onWillPop: () => null,
       child: Scaffold(
+        backgroundColor: Colors.black,
         body: Stack(
           children: <Widget>[
             SingleChildScrollView(
@@ -375,15 +315,80 @@ class _CreateProfile1State extends State<CreateProfile1> {
                 ],
               ),
             ),
-            loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : SizedBox()
+            loading ? Loading() : SizedBox()
           ],
         ),
       ),
     );
+  }
+
+  Widget next() {
+    final user = Provider.of<UserData>(context, listen: false);
+    Size scr = MediaQuery.of(context).size;
+    if (password.text != '' && id.text != '' && image != null) {
+      return Container(
+        child: GestureDetector(
+          child: Container(
+            // margin: EdgeInsets.only(top: scr.width / 16),
+            padding: EdgeInsets.all(appBarHeight / 7),
+            width: scr.width / 1.5,
+            height: scr.height / 15,
+            decoration: BoxDecoration(
+                color: Color(0xff26A4FE),
+                borderRadius: BorderRadius.all(Radius.circular(7))),
+            child: Text(
+              'ต่อไป',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: s52,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xfffFFFFFF)),
+            ),
+          ),
+          onTap: () async {
+            authService.loading.add(true);
+            if (password.text.length >= 6) {
+              var docs =
+                  (await authService.getDocuments('id', id.text)).documents;
+              if (docs.length > 0 && docs[0].documentID != user.uid) {
+                authService.warn('idนี้มีคนใช้แล้ว');
+              } else {
+                user.id = id.text;
+                user.img = image;
+                user.password = password.text;
+                await fireStore
+                    .collection('Account')
+                    .document(user.uid)
+                    .updateData({'id': id.text});
+                authService.loading.add(false);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CreateProfile2()));
+              }
+            } else {
+              authService.warn('รหัสผ่านต้องมี6ตัวขึ้นไป');
+            }
+          },
+        ),
+      );
+    } else {
+      return Container(
+        // margin: EdgeInsets.only(top: scr.width / 16),
+        padding: EdgeInsets.all(appBarHeight / 7),
+        width: scr.width / 1.5,
+        height: scr.height / 15,
+        decoration: BoxDecoration(
+            color: Color(0xff515151),
+            borderRadius: BorderRadius.all(Radius.circular(7))),
+        child: Text(
+          'ต่อไป',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: s52,
+              fontWeight: FontWeight.w900,
+              color: Color(0xfffFFFFFF).withOpacity(0.38)),
+        ),
+      );
+    }
   }
 
   warning(String warn, {Function function}) {
