@@ -187,6 +187,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       color: Color(0xffFFFFFF)
                                                           .withOpacity(0.15)),
                                                 ),
+                                                //ทำให้ตัวแรกของไอดีเป็น @
                                                 onChanged: (gId) {
                                                   var trim = gId.trim();
                                                   trim[0] == '@'
@@ -244,6 +245,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                                   .length));
                                                   setState(() {});
                                                 },
+                                                //ถ้าพาสเวิร์ด=='' || == null => toast
                                                 validator: ((val) {
                                                   return val.trim() == null ||
                                                           val.trim() == ''
@@ -261,48 +263,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                             next(),
                                           ],
                                         ),
-                                        /*Padding(
-                                          padding: EdgeInsets.only(
-                                              top: scr.height / 15,
-                                              left: scr.width / 6.5,
-                                              right: scr.width / 6.5),
-                                          child: MaterialButton(
-                                            child: next(),
-                                            onPressed: () async {
-                                              if (_formKey.currentState
-                                                  .validate()) {
-                                                _formKey.currentState.save();
-                                                image != null
-                                                    ? await hasAccount(id)
-                                                        ? warning(
-                                                            'ไอดีนี้ได้ทำการลงทะเบียนไว้แล้ว')
-                                                        : Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    CreateProfile2(
-                                                                        uid: user
-                                                                            .uid,
-                                                                        pro: {
-                                                                          'img':
-                                                                              image,
-                                                                          'id':
-                                                                              id
-                                                                        })))
-                                                    : warning(
-                                                        'กรุณาเลือกรูปโปรไฟล์ของท่าน');
-                                              }
-                                            },
-                                            color: Color(0xfff515151),
-                                            elevation: 0,
-                                            height: appBarHeight / 1.2,
-                                            textColor: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                        ),*/
                                       ],
                                     ),
                                   ),
@@ -329,7 +289,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
       return Container(
         child: GestureDetector(
           child: Container(
-            // margin: EdgeInsets.only(top: scr.width / 16),
             padding: EdgeInsets.all(appBarHeight / 7),
             width: scr.width / 1.5,
             height: scr.height / 15,
@@ -372,7 +331,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
       );
     } else {
       return Container(
-        // margin: EdgeInsets.only(top: scr.width / 16),
         padding: EdgeInsets.all(appBarHeight / 7),
         width: scr.width / 1.5,
         height: scr.height / 15,

@@ -144,7 +144,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                       Padding(
                         padding: const EdgeInsets.only(left: 15, right: 15),
                         child: Text(
-                          'หากคุณมีไอเดียดีๆที่อยากเพิ่มฟังก์ชันการใช้งานหรือความกวนใจขณะใช้งานแอปพลิเคชัน\n“ ปากระดาษใส่เราสิ! ”',
+                          'หากคุณมีไอเดียดีๆที่อยากเพิ่มฟังก์ชันการใช้งานหรือความกวนใจขณะใช้งานแอปพลิเคชัน\n“ ปาสแครปใส่เราสิ! ”',
                           style: TextStyle(
                               fontSize: a.width / 17,
                               color: Colors.white,

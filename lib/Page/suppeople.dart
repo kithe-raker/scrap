@@ -83,7 +83,7 @@ class _SubpeopleState extends State<Subpeople> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "\tค้นหาผู้คนเพื่ออ่านสแครปหรือปากระดาษหาพวกเขา",
+                          "\tค้นหาผู้คนเพื่ออ่านสแครปหรือปาสแครปหาพวกเขา",
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: a.width / 20,

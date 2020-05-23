@@ -872,7 +872,7 @@ class _MapScrapsState extends State<MapScraps> {
                             borderRadius:
                                 BorderRadius.circular(screenWidthDp / 14.2)),
                         child: Text(
-                          ' กำลังโหลกระดาษ... ',
+                          ' กำลังโหลดสแครป... ',
                           style: TextStyle(
                               letterSpacing: 1.2,
                               fontSize: screenWidthDp / 18,

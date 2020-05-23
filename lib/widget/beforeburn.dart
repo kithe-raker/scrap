@@ -110,7 +110,7 @@ void _showdialogwhatshot(context) {
                                 size: a.width / 3,
                               ),
                               Text(
-                                "เผากระดาษ",
+                                "เผาสแครป",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: a.width / 17,
