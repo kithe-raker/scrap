@@ -99,7 +99,7 @@ class Scraps {
         .update({'papers': user.papers - 1});
     await batch.commit();
     loading.add(false);
-    toast('คุณโยนกระดาษไปที่คุณเลือกแล้ว');
+    toast('คุณโยนสแครปไปที่คุณเลือกแล้ว');
     Navigator.pop(context);
   }
 

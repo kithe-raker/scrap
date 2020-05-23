@@ -44,7 +44,7 @@ class _CountDownTextState extends State<CountDownText> {
   Widget build(BuildContext context) {
     screenutilInit(context);
     return secondLeft < 1
-        ? Text('กระดาษแผ่นนี้หมดเวลาแล้ว',
+        ? Text('สแครปแผ่นนี้หมดเวลาแล้ว',
             style:
                 TextStyle(fontSize: s38, height: 0.8, color: Color(0xff969696)))
         : Row(

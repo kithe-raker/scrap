@@ -198,7 +198,7 @@ class _FriendListState extends State<FriendList> {
                                     fontWeight: FontWeight.w300),
                               ),
                               Text(
-                                'ค้นหาสหายแล้วปากระดาษใส่พวกเขากัน',
+                                'ค้นหาสหายแล้วปาสแครปใส่พวกเขากัน',
                                 style: TextStyle(
                                     fontSize: a.width / 16,
                                     color: Colors.white,

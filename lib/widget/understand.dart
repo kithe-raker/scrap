@@ -106,7 +106,7 @@ void _showdialogunderstand(context) {
                                 ),
                               ),
                               onPressed: () {
-                                // _whatshot(context);
+                                Navigator.pop(context);
                               }),
                         ],
                       ),

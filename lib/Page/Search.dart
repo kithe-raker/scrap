@@ -102,7 +102,7 @@ class _SearchState extends State<Search> {
                                         fontSize: a.width / 6.5,
                                         color: Colors.white),
                                   ),
-                                  Text("ค้นหาไอดีแล้วปากระดาษใส่พวกเขากัน",
+                                  Text("ค้นหาไอดีแล้วปาสแครปใส่พวกเขากัน",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: a.width / 16)),

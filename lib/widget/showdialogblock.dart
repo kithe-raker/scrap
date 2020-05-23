@@ -122,37 +122,13 @@ void _showdialogblock(context) {
                               ),
                             ],
                           ),
-                          Column(
-                            children: <Widget>[
-                              Text(
-                                "คุณต้องการบล๊อคผู้ใช้รายนี้ไหม",
-                                style: TextStyle(
-                                    fontSize: a.width / 20,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "คุณจะไม่เห็นสแครปจากผู้ใช้รายนี้อีกต่อไป",
-                                style: TextStyle(
-                                    fontSize: a.width / 20,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "และผู้ใช้งานรายนี้จะไม่สามารถปาแครป",
-                                style: TextStyle(
-                                    fontSize: a.width / 20,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "หาคุณได้ด้วย",
-                                style: TextStyle(
-                                    fontSize: a.width / 20,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                          Text(
+                            "คุณต้องการบล๊อคผู้ใช้รายนี้ไหม\nคุณจะไม่เห็นสแครปจากผู้ใช้รายนี้อีกต่อไป\nและผู้ใช้งานรายนี้จะไม่สามารถปาแครป\nหาคุณได้ด้วย",
+                            style: TextStyle(
+                                fontSize: a.width / 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
                           ),
                           Column(
                             children: <Widget>[
@@ -174,9 +150,7 @@ void _showdialogblock(context) {
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),
-                                  onPressed: () {
-                                    // _whatshot(context);
-                                  }),
+                                  onPressed: () {}),
                               Text(
                                 '"แน่ใจนะ"',
                                 style: TextStyle(color: Colors.white),

@@ -6,13 +6,6 @@ import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
-/* 
-List Problem ( control+F => Image.asset / ReportToScrap_MyProfile() )
-- Image.asset : ขนาด iconบัวลอย เพี้ยน 
-(ควรโหลดจาก XD ใหม่ตั้งแต่ต้น แล้วลงในโฟลเดอร์ assets เพราะจะ error เนื่องจากไม่มีที่อยู่ไฟล์) 
-- ReportToScrap_MyProfile : ยังไม่ได้ใส่ TextField เนื่องจากขยายขนาดไม่ได้
-*/
-
 //textfield popup
 void showPopup(BuildContext context) {
   int _charCount = 0;
