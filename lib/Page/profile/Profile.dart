@@ -79,10 +79,10 @@ class _ProfileState extends State<Profile> {
     super.dispose();
   }
 
-  Stream<Event> streamTransaction(String uid) {
+  Stream<Event> streamTransaction(String uid, String field) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
-    return userDb.reference().child('users/$uid').onValue;
+    return userDb.reference().child('users/$uid/$field').onValue;
   }
 
   //Run
@@ -132,39 +132,20 @@ class _ProfileState extends State<Profile> {
                             height: appBarHeight / 10,
                           ),
                           Container(
-                            child: user.uid == null
-                                ? null
-                                : StreamBuilder(
-                                    stream: streamTransaction(user.uid),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        var trans =
-                                            snapshot.data.snapshot.value;
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: <Widget>[
-                                            dataProfile(
-                                                trans['pick'], 'เก็บไว้'),
-                                            dataProfile(
-                                                trans['att'], 'แอทเทนชัน'),
-                                            dataProfile(
-                                                trans['thrown'], 'โดนปาใส่'),
-                                          ],
-                                        );
-                                      } else {
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: <Widget>[
-                                            dataProfile(0, 'เก็บไว้'),
-                                            dataProfile(0, 'แอทเทนชัน'),
-                                            dataProfile(0, 'โดนปาใส่'),
-                                          ],
-                                        );
-                                      }
-                                    }),
-                          ),
+                              child: user.uid == null
+                                  ? null
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        dataProfile('เก็บไว้', user.uid,
+                                            field: 'pick'),
+                                        dataProfile('แอทเทนชัน', user.uid,
+                                            field: 'att'),
+                                        dataProfile('โดนปาใส่', user.uid,
+                                            field: 'thrown'),
+                                      ],
+                                    )),
                           SizedBox(height: screenHeightDp / 24),
                           FlatButton(
                             child: Text(
@@ -556,6 +537,48 @@ class _ProfileState extends State<Profile> {
 // StatefulBuilder(
   // builder: (BuildContext context, StateSetter setState)
 
+  //ข้อมูลผู้ใช้
+//name = [เก็บไว้, คนให้ความสนใจ, โดนปาใส่]
+  Widget dataProfile(String name, String uid, {@required String field}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        StreamBuilder(
+            stream: streamTransaction(uid, field),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var trans = snapshot.data.snapshot.value;
+                return Text(
+                  '$trans',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: s70 * 1.2,
+                      fontWeight: FontWeight.bold),
+                );
+              } else {
+                return Text(
+                  '0',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: s70 * 1.2,
+                      fontWeight: FontWeight.bold),
+                );
+              }
+            }),
+        Container(
+          child: Text(
+            name,
+            style: TextStyle(
+              height: 0.21,
+              color: Color(0xfff727272),
+              fontWeight: FontWeight.bold,
+              fontSize: s36,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 // class A extends StatefulWidget {
@@ -585,35 +608,6 @@ Widget adsContainer() {
           child: Text(
             'Google ADS',
             style: TextStyle(fontSize: 48, color: Colors.white),
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
-//ข้อมูลผู้ใช้
-//name = [เก็บไว้, คนให้ความสนใจ, โดนปาใส่]
-Widget dataProfile(int n, String name) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: <Widget>[
-      Text(
-        '$n',
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: s70 * 1.2,
-            fontWeight: FontWeight.bold),
-      ),
-      // SizedBox(height: screenHeightDp / 64),
-      Container(
-        child: Text(
-          name,
-          style: TextStyle(
-            height: 0.21,
-            color: Color(0xfff727272),
-            fontWeight: FontWeight.bold,
-            fontSize: s36,
           ),
         ),
       ),

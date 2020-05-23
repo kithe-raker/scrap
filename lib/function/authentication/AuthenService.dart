@@ -184,14 +184,16 @@ class AuthenService {
         .document(uid);
     var batch = fireStore.batch();
     if (userData.img.runtimeType != String) {
-      var resizeImg = await resize.resize(image: userData.img);
-      userData.img =
-          await resize.uploadImg(img: resizeImg, imageName: uid + '_pro0');
+      var resizeImg = await resize.resize(image: userData.img, quality: 32);
+      userData.img = await resize.uploadImg(
+          img: resizeImg, imageName: uid + '/' + '${uid}_pro0');
     }
+    userDb.reference().child('users/$uid').set(
+        {'att': 0, 'papers': 0, 'pick': 0, 'thrown': 0, 'allowThrow': true});
     userDb
         .reference()
-        .child('users/$uid')
-        .set({'att': 0, 'papers': 0, 'pick': 0, 'thrown': 0});
+        .child('users/$uid/follows')
+        .set({'followers': 0, 'following': 0});
     batch.setData(
         accRef,
         {
