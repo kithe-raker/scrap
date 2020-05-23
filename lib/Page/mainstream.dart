@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/realtimeDB/ConfigDatabase.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -14,17 +15,12 @@ class MainStream extends StatefulWidget {
 }
 
 class _MainStreamState extends State<MainStream> {
-  Future<DocumentSnapshot> userStream() async {
-    final user = Provider.of<UserData>(context, listen: false);
-    final auth = await FirebaseAuth.instance.currentUser();
-    var uid = auth.uid;
-    user.uid = uid;
-    return Firestore.instance.collection('Users').document(uid).get();
+  Future configDatabase() async {
+    await confgiDB.initRTDB(context);
   }
 
   @override
   void initState() {
-    confgiDB.initRTDB(context);
     super.initState();
   }
 
@@ -33,13 +29,12 @@ class _MainStreamState extends State<MainStream> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: FutureBuilder(
-        future: userStream(),
+        future: configDatabase(),
         builder: (context, snap) {
-          if (snap.hasData) {
-            return snap.data['id'] == null ? CreateProfile1() : HomePage();
-          } else {
+          if (snap.hasData)
+            return HomePage();
+          else
             return Loading();
-          }
         },
       ),
     );

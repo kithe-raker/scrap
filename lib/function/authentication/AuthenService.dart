@@ -10,6 +10,7 @@ import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/authentication/OTPScreen.dart';
 import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/others/ResizeImage.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
@@ -47,6 +48,7 @@ class AuthenService {
     loading.add(true);
     var docs = await getDocuments('phone', user.phone);
     user.region = 'th';
+    userinfo.initRegion(region: 'th');
     await phoneVerified(context);
     if (docs.documentChanges.length > 0) {
       var userDoc = docs.documents[0];
@@ -123,9 +125,9 @@ class AuthenService {
           verificationId: authenInfo.verifiedId, smsCode: smsCode);
       var curUser = await fireAuth.signInWithCredential(credent);
       var uid = curUser.user.uid;
-      await updateToken(uid);
 
-      nav.pushReplacement(context, MainStream());
+      await updateToken(uid);
+      await checkFinishSignUp(context);
       // if (await cacheUser.docExistsThenNewFile(uid, context,
       //     region: authenInfo?.region ?? null))
       //   navigatorReplace(context, AuthenPage());
@@ -151,16 +153,18 @@ class AuthenService {
 
   Future<void> signInWithID(BuildContext context,
       {@required String id, @required String password}) async {
+    final user = Provider.of<UserData>(context, listen: false);
     loading.add(true);
     var docs = (await getDocuments('id', id)).documents;
     if (docs.length > 0) {
       if (docs[0]['password'] == password) {
+        user.region = docs[0]['region'];
+        userinfo.initRegion(region: docs[0]['region']);
         var uid = docs[0].documentID;
         fireAuth.signInWithEmailAndPassword(
             email: '$uid@gmail.com', password: password);
         await updateToken(uid);
-        nav.pushReplacement(context, MainStream());
-        loading.add(false);
+        await checkFinishSignUp(context);
       } else
         warn('ตรวจสอบรหัสผ่านของคุณ');
     } else
@@ -189,7 +193,7 @@ class AuthenService {
           img: resizeImg, imageName: uid + '/' + '${uid}_pro0');
     }
     userDb.reference().child('users/$uid').set(
-        {'att': 0, 'papers': 0, 'pick': 0, 'thrown': 0, 'allowThrow': true});
+        {'att': 0, 'papers': 0, 'pick': 0, 'thrown': 0, 'allowThrow': false});
     userDb
         .reference()
         .child('users/$uid/follows')
@@ -215,14 +219,7 @@ class AuthenService {
         merge: true);
     batch.setData(userRef, {'id': userData.id, 'img': userData.img},
         merge: true);
-    // cacheUser.newFileUserInfo(uid, context, info: {
-    //   "uid": uid,
-    //   "img": userData.img,
-    //   'pName': userData.pName,
-    //   'region': userData.region,
-    //   'birthday': userData.birthday.toString(),
-    //   'gender': userData.gender,
-    // });
+    initUser(context);
     await batch.commit();
 
     var emailCredent = EmailAuthProvider.getCredential(
@@ -231,6 +228,34 @@ class AuthenService {
     loading.add(false);
 
     nav.pushReplacement(context, MainStream());
+  }
+
+  Future<void> checkFinishSignUp(BuildContext context) async {
+    final user = Provider.of<UserData>(context, listen: false);
+    var doc = await fireStore
+        .collection('Users/${user.region}/users')
+        .document(user.uid)
+        .get();
+    if (doc.exists && doc['img'] != null) {
+      var map = doc.data;
+      doc.data['region'] = user.region;
+      await userinfo.initUserInfo(doc: map);
+      loading.add(false);
+      nav.pushReplacement(context, MainStream());
+    } else {
+      loading.add(false);
+      nav.pushReplacement(context, CreateProfile1());
+    }
+  }
+
+  Future<void> initUser(BuildContext context) async {
+    final user = Provider.of<UserData>(context, listen: false);
+    userinfo.initUserInfo(doc: {
+      'url': user.img,
+      'id': user.id,
+      'status': '',
+      'region': user.region
+    });
   }
 
   Future<String> getToken() async {
@@ -246,9 +271,9 @@ class AuthenService {
   }
 
   ///sign current user out then laed to [AuthenPage]
-  signOut(BuildContext context) async {
+  Future<void> signOut(BuildContext context) async {
     loading.add(true);
-    // await cacheUser.deleteFile();
+    await userinfo.deleteFile();
     await fireAuth.signOut();
     nav.pushReplacement(context, LoginPage());
     loading.add(false);
