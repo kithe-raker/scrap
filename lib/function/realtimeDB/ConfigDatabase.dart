@@ -12,7 +12,7 @@ class ConfigDateBase {
   final gcm = '273076153449';
   bool isIOS = Platform.isIOS;
 
-  initRTDB(BuildContext context) async {
+  Future<void> initRTDB(BuildContext context) async {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     db.scrapAll = await FirebaseApp.configure(
         name: 'scraps-all',

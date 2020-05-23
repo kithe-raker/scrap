@@ -6,11 +6,16 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/Page/profile/createProfile1.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/ImgCacheManger.dart';
 import 'package:scrap/services/jsonConverter.dart';
 
@@ -87,18 +92,40 @@ class _MainPageState extends State<MainPage> {
     return false; //close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
   }
 
-  Future<bool> versionChecker() async {
+  bool olderVersion() {
     String recent = '1.1.0', incoming;
     bool isIOS = Platform.isIOS;
     isIOS
         ? incoming = appInfo['versions']['IOS']
         : incoming = appInfo['versions']['android'];
-    return true; // recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
+    return false; // recent != incoming;
   }
 
-  Future<bool> isLogin() async {
+  Future<bool> isNotLogin() async {
+    final user = Provider.of<UserData>(context, listen: false);
     final auth = await FirebaseAuth.instance.currentUser();
-    return auth != null;
+    if (auth != null) user.uid = auth.uid;
+    return auth == null;
+  }
+
+  Future<bool> finishProfile() async {
+    final user = Provider.of<UserData>(context, listen: false);
+    var map = await userinfo.readContents();
+    user.region = map['region'];
+    if (map['img'] == null) {
+      var doc = await fireStore
+          .collection('Users/${map['region']}/users')
+          .document(user.uid)
+          .get();
+      if (doc.exists && doc['img'] != null) {
+        var map = doc.data;
+        doc.data['region'] = user.region;
+        await userinfo.initUserInfo(doc: map);
+        return true;
+      } else
+        return false;
+    } else
+      return true;
   }
 
   @override
@@ -123,11 +150,13 @@ class _MainPageState extends State<MainPage> {
               onSuccess: (data) async {
                 await serverChecker()
                     ? navigator(Sorry())
-                    : await versionChecker()
-                        ? await isLogin()
-                            ? navigator(MainStream())
-                            : navigator(LoginPage())
-                        : navigator(Update());
+                    : olderVersion()
+                        ? navigator(Update())
+                        : await isNotLogin()
+                            ? navigator(LoginPage())
+                            : await finishProfile()
+                                ? navigator(MainStream())
+                                : navigator(CreateProfile1());
               },
               loopAnimation: '1',
               until: () => Future.delayed(Duration(seconds: 1)),
