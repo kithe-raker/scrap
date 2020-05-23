@@ -245,15 +245,13 @@ class _OptionSettingState extends State<OptionSetting> {
 
   @override
   Widget build(BuildContext context) {
-    Size a = MediaQuery.of(context).size;
     screenutilInit(context);
     return Scaffold(
-      //backgroundColor: Colors.black,
+      backgroundColor: Colors.black,
       //resizeToAvoidBottomPadding: false,
       body: Stack(
         children: [
-          Container(
-            color: Colors.black,
+          SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

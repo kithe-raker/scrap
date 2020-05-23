@@ -1,16 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
-import 'package:scrap/Page/mainstream.dart';
-import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/friendManager.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/function/cacheManage/HistoryUser.dart';
 
 class LoginID extends StatefulWidget {
   @override
@@ -18,88 +16,23 @@ class LoginID extends StatefulWidget {
 }
 
 class _LoginIDState extends State<LoginID> {
-  String id, _password, token;
+  String id, _password;
   bool loading = false;
+  StreamSubscription loadingStream;
   var _key = GlobalKey<FormState>();
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-  List acc = [];
-  FriendManager friendManager = FriendManager();
-  JsonConverter jsonConverter = JsonConverter();
-
-  // Future<bool> hasAccount(String user) async {
-  //   final QuerySnapshot users = await Firestore.instance
-  //       .collection('Users')
-  //       .where('id', isEqualTo: user)
-  //       .limit(1)
-  //       .getDocuments();
-  //   final List<DocumentSnapshot> doc = users.documents;
-  //   if (doc.length == 1) {
-  //     acc = doc;
-  //   }
-  //   return doc.length == 1;
-  // }
-
-  // continueSignIn() async {
-  //   DocumentSnapshot doc = acc[0];
-  //   doc.data['password'] == _password
-  //       ? await signIn(doc.data['email'])
-  //       : warning(context, 'กรุณาตรวจสอบรหัสผ่านของท่าน');
-  // }
-
-  // signIn(String email) async {
-  //   var auth = await FirebaseAuth.instance
-  //       .signInWithEmailAndPassword(email: email, password: _password);
-  //   cacheHistory.initHistory();
-  //   updateToken(auth.user.uid);
-  //   await friendManager.initFriend(auth.user.uid);
-  //   var doc = await Firestore.instance
-  //       .collection('Users/${auth.user.uid}/info')
-  //       .document(auth.user.uid)
-  //       .get();
-  //   await userinfo.writeContent(doc: doc);
-  //   setState(() {
-  //     loading = false;
-  //   });
-  //   Navigator.pushReplacement(
-  //       context, MaterialPageRoute(builder: (context) => MainStream()));
-  // }
-
-  // updateToken(String uid) async {
-  //   await Firestore.instance
-  //       .collection('Users')
-  //       .document(uid)
-  //       .collection('token')
-  //       .getDocuments()
-  //       .then((docs) async {
-  //     List data = docs.documents;
-  //     if (data[0].documentID != token) {
-  //       Firestore.instance
-  //           .collection('Users')
-  //           .document(uid)
-  //           .collection('token')
-  //           .document(data[0].documentID)
-  //           .delete();
-  //       Firestore.instance
-  //           .collection('Users')
-  //           .document(uid)
-  //           .collection('token')
-  //           .document(token)
-  //           .setData({'token': token});
-  //     }
-  //   });
-  // }
-
-  void getToken() {
-    firebaseMessaging.getToken().then((String tken) {
-      assert(tken != null);
-      token = tken;
-    });
-  }
 
   @override
   void initState() {
-    getToken();
+    loadingStream =
+        authService.loading.listen((value) => setState(() => loading = value));
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadingStream.cancel();
+    super.dispose();
   }
 
   @override
@@ -177,6 +110,7 @@ class _LoginIDState extends State<LoginID> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: '@someone',
+                                  errorStyle: TextStyle(height: 0),
                                   hintStyle: TextStyle(
                                     color: Colors.grey[500],
                                     fontSize: screenWidthDp / 15,
@@ -184,14 +118,14 @@ class _LoginIDState extends State<LoginID> {
                                 ),
                                 validator: (val) {
                                   return val.trim() == ""
-                                      ? Taoast().toast("ใส่ไอดีของคุณ")
-                                      : val.trim()[0] == '@'
-                                          ? null
-                                          : Taoast()
-                                              .toast("ใส่@ด้านหน้สไอดีคุณ");
+                                      ? Taoast().validateToast("ใส่ไอดีของคุณ")
+                                      : null;
                                 },
                                 onSaved: (val) {
-                                  id = val.trim().substring(1);
+                                  var trim = val.trim();
+                                  trim[0] == '@'
+                                      ? id = trim.substring(1)
+                                      : id = trim;
                                 },
                               ),
                             ),
@@ -201,13 +135,7 @@ class _LoginIDState extends State<LoginID> {
                                   top: screenWidthDp / 20,
                                   left: screenWidthDp / 20,
                                   bottom: screenWidthDp / 80),
-                              child:
-                                  /*Text(
-                              "Password",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: a.width / 20 , fontWeight: FontWeight.w600),
-                            )*/
-                                  Row(
+                              child: Row(
                                 children: <Widget>[
                                   Icon(Icons.lock,
                                       color: Colors.white,
@@ -239,6 +167,7 @@ class _LoginIDState extends State<LoginID> {
                                   fontSize: screenWidthDp / 15,
                                 ),
                                 decoration: InputDecoration(
+                                  errorStyle: TextStyle(height: 0),
                                   border: InputBorder.none,
                                   hintText: '••••••••',
                                   hintStyle: TextStyle(
@@ -248,7 +177,8 @@ class _LoginIDState extends State<LoginID> {
                                 ),
                                 validator: (val) {
                                   return val.trim() == ""
-                                      ? Taoast().toast("กรุณากรอกข้อมูลให้ครบ")
+                                      ? Taoast()
+                                          .validateToast('ใส่รหัสผ่านของคุณ')
                                       : null;
                                 },
                                 onSaved: (val) {
@@ -283,13 +213,13 @@ class _LoginIDState extends State<LoginID> {
                                           fontSize: screenWidthDp / 16,
                                           fontWeight: FontWeight.bold,
                                         ))),
-                                onTap: () async {
-                                  // if (_key.currentState.validate()) {
-                                  //   _key.currentState.save();
-                                  //   setState(() {
-                                  //     loading = true;
-                                  //   });
-                                  // }
+                                onTap: () {
+                                  var curState = _key.currentState;
+                                  if (curState.validate()) {
+                                    curState.save();
+                                    authService.signInWithID(context,
+                                        id: id, password: _password);
+                                  }
                                 }),
                           ],
                         ),

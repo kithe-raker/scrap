@@ -82,9 +82,9 @@ class Scraps {
         'timeStamp': FieldValue.serverTimestamp(),
       },
       'position': point.data,
-      'default': defaultPoint.data
     };
     batch.setData(ref.document(docId), scrap);
+    scrap['default'] = defaultPoint.data;
     batch.setData(
         Firestore.instance
             .collection('Users/${user.uid}/history')

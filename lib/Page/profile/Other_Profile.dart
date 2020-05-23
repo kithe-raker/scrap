@@ -1,9 +1,11 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/profile/Profile.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
 import 'package:scrap/widget/wrap.dart';
-import 'OptionSetting_My_Profile.dart';
 
 bool value = false;
 /*
@@ -21,6 +23,13 @@ class Other_Profile extends StatefulWidget {
 class _Other_ProfileState extends State<Other_Profile> {
   int page = 0;
   var controller = PageController();
+
+  Stream<Event> streamTransaction(String uid, String field) {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    return userDb.reference().child('users/$uid/$field').onValue;
+  }
+
   // Appbar สำหรับ หน้า Profile ของคนอื่น
   Widget appbar_OtherProfile(BuildContext context) {
     return Container(
@@ -77,6 +86,7 @@ class _Other_ProfileState extends State<Other_Profile> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     return Scaffold(
       body: SafeArea(
@@ -120,9 +130,9 @@ class _Other_ProfileState extends State<Other_Profile> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            dataProfile(15, 'เก็บไว้'),
-                            dataProfile(41, 'ผู้ติดตาม'),
-                            dataProfile(31, 'โดนปาใส่'),
+                            dataProfile('เก็บไว้', user.uid, field: 'pick'),
+                            dataProfile('แอทเทนชัน', user.uid, field: 'att'),
+                            dataProfile('โดนปาใส่', user.uid, field: 'thrown'),
                           ],
                         ),
                       ),
@@ -349,6 +359,47 @@ class _Other_ProfileState extends State<Other_Profile> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget dataProfile(String name, String uid, {@required String field}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        StreamBuilder(
+            stream: streamTransaction(uid, field),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var trans = snapshot.data.snapshot.value;
+                return Text(
+                  '$trans',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: s70 * 1.2,
+                      fontWeight: FontWeight.bold),
+                );
+              } else {
+                return Text(
+                  '0',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: s70 * 1.2,
+                      fontWeight: FontWeight.bold),
+                );
+              }
+            }),
+        Container(
+          child: Text(
+            name,
+            style: TextStyle(
+              height: 0.21,
+              color: Color(0xfff727272),
+              fontWeight: FontWeight.bold,
+              fontSize: s36,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,6 +12,7 @@ import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
 import 'package:scrap/function/others/ResizeImage.dart';
 import 'package:scrap/method/Navigator.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 
 final fireStore = Firestore.instance;
@@ -20,6 +22,15 @@ final nav = Nav();
 
 class AuthenService {
   PublishSubject<bool> loading = PublishSubject();
+
+  Future<bool> hasAccount(String key, dynamic value) async {
+    var doc = await fireStore
+        .collection('Account')
+        .where(key, isEqualTo: value)
+        .limit(1)
+        .getDocuments();
+    return doc.documents.length > 0;
+  }
 
   Future<QuerySnapshot> getDocuments(String key, dynamic value,
       {String field = 'Account'}) async {
@@ -81,9 +92,11 @@ class AuthenService {
           verificationId: user.verifiedId, smsCode: smsCode);
 
       var curUser = await fireAuth.signInWithCredential(phoneCredent);
-      await fireStore.collection('Account').document(curUser.user.uid).setData(
-          {'phone': user.phone, 'region': user.region},
-          merge: true);
+      user.uid = curUser.user.uid;
+      await fireStore
+          .collection('Account')
+          .document(curUser.user.uid)
+          .setData({'phone': user.phone, 'region': user.region}, merge: true);
       nav.pushReplacement(context, CreateProfile1());
       loading.add(false);
     } catch (e) {
@@ -136,46 +149,71 @@ class AuthenService {
     }
   }
 
+  Future<void> signInWithID(BuildContext context,
+      {@required String id, @required String password}) async {
+    loading.add(true);
+    var docs = (await getDocuments('id', id)).documents;
+    if (docs.length > 0) {
+      if (docs[0]['password'] == password) {
+        var uid = docs[0].documentID;
+        fireAuth.signInWithEmailAndPassword(
+            email: '$uid@gmail.com', password: password);
+        await updateToken(uid);
+        nav.pushReplacement(context, MainStream());
+        loading.add(false);
+      } else
+        warn('ตรวจสอบรหัสผ่านของคุณ');
+    } else
+      warn('ไม่พบบัญชีดังกล่าว');
+  }
+
   Future<void> setAccount(BuildContext context,
       {@required DateTime birthday, @required String gender}) async {
     loading.add(true);
     var token = await getToken();
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
     final userData = Provider.of<UserData>(context, listen: false);
     var user = await fireAuth.currentUser();
     String uid = user.uid;
     var accRef = fireStore.collection('Account').document(uid);
-    var userRef = fireStore
-        .collection('Users')
-        .document(userData.region)
-        .collection('users')
+    var userRef =
+        fireStore.collection('Users/${userData.region}/users').document(uid);
+    var infoRef = fireStore
+        .collection('Users/${userData.region}/users/$uid/info')
         .document(uid);
     var batch = fireStore.batch();
     if (userData.img.runtimeType != String) {
-      var resizeImg = await resize.resize(image: userData.img);
-      userData.img =
-          await resize.uploadImg(img: resizeImg, imageName: uid + '_pro0');
+      var resizeImg = await resize.resize(image: userData.img, quality: 32);
+      userData.img = await resize.uploadImg(
+          img: resizeImg, imageName: uid + '/' + '${uid}_pro0');
     }
+    userDb.reference().child('users/$uid').set(
+        {'att': 0, 'papers': 0, 'pick': 0, 'thrown': 0, 'allowThrow': true});
+    userDb
+        .reference()
+        .child('users/$uid/follows')
+        .set({'followers': 0, 'following': 0});
     batch.setData(
         accRef,
         {
-          'email': user?.email ?? '$uid@gmail.com',
           'password': userData.password,
           'id': userData.id,
           'region': userData.region,
-          'token': token,
+          'token': token
         },
         merge: true);
     batch.setData(
-        userRef,
+        infoRef,
         {
-          'id': userData.id,
           'region': userData.region,
           'birthday': birthday,
           'gender': gender,
           'created': FieldValue.serverTimestamp(),
-          'img': userData.img,
           'imgList': FieldValue.arrayUnion([userData.img])
         },
+        merge: true);
+    batch.setData(userRef, {'id': userData.id, 'img': userData.img},
         merge: true);
     // cacheUser.newFileUserInfo(uid, context, info: {
     //   "uid": uid,
@@ -188,7 +226,7 @@ class AuthenService {
     await batch.commit();
 
     var emailCredent = EmailAuthProvider.getCredential(
-        email: user?.email ?? '$uid@gmail.com', password: userData.password);
+        email: '$uid@gmail.com', password: userData.password);
     await user.linkWithCredential(emailCredent);
     loading.add(false);
 
