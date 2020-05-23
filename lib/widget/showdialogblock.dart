@@ -66,25 +66,29 @@ void _showdialogblock(context) {
                 bottom: a.width / 5),
             child: Column(
               children: <Widget>[
-                Container(
-                  width: a.width,
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                        top: a.width / 20, bottom: a.width / 15),
-                    width: a.width / 12,
-                    height: a.width / 12,
-                    child: Center(
-                      child: Icon(
-                        Icons.clear,
-                        color: Colors.white,
+                GestureDetector(
+                    child: Container(
+                      width: a.width,
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: a.width / 20, bottom: a.width / 15),
+                        width: a.width / 12,
+                        height: a.width / 12,
+                        child: Center(
+                          child: Icon(
+                            Icons.clear,
+                            color: Colors.white,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                            color: Colors.white24,
+                            borderRadius: BorderRadius.circular(a.width)),
                       ),
                     ),
-                    decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(a.width)),
-                  ),
-                ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    }),
                 Container(
                   decoration: BoxDecoration(
                       color: Color(0xff282828),
@@ -121,7 +125,7 @@ void _showdialogblock(context) {
                           Column(
                             children: <Widget>[
                               Text(
-                                "คุณต้องการบล็อคผู้ใช้รายนี้ไหม",
+                                "คุณต้องการบล๊อคผู้ใช้รายนี้ไหม",
                                 style: TextStyle(
                                     fontSize: a.width / 20,
                                     color: Colors.white,
@@ -135,7 +139,7 @@ void _showdialogblock(context) {
                                     fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                "และยูเซอร์รายนี้จะไม่สามารถปาแครป",
+                                "และผู้ใช้งานรายนี้จะไม่สามารถปาแครป",
                                 style: TextStyle(
                                     fontSize: a.width / 20,
                                     color: Colors.white,
@@ -159,14 +163,14 @@ void _showdialogblock(context) {
                                         BorderRadius.circular(a.width),
                                   ),
                                   child: Container(
-                                    width: a.width / 4,
-                                    height: a.width / 8,
+                                    width: a.width / 3.5,
+                                    height: a.width / 8.5,
                                     alignment: Alignment.center,
                                     child: Text(
-                                      "บล็อคจ่ะ",
+                                      "บล๊อคจ่ะ",
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: a.width / 20,
+                                          fontSize: a.width / 18,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),

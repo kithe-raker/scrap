@@ -67,9 +67,14 @@ void dialogvideo(BuildContext context, String uid) {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
+                                  SizedBox(
+                                    height: a.width / 20,
+                                  ),
                                   Column(
                                     children: <Widget>[
                                       Container(
+                                        padding: EdgeInsets.only(
+                                            right: a.width / 70),
                                         height: a.width / 3.3,
                                         width: a.width / 3.3,
                                         decoration: BoxDecoration(
@@ -78,7 +83,7 @@ void dialogvideo(BuildContext context, String uid) {
                                             color: Color(0xff26A4FF)),
                                         child: Icon(
                                           Icons.play_arrow,
-                                          size: a.width / 4.5,
+                                          size: a.width / 5,
                                           color: Colors.white,
                                         ),
                                       ),

@@ -27,6 +27,7 @@ import 'package:scrap/widget/notburnt.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/thrown.dart';
+import 'package:scrap/widget/understand.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/Page/profile/OptionSetting_My_Profile.dart';
@@ -61,7 +62,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: OptionSetting()),
+          home: Understand()),
     );
   }
 }
