@@ -330,13 +330,15 @@ class _OptionSettingState extends State<OptionSetting> {
                 ),*/
                 Column(
                   children: [
+                    SizedBox(
+                      height: appBarHeight / 1,
+                    ),
                     GestureDetector(
-                      child: Text(
-                        'SCRAP.',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: s70 * 1.5,
-                            fontWeight: FontWeight.bold),
+                      child: ClipRRect(
+                        child: Image.asset(
+                          'assets/scrapbig.png',
+                          scale: appBarHeight / 10,
+                        ),
                       ),
                       onTap: () async {
                         await FirebaseAuth.instance.signOut();
