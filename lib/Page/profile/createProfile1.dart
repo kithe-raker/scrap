@@ -318,7 +318,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                 await fireStore
                     .collection('Account')
                     .document(user.uid)
-                    .updateData({'id': id.text});
+                    .setData({'id': id.text}, merge: true);
                 authService.loading.add(false);
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => CreateProfile2()));

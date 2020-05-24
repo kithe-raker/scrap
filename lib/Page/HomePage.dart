@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -302,14 +303,7 @@ class _HomePageState extends State<HomePage> {
                                           width: 1, color: Colors.white)),
                                   child: initInfoFinish
                                       ? ClipRRect(
-                                          child: CachedNetworkImage(
-                                              errorWidget:
-                                                  (context, string, odject) {
-                                                return Image.asset(
-                                                    'assets/userprofile.png',
-                                                    fit: BoxFit.cover);
-                                              },
-                                              imageUrl: user.img,
+                                          child: Image.file(File(user.img),
                                               fit: BoxFit.cover),
                                           borderRadius: BorderRadius.circular(
                                               a.width / 10),

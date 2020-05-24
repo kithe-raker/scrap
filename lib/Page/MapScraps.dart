@@ -61,9 +61,11 @@ class _MapScrapsState extends State<MapScraps> {
 
   @override
   void initState() {
-    streamLocation = geoLocator
-        .getPositionStream()
-        .listen((event) => setState(() => currentLocation = event));
+    streamLocation == null
+        ? streamLocation = geoLocator
+            .getPositionStream()
+            .listen((event) => setState(() => currentLocation = event))
+        : streamLocation.resume();
     randomAdsRate();
     initUserHistory();
     super.initState();

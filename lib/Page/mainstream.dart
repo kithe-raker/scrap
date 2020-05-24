@@ -15,28 +15,8 @@ class MainStream extends StatefulWidget {
 }
 
 class _MainStreamState extends State<MainStream> {
-  Future configDatabase() async {
-    await confgiDB.initRTDB(context);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: FutureBuilder(
-        future: configDatabase(),
-        builder: (context, snap) {
-          if (snap.hasData)
-            return HomePage();
-          else
-            return Loading();
-        },
-      ),
-    );
+    return Scaffold(backgroundColor: Colors.black, body: HomePage());
   }
 }

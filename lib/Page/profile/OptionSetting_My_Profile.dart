@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:wasm';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
@@ -198,42 +201,20 @@ class OptionSetting extends StatefulWidget {
 }
 
 class _OptionSettingState extends State<OptionSetting> {
-  Widget appbar_OptionSetting(BuildContext context) {
-    return Container(
-      height: appBarHeight / 1.35,
-      width: screenWidthDp,
-      margin: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 100,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: s60,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-          Text(
-            'การตั้งค่า',
-            style: TextStyle(
-              fontSize: s60,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.more_horiz,
-              //color: Colors.white,
-            ),
-            onPressed: null,
-          ),
-        ],
-      ),
-    );
+  StreamSubscription loadStatus;
+  bool loading = false;
+
+  @override
+  void initState() {
+    loadStatus =
+        authService.loading.listen((value) => setState(() => loading = value));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loadStatus.cancel();
+    super.dispose();
   }
 
   @override
@@ -254,7 +235,7 @@ class _OptionSettingState extends State<OptionSetting> {
                     Container(
                       height: appBarHeight / 2,
                     ),
-                    appbar_OptionSetting(context),
+                    appbarOptionSetting(context),
                     list_OptionSetting(context, Icons.face,
                         ' จัดการบัญชีของฉัน', Manage_MyProfile()),
                     list_OptionSetting(context, Icons.history,
@@ -315,33 +296,32 @@ class _OptionSettingState extends State<OptionSetting> {
                     ),
                     //ออกจากระบบ
                     GestureDetector(
-                      onTap: () {},
                       child: Container(
-                        padding: EdgeInsets.only(left: appBarHeight / 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                          padding: EdgeInsets.only(left: appBarHeight / 10),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  width: appBarHeight / 1.5,
-                                  child: Icon(
-                                    Icons.exit_to_app,
-                                    color: Colors.white,
-                                    size: s70,
-                                  ),
-                                ),
-                                Text(
-                                  'ออกจากระบบ',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: s60),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: appBarHeight / 1.5,
+                                        child: Icon(
+                                          Icons.exit_to_app,
+                                          color: Colors.white,
+                                          size: s70,
+                                        ),
+                                      ),
+                                      Text(
+                                        'ออกจากระบบ',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: s60),
+                                      )
+                                    ])
+                              ])),
+                      onTap: () {
+                        authService.signOut(context);
+                      },
                     ),
                   ],
                 ),
@@ -375,31 +355,49 @@ class _OptionSettingState extends State<OptionSetting> {
               ],
             ),
           ),
-          /*  Positioned(
-            bottom: 0,
-            left: appBarHeight,
-            child: Container(
-              child: Column(
-                children: [
-                  Text(
-                    'SCRAP.',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: s70 * 1.5,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'version 2.0.1\n\n',
-                    style: TextStyle(color: Colors.white, fontSize: s58),
-                  ),
-                ],
-              ),
-            ),
-          )*/
+          loading ? Loading() : SizedBox()
         ],
       ),
     );
   }
+}
+
+Widget appbarOptionSetting(BuildContext context) {
+  return Container(
+    height: appBarHeight / 1.35,
+    width: screenWidthDp,
+    margin: EdgeInsets.symmetric(
+      horizontal: screenWidthDp / 100,
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: s60,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        Text(
+          'การตั้งค่า',
+          style: TextStyle(
+            fontSize: s60,
+            color: Colors.white,
+          ),
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.more_horiz,
+            //color: Colors.white,
+          ),
+          onPressed: null,
+        ),
+      ],
+    ),
+  );
 }
 
 // list_OptionSetting เป็น Widget ที่แสดงลิสต์ต่างๆในการตั้งค่า

@@ -94,6 +94,11 @@ class HistoryUser {
     var match = data.where((map) => map['id'] == id).toList();
     return match.length < 0;
   }
+
+  Future<void> deleteFile() async {
+    final file = await _localFile;
+    await file.delete();
+  }
 }
 
 final cacheHistory = HistoryUser();

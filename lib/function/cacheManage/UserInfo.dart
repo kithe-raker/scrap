@@ -72,6 +72,8 @@ class UserInfo {
 
   Future<void> deleteFile() async {
     final file = await _localFile;
+    var data = await readContents();
+    await File(data['img']).delete();
     await file.delete();
   }
 }

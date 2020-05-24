@@ -15,6 +15,7 @@ import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/function/realtimeDB/ConfigDatabase.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/ImgCacheManger.dart';
 import 'package:scrap/services/jsonConverter.dart';
@@ -102,6 +103,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<bool> isNotLogin() async {
+    await confgiDB.initRTDB(context);
     final user = Provider.of<UserData>(context, listen: false);
     final auth = await FirebaseAuth.instance.currentUser();
     if (auth != null) user.uid = auth.uid;

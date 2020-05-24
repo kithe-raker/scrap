@@ -10,6 +10,8 @@ import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/authentication/OTPScreen.dart';
 import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/Page/profile/createProfile1.dart';
+import 'package:scrap/function/cacheManage/FriendsCache.dart';
+import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/others/ResizeImage.dart';
 import 'package:scrap/method/Navigator.dart';
@@ -119,35 +121,30 @@ class AuthenService {
 
   signInWithPhone(BuildContext context, {@required String smsCode}) async {
     try {
-      final authenInfo = Provider.of<UserData>(context, listen: false);
+      final userData = Provider.of<UserData>(context, listen: false);
       loading.add(true);
       var credent = PhoneAuthProvider.getCredential(
-          verificationId: authenInfo.verifiedId, smsCode: smsCode);
+          verificationId: userData.verifiedId, smsCode: smsCode);
       var curUser = await fireAuth.signInWithCredential(credent);
       var uid = curUser.user.uid;
-
+      userData.uid = uid;
+      initFriends(context);
+      cacheHistory.initHistory();
       await updateToken(uid);
       await checkFinishSignUp(context);
-      // if (await cacheUser.docExistsThenNewFile(uid, context,
-      //     region: authenInfo?.region ?? null))
-      //   navigatorReplace(context, AuthenPage());
-      // else
-      //   na(context, CreateProfile1());
-
-      loading.add(false);
     } catch (e) {
       print(e.toString());
-      switch (e.code) {
-        case 'ERROR_NETWORK_REQUEST_FAILED':
-          warn('ตรวจสอบการเชื่อมต่อ');
-          break;
-        case 'ERROR_INVALID_VERIFICATION_CODE':
-          warn('เช็คใหม่');
-          break;
-        default:
-          warn('OTPอาจหมดอายุ');
-          break;
-      }
+      // switch (e.code) {
+      //   case 'ERROR_NETWORK_REQUEST_FAILED':
+      //     warn('ตรวจสอบการเชื่อมต่อ');
+      //     break;
+      //   case 'ERROR_INVALID_VERIFICATION_CODE':
+      //     warn('เช็คใหม่');
+      //     break;
+      //   default:
+      //     warn('OTPอาจหมดอายุ');
+      //     break;
+      // }
     }
   }
 
@@ -158,6 +155,8 @@ class AuthenService {
     var docs = (await getDocuments('id', id)).documents;
     if (docs.length > 0) {
       if (docs[0]['password'] == password) {
+        initFriends(context);
+        cacheHistory.initHistory();
         user.region = docs[0]['region'];
         userinfo.initRegion(region: docs[0]['region']);
         var uid = docs[0].documentID;
@@ -192,8 +191,10 @@ class AuthenService {
       userData.img = await resize.uploadImg(
           img: resizeImg, imageName: uid + '/' + '${uid}_pro0');
     }
+    initFile(context);
+    cacheHistory.initHistory();
     userDb.reference().child('users/$uid').set(
-        {'att': 0, 'papers': 0, 'pick': 0, 'thrown': 0, 'allowThrow': false});
+        {'att': 0, 'papers': 15, 'pick': 0, 'thrown': 0, 'allowThrow': false});
     userDb
         .reference()
         .child('users/$uid/follows')
@@ -219,7 +220,6 @@ class AuthenService {
         merge: true);
     batch.setData(userRef, {'id': userData.id, 'img': userData.img},
         merge: true);
-    initUser(context);
     await batch.commit();
 
     var emailCredent = EmailAuthProvider.getCredential(
@@ -236,7 +236,7 @@ class AuthenService {
         .collection('Users/${user.region}/users')
         .document(user.uid)
         .get();
-    if (doc.exists && doc['img'] != null) {
+    if (doc.exists) {
       var map = doc.data;
       doc.data['region'] = user.region;
       await userinfo.initUserInfo(doc: map);
@@ -248,14 +248,26 @@ class AuthenService {
     }
   }
 
-  Future<void> initUser(BuildContext context) async {
+  void initFile(BuildContext context) {
     final user = Provider.of<UserData>(context, listen: false);
     userinfo.initUserInfo(doc: {
-      'url': user.img,
+      'img': user.img,
       'id': user.id,
       'status': '',
       'region': user.region
     });
+    cacheFriends.intitFile();
+  }
+
+  Future<void> initFriends(BuildContext context) async {
+    final user = Provider.of<UserData>(context, listen: false);
+    var docs = await fireStore
+        .collection('Users/${user.region}/users/${user.uid}/following')
+        .getDocuments();
+    if (docs.documents.length > 0)
+      for (var doc in docs.documents) {
+        cacheFriends.addFollowing(following: doc['list']);
+      }
   }
 
   Future<String> getToken() async {
@@ -274,6 +286,7 @@ class AuthenService {
   Future<void> signOut(BuildContext context) async {
     loading.add(true);
     await userinfo.deleteFile();
+    await cacheHistory.deleteFile();
     await fireAuth.signOut();
     nav.pushReplacement(context, LoginPage());
     loading.add(false);

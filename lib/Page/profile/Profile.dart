@@ -1,10 +1,11 @@
+import 'dart:io';
 import 'dart:ui';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/profile/OptionSetting_My_Profile.dart';
-import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
@@ -34,7 +35,7 @@ class _ProfileState extends State<Profile> {
       width: screenWidthDp,
       color: Colors.black,
       padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 100,
+        horizontal: screenWidthDp / 21,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,8 +69,8 @@ class _ProfileState extends State<Profile> {
   }
 
   initUser() async {
-    // var data = await userinfo.readContents();
-    //  profile = data;
+    var data = await userinfo.readContents();
+    profile = data;
     setState(() => initInfoFinish = true);
   }
 
@@ -97,10 +98,12 @@ class _ProfileState extends State<Profile> {
             ? Stack(
                 children: <Widget>[
                   Container(
+                    width: screenWidthDp,
                     padding: EdgeInsets.only(top: appBarHeight / 1.35),
                     child: SingleChildScrollView(
                       physics: BouncingScrollPhysics(),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           SizedBox(height: screenHeightDp / 36),
                           Container(
@@ -118,7 +121,7 @@ class _ProfileState extends State<Profile> {
                                   BorderRadius.circular(screenHeightDp),
                               child: profile['img'] == null
                                   ? Image.asset('assets/userprofile.png')
-                                  : Image.network(profile['img'],
+                                  : Image.file(File(profile['img']),
                                       fit: BoxFit.cover),
                             ),
                           ),
@@ -149,7 +152,7 @@ class _ProfileState extends State<Profile> {
                           SizedBox(height: screenHeightDp / 24),
                           FlatButton(
                             child: Text(
-                              '${profile['status'] ?? 'status'}',
+                              '${profile['status'] ?? 'สเตตัสของคุณ'}',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: s48,
@@ -171,13 +174,10 @@ class _ProfileState extends State<Profile> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      'โดนปาใส่ล่าสุด 9 ก้อน',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: s60,
-                                      ),
-                                    ),
+                                    Text('โดนปาใส่ล่าสุด 9 ก้อน',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: s60)),
                                     Transform.scale(
                                       scale: 1.3,
                                       child: Switch(
@@ -540,43 +540,46 @@ class _ProfileState extends State<Profile> {
   //ข้อมูลผู้ใช้
 //name = [เก็บไว้, คนให้ความสนใจ, โดนปาใส่]
   Widget dataProfile(String name, String uid, {@required String field}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        StreamBuilder(
-            stream: streamTransaction(uid, field),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var trans = snapshot.data.snapshot.value;
-                return Text(
-                  '$trans',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: s70 * 1.2,
-                      fontWeight: FontWeight.bold),
-                );
-              } else {
-                return Text(
-                  '0',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: s70 * 1.2,
-                      fontWeight: FontWeight.bold),
-                );
-              }
-            }),
-        Container(
-          child: Text(
-            name,
-            style: TextStyle(
-              height: 0.21,
-              color: Color(0xfff727272),
-              fontWeight: FontWeight.bold,
-              fontSize: s36,
+    return SizedBox(
+      width: screenWidthDp / 5.4,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          StreamBuilder(
+              stream: streamTransaction(uid, field),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  var trans = snapshot.data.snapshot.value;
+                  return Text(
+                    '$trans',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: s70 * 1.2,
+                        fontWeight: FontWeight.bold),
+                  );
+                } else {
+                  return Text(
+                    '0',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: s70 * 1.2,
+                        fontWeight: FontWeight.bold),
+                  );
+                }
+              }),
+          Container(
+            child: Text(
+              name,
+              style: TextStyle(
+                height: 0.21,
+                color: Color(0xfff727272),
+                fontWeight: FontWeight.bold,
+                fontSize: s36,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
