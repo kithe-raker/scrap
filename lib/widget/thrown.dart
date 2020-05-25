@@ -36,7 +36,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                   margin: EdgeInsets.only(
                       top: a.height / 8,
                       right: a.width / 60,
-                      left: a.width / 40,
+                      left: a.width / 60,
                       bottom: a.width / 8),
                   child: ListView(
                     children: <Widget>[
@@ -86,43 +86,28 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                     ),
                                   ),
                                   //ออกจากหน้าปากระดาษ
-                                  /*  InkWell(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Color(0xfff707070),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(50))),
-                                      child: Icon(
-                                        Icons.clear,
-                                        size: a.width / 15,
-                                        //color: Color(0xfff707070),
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),*/
                                 ],
                               ),
                             ),
                             //กระดาษที่ไว้เขียนไงจ้ะ
                             Container(
-                              margin: EdgeInsets.only(top: a.width / 150),
+                              margin: EdgeInsets.only(
+                                  top: a.width / 150,
+                                  left: s10 / 2,
+                                  right: s10 / 2),
                               width: a.width / 1,
                               height: a.height / 1.8,
                               //ใช้สแต็กเอา
                               child: Stack(
                                 children: <Widget>[
                                   //รูปกระดาษ
-                                  Center(
-                                    child: Container(
-                                      child: Image.asset(
-                                        'assets/paper-readed.png',
-                                        width: a.width / 1.04,
-                                        height: a.width / 1.04 * 1.115,
-                                        fit: BoxFit.cover,
-                                      ),
+                                  Container(
+                                    margin: EdgeInsets.all(s10 / 5),
+                                    child: Image.asset(
+                                      'assets/paper-readed.png',
+                                      width: a.width / 1.04,
+                                      height: a.width / 1.04 * 1.115,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
 

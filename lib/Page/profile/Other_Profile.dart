@@ -7,7 +7,7 @@ import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
 import 'package:scrap/widget/wrap.dart';
 
-bool value = false;
+bool value = false, v = false;
 /*
 List Problem
 - Text ก่อน wrap() ไม่อยู่ตรงกลาง ( control+F => ยุบพรรคอนาโค้งใหม่ )
@@ -84,24 +84,149 @@ class _Other_ProfileState extends State<Other_Profile> {
     );
   }
 
+  Widget checkv() {
+    if (v == false)
+      return Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      v = false;
+                      setState(() {});
+                    },
+                    child: Container(
+                      height: appBarHeight / 2,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(width: 2.0, color: Colors.white),
+                        ),
+                      ),
+                      child: Text(
+                        'เก็บจากที่ทิ้งไว้',
+                        style: TextStyle(
+                            fontSize: s48,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      v = true;
+                      setState(() {});
+                    },
+                    child: Container(
+                      child: Text(
+                        'เก็บจากโดนปาใส่',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: s48,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: appBarHeight / 3,
+              ),
+              Wrapblock(),
+            ],
+          ),
+          Positioned(
+              child: Container(
+            padding: EdgeInsets.only(top: appBarHeight / 2.6),
+            child: Divider(
+              color: Colors.grey,
+            ),
+          )),
+        ],
+      );
+    else
+      return Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      v = false;
+                      setState(() {});
+                    },
+                    child: Container(
+                      child: Text(
+                        'เก็บจากที่ทิ้งไว้',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: s48,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      v = true;
+                      setState(() {});
+                    },
+                    child: Container(
+                      height: appBarHeight / 2,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(width: 2.0, color: Colors.white),
+                        ),
+                      ),
+                      child: Text(
+                        'เก็บจากโดนปาใส่',
+                        style: TextStyle(
+                            fontSize: s48,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: appBarHeight / 3,
+              ),
+              Wrapblock(),
+            ],
+          ),
+          Positioned(
+              child: Container(
+            padding: EdgeInsets.only(top: appBarHeight / 2.6),
+            child: Divider(
+              color: Colors.grey,
+            ),
+          )),
+        ],
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Stack(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(top: appBarHeight / 1.35),
+              padding: EdgeInsets.only(
+                  top: appBarHeight / 1.35, bottom: appBarHeight),
               color: Colors.black,
               child: ListView(
                 physics: BouncingScrollPhysics(),
                 children: <Widget>[
-                  //user_MyProfile(),
                   Column(
                     children: <Widget>[
-                      // appbar_OtherProfile(context),
                       Container(
                         height: screenWidthDp / 3,
                         width: screenWidthDp / 3,
@@ -125,8 +250,8 @@ class _Other_ProfileState extends State<Other_Profile> {
                       ),
                       Container(
                         /*margin: EdgeInsets.symmetric(
-                          horizontal: screenWidthDp / 40,
-                        ),*/
+                        horizontal: screenWidthDp / 40,
+                      ),*/
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
@@ -214,7 +339,6 @@ class _Other_ProfileState extends State<Other_Profile> {
                       Container(
                         height: screenHeightDp / 40,
                       ),
-
                       Container(
                         margin: EdgeInsets.symmetric(
                           horizontal: screenWidthDp / 30,
@@ -231,117 +355,11 @@ class _Other_ProfileState extends State<Other_Profile> {
                       Container(
                         height: screenHeightDp / 40,
                       ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          bottom: 10,
-                        ),
-                        child: Column(
-                          children: [
-                            Divider(
-                              color: Colors.white,
-                            ),
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    if (controller.page != 0)
-                                      controller.previousPage(
-                                          duration: Duration(milliseconds: 120),
-                                          curve: Curves.ease);
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    child: Text('เก็บจากที่ทิ้งไว้',
-                                        style:
-                                            // page != 0
-                                            // ?
-                                            // TextStyle(
-                                            //   color: Colors.white,
-                                            //   fontSize: s52,
-                                            //   )
-                                            // :
-                                            TextStyle(
-                                          //decoration: TextDecoration.underline,
-                                          color: Colors.white,
-                                          fontSize: s52,
-                                        )),
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    if (controller.page != 1)
-                                      controller.nextPage(
-                                          duration: Duration(milliseconds: 120),
-                                          curve: Curves.ease);
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    child: Text('เก็บจากโดนปาใส่',
-                                        style:
-                                            // page != 1
-                                            // ?
-                                            // TextStyle(
-                                            //   color: Colors.white,
-                                            //   fontSize: s52,
-                                            //   )
-                                            // :
-                                            TextStyle(
-                                          //decoration: TextDecoration.underline,
-                                          color: Colors.white,
-                                          fontSize: s52,
-                                        )),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Stack(
-                              children: [
-                                Divider(
-                                  color: Colors.white,
-                                ),
-                                Divider(
-                                  color: Colors.white,
-                                  thickness: 2,
-                                  indent: page != 1 ? (9) : (127),
-                                  endIndent: page != 1
-                                      ? (screenWidthDp - 107)
-                                      : (screenWidthDp - 240),
-                                  // indent: 9,
-                                  // endIndent: screenWidthDp-82,
-                                ),
-                                // Divider(
-                                //   color: Colors.white,
-                                //   thickness: 2,
-                                //   indent: 76,
-                                //   endIndent: screenWidthDp-168,
-                                // ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      Divider(
+                        color: Colors.grey,
                       ),
-                      Container(
-                        height: screenHeightDp * 1.3,
-                        width: screenWidthDp,
-                        child: PageView(
-                          onPageChanged: (index) {
-                            setState(() => page = index);
-                          },
-                          controller: controller,
-                          children: [
-                            Wrapblock(),
-                            Wrapblock(),
-                          ],
-                        ),
-                      ),
+                      checkv(),
                     ],
-                  ),
-                  Container(
-                    height: appBarHeight,
                   ),
                 ],
               ),

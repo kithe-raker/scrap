@@ -24,9 +24,146 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool isSwitched = false, initInfoFinish = false;
+  bool v = false;
   Map profile = {};
   int page = 0;
   var controller = PageController();
+  Widget checkv() {
+    if (v == false)
+      return Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  /*  SizedBox(
+                    width: appBarHeight / 7,
+                  ),*/
+                  GestureDetector(
+                    onTap: () {
+                      v = false;
+                      setState(() {});
+                    },
+                    child: Container(
+                      height: appBarHeight / 2,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(width: 2.0, color: Colors.white),
+                        ),
+                      ),
+                      child: Text(
+                        'เก็บจากที่ทิ้งไว้',
+                        style: TextStyle(
+                            fontSize: s48,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  /* SizedBox(
+                    width: appBarHeight / 3,
+                  ),*/
+                  GestureDetector(
+                    onTap: () {
+                      v = true;
+                      setState(() {});
+                    },
+                    child: Container(
+                      child: Text(
+                        'เก็บจากโดนปาใส่',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: s48,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: appBarHeight / 3,
+              ),
+              Wrapblock(),
+            ],
+          ),
+          Positioned(
+              child: Container(
+            padding: EdgeInsets.only(top: appBarHeight / 2.6),
+            child: Divider(
+              color: Colors.grey,
+            ),
+          )),
+        ],
+      );
+    else
+      return Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  /* SizedBox(
+                    width: appBarHeight / 7,
+                  ),*/
+                  GestureDetector(
+                    onTap: () {
+                      v = false;
+                      setState(() {});
+                    },
+                    child: Container(
+                      child: Text(
+                        'เก็บจากที่ทิ้งไว้',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: s48,
+                        ),
+                      ),
+                    ),
+                  ),
+                  /* SizedBox(
+                    width: appBarHeight / 3,
+                  ),*/
+                  GestureDetector(
+                    onTap: () {
+                      v = true;
+                      setState(() {});
+                    },
+                    child: Container(
+                      height: appBarHeight / 2,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(width: 2.0, color: Colors.white),
+                        ),
+                      ),
+                      child: Text(
+                        'เก็บจากโดนปาใส่',
+                        style: TextStyle(
+                            fontSize: s48,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: appBarHeight / 3,
+              ),
+              Wrapblock(),
+            ],
+          ),
+          Positioned(
+              child: Container(
+            padding: EdgeInsets.only(top: appBarHeight / 2.6),
+            child: Divider(
+              color: Colors.grey,
+            ),
+          )),
+        ],
+      );
+  }
 
   //Appbar สำหรับหน้าโปรไฟล์ของฉัน
   Widget appbarProfile(BuildContext context) {
@@ -69,8 +206,8 @@ class _ProfileState extends State<Profile> {
   }
 
   initUser() async {
-    var data = await userinfo.readContents();
-    profile = data;
+    //var data = await userinfo.readContents();
+    // profile = data;
     setState(() => initInfoFinish = true);
   }
 
@@ -165,41 +302,46 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(height: screenHeightDp / 24),
                           Container(
-                            margin: EdgeInsets.symmetric(
+                            /* margin: EdgeInsets.symmetric(
                               horizontal: screenWidthDp / 30,
-                            ),
+                            ),*/
                             child: Column(
                               children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text('โดนปาใส่ล่าสุด 9 ก้อน',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: s60)),
-                                    Transform.scale(
-                                      scale: 1.3,
-                                      child: Switch(
-                                        value: isSwitched,
-                                        onChanged: (value) {
-                                          if (value == false) {
-                                            Fluttertoast.showToast(
-                                                msg: 'ปิดการโดนปาใส่แล้ว');
-                                          } else {
-                                            Fluttertoast.showToast(
-                                                msg: 'เปิดการโดนปาใส่แล้ว');
-                                          }
-                                          setState(() {
-                                            isSwitched = value;
-                                          });
-                                        },
-                                        inactiveTrackColor: Colors.grey,
-                                        activeTrackColor: Colors.blue,
-                                        activeColor: Colors.white,
+                                Container(
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: screenWidthDp / 30,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text('โดนปาใส่ล่าสุด 9 ก้อน',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: s60)),
+                                      Transform.scale(
+                                        scale: 1.3,
+                                        child: Switch(
+                                          value: isSwitched,
+                                          onChanged: (value) {
+                                            if (value == false) {
+                                              Fluttertoast.showToast(
+                                                  msg: 'ปิดการโดนปาใส่แล้ว');
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg: 'เปิดการโดนปาใส่แล้ว');
+                                            }
+                                            setState(() {
+                                              isSwitched = value;
+                                            });
+                                          },
+                                          inactiveTrackColor: Colors.grey,
+                                          activeTrackColor: Colors.blue,
+                                          activeColor: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 Container(
                                   height: screenHeightDp / 10,
@@ -233,115 +375,17 @@ class _ProfileState extends State<Profile> {
                                   margin: EdgeInsets.only(
                                     bottom: 10,
                                   ),
-                                  child: Column(
-                                    children: [
-                                      Divider(
-                                        color: Colors.white,
-                                      ),
-                                      Row(
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              if (controller.page != 0)
-                                                controller.previousPage(
-                                                    duration: Duration(
-                                                        milliseconds: 120),
-                                                    curve: Curves.ease);
-                                            },
-                                            child: Container(
-                                              margin: EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                              ),
-                                              child: Text('เก็บไว้',
-                                                  style:
-                                                      // page != 0
-                                                      // ?
-                                                      // TextStyle(
-                                                      //   color: Colors.white,
-                                                      //   fontSize: s52,
-                                                      //   )
-                                                      // :
-                                                      TextStyle(
-                                                    //decoration: TextDecoration.underline,
-                                                    color: Colors.white,
-                                                    fontSize: s52,
-                                                  )),
-                                            ),
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              if (controller.page != 1)
-                                                controller.nextPage(
-                                                    duration: Duration(
-                                                        milliseconds: 120),
-                                                    curve: Curves.ease);
-                                            },
-                                            child: Container(
-                                              margin: EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                              ),
-                                              child: Text('โดนปาใส่',
-                                                  style:
-                                                      // page != 1
-                                                      // ?
-                                                      // TextStyle(
-                                                      //   color: Colors.white,
-                                                      //   fontSize: s52,
-                                                      //   )
-                                                      // :
-                                                      TextStyle(
-                                                    //decoration: TextDecoration.underline,
-                                                    color: Colors.white,
-                                                    fontSize: s52,
-                                                  )),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Stack(
-                                        children: [
-                                          Divider(
-                                            color: Colors.white,
-                                          ),
-                                          Divider(
-                                            color: Colors.white,
-                                            thickness: 2,
-                                            indent: page != 1 ? (9) : (70),
-                                            endIndent: page != 1
-                                                ? (screenWidthDp - 70)
-                                                : (screenWidthDp - 150),
-                                            // indent: 9,
-                                            // endIndent: screenWidthDp-82,
-                                          ),
-                                          // Divider(
-                                          //   color: Colors.white,
-                                          //   thickness: 2,
-                                          //   indent: 76,
-                                          //   endIndent: screenWidthDp-168,
-                                          // ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                ),
+                                Divider(
+                                  color: Colors.grey,
+                                ),
+                                checkv(),
+                                SizedBox(
+                                  height: appBarHeight,
                                 ),
                               ],
                             ),
                           ),
-                          Container(
-                            height: screenHeightDp * 1.2,
-                            // width: screenWidthDp,
-                            child: PageView(
-                              onPageChanged: (index) {
-                                setState(() => page = index);
-                              },
-                              controller: controller,
-                              children: [
-                                Wrapblock(),
-                                Wrapblock(),
-                              ],
-                            ),
-                          ),
-                          //wrap(),
                         ],
                       ),
                       //user_OtherProfile(),
@@ -477,31 +521,6 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ],
                               ),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.end,
-                              //   children: [
-                              //     Container(
-                              //       height: 80,
-                              //       width: 80,
-                              //       margin: EdgeInsets.only(
-                              //         right: 5,
-                              //         bottom: 5,
-                              //       ),
-                              //       decoration: BoxDecoration(
-                              //         color: Colors.white,
-                              //         borderRadius:
-                              //             BorderRadius.circular(screenHeightDp),
-                              //       ),
-                              //       child: IconButton(
-                              //           icon: Icon(
-                              //             Icons.send,
-                              //             size: 50,
-                              //             color: Colors.blue,
-                              //           ),
-                              //           onPressed: () {}),
-                              //     ),
-                              //   ],
-                              // ),
                             ],
                           ),
                         ),
@@ -525,17 +544,6 @@ class _ProfileState extends State<Profile> {
           );
         });
   }
-  //popup หน้า เพิ่มสเตตัส มีปัญหาเรื่อง Textfield
-
-  // _onChanged(String value) {
-  //   setState(() {
-  //     _charCount = value.length;
-  //     print(_charCount);
-  //   });
-  // }
-
-// StatefulBuilder(
-  // builder: (BuildContext context, StateSetter setState)
 
   //ข้อมูลผู้ใช้
 //name = [เก็บไว้, คนให้ความสนใจ, โดนปาใส่]
@@ -583,20 +591,6 @@ class _ProfileState extends State<Profile> {
     );
   }
 }
-
-// class A extends StatefulWidget {
-//   @override
-//   _AState createState() => _AState();
-// }
-
-// class _AState extends State<A> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-
-//     );
-//   }
-// }
 
 //โฆษณา Google Ads แสดงด้านล่างสุดของหน้าจอ
 Widget adsContainer() {
