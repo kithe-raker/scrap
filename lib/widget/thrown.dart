@@ -36,7 +36,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                   margin: EdgeInsets.only(
                       top: a.height / 8,
                       right: a.width / 60,
-                      left: a.width / 40,
+                      left: a.width / 60,
                       bottom: a.width / 8),
                   child: ListView(
                     children: <Widget>[
@@ -86,23 +86,6 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                     ),
                                   ),
                                   //ออกจากหน้าปากระดาษ
-                                  /*  InkWell(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Color(0xfff707070),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(50))),
-                                      child: Icon(
-                                        Icons.clear,
-                                        size: a.width / 15,
-                                        //color: Color(0xfff707070),
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),*/
                                 ],
                               ),
                             ),
@@ -119,6 +102,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                 children: <Widget>[
                                   //รูปกระดาษ
                                   Container(
+                                    margin: EdgeInsets.all(s10 / 5),
                                     child: Image.asset(
                                       'assets/paper-readed.png',
                                       width: a.width / 1.04,
