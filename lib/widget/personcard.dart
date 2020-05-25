@@ -1,134 +1,120 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/Page/profile/Other_Profile.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/thrown.dart';
 
-class Personcard extends StatefulWidget {
+class PersonCard extends StatefulWidget {
+  final Map data;
+  final String uid;
+  final String ref;
+  PersonCard({@required this.data, this.uid, this.ref});
   @override
-  _PersoncardState createState() => _PersoncardState();
+  _PersonCardState createState() => _PersonCardState();
 }
 
-class _PersoncardState extends State<Personcard> {
+class _PersonCardState extends State<PersonCard> {
+  Future<DataSnapshot> streamTransaction(String field) {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    return userDb
+        .reference()
+        .child('users/${widget.uid ?? widget.data['uid']}/$field')
+        .once();
+  }
+
   @override
   Widget build(BuildContext context) {
+    screenutilInit(context);
     Size a = MediaQuery.of(context).size;
-    return Container(
-      width: a.width,
-      height: a.width / 5,
-      margin: EdgeInsets.only(bottom: a.width / 100, left: a.width / 100),
-      child: Row(
-        children: <Widget>[
-          Container(
-            width: a.width / 6,
-            height: a.width / 6,
-            decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(a.width)),
-          ),
-          SizedBox(
-            width: a.width / 30,
-          ),
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+    return GestureDetector(
+      child: Container(
+        color: Colors.transparent,
+        width: a.width,
+        height: a.width / 5,
+        margin: EdgeInsets.only(bottom: a.width / 100, left: a.width / 100),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
               children: <Widget>[
-                Text("@someone",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: a.width / 18,
-                        fontWeight: FontWeight.bold)),
-                Text("ต้นๆรถเป็นอะไรอ่ะ",
-                    style: TextStyle(
+                Container(
+                  width: a.width / 6,
+                  height: a.width / 6,
+                  decoration: BoxDecoration(
                       color: Colors.grey,
-                      fontSize: a.width / 22,
-                    ))
+                      borderRadius: BorderRadius.circular(a.width),
+                      image: widget.data['img'] == null
+                          ? null
+                          : DecorationImage(
+                              image: NetworkImage(widget.data['img']),
+                              fit: BoxFit.cover)),
+                ),
+                SizedBox(
+                  width: a.width / 30,
+                ),
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("@${widget.data['id']}",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: a.width / 18,
+                              fontWeight: FontWeight.bold)),
+                      Text(widget.data['status'] ?? '',
+                          style: TextStyle(color: Colors.grey, fontSize: s38))
+                    ],
+                  ),
+                )
               ],
             ),
-          )
-        ],
+            throwButton()
+          ],
+        ),
       ),
+      onTap: () {
+        nav.push(context, Other_Profile());
+      },
     );
   }
-}
 
-class Personcard1 extends StatefulWidget {
-  final Map data;
-  Personcard1({@required this.data});
-  @override
-  _Personcard1State createState() => _Personcard1State();
-}
-
-class _Personcard1State extends State<Personcard1> {
-  @override
-  Widget build(BuildContext context) {
-    Size a = MediaQuery.of(context).size;
-    return Container(
-      width: a.width,
-      height: a.width / 5,
-      margin: EdgeInsets.only(bottom: a.width / 100, left: a.width / 100),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                width: a.width / 6,
-                height: a.width / 6,
-                decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(a.width),
-                    image: widget.data['img'] == null
-                        ? null
-                        : DecorationImage(
-                            image: NetworkImage(widget.data['img']),
-                            fit: BoxFit.cover)),
-              ),
-              SizedBox(
-                width: a.width / 30,
-              ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text("@${widget.data['id']}",
+  Widget throwButton() {
+    return FutureBuilder(
+        future: streamTransaction('allowThrow'),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data.value ?? false
+                ? GestureDetector(
+                    child: Container(
+                      width: screenWidthDp / 6,
+                      height: screenWidthDp / 10,
+                      margin: EdgeInsets.only(
+                          top: screenWidthDp / 30, right: screenWidthDp / 50),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(screenWidthDp),
+                          color: Colors.white),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "ปาใส่",
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: a.width / 18,
-                            fontWeight: FontWeight.bold)),
-                    Text(widget.data['status'] ?? '',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: a.width / 22,
-                        ))
-                  ],
-                ),
-              )
-            ],
-          ),
-          GestureDetector(
-            child: Container(
-              width: a.width / 6,
-              height: a.width / 10,
-              margin: EdgeInsets.only(top: a.width / 30, right: a.width / 50),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(a.width),
-                  color: Colors.white),
-              alignment: Alignment.center,
-              child: Text(
-                "ปาใส่",
-                style: TextStyle(
-                    color: Color(0xff26A4FF),
-                    fontWeight: FontWeight.bold,
-                    fontSize: a.width / 20),
-              ),
-            ),
-            onTap: () {
-              writerScrap(context);
-            },
-          ),
-        ],
-      ),
-    );
+                            color: Color(0xff26A4FF),
+                            fontWeight: FontWeight.bold,
+                            fontSize: screenWidthDp / 20),
+                      ),
+                    ),
+                    onTap: () {
+                      writerScrap(context);
+                    })
+                : SizedBox();
+          } else {
+            return SizedBox();
+          }
+        });
   }
 }

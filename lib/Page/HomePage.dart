@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/MapScraps.dart';
-import 'package:scrap/Page/friendList.dart';
 import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
@@ -281,11 +279,11 @@ class _HomePageState extends State<HomePage> {
                                       color: Colors.white, size: a.width / 15),
                                 ),
                                 onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              FriendList(doc: null)));
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //             FriendList(doc: null)));
                                 },
                               )),
                           Container(

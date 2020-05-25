@@ -1,4 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/FriendsCache.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/personcard.dart';
 
 class Allfollower extends StatefulWidget {
@@ -7,12 +13,110 @@ class Allfollower extends StatefulWidget {
 }
 
 class _AllfollowerState extends State<Allfollower> {
+  var controller = RefreshController();
+  List friendsUid = [];
+  List<DocumentSnapshot> friends = [];
+  bool loading = true;
+
+  @override
+  void initState() {
+    initFriends();
+    super.initState();
+  }
+
+  initFriends() async {
+    friendsUid = await cacheFriends.getFollowing();
+    var queryList = friendsUid.take(12).toList();
+    var docs = await fireStore
+        .collectionGroup('users')
+        .where('uid', whereIn: queryList)
+        .getDocuments();
+    friends.addAll(docs.documents);
+    friendsUid.length < 12 ? friendsUid.clear() : friendsUid.removeRange(0, 12);
+    setState(() => loading = false);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    screenutilInit(context);
+    return Scaffold(
+        backgroundColor: Colors.black,
+        body: Container(
+          width: screenWidthDp,
+          height: screenHeightDp,
+          child: Stack(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  SizedBox(height: screenHeightDp / 64),
+                  appbar(),
+                  loading
+                      ? Expanded(
+                          child: Center(
+                              child: Container(
+                                  width: screenWidthDp / 3.6,
+                                  height: screenWidthDp / 3.6,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.42),
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: FlareActor('assets/paper_loading.flr',
+                                      animation: 'Untitled',
+                                      fit: BoxFit.cover))),
+                        )
+                      : Expanded(
+                          child: StatefulBuilder(
+                              builder: (context, StateSetter setList) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidthDp / 36),
+                              child: SmartRefresher(
+                                enablePullDown: false,
+                                controller: controller,
+                                onLoading: () async {
+                                  var queryList = friendsUid.take(12).toList();
+                                  var docs = await fireStore
+                                      .collectionGroup('users')
+                                      .where('uid', whereIn: queryList)
+                                      .getDocuments();
+                                  friends.addAll(docs.documents);
+                                  friendsUid.length < 12
+                                      ? friendsUid.clear()
+                                      : friendsUid.removeRange(0, 12);
+                                  setList(() {});
+                                  controller.loadComplete();
+                                },
+                                physics: BouncingScrollPhysics(),
+                                child: Column(
+                                    children: friends
+                                        .map((doc) => PersonCard(
+                                              data: doc.data,
+                                              uid: doc.documentID,
+                                              ref: doc.reference.toString(),
+                                            ))
+                                        .toList()),
+                              ),
+                            );
+                          }),
+                        ),
+                ],
+              ),
+            ],
+          ),
+        ));
+  }
+
   Widget appbar() {
     Size a = MediaQuery.of(context).size;
     return Container(
       width: a.width,
-      height: a.width / 5,
-      //color: Colors.black,
+      height: a.width / 5.4,
+      color: Colors.black,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -31,61 +135,9 @@ class _AllfollowerState extends State<Allfollower> {
                 fontSize: a.width / 18,
                 fontWeight: FontWeight.bold),
           ),
-          SizedBox(
-            width: a.width / 7.5,
-          ),
+          SizedBox(width: a.width / 7.5),
         ],
       ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Size a = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.black,
-        body: SafeArea(
-      child: Container(
-        height: a.height,
-        width: a.width,
-        color: Colors.black,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-                top: 0,
-                child: Container(
-                  child: appbar(),
-                )),
-            Positioned(
-              top: a.width / 5,
-              child: Container(
-                height: a.height,
-                width: a.width,
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  children: <Widget>[
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    Personcard1(),
-                    SizedBox(
-                      height: a.width / 3,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ));
   }
 }

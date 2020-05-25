@@ -221,7 +221,7 @@ class AuthenService {
           'imgList': FieldValue.arrayUnion([userData.img])
         },
         merge: true);
-    batch.setData(userRef, {'id': userData.id, 'img': userData.img},
+    batch.setData(userRef, {'id': userData.id, 'uid': uid, 'img': userData.img},
         merge: true);
     await batch.commit();
 

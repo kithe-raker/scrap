@@ -4,9 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/authentication/LoginID.dart';
-import 'package:scrap/Page/authentication/OTPScreen.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
-import 'package:scrap/function/cacheManage/friendManager.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
@@ -21,7 +19,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool loading = false;
   var _key = GlobalKey<FormState>();
-  FriendManager friendManager = FriendManager();
   StreamSubscription loadStatus;
 
   @override

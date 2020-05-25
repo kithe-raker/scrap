@@ -1,31 +1,5 @@
 import 'dart:ui';
-import 'package:admob_flutter/admob_flutter.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_admob/firebase_admob.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:scrap/Page/Gridfavorite.dart';
-import 'package:scrap/Page/Gridsubscripe.dart';
-import 'package:scrap/Page/MapScraps.dart';
-import 'package:scrap/Page/friendList.dart';
-import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/function/cacheManage/UserInfo.dart';
-import 'package:scrap/function/toDatabase/scrap.dart';
-import 'package:scrap/provider/RealtimeDB.dart';
-import 'package:scrap/provider/UserData.dart';
-import 'package:scrap/services/admob_service.dart';
-import 'package:scrap/services/jsonConverter.dart';
-import 'package:scrap/widget/Loading.dart';
-import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/showdialogfinishpaper.dart';
-import 'package:scrap/widget/warning.dart';
-import 'package:scrap/widget/showdialogreport.dart';
 
 class Burn extends StatefulWidget {
   @override

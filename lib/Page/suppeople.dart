@@ -11,8 +11,8 @@ import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
+import 'package:scrap/widget/PersonCard.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:scrap/widget/personcard.dart';
 import 'package:scrap/Page/allfollower.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -193,146 +193,17 @@ class _SubpeopleState extends State<Subpeople> {
                                 ),
                               )
                             : !searching
-                                ? recently.length < 1 && following.length < 1
+                                ? false //recetly.length < 1 && following.length < 1
                                     ? Center(
                                         child: guide('ไม่มีคนที่คุณติดตาม'))
                                     : ListView(
-                                        physics: BouncingScrollPhysics(),
+                                        physics: AlwaysScrollableScrollPhysics(),
                                         children: <Widget>[
-                                          recently.length > 0
-                                              ? Container(
-                                                  width: a.width,
-                                                  decoration: BoxDecoration(
-                                                      border: Border(
-                                                          bottom: BorderSide(
-                                                              color: Color(
-                                                                  0xff292929)))),
-                                                  padding: EdgeInsets.only(
-                                                    left: a.width / 50,
-                                                  ),
-                                                  child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: <Widget>[
-                                                        SizedBox(
-                                                          height: a.width / 25,
-                                                        ),
-                                                        Container(
-                                                          child: Text(
-                                                            "\tล่าสุดที่ปาใส่",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize:
-                                                                    a.width /
-                                                                        15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: a.width / 20,
-                                                        ),
-                                                        Wrap(
-                                                          children: <Widget>[
-                                                            Personcard(),
-                                                            Personcard(),
-                                                            Personcard(),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                            height:
-                                                                a.width / 30),
-                                                      ]))
+                                          true // recently.length > 0
+                                              ? recentlyThrow()
                                               : SizedBox(),
-                                          following.length > 0
-                                              ? Container(
-                                                  width: a.width,
-                                                  padding: EdgeInsets.only(
-                                                      //top: a.width / 20,
-                                                      left: a.width / 50,
-                                                      right: a.width / 50),
-                                                  child: Column(
-                                                    children: <Widget>[
-                                                      SizedBox(
-                                                        height: a.width / 45,
-                                                      ),
-                                                      Container(
-                                                        width: a.width,
-                                                        height: a.width / 10,
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: <Widget>[
-                                                            Text(
-                                                              "กำลังติดตาม " +
-                                                                  "125",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize:
-                                                                      a.width /
-                                                                          15,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                            GestureDetector(
-                                                              child: Row(
-                                                                children: <
-                                                                    Widget>[
-                                                                  Text(
-                                                                    "ทั้งหมด",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        fontSize:
-                                                                            a.width /
-                                                                                15,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                  Icon(
-                                                                      Icons
-                                                                          .keyboard_arrow_right,
-                                                                      color: Colors
-                                                                          .white,
-                                                                      size:
-                                                                          a.width /
-                                                                              15)
-                                                                ],
-                                                              ),
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              Allfollower()),
-                                                                );
-                                                              },
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: a.width / 20,
-                                                      ),
-                                                      Wrap(
-                                                        children: <Widget>[
-                                                          Personcard1(),
-                                                          Personcard1(),
-                                                          Personcard1(),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                          height: a.width / 7),
-                                                    ],
-                                                  ),
-                                                )
+                                          true //following.length > 0
+                                              ? followingList()
                                               : SizedBox()
                                         ],
                                       )
@@ -351,6 +222,125 @@ class _SubpeopleState extends State<Subpeople> {
         ),
       ),
     );
+  }
+
+  Widget recentlyThrow() {
+    return Container(
+        width: screenWidthDp,
+        decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Color(0xff292929)))),
+        padding: EdgeInsets.only(
+          left: screenWidthDp / 50,
+        ),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: screenWidthDp / 25,
+              ),
+              Container(
+                child: Text(
+                  "\tล่าสุดที่ปาใส่",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: s42,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(height: screenWidthDp / 20),
+              Column(
+                  children:
+                      recently.map((user) => PersonCard(data: user)).toList()),
+              SizedBox(height: screenWidthDp / 30),
+            ]));
+  }
+
+  Widget followingList() {
+    return Container(
+      width: screenWidthDp,
+      padding:
+          EdgeInsets.only(left: screenWidthDp / 50, right: screenWidthDp / 50),
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: screenWidthDp / 45,
+          ),
+          Container(
+              width: screenWidthDp,
+              height: screenWidthDp / 10,
+              child: allFollowingButton()),
+          SizedBox(height: screenWidthDp / 20),
+          FutureBuilder(
+              future: fireStore
+                  .collectionGroup('users')
+                  .where('uid', whereIn: following)
+                  .limit(3)
+                  .getDocuments(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<DocumentSnapshot> docs = snapshot.data.documents;
+                  return Column(
+                      children: docs
+                          .map((doc) => PersonCard(
+                              data: doc.data,
+                              uid: doc.documentID,
+                              ref: doc.reference.toString()))
+                          .toList());
+                } else {
+                  return Center(
+                      child: Container(
+                          width: screenWidthDp / 3.6,
+                          height: screenWidthDp / 3.6,
+                          decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.42),
+                              borderRadius: BorderRadius.circular(12)),
+                          child: FlareActor('assets/paper_loading.flr',
+                              animation: 'Untitled', fit: BoxFit.cover)));
+                }
+              }),
+          SizedBox(height: screenWidthDp / 7),
+        ],
+      ),
+    );
+  }
+
+  Widget allFollowingButton() {
+    return StreamBuilder(
+        stream: streamTransaction('following'),
+        builder: (context, snapshot) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                snapshot?.data == null
+                    ? "กำลังติดตาม 0"
+                    : 'กำลังติดตาม ${snapshot.data.snapshot?.value ?? 0}',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: screenWidthDp / 15,
+                    fontWeight: FontWeight.bold),
+              ),
+              GestureDetector(
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        "ทั้งหมด",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenWidthDp / 15,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Icon(Icons.keyboard_arrow_right,
+                          color: Colors.white, size: screenWidthDp / 15)
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Allfollower()));
+                  })
+            ],
+          );
+        });
   }
 
   Widget serachResult() {
@@ -395,7 +385,11 @@ class _SubpeopleState extends State<Subpeople> {
                           List<DocumentSnapshot> docs = snapshot.data.documents;
                           return Column(
                               children: docs
-                                  .map((doc) => Personcard1(data: doc.data))
+                                  .map((doc) => PersonCard(
+                                        data: doc.data,
+                                        uid: doc.documentID,
+                                        ref: doc.reference.toString(),
+                                      ))
                                   .toList());
                         } else {
                           return Column(

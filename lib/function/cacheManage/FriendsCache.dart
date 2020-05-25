@@ -42,6 +42,13 @@ class FriendsCache {
     await file.writeAsString(json.encode(data));
   }
 
+  Future<void> unFollowing({@required String unFollowUid}) async {
+    final file = await _localFile;
+    var data = await read();
+    data['following'].removeWhere((uid) => uid == unFollowUid);
+    await file.writeAsString(json.encode(data));
+  }
+
   Future<List> getRecently() async {
     var list = await read();
     return list['recently'];
