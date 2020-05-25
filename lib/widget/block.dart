@@ -14,7 +14,7 @@ class _BlockState extends State<Block> {
     return Container(
       height: screenWidthDp / 2.16 * 1.21,
       width: screenWidthDp / 2.16,
-      color: Colors.red,
+      color: Colors.white,
     );
   }
 }

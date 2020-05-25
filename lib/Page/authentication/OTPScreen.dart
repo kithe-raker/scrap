@@ -101,13 +101,31 @@ class _OTPScreenState extends State<OTPScreen> {
                 ),
                 SizedBox(height: screenHeightDp / 4.6),
                 GestureDetector(
-                    child: Text(
-                      'ใช้ไอดีของ SCRAP.',
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: Colors.white,
-                          fontSize: s52,
-                          fontWeight: FontWeight.w600),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          'มีไอดี\t',
+                          style: TextStyle(
+                              //decoration: TextDecoration.underline,
+                              color: Colors.white,
+                              fontSize: s52,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        Image.asset(
+                          'assets/scrapmini.png',
+                          scale: s10 / 2,
+                        ),
+                        Text(
+                          '\tแล้ว',
+                          style: TextStyle(
+                              //decoration: TextDecoration.underline,
+                              color: Colors.white,
+                              fontSize: s52,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ],
                     ),
                     onTap: () {
                       Navigator.pushReplacement(context,

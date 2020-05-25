@@ -15,6 +15,9 @@ import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/widget/showdialogfinishpaper.dart';
 import 'package:scrap/widget/thrown.dart';
+import 'package:scrap/Page/authentication/LoginPage.dart';
+import 'package:scrap/Page/authentication/LoginID.dart';
+import 'package:scrap/Page/authentication/OTPScreen.dart';
 
 const String testDevice = "34C215009965F34F";
 
@@ -47,7 +50,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: Profile()),
+          home: OTPScreen()),
     );
   }
 }
