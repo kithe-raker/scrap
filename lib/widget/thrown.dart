@@ -108,21 +108,22 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                             ),
                             //กระดาษที่ไว้เขียนไงจ้ะ
                             Container(
-                              margin: EdgeInsets.only(top: a.width / 150),
+                              margin: EdgeInsets.only(
+                                  top: a.width / 150,
+                                  left: s10 / 2,
+                                  right: s10 / 2),
                               width: a.width / 1,
                               height: a.height / 1.8,
                               //ใช้สแต็กเอา
                               child: Stack(
                                 children: <Widget>[
                                   //รูปกระดาษ
-                                  Center(
-                                    child: Container(
-                                      child: Image.asset(
-                                        'assets/paper-readed.png',
-                                        width: a.width / 1.04,
-                                        height: a.width / 1.04 * 1.115,
-                                        fit: BoxFit.cover,
-                                      ),
+                                  Container(
+                                    child: Image.asset(
+                                      'assets/paper-readed.png',
+                                      width: a.width / 1.04,
+                                      height: a.width / 1.04 * 1.115,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/block.dart';
 
 class Wrapblock extends StatefulWidget {
@@ -9,9 +10,10 @@ class Wrapblock extends StatefulWidget {
 class _WrapblockState extends State<Wrapblock> {
   Widget sizedbox() {
     Size a = MediaQuery.of(context).size;
+    screenutilInit(context);
     return Container(
-      height: 407 / a.width * 165,
-      width: 365 / a.width * 165,
+      height: 407 / 365 / 1.035 * s65 * s17,
+      width: 365 / 407 / 1.035 * s65 * s17,
       color: Colors.transparent,
     );
   }
@@ -26,6 +28,8 @@ class _WrapblockState extends State<Wrapblock> {
         runSpacing: a.width / 42,
         alignment: WrapAlignment.center,
         children: <Widget>[
+          Block(),
+          Block(),
           Block(),
           Block(),
           Block(),

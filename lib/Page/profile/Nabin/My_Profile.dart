@@ -247,6 +247,7 @@ class _My_ProfileState extends State<My_Profile> {
                                                     TextStyle(
                                                   //decoration: TextDecoration.underline,
                                                   color: Colors.white,
+
                                                   fontSize: s52,
                                                 )),
                                           ),
@@ -264,16 +265,7 @@ class _My_ProfileState extends State<My_Profile> {
                                               horizontal: 10,
                                             ),
                                             child: Text('โดนปาใส่',
-                                                style:
-                                                    // page != 1
-                                                    // ?
-                                                    // TextStyle(
-                                                    //   color: Colors.white,
-                                                    //   fontSize: s52,
-                                                    //   )
-                                                    // :
-                                                    TextStyle(
-                                                  //decoration: TextDecoration.underline,
+                                                style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: s52,
                                                 )),

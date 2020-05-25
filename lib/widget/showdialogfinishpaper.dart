@@ -108,7 +108,7 @@ void dialogfinishpaper(BuildContext context) {
                             GestureDetector(
                               child: Container(
                                   width: a.width / 2.85,
-                                  height: a.width / 7.3,
+                                  height: a.width / 6.8,
                                   //   margin: EdgeInsets.only(right: a.width / 20),
                                   decoration: BoxDecoration(
                                       color: Colors.white,
@@ -119,7 +119,7 @@ void dialogfinishpaper(BuildContext context) {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Container(
-                                          width: a.width / 15,
+                                          width: a.width / 17,
                                           child: Image.asset(
                                             "assets/Group 74.png",
                                             color: Color(0xff26A4FF),
@@ -143,7 +143,7 @@ void dialogfinishpaper(BuildContext context) {
                                 child: Container(
                                   margin: EdgeInsets.only(left: a.width / 20),
                                   width: a.width / 2.85,
-                                  height: a.width / 7.3,
+                                  height: a.width / 6.8,
                                   decoration: BoxDecoration(
                                       color: Color(0xff26A4FF),
                                       borderRadius:

@@ -7,6 +7,7 @@ import 'package:scrap/Page/viewprofile.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 
 class FriendList extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -227,6 +228,7 @@ class _FriendListState extends State<FriendList> {
                           child: TextFormField(
                             textAlign: TextAlign.center,
                             style: TextStyle(
+                              height: s10,
                               color: Colors.white,
                               fontSize: a.width / 14,
                               fontWeight: FontWeight.w300,

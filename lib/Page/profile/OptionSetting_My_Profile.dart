@@ -467,7 +467,7 @@ Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
             Icon(
               icon,
               color: Colors.white,
-              size: s52,
+              size: s58,
             ),
             Text(
               name,
@@ -514,7 +514,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
             height: screenHeightDp / 5.5,
             width: screenWidthDp / 1.1,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(3),
               color: Color(0xff1a1a1a),
             ),
             child: Container(
@@ -547,7 +547,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                         'Join 15/02/2020',
                         style: TextStyle(
                           fontSize: s60,
-                          color: Colors.blue,
+                          color: Color(0xfff26A4FF),
                         ),
                       ),
                     ],
@@ -566,7 +566,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
             height: screenHeightDp / 3,
             width: screenWidthDp / 1.1,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(3),
               color: Color(0xff1a1a1a),
             ),
             child: Column(
@@ -585,7 +585,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                               'เพิ่มสเตตัส',
                               style: TextStyle(
                                 fontSize: s48,
-                                color: Colors.blue,
+                                color: Color(0xfff26A4FF),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -604,7 +604,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                     horizontal: 12,
                   ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(3),
                     color: Color(0xff222222),
                   ),
                   child: Center(
@@ -628,7 +628,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
             height: screenHeightDp / 4.5,
             width: screenWidthDp / 1.1,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(3),
               color: Color(0xff1a1a1a),
             ),
             child: Column(
@@ -645,7 +645,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                   '044-112-1011',
                   style: TextStyle(
                     fontSize: s65,
-                    color: Colors.blue,
+                    color: Color(0xfff26A4FF),
                   ),
                 ),
                 Row(
@@ -860,6 +860,9 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
               ),
               appbar_ListOptionSetting(
                   context, Icons.bug_report, ' แจ้งปัญหาระบบ'),
+              SizedBox(
+                height: appBarHeight / 3,
+              ),
               Container(
                 margin: EdgeInsets.only(
                   bottom: 10,
@@ -885,6 +888,12 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                             ),
                           ),
                         ],
+                      ),
+                      Divider(
+                        color: Color(0xff383838),
+                        thickness: 1,
+                        indent: s10,
+                        endIndent: s10,
                       ),
                       Container(
                         child: TextField(
@@ -936,17 +945,6 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                 ),
               ),
             ],
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              vertical: screenHeightDp / 5.2,
-            ),
-            child: Divider(
-              color: Color(0xff383838),
-              thickness: 2,
-              indent: 25,
-              endIndent: 25,
-            ),
           ),
         ],
       ),

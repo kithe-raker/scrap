@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
@@ -21,8 +23,9 @@ class _AdsState extends State<Ads> {
             child: //Image.asset('assets/adsgoogle.jpg'),
                 Center(
               child: Text(
-                'Google Kuay',
-                style: TextStyle(fontSize: 48, color: Colors.white),
+                'Google Ads',
+                style:
+                    TextStyle(fontSize: 48, color: Colors.white, height: 1.1),
               ),
             ),
           ),
