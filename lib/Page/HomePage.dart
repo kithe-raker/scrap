@@ -237,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                               height: a.width / 7,
                               alignment: Alignment.center,
                               child: Image.asset(
-                                'assets/SCRAP.png',
+                                'assets/scrapmini.png',
                                 width: a.width / 4,
                               )),
                           //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile

@@ -55,6 +55,7 @@ dependencies:
   flutter_image_compress: ^0.6.5+1
   flutter_cupertino_date_picker: ^1.0.12
   http: ^0.12.0+2
+  stream_transform: ^0.0.19
 
 
   

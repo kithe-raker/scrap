@@ -73,6 +73,8 @@ class AuthenService {
     };
     PhoneVerificationFailed failed = (AuthException error) {
       warn('เกิดข้อผิดพลาดกรุณาลองใหม่');
+      print(error.code);
+      print(error.message);
     };
     await fireAuth
         .verifyPhoneNumber(
@@ -160,7 +162,8 @@ class AuthenService {
         user.region = docs[0]['region'];
         userinfo.initRegion(region: docs[0]['region']);
         var uid = docs[0].documentID;
-        fireAuth.signInWithEmailAndPassword(
+        user.uid = uid;
+        await fireAuth.signInWithEmailAndPassword(
             email: '$uid@gmail.com', password: password);
         await updateToken(uid);
         await checkFinishSignUp(context);
@@ -268,6 +271,8 @@ class AuthenService {
       for (var doc in docs.documents) {
         cacheFriends.addFollowing(following: doc['list']);
       }
+    else
+      cacheFriends.intitFile();
   }
 
   Future<String> getToken() async {

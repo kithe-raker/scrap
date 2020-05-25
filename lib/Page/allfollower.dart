@@ -1,6 +1,4 @@
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/personcard.dart';
 
 class Allfollower extends StatefulWidget {
@@ -45,6 +43,7 @@ class _AllfollowerState extends State<Allfollower> {
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.black,
         body: SafeArea(
       child: Container(
         height: a.height,

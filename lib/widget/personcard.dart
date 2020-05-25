@@ -51,6 +51,8 @@ class _PersoncardState extends State<Personcard> {
 }
 
 class Personcard1 extends StatefulWidget {
+  final Map data;
+  Personcard1({@required this.data});
   @override
   _Personcard1State createState() => _Personcard1State();
 }
@@ -74,7 +76,12 @@ class _Personcard1State extends State<Personcard1> {
                 height: a.width / 6,
                 decoration: BoxDecoration(
                     color: Colors.grey,
-                    borderRadius: BorderRadius.circular(a.width)),
+                    borderRadius: BorderRadius.circular(a.width),
+                    image: widget.data['img'] == null
+                        ? null
+                        : DecorationImage(
+                            image: NetworkImage(widget.data['img']),
+                            fit: BoxFit.cover)),
               ),
               SizedBox(
                 width: a.width / 30,
@@ -84,12 +91,12 @@ class _Personcard1State extends State<Personcard1> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text("@someone",
+                    Text("@${widget.data['id']}",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: a.width / 18,
                             fontWeight: FontWeight.bold)),
-                    Text("ต้นๆรถเป็นอะไรอ่ะ",
+                    Text(widget.data['status'] ?? '',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: a.width / 22,
