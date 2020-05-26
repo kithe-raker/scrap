@@ -12,9 +12,9 @@ class _BlockState extends State<Block> {
     Size a = MediaQuery.of(context).size;
     screenutilInit(context);
     return Container(
-      height: screenWidthDp / 2.18 * 1.21,
-      width: screenWidthDp / 2.18,
-      color: Colors.red,
+      height: screenWidthDp / 2.16 * 1.21,
+      width: screenWidthDp / 2.16,
+      color: Colors.white,
     );
   }
 }
