@@ -128,7 +128,8 @@ class _SignUpTelState extends State<SignUpTel> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: <Widget>[
@@ -325,7 +326,7 @@ class _SignUpTelState extends State<SignUpTel> {
           loading ? Loading() : SizedBox()
         ],
       ),
-    );
+    ));
   }
 
   fail() {

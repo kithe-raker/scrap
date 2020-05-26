@@ -106,17 +106,17 @@ class _OTPScreenState extends State<OTPScreen> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                          'มีไอดี\t',
+                          'มีไอดี\tSCRAP.',
                           style: TextStyle(
                               //decoration: TextDecoration.underline,
                               color: Colors.white,
                               fontSize: s52,
                               fontWeight: FontWeight.w600),
                         ),
-                        Image.asset(
+                        /* Image.asset(
                           'assets/scrapmini.png',
                           scale: s10 / 2,
-                        ),
+                        ),*/
                         Text(
                           '\tแล้ว',
                           style: TextStyle(

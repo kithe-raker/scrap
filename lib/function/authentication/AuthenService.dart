@@ -290,8 +290,8 @@ class AuthenService {
   ///sign current user out then laed to [AuthenPage]
   Future<void> signOut(BuildContext context) async {
     loading.add(true);
-    await userinfo.deleteFile();
-    await cacheHistory.deleteFile();
+    // await userinfo.deleteFile();
+    // await cacheHistory.deleteFile();
     await fireAuth.signOut();
     nav.pushReplacement(context, LoginPage());
     loading.add(false);
