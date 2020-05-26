@@ -288,34 +288,29 @@ class _HomePageState extends State<HomePage> {
                               height: a.width / 5,
                               alignment: Alignment.center,
                               child: InkWell(
-                                child: Container(
-                                  width: a.width / 10,
-                                  height: a.width / 10,
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(a.width),
-                                      color: Colors.white,
-                                      border: Border.all(
-                                          width: 1, color: Colors.white)),
-                                  child: initInfoFinish
-                                      ? ClipRRect(
-                                          child: Image.file(File(user.img),
-                                              fit: BoxFit.cover),
-                                          borderRadius: BorderRadius.circular(
-                                              a.width / 10),
-                                        )
-                                      : Icon(Icons.person,
-                                          color: Colors.black,
-                                          size: a.width / 15),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              Profile())); //ไปยังหน้า Profile
-                                },
-                              )),
+                                  child: Container(
+                                    width: a.width / 10,
+                                    height: a.width / 10,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(a.width),
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            width: 1, color: Colors.white)),
+                                    child: initInfoFinish
+                                        ? ClipRRect(
+                                            child: Image.file(File(user.img),
+                                                fit: BoxFit.cover),
+                                            borderRadius: BorderRadius.circular(
+                                                a.width / 10),
+                                          )
+                                        : Icon(Icons.person,
+                                            color: Colors.black,
+                                            size: a.width / 15),
+                                  ),
+                                  onTap: () {
+                                    nav.push(context, Profile());
+                                  })),
                         ],
                       ),
                     ),

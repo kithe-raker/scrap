@@ -12,7 +12,11 @@ import 'package:scrap/widget/Ads.dart';
 
 //ฟังก์ชั่นปากระดาษ
 void writerScrap(BuildContext context,
-    {LatLng latLng, String thrownUID, String ref, bool isThrow = false}) {
+    {LatLng latLng,
+    Map data,
+    String thrownUID,
+    String ref,
+    bool isThrow = false}) {
   var _key = GlobalKey<FormState>();
   bool public = false, loading = false;
   final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
@@ -228,6 +232,7 @@ void writerScrap(BuildContext context,
                                           scrapData.public = public;
                                           if (isThrow) {
                                             scrap.throwTo(context,
+                                                data: data,
                                                 thrownUID: thrownUID,
                                                 collRef: ref);
                                           } else {

@@ -49,6 +49,22 @@ class FriendsCache {
     await file.writeAsString(json.encode(data));
   }
 
+  Future<void> addRecently(
+      {@required String id,
+      @required String img,
+      @required String status,
+      @required String thrownUid,
+      @required String ref}) async {
+    final file = await _localFile;
+    var data = await read();
+    var recently = data['recently'];
+    if (recently.length > 3) recently.remove(recently.first);
+    recently
+        .add({'id': id, 'img': img, 'status': status, 'uid': thrownUid, 'ref': ref});
+    data['recently'] = recently;
+    await file.writeAsString(json.encode(data));
+  }
+
   Future<List> getRecently() async {
     var list = await read();
     return list['recently'];

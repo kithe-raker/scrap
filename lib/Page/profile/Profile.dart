@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/widget/block.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +11,7 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-/* 
-List Problem ( control+F => showPopup(context) / wrap() )
-- void showPopup(context) -> TextField : ขยายขนาดไม่ได้
-- wrap() : ต้องเปลี่ยนเป็น "ตารางสแครปยอดนิยมและจากคนที่เราติดตาม" ตามใน XD
-*/
 
-//หน้าโปรไฟล์ของฉัน
 class Profile extends StatefulWidget {
   @override
   _ProfileState createState() => _ProfileState();
@@ -24,146 +19,10 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool isSwitched = false, initInfoFinish = false;
-  bool v = false;
+  bool pickedScrap = true;
   Map profile = {};
   int page = 0;
   var controller = PageController();
-  Widget checkv() {
-    if (v == false)
-      return Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  /*  SizedBox(
-                    width: appBarHeight / 7,
-                  ),*/
-                  GestureDetector(
-                    onTap: () {
-                      v = false;
-                      setState(() {});
-                    },
-                    child: Container(
-                      height: appBarHeight / 2,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(width: 2.0, color: Colors.white),
-                        ),
-                      ),
-                      child: Text(
-                        'เก็บจากที่ทิ้งไว้',
-                        style: TextStyle(
-                            fontSize: s48,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  /* SizedBox(
-                    width: appBarHeight / 3,
-                  ),*/
-                  GestureDetector(
-                    onTap: () {
-                      v = true;
-                      setState(() {});
-                    },
-                    child: Container(
-                      child: Text(
-                        'เก็บจากโดนปาใส่',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: s48,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: appBarHeight / 3,
-              ),
-              Wrapblock(),
-            ],
-          ),
-          Positioned(
-              child: Container(
-            padding: EdgeInsets.only(top: appBarHeight / 2.6),
-            child: Divider(
-              color: Colors.grey,
-            ),
-          )),
-        ],
-      );
-    else
-      return Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  /* SizedBox(
-                    width: appBarHeight / 7,
-                  ),*/
-                  GestureDetector(
-                    onTap: () {
-                      v = false;
-                      setState(() {});
-                    },
-                    child: Container(
-                      child: Text(
-                        'เก็บจากที่ทิ้งไว้',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: s48,
-                        ),
-                      ),
-                    ),
-                  ),
-                  /* SizedBox(
-                    width: appBarHeight / 3,
-                  ),*/
-                  GestureDetector(
-                    onTap: () {
-                      v = true;
-                      setState(() {});
-                    },
-                    child: Container(
-                      height: appBarHeight / 2,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(width: 2.0, color: Colors.white),
-                        ),
-                      ),
-                      child: Text(
-                        'เก็บจากโดนปาใส่',
-                        style: TextStyle(
-                            fontSize: s48,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: appBarHeight / 3,
-              ),
-              Wrapblock(),
-            ],
-          ),
-          Positioned(
-              child: Container(
-            padding: EdgeInsets.only(top: appBarHeight / 2.6),
-            child: Divider(
-              color: Colors.grey,
-            ),
-          )),
-        ],
-      );
-  }
 
   //Appbar สำหรับหน้าโปรไฟล์ของฉัน
   Widget appbarProfile(BuildContext context) {
@@ -206,8 +65,8 @@ class _ProfileState extends State<Profile> {
   }
 
   initUser() async {
-    //var data = await userinfo.readContents();
-    // profile = data;
+    var data = await userinfo.readContents();
+    profile = data;
     setState(() => initInfoFinish = true);
   }
 
@@ -376,19 +235,69 @@ class _ProfileState extends State<Profile> {
                                     bottom: 10,
                                   ),
                                 ),
-                                Divider(
-                                  color: Colors.grey,
-                                ),
-                                checkv(),
-                                SizedBox(
-                                  height: appBarHeight,
-                                ),
+                                Divider(color: Colors.grey),
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      GestureDetector(
+                                        onTap: () {
+                                          pickedScrap = true;
+                                          setState(() {});
+                                        },
+                                        child: Container(
+                                          height: appBarHeight / 2,
+                                          decoration: BoxDecoration(
+                                            border: pickedScrap
+                                                ? Border(
+                                                    bottom: BorderSide(
+                                                        width: 2.0,
+                                                        color: Colors.white),
+                                                  )
+                                                : null,
+                                          ),
+                                          child: Text(
+                                            'เก็บจากที่ทิ้งไว้',
+                                            style: TextStyle(
+                                                fontSize: s48,
+                                                color: Colors.white,
+                                                fontWeight: pickedScrap
+                                                    ? FontWeight.bold
+                                                    : null),
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                          onTap: () {
+                                            pickedScrap = false;
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                border: pickedScrap
+                                                    ? null
+                                                    : Border(
+                                                        bottom: BorderSide(
+                                                            width: 2.0,
+                                                            color:
+                                                                Colors.white))),
+                                            child: Text('เก็บจากโดนปาใส่',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: s48,
+                                                    fontWeight: pickedScrap
+                                                        ? null
+                                                        : FontWeight.bold)),
+                                          ))
+                                    ]),
+                                Divider(color: Colors.grey, height: 0),
+                                SizedBox(height: screenWidthDp / 36),
+                                scrapGrid(),
                               ],
                             ),
                           ),
                         ],
                       ),
-                      //user_OtherProfile(),
                     ),
                   ),
                   Positioned(top: 0, child: appbarProfile(context)),
@@ -543,6 +452,22 @@ class _ProfileState extends State<Profile> {
             ],
           );
         });
+  }
+
+  Widget scrapGrid() {
+    return Container(
+        margin: EdgeInsets.only(bottom: screenHeightDp / 10),
+        child: Wrap(
+            spacing: screenWidthDp / 42,
+            runSpacing: screenWidthDp / 42,
+            alignment: WrapAlignment.start,
+            children: <Widget>[
+              Block(),
+              Block(),
+              Block(),
+              Block(),
+              Block(),
+            ]));
   }
 
   //ข้อมูลผู้ใช้

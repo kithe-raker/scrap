@@ -281,6 +281,7 @@ class _OtherProfileState extends State<OtherProfile> {
                           user.papers > 0
                               ? writerScrap(context,
                                   isThrow: true,
+                                  data: widget.data,
                                   thrownUID: uid,
                                   ref: widget.ref)
                               : toast.toast('กระดาษคุณหมดแล้ว');

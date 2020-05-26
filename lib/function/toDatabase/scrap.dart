@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
@@ -19,7 +20,9 @@ class Scraps {
   final FirebaseMessaging fcm = FirebaseMessaging();
 
   throwTo(BuildContext context,
-      {@required String thrownUID, @required String collRef}) async {
+      {@required Map data,
+      @required String thrownUID,
+      @required String collRef}) async {
     loading.add(true);
     final db = Provider.of<RealtimeDB>(context, listen: false);
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
@@ -31,6 +34,12 @@ class Scraps {
       var ref =
           Firestore.instance.collection('$collRef/$thrownUID/thrownScraps');
       var docId = ref.document().documentID;
+      cacheFriends.addRecently(
+          id: data['id'],
+          img: data['img'],
+          status: data['status'],
+          thrownUid: thrownUID,
+          ref: collRef);
       // userDb
       //     .reference()
       //     .child('users/${user.uid}')

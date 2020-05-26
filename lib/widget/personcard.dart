@@ -120,9 +120,16 @@ class _PersonCardState extends State<PersonCard> {
                     ),
                     onTap: () {
                       writerScrap(context,
-                          isThrow: true, thrownUID: uid, ref: ref);
+                          isThrow: true,
+                          data: widget.data,
+                          thrownUID: uid,
+                          ref: ref);
                       // user.papers > 0
-                      //     ?   writerScrap(context, isThrow: true, thrownUID: uid);
+                      //     ?    writerScrap(context,
+                      // isThrow: true,
+                      // data: widget.data,
+                      // thrownUID: uid,
+                      // ref: ref);
                       //     : toast.toast('กระดาษของคุณหมดแล้ว');
                     })
                 : SizedBox();
