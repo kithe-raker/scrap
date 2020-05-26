@@ -154,12 +154,7 @@ void dialogvideo(BuildContext context, String uid) {
                                                 setState(() => loading = false);
                                                 Navigator.pop(context);
                                                 dialogfinishpaper(context);
-                                              } else if (event ==
-                                                      MobileAdEvent
-                                                          .failedToLoad ||
-                                                  event ==
-                                                      MobileAdEvent
-                                                          .leftApplication) {
+                                              } else {
                                                 scrap.toast(
                                                     'เกิดข้อผิดพลาดกรุณาลองอีกครั้ง');
                                                 setState(() => loading = false);

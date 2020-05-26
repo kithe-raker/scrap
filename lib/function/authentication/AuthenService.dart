@@ -228,9 +228,8 @@ class AuthenService {
     var emailCredent = EmailAuthProvider.getCredential(
         email: '$uid@gmail.com', password: userData.password);
     await user.linkWithCredential(emailCredent);
-    loading.add(false);
-
     nav.pushReplacement(context, MainStream());
+    loading.add(false);
   }
 
   Future<void> checkFinishSignUp(BuildContext context) async {
@@ -241,7 +240,7 @@ class AuthenService {
         .get();
     if (doc.exists) {
       var map = doc.data;
-      doc.data['region'] = user.region;
+      map['region'] = user.region;
       await userinfo.initUserInfo(doc: map);
       loading.add(false);
       nav.pushReplacement(context, MainStream());

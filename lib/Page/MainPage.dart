@@ -112,22 +112,25 @@ class _MainPageState extends State<MainPage> {
 
   Future<bool> finishProfile() async {
     final user = Provider.of<UserData>(context, listen: false);
-    var map = await userinfo.readContents();
-    user.region = map['region'];
-    if (map['img'] == null) {
-      var doc = await fireStore
-          .collection('Users/${map['region']}/users')
-          .document(user.uid)
-          .get();
-      if (doc.exists && doc['img'] != null) {
-        var map = doc.data;
-        doc.data['region'] = user.region;
-        await userinfo.initUserInfo(doc: map);
-        return true;
-      } else
-        return false;
-    } else
-      return true;
+    bool fileExist = await userinfo.fileExist();
+    var img, doc;
+    if (fileExist) {
+      var map = await userinfo.readContents();
+      user.region = map['region'];
+      img = map['img'];
+      if (img == null) {
+        doc = await fireStore
+            .collection('Users/${map['region']}/users')
+            .document(user.uid)
+            .get();
+        if (doc.exists && doc['img'] != null) {
+          var map = doc.data;
+          doc.data['region'] = user.region;
+          await userinfo.initUserInfo(doc: map);
+        }
+      }
+    }
+    return (fileExist && img != null) || (doc.exists && doc['img'] != null);
   }
 
   @override

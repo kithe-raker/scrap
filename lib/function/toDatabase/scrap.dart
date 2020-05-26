@@ -217,7 +217,6 @@ class Scraps {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     await userDb.reference().child('users/$uid').update({'papers': 15});
-    toast('คุณได้รับกระดาษเพิ่มแล้ว');
   }
 
   Future<bool> blocked(String uid, String thrownUID) async {

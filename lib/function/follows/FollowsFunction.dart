@@ -38,7 +38,7 @@ class FollowsFunction {
     batch.setData(
         fireStore
             .collection('$otherCollRef/$otherUid/follower')
-            .document((data.value + 1) ~/ 1000),
+            .document('${(data.value + 1) ~/ 1000}'),
         {
           'list': FieldValue.arrayUnion([user.uid])
         },
@@ -64,11 +64,11 @@ class FollowsFunction {
     cacheFriends.unFollowing(unFollowUid: otherUid);
     var otherDoc = await fireStore
         .collection('$otherCollRef/$otherUid/follower')
-        .where('list', arrayContains: otherUid)
+        .where('list', arrayContains: user.uid)
         .getDocuments();
     var docs = await fireStore
         .collection('Users/${user.region}/users/${user.uid}/following')
-        .where('list', arrayContains: user.uid)
+        .where('list', arrayContains: otherUid)
         .getDocuments();
     batch.setData(
         otherDoc.documents[0].reference,

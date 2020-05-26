@@ -6,11 +6,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
+import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/PersonCard.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/Page/allfollower.dart';
@@ -145,7 +147,11 @@ class _SubpeopleState extends State<Subpeople> {
                                     setState(() => searching = true);
                                   },
                                   onChanged: (val) {
-                                    streamController.add(val.trim());
+                                    var trim = val.trim();
+                                    trim[0] == '@'
+                                        ? streamController
+                                            .add(trim.substring(1))
+                                        : streamController.add(trim);
                                   },
                                 ),
                               ),
@@ -231,23 +237,23 @@ class _SubpeopleState extends State<Subpeople> {
         decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Color(0xff292929)))),
         padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 50),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: screenWidthDp / 24),
-              Container(
-                child: Text("\tล่าสุดที่ปาใส่",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: s42,
-                        fontWeight: FontWeight.bold)),
-              ),
-              SizedBox(height: screenWidthDp / 20),
-              Column(
-                  children:
-                      recently.map((user) => PersonCard(data: user)).toList()),
-              SizedBox(height: screenWidthDp / 30),
-            ]));
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+            Widget>[
+          SizedBox(height: screenWidthDp / 24),
+          Container(
+            child: Text("\tล่าสุดที่ปาใส่",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: s42,
+                    fontWeight: FontWeight.bold)),
+          ),
+          SizedBox(height: screenWidthDp / 20),
+          Column(
+              children: recently
+                  .map((user) => PersonCard(data: user, enableNavigator: true))
+                  .toList()),
+          SizedBox(height: screenWidthDp / 30),
+        ]));
   }
 
   Widget followingList() {
@@ -274,22 +280,11 @@ class _SubpeopleState extends State<Subpeople> {
                 if (snapshot.hasData) {
                   List<DocumentSnapshot> docs = snapshot.data.documents;
                   return Column(
-                      children: docs
-                          .map((doc) => PersonCard(
-                              data: doc.data,
-                              uid: doc.documentID,
-                              ref: doc.reference.parent().path))
-                          .toList());
+                      children: docs.map((doc) => userCard(doc)).toList());
                 } else {
                   return Center(
-                      child: Container(
-                          width: screenWidthDp / 3.6,
-                          height: screenWidthDp / 3.6,
-                          decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.42),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: FlareActor('assets/paper_loading.flr',
-                              animation: 'Untitled', fit: BoxFit.cover)));
+                    child: LoadNoBlur(),
+                  );
                 }
               }),
           SizedBox(height: screenWidthDp / 7),
@@ -377,24 +372,40 @@ class _SubpeopleState extends State<Subpeople> {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           List<DocumentSnapshot> docs = snapshot.data.documents;
-                          return Column(
-                              children: docs
-                                  .map((doc) => PersonCard(
-                                        data: doc.data,
-                                        uid: doc.documentID,
-                                        ref: doc.reference.toString(),
-                                      ))
-                                  .toList());
+                          return docs.length > 0
+                              ? Column(
+                                  children: docs
+                                      .map((doc) => doc['img'] != null
+                                          ? userCard(doc)
+                                          : SizedBox())
+                                      .toList())
+                              : guide('ไม่พบไอดีดังกล่าวในระบบ');
                         } else {
-                          return Column(
-                            children: <Widget>[],
-                          );
+                          return Center(child: LoadNoBlur());
                         }
                       }),
                   SizedBox(height: screenWidthDp / 7),
                 ]))
       ],
     );
+  }
+
+  Widget userCard(DocumentSnapshot doc) {
+    return GestureDetector(
+        child: PersonCard(
+            data: doc.data,
+            uid: doc.documentID,
+            ref: doc.reference.parent().path),
+        onTap: () async {
+          bool resault = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => OtherProfile(
+                      data: doc.data,
+                      uid: doc.documentID,
+                      ref: doc.reference.parent().path)));
+          if (resault) initFollows();
+        });
   }
 
   Widget followerButton() {

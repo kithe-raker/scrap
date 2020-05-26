@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
+import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: MainPage()),
+          home:MainPage()),
     );
   }
 }

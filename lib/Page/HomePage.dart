@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/Page/suppeople.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/UserData.dart';
@@ -279,11 +281,7 @@ class _HomePageState extends State<HomePage> {
                                       color: Colors.white, size: a.width / 15),
                                 ),
                                 onTap: () {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             FriendList(doc: null)));
+                                  nav.push(context, Subpeople());
                                 },
                               )),
                           Container(

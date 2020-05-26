@@ -97,7 +97,7 @@ class _AllfollowerState extends State<Allfollower> {
                                         .map((doc) => PersonCard(
                                               data: doc.data,
                                               uid: doc.documentID,
-                                              ref: doc.reference.toString(),
+                                              ref: doc.reference.parent().path,
                                             ))
                                         .toList()),
                               ),

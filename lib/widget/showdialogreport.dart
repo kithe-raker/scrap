@@ -3,8 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/function/aboutUser/ReportUser.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/Report.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class Report_DropDownButton extends StatefulWidget {
   @override
@@ -16,7 +20,6 @@ class _Report_DropDownButtonState extends State<Report_DropDownButton> {
 
   @override
   Widget build(BuildContext context) {
-
     return DropdownButtonHideUnderline(
       child: DropdownButton<dynamic>(
         value: dropdownValue,
@@ -89,193 +92,149 @@ class _Report_DropDownButtonState extends State<Report_DropDownButton> {
   }
 }
 
-class Showreport extends StatefulWidget {
-  @override
-  _ShowreportState createState() => _ShowreportState();
-}
-
-class _ShowreportState extends State<Showreport> {
-  @override
-  Widget build(BuildContext context) {
-    screenutilInit(context);
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: Center(
-        child: InkWell(
-          child: Text('Report'),
-          onTap: () {
-            showDialogReport(context);
-          },
-        ),
-      ),
-    );
-  }
-}
-
 void showDialogReport(BuildContext context) {
   Size a = MediaQuery.of(context).size;
   final report = Provider.of<Report>(context, listen: false);
+  String describe;
+  bool loading = false;
 
-  getDate(){
-    var now  = DateTime.now();
-    return DateFormat('yyyy-MM-dd').format(now);
-  }
-
-  updateData() async {
-    await Firestore.instance
-    .collection("Report")
-    .document(getDate())
-    .collection("reportUser")
-    .document()
-    .setData({
-      "topic":report.topic,
-      "reporter":"wait for provider",
-      "reported":"wait for provider",
-      "text":report.reportText,
-      "timestamp":DateTime.now().millisecondsSinceEpoch
-    });
-  }
-  screenutilInit(context);
   showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: appBarHeight,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+        screenutilInit(context);
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomPadding: false,
+          body: StatefulBuilder(builder: (context, StateSetter setDialog) {
+            return Stack(
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(
-                      right: appBarHeight / 4, bottom: appBarHeight / 5),
-                  child: GestureDetector(
-                      child: Container(
-                        height: appBarHeight / 2.8,
-                        width: appBarHeight / 2.8,
-                        decoration: BoxDecoration(
-                            color: Color(0xfffFFFFFF).withOpacity(0.24),
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(appBarHeight))),
-                        child: Icon(
-                          Icons.clear,
-                          color: Colors.white,
-                          size: s42,
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                      }),
-                ),
-              ],
-            ),
-            Container(
-              height: screenHeightDp / 1.7,
-              width: screenWidthDp / 1.1,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(50))),
-              child: Stack(
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: a.width / 100),
-                    child: Scaffold(
-                      backgroundColor: Colors.transparent,
-                      resizeToAvoidBottomPadding: false,
-                      body: Container(
-                        decoration: BoxDecoration(
-                            color: Color(0xfff282828),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(7.0))),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              child: Report_DropDownButton(),
-                            ),
-                            Container(
-                              /*  margin: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),*/
-                              padding: EdgeInsets.only(
-                                  top: a.width / 100, left: a.width / 50),
-                              child: TextField(
-                                onChanged: (str){
-                                  final report = Provider.of<Report>(context, listen: false);
-                                  report.reportText = str;
-                                },
-                                style: TextStyle(
-                                    fontSize: s52, color: Colors.white),
-                                minLines: 5,
-                                maxLines: 5,
-                                decoration: InputDecoration(
-                                  // fillColor: Colors.redAccent,
-                                  // filled: true,
-                                  border: InputBorder.none,
-                                  hintText: 'รายงานเจ้าของสแครปรายนี้',
-                                  hintStyle: TextStyle(
-                                    fontSize: s54,
-                                    height: 0.08,
-                                    color: Colors.white30,
-                                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: appBarHeight),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(
+                              right: appBarHeight / 4,
+                              bottom: appBarHeight / 5),
+                          child: GestureDetector(
+                              child: Container(
+                                height: appBarHeight / 2.8,
+                                width: appBarHeight / 2.8,
+                                decoration: BoxDecoration(
+                                    color: Color(0xfffFFFFFF).withOpacity(0.24),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(appBarHeight))),
+                                child: Icon(
+                                  Icons.clear,
+                                  color: Colors.white,
+                                  size: s42,
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              height: appBarHeight * 1.75,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    updateData();
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.only(
-                                        left: appBarHeight / 15),
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: a.width / 40,
-                                      vertical: a.width / 40,
-                                    ),
-                                    width: a.width / 8,
-                                    height: a.width / 8,
-                                    //alignment: Alignment.center,
-                                    child: Icon(
-                                      Icons.send,
-                                      color: Color(0xff26A4FF),
-                                      size: s60 * 0.8,
-                                    ),
-
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(a.width)),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
+                              onTap: () {
+                                Navigator.pop(context);
+                              }),
                         ),
+                      ],
+                    ),
+                    Container(
+                      width: screenWidthDp / 1.1,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(50))),
+                      child: Stack(
+                        children: [
+                          Container(
+                              padding: EdgeInsets.only(top: a.width / 100),
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Color(0xfff282828),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(7.0))),
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                      color: Color(0xff383838),
+                                                      width: 2))),
+                                          child: Report_DropDownButton(),
+                                        ),
+                                        Container(
+                                          height: screenHeightDp / 2.1,
+                                          padding: EdgeInsets.only(
+                                              top: a.width / 100,
+                                              left: a.width / 50),
+                                          child: TextField(
+                                            maxLines: null,
+                                            onChanged: (str) =>
+                                                describe = str.trim(),
+                                            style: TextStyle(
+                                                fontSize: s52,
+                                                color: Colors.white),
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText:
+                                                  'รายงานเจ้าของสแครปรายนี้',
+                                              hintStyle: TextStyle(
+                                                fontSize: s54,
+                                                height: 0.08,
+                                                color: Colors.white30,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            GestureDetector(
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: appBarHeight / 15),
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: a.width / 40,
+                                                    vertical: a.width / 40,
+                                                  ),
+                                                  width: a.width / 8,
+                                                  height: a.width / 8,
+                                                  child: Icon(Icons.send,
+                                                      color: Color(0xff26A4FF),
+                                                      size: s60 * 0.8),
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              a.width)),
+                                                ),
+                                                onTap: () async {
+                                                  setDialog(
+                                                      () => loading = true);
+                                                  report.reportText = describe;
+                                                  await reportUser
+                                                      .updateData(context);
+                                                  setDialog(
+                                                      () => loading = false);
+                                                  nav.pop(context);
+                                                  toast.toast(
+                                                      'รายงานผู้ใช้รายนี้แล้ว');
+                                                }),
+                                          ],
+                                        )
+                                      ]))),
+                        ],
                       ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      vertical: screenHeightDp / 18,
-                    ),
-                    child: Divider(
-                      color: Color(0xff383838),
-                      thickness: 2,
-                      indent: 5,
-                      endIndent: 5,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                  ],
+                ),
+                loading ? Loading() : SizedBox()
+              ],
+            );
+          }),
         );
       });
 }
