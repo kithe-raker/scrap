@@ -27,20 +27,22 @@ class FollowsFunction {
     otherRef.update({'followers': data.value + 1});
     ref.update({'following': followingCounts + 1});
     cacheFriends.addFollowing(following: [otherUid]);
-    batch.updateData(
+    batch.setData(
         fireStore
             .collection('Users/${user.region}/users/${user.uid}/following')
             .document('$index'),
         {
           'list': FieldValue.arrayUnion([otherUid])
-        });
-    batch.updateData(
+        },
+        merge: true);
+    batch.setData(
         fireStore
             .collection('$otherCollRef/$otherUid/follower')
             .document((data.value + 1) ~/ 1000),
         {
           'list': FieldValue.arrayUnion([user.uid])
-        });
+        },
+        merge: true);
     await batch.commit();
     loading.add(false);
   }
@@ -68,13 +70,21 @@ class FollowsFunction {
         .collection('Users/${user.region}/users/${user.uid}/following')
         .where('list', arrayContains: user.uid)
         .getDocuments();
-    batch.updateData(otherDoc.documents[0].reference, {
-      'list': FieldValue.arrayRemove([user.uid])
-    });
-    batch.updateData(docs.documents[0].reference, {
-      'list': FieldValue.arrayRemove([otherUid])
-    });
+    batch.setData(
+        otherDoc.documents[0].reference,
+        {
+          'list': FieldValue.arrayRemove([user.uid])
+        },
+        merge: true);
+    batch.setData(
+        docs.documents[0].reference,
+        {
+          'list': FieldValue.arrayRemove([otherUid])
+        },
+        merge: true);
     await batch.commit();
     loading.add(false);
   }
 }
+
+final followFunc = FollowsFunction();

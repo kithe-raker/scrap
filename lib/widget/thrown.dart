@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/SelectPosition.dart';
 import 'package:scrap/widget/Ads.dart';
 
 //ฟังก์ชั่นปากระดาษ
-void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
+void writerScrap(BuildContext context,
+    {LatLng latLng, String thrownUID, String ref, bool isThrow = false}) {
   var _key = GlobalKey<FormState>();
-  bool public = false;
+  bool public = false, loading = false;
   final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
   showDialog(
       context: context,
@@ -19,6 +22,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
         Size a = MediaQuery.of(context).size;
         screenutilInit(context);
         return StatefulBuilder(builder: (context, StateSetter setState) {
+          scrap.loading.listen((value) => setState(() => loading = value));
           return Scaffold(
             backgroundColor: Colors.black,
             body: Stack(
@@ -222,15 +226,16 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
                                           scrapData.public = public;
-                                          if (!isThrow) {
-                                            Navigator.pop(context);
-                                            Navigator.push(
+                                          if (isThrow) {
+                                            scrap.throwTo(context,
+                                                thrownUID: thrownUID,
+                                                collRef: ref);
+                                          } else {
+                                            nav.pop(context);
+                                            nav.push(
                                                 context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        SelectPosition(
-                                                            defaultLatLng:
-                                                                latLng)));
+                                                SelectPosition(
+                                                    defaultLatLng: latLng));
                                           }
                                         }
                                       }),
@@ -249,6 +254,7 @@ void writerScrap(BuildContext context, {LatLng latLng, bool isThrow = false}) {
                     child: Container(
                       child: Ads(),
                     )),
+                loading ? Loading() : SizedBox()
               ],
             ),
           );

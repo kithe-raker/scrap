@@ -66,42 +66,44 @@ class _BlockingListState extends State<BlockingList> {
             ),
           ),
         ),
-        body: StreamBuilder(
-            stream: Firestore.instance
-                .collection('Users')
-                .document(widget.uid)
-                .collection('info')
-                .document('blockList')
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.active) {
-                List blockList = snapshot?.data['blockList'] ?? [];
-                return blockList?.length == null || blockList?.length == 0
-                    ? Center(
-                        child: nullReturn(
-                            scr, 'ไม่มีผู้ใช้ที่คุณบล็อค', scr.height / 2))
-                    : dataReturn(blockList.reversed.toList(), scr);
-              } else
-                return Container(
-                  height: scr.height,
-                  width: scr.width,
-                  child: Center(
-                    child: Container(
-                      width: scr.width / 3.6,
-                      height: scr.width / 3.6,
-                      decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.42),
-                          borderRadius: BorderRadius.circular(12)),
-                      child: FlareActor(
-                        'assets/paper_loading.flr',
-                        animation: 'Untitled',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                );
-            }));
+        body: Center(child: nullReturn(scr, 'ไม่มีผู้ใช้ที่คุณบล็อค', scr.height / 2))
+        // StreamBuilder(
+        //     stream: Firestore.instance
+        //         .collection('Users')
+        //         .document(widget.uid)
+        //         .collection('info')
+        //         .document('blockList')
+        //         .snapshots(),
+        //     builder: (context, snapshot) {
+        //       if (snapshot.hasData &&
+        //           snapshot.connectionState == ConnectionState.active) {
+        //         List blockList = snapshot?.data['blockList'] ?? [];
+        //         return blockList?.length == null || blockList?.length == 0
+        //             ? Center(
+        //                 child: nullReturn(
+        //                     scr, 'ไม่มีผู้ใช้ที่คุณบล็อค', scr.height / 2))
+        //             : dataReturn(blockList.reversed.toList(), scr);
+        //       } else
+        //         return Container(
+        //           height: scr.height,
+        //           width: scr.width,
+        //           child: Center(
+        //             child: Container(
+        //               width: scr.width / 3.6,
+        //               height: scr.width / 3.6,
+        //               decoration: BoxDecoration(
+        //                   color: Colors.white.withOpacity(0.42),
+        //                   borderRadius: BorderRadius.circular(12)),
+        //               child: FlareActor(
+        //                 'assets/paper_loading.flr',
+        //                 animation: 'Untitled',
+        //                 fit: BoxFit.cover,
+        //               ),
+        //             ),
+        //           ),
+        //         );
+        //     })
+        );
   }
 
   Widget nullReturn(Size a, String text, double heigth) {

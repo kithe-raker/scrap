@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/thrown.dart';
 
@@ -17,13 +18,19 @@ class PersonCard extends StatefulWidget {
 }
 
 class _PersonCardState extends State<PersonCard> {
+  String uid, ref;
+
+  @override
+  void initState() {
+    widget.uid == null ? uid = widget.data['uid'] : uid = widget.uid;
+    widget.ref == null ? ref = widget.data['ref'] : ref = widget.ref;
+    super.initState();
+  }
+
   Future<DataSnapshot> streamTransaction(String field) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
-    return userDb
-        .reference()
-        .child('users/${widget.uid ?? widget.data['uid']}/$field')
-        .once();
+    return userDb.reference().child('users/$uid/$field').once();
   }
 
   @override
@@ -79,17 +86,19 @@ class _PersonCardState extends State<PersonCard> {
         ),
       ),
       onTap: () {
-        nav.push(context, Other_Profile());
+        nav.push(context,
+            Other_Profile(data: widget.data, uid: uid, ref: widget.ref));
       },
     );
   }
 
   Widget throwButton() {
+    final user = Provider.of<UserData>(context, listen: false);
     return FutureBuilder(
         future: streamTransaction('allowThrow'),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return snapshot.data.value ?? false
+            return snapshot.data.value ?? true
                 ? GestureDetector(
                     child: Container(
                       width: screenWidthDp / 6,
@@ -109,7 +118,11 @@ class _PersonCardState extends State<PersonCard> {
                       ),
                     ),
                     onTap: () {
-                      writerScrap(context);
+                      writerScrap(context,
+                          isThrow: true, thrownUID: uid, ref: ref);
+                      // user.papers > 0
+                      //     ?   writerScrap(context, isThrow: true, thrownUID: uid);
+                      //     : toast.toast('กระดาษของคุณหมดแล้ว');
                     })
                 : SizedBox();
           } else {

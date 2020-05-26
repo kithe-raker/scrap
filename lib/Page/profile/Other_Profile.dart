@@ -1,13 +1,21 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrap/Page/setting/blockingList.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/FriendsCache.dart';
+import 'package:scrap/function/follows/FollowsFunction.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
+import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/block.dart';
+import 'package:scrap/widget/thrown.dart';
 import 'package:scrap/widget/wrap.dart';
 
-bool value = false, v = false;
+bool value = false, pickedScrap = false;
 /*
 List Problem
 - Text ก่อน wrap() ไม่อยู่ตรงกลาง ( control+F => ยุบพรรคอนาโค้งใหม่ )
@@ -16,12 +24,20 @@ List Problem
 
 // หน้า Profile ของคนอื่น
 class Other_Profile extends StatefulWidget {
+  final Map data;
+  final String uid;
+  final String ref;
+  Other_Profile({@required this.data, this.uid, this.ref});
   @override
   _Other_ProfileState createState() => _Other_ProfileState();
 }
 
 class _Other_ProfileState extends State<Other_Profile> {
   int page = 0;
+  String uid;
+  List followList = [], pickScraps = [];
+  bool loading = true;
+  var refreshController = RefreshController();
   var controller = PageController();
 
   Stream<Event> streamTransaction(String uid, String field) {
@@ -30,29 +46,255 @@ class _Other_ProfileState extends State<Other_Profile> {
     return userDb.reference().child('users/$uid/$field').onValue;
   }
 
+  Future<DataSnapshot> futureTransaction(String uid, String field) {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    return userDb.reference().child('users/$uid/$field').once();
+  }
+
+  @override
+  void initState() {
+    initList();
+    super.initState();
+  }
+
+  Future<void> initList() async {
+    followList = await cacheFriends.getFollowing();
+    uid = widget.uid;
+    setState(() => loading = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<UserData>(context, listen: false);
+    screenutilInit(context);
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(top: appBarHeight / 1.35),
+              child: SingleChildScrollView(
+                // controller: refreshController,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      height: screenWidthDp / 3,
+                      width: screenWidthDp / 3,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(screenHeightDp),
+                          image: DecorationImage(
+                              image: NetworkImage(widget.data['img']),
+                              fit: BoxFit.cover)),
+                    ),
+                    SizedBox(height: appBarHeight / 5),
+                    Text('@${widget.data['id']}',
+                        style: TextStyle(color: Colors.white, fontSize: s60)),
+                    SizedBox(height: appBarHeight / 10),
+                    Container(
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                          dataProfile('เก็บไว้', uid, field: 'pick'),
+                          dataProfile('แอทเทนชัน', uid, field: 'att'),
+                          dataProfile('โดนปาใส่', uid, field: 'thrown'),
+                        ])),
+                    Container(height: screenHeightDp / 100),
+                    SizedBox(height: appBarHeight / 10),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[followButton(), throwButton()]),
+                    Container(height: screenHeightDp / 40),
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: screenWidthDp / 30),
+                      child: Text('${widget.data['status'] ?? ''}',
+                          style: TextStyle(color: Colors.white, fontSize: s40),
+                          textAlign: TextAlign.center),
+                    ),
+                    Container(height: screenHeightDp / 40),
+                    Divider(color: Colors.grey),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {
+                            pickedScrap = true;
+                            setState(() {});
+                          },
+                          child: Container(
+                            height: appBarHeight / 2,
+                            decoration: BoxDecoration(
+                              border: pickedScrap
+                                  ? Border(
+                                      bottom: BorderSide(
+                                          width: 2.0, color: Colors.white),
+                                    )
+                                  : null,
+                            ),
+                            child: Text(
+                              'เก็บจากที่ทิ้งไว้',
+                              style: TextStyle(
+                                  fontSize: s48,
+                                  color: Colors.white,
+                                  fontWeight:
+                                      pickedScrap ? FontWeight.bold : null),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            pickedScrap = false;
+                            setState(() {});
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: pickedScrap
+                                    ? null
+                                    : Border(
+                                        bottom: BorderSide(
+                                            width: 2.0, color: Colors.white))),
+                            child: Text(
+                              'เก็บจากโดนปาใส่',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: s48,
+                                  fontWeight:
+                                      pickedScrap ? null : FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(color: Colors.grey, height: 0),
+                    SizedBox(height: screenWidthDp / 36),
+                    scrapGrid()
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+                top: 0,
+                child: Container(
+                  child: appbar_OtherProfile(context),
+                )),
+            Positioned(
+                bottom: 0,
+                child: Container(
+                  child: Ads(),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget followButton() {
+    return StatefulBuilder(builder: (context, StateSetter setButton) {
+      return GestureDetector(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(appBarHeight / 3, appBarHeight / 50,
+                appBarHeight / 3, appBarHeight / 50),
+            decoration: BoxDecoration(
+              border: Border.all(color: Color(0xfff26A4FF)),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Text(
+              followList.contains(uid) ? 'กำลังติดตาม' : 'ติดตาม',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xfff26A4FF),
+                  fontSize: s52),
+            ),
+          ),
+          onTap: () {
+            if (followList.contains(uid)) {
+              followFunc.unFollowUser(context,
+                  otherUid: uid,
+                  otherCollRef: widget.ref ?? widget.data['ref'],
+                  followingCounts: followList.length);
+              followList.remove(uid);
+              setButton(() {});
+            } else {
+              followFunc.followUser(context,
+                  otherUid: uid,
+                  otherCollRef: widget.ref ?? widget.data['ref'],
+                  followingCounts: followList.length);
+              followList.add(uid);
+              setButton(() {});
+            }
+          });
+    });
+  }
+
+  Widget throwButton() {
+    final user = Provider.of<UserData>(context, listen: false);
+    return FutureBuilder(
+        future: futureTransaction(uid, 'allowThrow'),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data.value ?? false
+                ? Container(
+                    child: GestureDetector(
+                        child: Container(
+                          margin: EdgeInsets.only(left: appBarHeight / 6),
+                          width: appBarHeight * 1.55,
+                          padding: EdgeInsets.fromLTRB(
+                              appBarHeight / 5,
+                              appBarHeight / 50,
+                              appBarHeight / 5,
+                              appBarHeight / 50),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            'ปาสแครป',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xfff26A4FF),
+                              fontSize: s52,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          user.papers > 0
+                              ? writerScrap(context,
+                                  isThrow: true,
+                                  thrownUID: uid,
+                                  ref: widget.ref)
+                              : toast.toast('กระดาษคุณหมดแล้ว');
+                        }))
+                : SizedBox();
+          } else {
+            return SizedBox();
+          }
+        });
+  }
+
   // Appbar สำหรับ หน้า Profile ของคนอื่น
   Widget appbar_OtherProfile(BuildContext context) {
     return Container(
       height: appBarHeight / 1.35,
       width: screenWidthDp,
-      margin: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 100,
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-              onPressed: () {}),
-          IconButton(
-              icon: Icon(
-                Icons.more_horiz,
-                color: Colors.white,
-              ),
-              onPressed: () {
+          GestureDetector(
+              child: Icon(Icons.arrow_back, color: Colors.white, size: s54),
+              onTap: () {
+                nav.pop(context);
+              }),
+          GestureDetector(
+              child: Icon(Icons.more_horiz, color: Colors.white, size: s54),
+              onTap: () {
                 showButtonSheet(context);
               }),
         ],
@@ -84,300 +326,20 @@ class _Other_ProfileState extends State<Other_Profile> {
     );
   }
 
-  Widget checkv() {
-    if (v == false)
-      return Stack(
-        children: <Widget>[
-          Column(
+  Widget scrapGrid() {
+    return Container(
+        margin: EdgeInsets.only(bottom: screenHeightDp / 10),
+        child: Wrap(
+            spacing: screenWidthDp / 42,
+            runSpacing: screenWidthDp / 42,
+            alignment: WrapAlignment.start,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      v = false;
-                      setState(() {});
-                    },
-                    child: Container(
-                      height: appBarHeight / 2,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(width: 2.0, color: Colors.white),
-                        ),
-                      ),
-                      child: Text(
-                        'เก็บจากที่ทิ้งไว้',
-                        style: TextStyle(
-                            fontSize: s48,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      v = true;
-                      setState(() {});
-                    },
-                    child: Container(
-                      child: Text(
-                        'เก็บจากโดนปาใส่',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: s48,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: appBarHeight / 3,
-              ),
-              Wrapblock(),
-            ],
-          ),
-          Positioned(
-              child: Container(
-            padding: EdgeInsets.only(top: appBarHeight / 2.6),
-            child: Divider(
-              color: Colors.grey,
-            ),
-          )),
-        ],
-      );
-    else
-      return Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      v = false;
-                      setState(() {});
-                    },
-                    child: Container(
-                      child: Text(
-                        'เก็บจากที่ทิ้งไว้',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: s48,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      v = true;
-                      setState(() {});
-                    },
-                    child: Container(
-                      height: appBarHeight / 2,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(width: 2.0, color: Colors.white),
-                        ),
-                      ),
-                      child: Text(
-                        'เก็บจากโดนปาใส่',
-                        style: TextStyle(
-                            fontSize: s48,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: appBarHeight / 3,
-              ),
-              Wrapblock(),
-            ],
-          ),
-          Positioned(
-              child: Container(
-            padding: EdgeInsets.only(top: appBarHeight / 2.6),
-            child: Divider(
-              color: Colors.grey,
-            ),
-          )),
-        ],
-      );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final user = Provider.of<UserData>(context, listen: false);
-    screenutilInit(context);
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(
-                  top: appBarHeight / 1.35, bottom: appBarHeight),
-              color: Colors.black,
-              child: ListView(
-                physics: BouncingScrollPhysics(),
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Container(
-                        height: screenWidthDp / 3,
-                        width: screenWidthDp / 3,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(screenHeightDp),
-                        ),
-                      ),
-                      SizedBox(
-                        height: appBarHeight / 5,
-                      ),
-                      Text(
-                        '@MIKE',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: s60,
-                        ),
-                      ),
-                      SizedBox(
-                        height: appBarHeight / 10,
-                      ),
-                      Container(
-                        /*margin: EdgeInsets.symmetric(
-                        horizontal: screenWidthDp / 40,
-                      ),*/
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            dataProfile('เก็บไว้', user.uid, field: 'pick'),
-                            dataProfile('แอทเทนชัน', user.uid, field: 'att'),
-                            dataProfile('โดนปาใส่', user.uid, field: 'thrown'),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: screenHeightDp / 100,
-                      ),
-                      SizedBox(
-                        height: appBarHeight / 10,
-                      ),
-                      Container(
-                        width: appBarHeight * 4.5,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              width: appBarHeight * 1.55,
-                              child: GestureDetector(
-                                onTap: () {},
-                                //color: Colors.grey,
-                                child: Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      appBarHeight / 3,
-                                      appBarHeight / 50,
-                                      appBarHeight / 3,
-                                      appBarHeight / 50),
-                                  decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: Color(0xfff26A4FF)),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Text(
-                                    'ติดตาม',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xfff26A4FF),
-                                      fontSize: s52,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: appBarHeight / 6,
-                            ),
-                            Container(
-                              child: GestureDetector(
-                                onTap: () {},
-                                //color: Colors.grey,
-                                child: Container(
-                                  width: appBarHeight * 1.55,
-                                  padding: EdgeInsets.fromLTRB(
-                                      appBarHeight / 5,
-                                      appBarHeight / 50,
-                                      appBarHeight / 5,
-                                      appBarHeight / 50),
-                                  decoration: BoxDecoration(
-                                    // border: Border.all(
-                                    //   color: Colors.blue
-                                    // ),
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Text(
-                                    'ปาสแครป',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Color(0xfff26A4FF),
-                                      fontSize: s52,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: screenHeightDp / 40,
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: screenWidthDp / 30,
-                        ),
-                        child: Text(
-                          '“ยุบพรรคอนาคตใหม่แต่ยุบคนไทย\nไม่ได้หรอก\tไอตู่หน้าโง่”',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: s40,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Container(
-                        height: screenHeightDp / 40,
-                      ),
-                      Divider(
-                        color: Colors.grey,
-                      ),
-                      checkv(),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-                top: 0,
-                child: Container(
-                  child: appbar_OtherProfile(context),
-                )),
-            Positioned(
-                bottom: 0,
-                child: Container(
-                  child: Ads(),
-                )),
-          ],
-        ),
-      ),
-    );
+              Block(),
+              Block(),
+              Block(),
+              Block(),
+              Block(),
+            ]));
   }
 
   Widget dataProfile(String name, String uid, {@required String field}) {
@@ -439,12 +401,6 @@ void showButtonSheet(context) {
           ),
           child: Stack(
             children: <Widget>[
-              // Divider(
-              //   thickness: 10,
-              //   color: Colors.grey,
-              //   indent: 140,
-              //   endIndent: 140,
-              // ),
               Align(
                   alignment: Alignment.topCenter,
                   child: Container(
@@ -467,22 +423,22 @@ void showButtonSheet(context) {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            height: 50,
-                            width: 50,
-                            margin: EdgeInsets.symmetric(
-                              horizontal: 15,
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.circular(screenHeightDp)),
-                            child: IconButton(
-                                icon: Icon(
-                                  Icons.block,
-                                  size: appBarHeight / 3,
+                          GestureDetector(
+                            child: Container(
+                                height: 50,
+                                width: 50,
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 15,
                                 ),
-                                onPressed: null),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.circular(screenHeightDp)),
+                                child:
+                                    Icon(Icons.block, size: appBarHeight / 3)),
+                            onTap: () {
+                              nav.push(context, BlockingList(uid: null));
+                            },
                           ),
                           Text(
                             'บล็อคผู้ใช้',

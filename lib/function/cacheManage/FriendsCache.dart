@@ -62,12 +62,14 @@ class FriendsCache {
   Future<List> getRandomFollowing() async {
     var list = await getFollowing();
     List randomList = [];
-    if (list.length > 0) {
+    if (list.length > 3) {
       for (var i = 0; i < 3; i++) {
         var index = random.nextInt(list.length);
         randomList.add(list[index]);
         list.remove(list[index]);
       }
+    } else {
+      randomList.addAll(list);
     }
     return randomList;
   }
