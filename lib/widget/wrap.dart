@@ -12,8 +12,8 @@ class _WrapblockState extends State<Wrapblock> {
     Size a = MediaQuery.of(context).size;
     screenutilInit(context);
     return Container(
-      height: 407 / 365 / 1.035 * s65 * s17,
-      width: 365 / 407 / 1.035 * s65 * s17,
+      height: screenWidthDp / 2.16 * 1.21,
+      width: screenWidthDp / 2.16,
       color: Colors.transparent,
     );
   }
