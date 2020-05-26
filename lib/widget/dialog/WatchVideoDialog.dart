@@ -152,9 +152,13 @@ void dialogvideo(BuildContext context, String uid) {
                                                 await scrap.resetScrap(context,
                                                     uid: uid);
                                                 setState(() => loading = false);
-                                                Navigator.pop(context);
                                                 dialogfinishpaper(context);
-                                              } else {
+                                              } else if (event ==
+                                                      MobileAdEvent
+                                                          .failedToLoad ||
+                                                  event ==
+                                                      MobileAdEvent
+                                                          .leftApplication) {
                                                 scrap.toast(
                                                     'เกิดข้อผิดพลาดกรุณาลองอีกครั้ง');
                                                 setState(() => loading = false);

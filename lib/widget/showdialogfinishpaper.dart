@@ -111,6 +111,7 @@ void dialogfinishpaper(BuildContext context) {
                                   )),
                               onTap: () {
                                 Navigator.pop(context);
+                                Navigator.pop(context);
                               },
                             ),
                             InkWell(
