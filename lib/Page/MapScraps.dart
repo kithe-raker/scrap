@@ -13,19 +13,23 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/scrapFilter.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/ads.dart';
 import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
+import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/thrown.dart';
 
 class MapScraps extends StatefulWidget {
@@ -299,8 +303,11 @@ class _MapScrapsState extends State<MapScraps> {
                                                     .toDate())
                                           ],
                                         ),
-                                        Icon(Icons.more_horiz,
-                                            color: Colors.white, size: s70)
+                                        GestureDetector(
+                                            child: Icon(Icons.more_horiz,
+                                                color: Colors.white, size: s70),
+                                            onTap: () => showMore(context,
+                                                writerUid: data['uid']))
                                       ],
                                     ),
                                   ),
@@ -427,22 +434,6 @@ class _MapScrapsState extends State<MapScraps> {
                                                         }
                                                         setTrans(() {});
                                                       }
-                                                      // if (inHistory('picked',
-                                                      //     data.documentID)) {
-                                                      //   ++pick;
-                                                      //   history['picked']
-                                                      //       .remove(data
-                                                      //           .documentID);
-                                                      // } else {
-                                                      //   --pick;
-                                                      //   history['picked'].add(
-                                                      //       data.documentID);
-                                                      // }
-                                                      // scrap.updateScrapTrans(
-                                                      //     'picked',
-                                                      //     data,
-                                                      //     context);
-                                                      // setTrans(() {});
                                                     },
                                                   ),
                                                   GestureDetector(
@@ -467,99 +458,6 @@ class _MapScrapsState extends State<MapScraps> {
                                                       );
                                                     },
                                                   )
-                                                  // Container(
-                                                  //   decoration: BoxDecoration(
-                                                  //       color: Colors.white,
-                                                  //       borderRadius: BorderRadius.circular(a.width)),
-                                                  //   child: Row(
-                                                  //     mainAxisAlignment: MainAxisAlignment.center,
-                                                  //     children: <Widget>[
-                                                  //       writer != 'สุ่มโดย Scrap'
-                                                  //           ? InkWell(
-                                                  //               child: Container(
-                                                  //                 margin: EdgeInsets.only(
-                                                  //                     right: a.width / 42),
-                                                  //                 width: a.width / 6,
-                                                  //                 height: a.width / 6,
-                                                  //                 child: Column(
-                                                  //                     mainAxisAlignment:
-                                                  //                         MainAxisAlignment.center,
-                                                  //                     children: <Widget>[
-                                                  //                       Icon(
-                                                  //                         Icons.whatshot,
-                                                  //                         color: Colors.grey[600],
-                                                  //                         size: a.width / 14,
-                                                  //                       ),
-                                                  //                       Text(
-                                                  //                         "เผา",
-                                                  //                         style: TextStyle(
-                                                  //                             color: Colors.grey[600],
-                                                  //                             fontSize: a.width / 25),
-                                                  //                       )
-                                                  //                     ]),
-                                                  //               ),
-                                                  //               onTap: () async {
-                                                  //                 await burn(id);
-                                                  //                 Navigator.pop(context);
-                                                  //                 Taoast().toast('คุณได้เผากระดาษไปแล้ว');
-                                                  //               },
-                                                  //             )
-                                                  //           : SizedBox(),
-                                                  //       InkWell(
-                                                  //         child: Container(
-                                                  //           margin: EdgeInsets.only(right: a.width / 40),
-                                                  //           width: a.width / 6,
-                                                  //           height: a.width / 6,
-                                                  //           child: Column(
-                                                  //               mainAxisAlignment:
-                                                  //                   MainAxisAlignment.center,
-                                                  //               children: <Widget>[
-                                                  //                 Image.asset('assets/garbage_grey.png',
-                                                  //                     width: a.width / 14,
-                                                  //                     height: a.width / 14,
-                                                  //                     fit: BoxFit.cover),
-                                                  //                 Text(
-                                                  //                   "ทิ้งไว้",
-                                                  //                   style: TextStyle(
-                                                  //                       color: Colors.grey[600],
-                                                  //                       fontSize: a.width / 25),
-                                                  //                 )
-                                                  //               ]),
-                                                  //         ),
-                                                  //         onTap: () {
-                                                  //           Navigator.pop(context);
-                                                  //         },
-                                                  //       ),
-                                                  //       InkWell(
-                                                  //         child: Container(
-                                                  //           width: a.width / 6,
-                                                  //           height: a.width / 6,
-                                                  //           child: Column(
-                                                  //               mainAxisAlignment:
-                                                  //                   MainAxisAlignment.center,
-                                                  //               children: <Widget>[
-                                                  //                 Icon(
-                                                  //                   Icons.save_alt,
-                                                  //                   color: Colors.grey[600],
-                                                  //                   size: a.width / 14,
-                                                  //                 ),
-                                                  //                 Text(
-                                                  //                   "เก็บไว้",
-                                                  //                   style: TextStyle(
-                                                  //                       color: Colors.grey[600],
-                                                  //                       fontSize: a.width / 25),
-                                                  //                 )
-                                                  //               ]),
-                                                  //         ),
-                                                  //         onTap: () async {
-                                                  //           Navigator.pop(context);
-                                                  //           await pickScrap(
-                                                  //               id, text, '$time $date', writer);
-                                                  //         },
-                                                  //       ),
-                                                  //     ],
-                                                  //   ),
-                                                  // ),
                                                 ],
                                               ),
                                             ),
@@ -608,6 +506,119 @@ class _MapScrapsState extends State<MapScraps> {
             ));
       });
     }));
+  }
+
+  void showMore(context, {@required String writerUid}) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return Container(
+            height: appBarHeight * 3.4,
+            decoration: BoxDecoration(
+              color: Color(0xff202020),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
+            child: Stack(
+              children: <Widget>[
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 12, bottom: 4),
+                      width: screenWidthDp / 3.2,
+                      height: screenHeightDp / 81,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(screenHeightDp / 42),
+                        color: Color(0xff929292),
+                      ),
+                    )),
+                Container(
+                  margin: EdgeInsets.only(
+                    bottom: appBarHeight - 20,
+                  ),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                          screenHeightDp)),
+                                  child: Icon(Icons.block,
+                                      size: appBarHeight / 3)),
+                              onTap: () {},
+                            ),
+                            Text(
+                              'บล็อคผู้ใช้',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: s42,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                          screenHeightDp)),
+                                  child: Icon(Icons.report_problem,
+                                      size: appBarHeight / 3)),
+                              onTap: () {
+                                final report =
+                                    Provider.of<Report>(context, listen: false);
+                                report.targetId = writerUid;
+                                nav.pop(context);
+                                showDialogReport(context);
+                              },
+                            ),
+                            Text(
+                              'รายงาน',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: s42,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                    bottom: 0,
+                    child: Container(
+                      child: Ads(),
+                    )),
+              ],
+            ),
+          );
+        });
   }
 
   Widget iconWithLabel(String label,

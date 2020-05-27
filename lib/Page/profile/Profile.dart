@@ -196,15 +196,15 @@ class _ProfileState extends State<Profile> {
                                       // Image.asset('assets/paper-mini01.png'),
                                       // Image.asset('assets/paper-mini01.png'),
                                       // Image.asset('assets/paper-mini01.png'),
-                                      scrap_paper_cube(),
-                                      scrap_paper_cube(),
-                                      scrap_paper_cube(),
-                                      scrap_paper_cube(),
-                                      scrap_paper_cube(),
-                                      scrap_paper_cube(),
-                                      scrap_paper_cube(),
-                                      scrap_paper_cube(),
-                                      scrap_paper_cube(),
+                                      scrapPaper(),
+                                      scrapPaper(),
+                                      scrapPaper(),
+                                      scrapPaper(),
+                                      scrapPaper(),
+                                      scrapPaper(),
+                                      scrapPaper(),
+                                      scrapPaper(),
+                                      scrapPaper(),
                                     ],
                                   ),
                                 ),
@@ -541,20 +541,12 @@ Widget adsContainer() {
 }
 
 //ก้อนกระดาษ
-Widget scrap_paper_cube() {
+Widget scrapPaper() {
   return Transform.scale(
     scale: 1.1,
     child: Container(
-      margin: EdgeInsets.only(
-          //right: 6,
-          ),
-      width: screenWidthDp / 5.5,
-      //height: 20,
-      //color: Colors.white,
-      child: Image(
-        image: AssetImage('assets/paper-mini01.png'),
-      ),
-    ),
+        width: screenWidthDp / 5.5,
+        child: Image.asset('assets/paper-mini01.png', fit: BoxFit.cover)),
   );
 }
 
