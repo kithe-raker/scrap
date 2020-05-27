@@ -266,6 +266,7 @@ class AuthenService {
     var docs = await fireStore
         .collection('Users/${user.region}/users/${user.uid}/following')
         .getDocuments();
+    await cacheFriends.intitFile();
     if (docs.documents.length > 0)
       for (var doc in docs.documents) {
         cacheFriends.addFollowing(following: doc['list']);

@@ -77,8 +77,8 @@ void showPopup(BuildContext context) {
                               ],
                             ),
                             Divider(
-                              height: 5.0,
-                              color: Color(0xfff707070),
+                              height: 1.0,
+                              color: Color(0xff222222),
                             ),
                             SizedBox(
                               height: appBarHeight / 5,
@@ -106,7 +106,7 @@ void showPopup(BuildContext context) {
                                   hintStyle: TextStyle(
                                     fontSize: s48,
                                     height: 0.08,
-                                    color: Color(0xfffA2A2A2),
+                                    color: Color(0xffA2A2A2).withOpacity(0.43),
                                     //color: AppColors.textFieldInput
                                   ),
                                   enabledBorder: OutlineInputBorder(
@@ -139,7 +139,7 @@ void showPopup(BuildContext context) {
                                   width: screenWidthDp / 5,
                                   height: appBarHeight / 2.3,
                                   decoration: BoxDecoration(
-                                      color: Colors.black54,
+                                      color: Color(0xff000000),
                                       borderRadius: BorderRadius.circular(
                                           screenHeightDp)),
                                   child: Center(
@@ -171,7 +171,7 @@ void showPopup(BuildContext context) {
                                       child: Text(
                                         'เพิ่ม',
                                         style: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.normal,
                                           color: Colors.white,
                                           fontSize: s48,
                                         ),
@@ -223,142 +223,151 @@ class _OptionSettingState extends State<OptionSetting> {
     return Scaffold(
       backgroundColor: Colors.black,
       //resizeToAvoidBottomPadding: false,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  //mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: appBarHeight / 2,
-                    ),
-                    appbarOptionSetting(context),
-                    list_OptionSetting(context, Icons.face,
-                        ' จัดการบัญชีของฉัน', Manage_MyProfile()),
-                    list_OptionSetting(context, Icons.history,
-                        ' ประวัติการเขียนสแครป', HistoryScrap_MyProfile()),
-                    list_OptionSetting(context, Icons.description,
-                        ' ข้อกำหนดการให้บริการ', ComingSoon()),
-                    list_OptionSetting(context, Icons.extension,
-                        ' อธิบายฟีเจอร์', ComingSoon()),
-                    list_OptionSetting(context, Icons.markunread,
-                        ' สารจากผู้พัฒนา', ComingSoon()),
-                    list_OptionSetting(context, Icons.bug_report,
-                        ' แจ้งปัญหาระบบ', ReportToScrap_MyProfile()),
-                    list_OptionSetting(context, Icons.block, ' ประวัติการบล็อค',
-                        BlockUser_MyProfile()),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
-                      },
-                      child: Container(
-                        padding: EdgeInsets.only(left: appBarHeight / 10),
-                        /*   margin: EdgeInsets.symmetric(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    //mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      appbarOptionSetting(context),
+                      list_OptionSetting(context, Icons.face,
+                          ' จัดการบัญชีของฉัน', Manage_MyProfile()),
+                      list_OptionSetting(context, Icons.history,
+                          ' ประวัติการเขียนสแครป', HistoryScrap_MyProfile()),
+                      list_OptionSetting(context, Icons.description,
+                          ' ข้อกำหนดการให้บริการ', ComingSoon()),
+                      list_OptionSetting(context, Icons.extension,
+                          ' อธิบายฟีเจอร์', ComingSoon()),
+                      list_OptionSetting(context, Icons.markunread,
+                          ' สารจากผู้พัฒนา', ComingSoon()),
+                      list_OptionSetting(context, Icons.bug_report,
+                          ' แจ้งปัญหาระบบ', ReportToScrap_MyProfile()),
+                      list_OptionSetting(context, Icons.block,
+                          ' ประวัติการบล็อค', BlockUser_MyProfile()),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ComingSoon()));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(left: appBarHeight / 10),
+                          /*   margin: EdgeInsets.symmetric(
                           horizontal: 10,
                           //vertical: 5,
                         ),*/
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                    width: appBarHeight / 1.5,
-                                    child: Image.asset(
-                                      'assets/bualoi.png',
-                                      scale: 5,
-                                    )),
-                                Text(
-                                  'เกี่ยวกับ Bualoitech Co.,Ltd.',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: s60),
-                                )
-                              ],
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(right: appBarHeight) / 5,
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white,
-                                size: s54,
+                          margin: EdgeInsets.only(
+                              left: appBarHeight / 100,
+                              bottom: appBarHeight / 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      width: appBarHeight / 1.8,
+                                      child: Image.asset(
+                                        'assets/bualoi.png',
+                                        scale: 5,
+                                      )),
+                                  Text(
+                                    'เกี่ยวกับ Bualoitech Co.,Ltd.',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: s52),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
+                              Container(
+                                margin:
+                                    EdgeInsets.only(right: appBarHeight) / 5,
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.white,
+                                  size: s42,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    //ออกจากระบบ
-                    GestureDetector(
-                      child: Container(
-                          padding: EdgeInsets.only(left: appBarHeight / 10),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: appBarHeight / 1.5,
-                                        child: Icon(
-                                          Icons.exit_to_app,
-                                          color: Colors.white,
-                                          size: s70,
+                      //ออกจากระบบ
+                      GestureDetector(
+                        child: Container(
+                            padding: EdgeInsets.only(left: appBarHeight / 10),
+                            margin: EdgeInsets.only(
+                                left: appBarHeight / 100,
+                                bottom: appBarHeight / 4),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: appBarHeight / 1.5,
+                                          child: Icon(
+                                            Icons.exit_to_app,
+                                            color: Colors.white,
+                                            size: s60,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        'ออกจากระบบ',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: s60),
-                                      )
-                                    ])
-                              ])),
-                      onTap: () {
-                        authService.signOut(context);
-                      },
-                    ),
-                  ],
-                ),
-                /* SizedBox(
+                                        Text(
+                                          'ออกจากระบบ',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: s52),
+                                        )
+                                      ])
+                                ])),
+                        onTap: () {
+                          authService.signOut(context);
+                        },
+                      ),
+                    ],
+                  ),
+                  /* SizedBox(
                   height: appBarHeight * 1,
                 ),*/
-                Column(
-                  children: [
-                    SizedBox(
-                      height: appBarHeight / 1,
-                    ),
-                    GestureDetector(
-                      child: ClipRRect(
-                        child: Image.asset(
-                          'assets/scrapbig.png',
-                          scale: appBarHeight / 10,
-                        ),
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: appBarHeight / 3,
                       ),
-                      onTap: () async {
-                        await FirebaseAuth.instance.signOut();
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
-                      },
-                    ),
-                    Text(
-                      'version 2.0.1\n\n',
-                      style: TextStyle(color: Colors.white, fontSize: s58),
-                    ),
-                  ],
-                ),
-              ],
+                      GestureDetector(
+                        child: ClipRRect(
+                          child: Image.asset(
+                            'assets/scrapbig.png',
+                            scale: appBarHeight / 5,
+                          ),
+                        ),
+                        onTap: () async {
+                          await FirebaseAuth.instance.signOut();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()));
+                        },
+                      ),
+                      Text(
+                        'version 2.0.1\n\n',
+                        style: TextStyle(color: Colors.white, fontSize: s42),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          loading ? Loading() : SizedBox()
-        ],
+            loading ? Loading() : SizedBox()
+          ],
+        ),
       ),
     );
   }
@@ -366,13 +375,54 @@ class _OptionSettingState extends State<OptionSetting> {
 
 Widget appbarOptionSetting(BuildContext context) {
   return Container(
-    height: appBarHeight / 1.35,
+    height: appBarHeight / 1.42,
     width: screenWidthDp,
-    margin: EdgeInsets.symmetric(
-      horizontal: screenWidthDp / 100,
+    color: Colors.black,
+    /* padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),*/
+    /*padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),*/
+    padding: EdgeInsets.symmetric(
+      horizontal: screenWidthDp / 21,
     ),
     child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        GestureDetector(
+            child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
+            onTap: () {
+              Navigator.pop(context);
+            }),
+        GestureDetector(
+            child: Icon(
+              Icons.more_horiz,
+              color: Colors.white,
+              size: s65,
+            ),
+            onTap: () {
+              //showButtonSheet(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => OptionSetting()));
+            }),
+      ],
+    ),
+  ) /*Container(
+    height: appBarHeight / 1.35,
+    width: screenWidthDp,
+    /* margin: EdgeInsets.symmetric(
+      horizontal: screenWidthDp / 100,
+    ),*/
+    //padding: EdgeInsets.only(top: appBarHeight / 1.35),
+    margin: EdgeInsets.symmetric(
+      horizontal: screenWidthDp / 21,
+    ),
+    // EdgeInsets.only(left: screenWidthDp / 100, bottom: appBarHeight / 2.5),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
             icon: Icon(
@@ -386,8 +436,9 @@ Widget appbarOptionSetting(BuildContext context) {
         Text(
           'การตั้งค่า',
           style: TextStyle(
-            fontSize: s60,
+            fontSize: s52,
             color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
         IconButton(
@@ -399,7 +450,8 @@ Widget appbarOptionSetting(BuildContext context) {
         ),
       ],
     ),
-  );
+  )*/
+      ;
 }
 
 // list_OptionSetting เป็น Widget ที่แสดงลิสต์ต่างๆในการตั้งค่า
@@ -412,10 +464,13 @@ Widget list_OptionSetting(context, icon, name, stateful) {
             context, MaterialPageRoute(builder: (context) => stateful));
       },
       child: Container(
-        margin: EdgeInsets.symmetric(
+        /* margin: EdgeInsets.symmetric(
           //horizontal: 10,
           vertical: 5,
-        ),
+
+        ),*/
+        margin:
+            EdgeInsets.only(left: appBarHeight / 100, bottom: appBarHeight / 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -424,18 +479,18 @@ Widget list_OptionSetting(context, icon, name, stateful) {
                 Icon(
                   icon,
                   color: Colors.white,
-                  size: s70,
+                  size: s60,
                 ),
                 Text(
                   name,
-                  style: TextStyle(color: Colors.white, fontSize: s60),
+                  style: TextStyle(color: Colors.white, fontSize: s52),
                 )
               ],
             ),
             Icon(
               Icons.arrow_forward_ios,
               color: Colors.white,
-              size: s54,
+              size: s42,
             )
           ],
         ),
@@ -445,10 +500,13 @@ Widget list_OptionSetting(context, icon, name, stateful) {
 // Appbar ในหน้า statefulต่างๆ ที่หลังจากกด
 Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
   return Container(
-    height: appBarHeight / 1.35,
+    height: appBarHeight / 1.42,
     width: screenWidthDp,
-    margin: EdgeInsets.symmetric(
+    /* margin: EdgeInsets.symmetric(
       horizontal: screenWidthDp / 100,
+    ),*/
+    padding: EdgeInsets.symmetric(
+      horizontal: screenWidthDp / 21,
     ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -467,13 +525,14 @@ Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
             Icon(
               icon,
               color: Colors.white,
-              size: s58,
+              size: s60,
             ),
             Text(
               name,
               style: TextStyle(
-                fontSize: s60,
+                fontSize: s52,
                 color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],
@@ -541,6 +600,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                         style: TextStyle(
                           fontSize: s60,
                           color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
@@ -548,6 +608,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                         style: TextStyle(
                           fontSize: s60,
                           color: Color(0xfff26A4FF),
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -614,6 +675,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                         fontStyle: FontStyle.italic,
                         fontSize: s42,
                         color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -659,6 +721,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                     Text(
                       ' เปลี่ยนเบอร์โทรศัพท์',
                       style: TextStyle(
+                        fontWeight: FontWeight.bold,
                         fontSize: s42,
                         color: Colors.white,
                       ),
@@ -679,6 +742,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                     Text(
                       ' เปลี่ยนรหัสผ่าน',
                       style: TextStyle(
+                        fontWeight: FontWeight.bold,
                         fontSize: s42,
                         color: Colors.white,
                       ),
@@ -871,7 +935,7 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                 width: screenWidthDp / 1.1,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Color(0xff202020),
+                  color: Color(0xff282828),
                 ),
                 child: Container(
                   margin: EdgeInsets.all(10),
@@ -883,9 +947,9 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                           Text(
                             'ถึงผู้พัฒนา',
                             style: TextStyle(
-                              fontSize: s60,
-                              color: Colors.white,
-                            ),
+                                fontSize: s60,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -1059,19 +1123,17 @@ class _ComingSoonState extends State<ComingSoon> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Container(
-                height: appBarHeight / 2,
-              ),
-              Container(
-                height: appBarHeight,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned(
+              child: Container(
+                //  padding: EdgeInsets.only(top: appBarHeight / 1.35),
+                height: appBarHeight / 1.35,
                 width: screenWidthDp,
-                margin: EdgeInsets.symmetric(
+                /*    margin: EdgeInsets.symmetric(
                   horizontal: screenWidthDp / 100,
-                ),
+                ),*/
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
@@ -1086,17 +1148,17 @@ class _ComingSoonState extends State<ComingSoon> {
                   ],
                 ),
               ),
-            ],
-          ),
-          Center(
-            child: Container(
-              child: Text(
-                'C O M I N G S O O N',
-                style: TextStyle(fontSize: s70, color: Colors.white),
+            ),
+            Center(
+              child: Container(
+                child: Text(
+                  'C O M I N G S O O N',
+                  style: TextStyle(fontSize: s70, color: Colors.white),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

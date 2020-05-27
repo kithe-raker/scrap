@@ -118,10 +118,14 @@ class _SubpeopleState extends State<Subpeople> {
                             Expanded(
                               child: Container(
                                 height: a.width / 8,
-                                padding: EdgeInsets.only(
-                                    left: a.width / 100,
+                                margin: EdgeInsets.only(
+                                    left: appBarHeight / 8,
+                                    right: appBarHeight / 8),
+                                /*  padding: EdgeInsets.only(
+                                    left: a.width / 10,
+                                    right: a.width / 10,
                                     top: a.width / 500,
-                                    bottom: 0),
+                                    bottom: 0),*/
                                 decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(50.0)),
@@ -163,7 +167,7 @@ class _SubpeopleState extends State<Subpeople> {
                                       '\t\tยกเลิก\t',
                                       style: TextStyle(
                                           fontSize: a.width / 18,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.normal,
                                           color: Colors.white),
                                     ),
                                     onTap: () {
@@ -199,14 +203,14 @@ class _SubpeopleState extends State<Subpeople> {
                                 ),
                               )
                             : !searching
-                                ? recently.length < 1 && following.length < 1
+                                ? false //recently.length < 1 && following.length < 1
                                     ? Center(
                                         child: guide('ไม่มีคนที่คุณติดตาม'))
                                     : ListView(
                                         physics:
                                             AlwaysScrollableScrollPhysics(),
                                         children: <Widget>[
-                                          recently.length > 0
+                                          true //   recently.length > 0
                                               ? recentlyThrow()
                                               : SizedBox(),
                                           following.length > 0
@@ -237,23 +241,24 @@ class _SubpeopleState extends State<Subpeople> {
         decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Color(0xff292929)))),
         padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 50),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-            Widget>[
-          SizedBox(height: screenWidthDp / 24),
-          Container(
-            child: Text("\tล่าสุดที่ปาใส่",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: s42,
-                    fontWeight: FontWeight.bold)),
-          ),
-          SizedBox(height: screenWidthDp / 20),
-          Column(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: screenWidthDp / 24),
+              Container(
+                child: Text("\tล่าสุดที่ปาใส่",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: s48,
+                        fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(height: screenWidthDp / 20),
+              /* Column(
               children: recently
                   .map((user) => PersonCard(data: user, enableNavigator: true))
-                  .toList()),
-          SizedBox(height: screenWidthDp / 30),
-        ]));
+                  .toList()),*/
+              SizedBox(height: screenWidthDp / 30),
+            ]));
   }
 
   Widget followingList() {
@@ -306,7 +311,7 @@ class _SubpeopleState extends State<Subpeople> {
                     : 'กำลังติดตาม ${snapshot.data.snapshot?.value ?? 0}',
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: screenWidthDp / 15,
+                    fontSize: s48,
                     fontWeight: FontWeight.bold),
               ),
               GestureDetector(
@@ -316,7 +321,7 @@ class _SubpeopleState extends State<Subpeople> {
                         "ทั้งหมด",
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: screenWidthDp / 15,
+                            fontSize: s48,
                             fontWeight: FontWeight.bold),
                       ),
                       Icon(Icons.keyboard_arrow_right,
@@ -333,6 +338,7 @@ class _SubpeopleState extends State<Subpeople> {
   }
 
   Widget serachResult() {
+    Size a = MediaQuery.of(context).size;
     return ListView(
       physics: BouncingScrollPhysics(),
       children: <Widget>[
@@ -356,7 +362,7 @@ class _SubpeopleState extends State<Subpeople> {
                           "\tผู้คน",
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: screenWidthDp / 15,
+                              fontSize: a.width / 18,
                               fontWeight: FontWeight.bold),
                         ),
                       ],

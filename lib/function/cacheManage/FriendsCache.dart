@@ -59,8 +59,8 @@ class FriendsCache {
     var data = await read();
     var recently = data['recently'];
     if (recently.length > 3) recently.remove(recently.first);
-    recently
-        .add({'id': id, 'img': img, 'status': status, 'uid': thrownUid, 'ref': ref});
+    recently.add(
+        {'id': id, 'img': img, 'status': status, 'uid': thrownUid, 'ref': ref});
     data['recently'] = recently;
     await file.writeAsString(json.encode(data));
   }
