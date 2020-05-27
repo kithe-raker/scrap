@@ -56,7 +56,7 @@ dependencies:
   flutter_cupertino_date_picker: ^1.0.12
   http: ^0.12.0+2
   stream_transform: ^0.0.19
-
+  social_share: ^2.0.4
 
   
 dev_dependencies:

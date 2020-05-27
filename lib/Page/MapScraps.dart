@@ -373,7 +373,7 @@ class _MapScrapsState extends State<MapScraps> {
                                                     onTap: () {
                                                       if (isExpired(data)) {
                                                         scrap.toast(
-                                                            'แสครปนี้ย่อยสลายแล้ว');
+                                                            'สเเครปนี้ย่อยสลายแล้ว');
                                                       } else {
                                                         scrap.updateScrapTrans(
                                                             'like',
@@ -415,7 +415,7 @@ class _MapScrapsState extends State<MapScraps> {
                                                     onTap: () {
                                                       if (isExpired(data)) {
                                                         scrap.toast(
-                                                            'แสครปนี้ย่อยสลายแล้ว');
+                                                            'สเเครปนี้ย่อยสลายแล้ว');
                                                       } else {
                                                         scrap.updateScrapTrans(
                                                             'picked',
@@ -1094,7 +1094,7 @@ class _MapScrapsState extends State<MapScraps> {
         } catch (e) {
           print(e.toString());
           error(context,
-              'เกิดข้อผิดพลาด ไม่ทราบสาเหตุกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+              'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
         }
       },
     );
