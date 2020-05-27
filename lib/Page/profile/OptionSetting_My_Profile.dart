@@ -3,9 +3,13 @@ import 'dart:wasm';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
+import 'package:scrap/function/aboutUser/ReportApp.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/provider/Report.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
@@ -844,10 +848,13 @@ class ReportToScrap_MyProfile extends StatefulWidget {
 }
 
 class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
+  String text;
+  bool loading = false;
+  var key = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomPadding: false,
@@ -864,60 +871,64 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                 height: appBarHeight / 3,
               ),
               Container(
-                margin: EdgeInsets.only(
-                  bottom: 10,
-                ),
-                height: screenHeightDp / 1.5,
-                width: screenWidthDp / 1.1,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color(0xff202020),
-                ),
-                child: Container(
-                  margin: EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
+                  margin: EdgeInsets.only(bottom: 10),
+                  height: screenHeightDp / 1.5,
+                  width: screenWidthDp / 1.1,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color(0xff202020),
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: screenWidthDp / 1.1,
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      color: Color(0xff383838), width: 1))),
+                          child: Text(
                             'ถึงผู้พัฒนา',
-                            style: TextStyle(
-                              fontSize: s60,
-                              color: Colors.white,
-                            ),
+                            style:
+                                TextStyle(fontSize: s60, color: Colors.white),
                           ),
-                        ],
-                      ),
-                      Divider(
-                        color: Color(0xff383838),
-                        thickness: 1,
-                        indent: s10,
-                        endIndent: s10,
-                      ),
-                      Container(
-                        child: TextField(
-                          style: TextStyle(fontSize: s52, color: Colors.white),
-                          minLines: 10,
-                          maxLines: 10,
-                          decoration: InputDecoration(
-                            // fillColor: Colors.redAccent,
-                            // filled: true,
-                            border: InputBorder.none,
-                            hintText: 'แจ้งรายละเอียดเกี่ยวกับปัญหา',
-                            hintStyle: TextStyle(
-                              fontSize: s54,
-                              height: 0.08,
-                              color: Colors.white30,
+                        ),
+                        Expanded(
+                          child: Form(
+                            key: key,
+                            child: TextFormField(
+                              style:
+                                  TextStyle(fontSize: s52, color: Colors.white),
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'แจ้งรายละเอียดเกี่ยวกับปัญหา',
+                                hintStyle: TextStyle(
+                                  fontSize: s54,
+                                  height: 0.08,
+                                  color: Colors.white30,
+                                ),
+                              ),
+                              validator: (val) {
+                                return val.trim() == ''
+                                    ? toast.validateToast(
+                                        'ไม่อธิบายแล้วเราจะรู้ได้ยังไง')
+                                    : null;
+                              },
+                              onSaved: (val) {
+                                final report =
+                                    Provider.of<Report>(context, listen: false);
+                                report.reportText = val.trim();
+                              },
                             ),
                           ),
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: GestureDetector(
                             child: Container(
                               padding: EdgeInsets.only(left: appBarHeight / 15),
                               margin: EdgeInsets.symmetric(
@@ -937,15 +948,19 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(a.width)),
                             ),
+                            onTap: () async {
+                              setState(() => loading = true);
+                              await reportApp.reportApp(context);
+                              setState(() => loading = false);
+                            },
                           ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
+                        )
+                      ],
+                    ),
+                  ))
             ],
           ),
+          loading ? Loading() : SizedBox()
         ],
       ),
     );
