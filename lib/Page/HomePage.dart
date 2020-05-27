@@ -16,7 +16,6 @@ import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
-import 'package:scrap/services/jsonConverter.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/warning.dart';
 
@@ -29,7 +28,6 @@ class _HomePageState extends State<HomePage> {
   String type, select, text;
   bool public = false, initInfoFinish = false;
   Scraps scrap = Scraps();
-  JsonConverter jsonConverter = JsonConverter();
 
   // _showModalBottomSheet(context) {
   //   Size a = MediaQuery.of(context).size;

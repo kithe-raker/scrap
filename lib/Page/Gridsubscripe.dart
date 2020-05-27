@@ -1,91 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/GridFollowing.dart';
 import 'package:scrap/Page/GridTopScrap.dart';
-import 'dart:math' as math;
-
+import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/FriendsCache.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-
-class Book_Widget extends StatelessWidget {
-  //final String text;
-  //Ads_Widget(this.text);
-  @override
-  Widget build(BuildContext context) {
-    Size a = MediaQuery.of(context).size;
-    return Container(
-      child: Container(
-        /*  width: a.width / 2.5,
-        height: a.width / 2,*/
-        width: a.width / 400 * 174,
-        height: a.width / 400 * 211,
-        margin: EdgeInsets.only(
-          left: 10,
-          right: 10,
-          bottom: 10,
-        ),
-
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(
-                'https://i.pinimg.com/564x/4d/99/81/4d99817fb9a9b2871af902218eb77261.jpg'), //firebase
-            fit: BoxFit.cover,
-          ),
-          //  borderRadius: BorderRadius.circular(3),
-          //color: Colors.yellow.shade700,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey[800],
-              offset: Offset(-1.5, 1.5),
-              blurRadius: 3,
-            )
-          ],
-        ),
-
-        //color: Colors.yellow.shade700,
-        //child: Center(child: Text(text)),
-      ),
-    );
-  }
-}
-
-class Ads_Widget extends StatelessWidget {
-  //final String text;
-  //Ads_Widget(this.text);
-  @override
-  Widget build(BuildContext context) {
-    Size a = MediaQuery.of(context).size;
-    return Container(
-      child: Container(
-        // width: 120,
-        height: 150,
-        /* margin: EdgeInsets.only(
-          left: 10,
-          right: 10,
-          bottom: 10,
-        ),*/
-
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(
-                'https://www.mktsme.com/wp-content/uploads/2018/12/Facebook-Ads-768x399.jpg'), //firebase
-            fit: BoxFit.cover,
-          ),
-          // borderRadius: BorderRadius.circular(3),
-          //color: Colors.yellow.shade700,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey[800],
-              offset: Offset(-1.5, 1.5),
-              blurRadius: 3,
-            )
-          ],
-        ),
-
-        //color: Colors.yellow.shade700,
-        //child: Center(child: Text(text)),
-      ),
-    );
-  }
-}
 
 class Gridsubscripe extends StatefulWidget {
   @override
@@ -95,164 +17,108 @@ class Gridsubscripe extends StatefulWidget {
 class _GridsubscripeState extends State<Gridsubscripe> {
   int page = 0;
   var controller = PageController();
+  var followingController = RefreshController();
+  var topController = RefreshController();
+  bool loading = true;
+
+  //top scrap
+  List scraps = [];
+  Map<String, int> comments = {};
+  int lessPoint;
+  bool lastQuery = false;
+
+  //following
+  List<DocumentSnapshot> followingScraps = [];
+  List friends = [];
 
   @override
   void initState() {
+    initScraps();
     super.initState();
   }
 
   @override
   void dispose() {
     controller.dispose();
+    followingController.dispose();
+    topController.dispose();
     super.dispose();
   }
 
-  Widget block() {
-    Size a = MediaQuery.of(context).size;
-    return GestureDetector(
-      child: Stack(
-        children: <Widget>[
-          Container(
-            height: screenWidthDp / 2.16 * 1.21,
-            width: screenWidthDp / 2.16,
-            color: Colors.white,
-            child: Center(
-              child: Text(
-                "datata",
-                style: TextStyle(fontSize: 32),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              margin: EdgeInsets.all(a.width / 45),
-              alignment: Alignment.center,
-              width: a.width / 5.5,
-              height: a.width / 11,
-              decoration: BoxDecoration(
-                  color: Color(0xfff707070),
-                  borderRadius: BorderRadius.circular(a.width / 80)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    "1.2K",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: a.width / 20),
-                  ),
-                  Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.rotationY(math.pi),
-                    child: Icon(
-                      Icons.sms,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Container(
-                    child: Text(' '),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-      onTap: () {
-        // controller.refreshCompleted();
-      },
-    );
+  Future<void> initScraps() async {
+    List<String> docId = [];
+    var ref = FirebaseDatabase.instance
+        .reference()
+        .child('scraps')
+        .orderByChild('point')
+        .limitToFirst(8);
+    DataSnapshot data = await ref.once();
+    data.value.forEach((key, value) {
+      docId.add(value['id']);
+      comments[value['id']] = value['comment']?.abs() ?? 0;
+      print(comments);
+      if (lessPoint == null)
+        lessPoint = value['point'].abs();
+      else if (lessPoint > value['point'].abs())
+        lessPoint = value['point'].abs();
+    });
+    var docs = await fireStore
+        .collectionGroup('ScrapDailys-th')
+        .where('id', whereIn: docId)
+        .getDocuments();
+    friends = await cacheFriends.getFollowing();
+    var followDocs = await Firestore.instance
+        .collectionGroup('scrapCollection')
+        .where('picker', whereIn: friends)
+        .orderBy('timeStamp', descending: true)
+        .limit(8)
+        .getDocuments();
+    followingScraps.addAll(followDocs.documents);
+    scraps.addAll(docs.documents);
+    scraps.add(lessPoint);
+    setState(() => loading = false);
   }
 
-  Widget following() {
-    Size a = MediaQuery.of(context).size;
-    return Container(
-      child: ListView(
-        physics: BouncingScrollPhysics(),
-        children: <Widget>[
-          Wrap(
-              spacing: a.width / 42,
-              runSpacing: a.width / 42,
-              alignment: WrapAlignment.center,
-              children: [
-                block(),
-                block(),
-                block(),
-                block(),
-                block(),
-                block(),
-                block(),
-                block(),
-                Ads_Widget(),
-                block(),
-                block(),
-                block(),
-                block(),
-                block(),
-                block(),
-                block(),
-                block(),
-                Ads_Widget(),
-              ]),
-          //  SizedBox(height: a.width / 5)
-        ],
-      ),
-    );
+  loadMoreScrap() async {
+    List<String> docId = [];
+    var ref = FirebaseDatabase.instance
+        .reference()
+        .child('scraps')
+        .orderByChild('point')
+        .startAt(-(++lessPoint))
+        .limitToFirst(8);
+    DataSnapshot data = await ref.once();
+    data.value.forEach((key, value) {
+      docId.add(value['id']);
+      comments[value['id']] = value['comment']?.abs() ?? 0;
+      if (lessPoint > value['point'].abs()) lessPoint = value['point'].abs();
+    });
+    if (docId.length > 1 && !lastQuery) {
+      var docs = await Firestore.instance
+          .collectionGroup('ScrapDailys-th')
+          .where('id', whereIn: docId)
+          .getDocuments();
+      docId.length < 8 ? lastQuery = true : scraps.add(lessPoint);
+      scraps.addAll(docs.documents);
+      setState(() => topController.loadComplete());
+    } else {
+      topController.loadNoData();
+    }
   }
 
-  Widget interest() {
-    Size a = MediaQuery.of(context).size;
-    return Container(
-      child: ListView(
-        physics: BouncingScrollPhysics(),
-        children: <Widget>[
-          Wrap(
-            spacing: a.width / 42,
-            runSpacing: a.width / 42,
-            alignment: WrapAlignment.center,
-            children: [
-              //Container(height: screenHeightDp/10,),
-              block(),
-              Ads_Widget(),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget appbarProfile(BuildContext context) {
-    return Container(
-      height: appBarHeight / 1.42,
-      width: screenWidthDp,
-      color: Colors.black,
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          GestureDetector(
-              child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
-              onTap: () {
-                Navigator.pop(context);
-              }),
-          IconButton(
-              icon: Icon(
-                Icons.more_horiz,
-                color: Colors.white,
-                size: s60,
-              ),
-              onPressed: () {
-                //showButtonSheet(context);
-              }),
-        ],
-      ),
-    );
+//following scrap query function
+  loadMoreFollowScrap() async {
+    var docs = await Firestore.instance
+        .collectionGroup('scrapCollection')
+        .where('picker', whereIn: friends)
+        .orderBy('timeStamp', descending: true)
+        .startAfterDocument(followingScraps.last)
+        .limit(8)
+        .getDocuments();
+    followingScraps.addAll(docs.documents);
+    docs.documents.length < 0
+        ? setState(() => followingController.loadComplete())
+        : followingController.loadNoData();
   }
 
   @override
@@ -265,16 +131,11 @@ class _GridsubscripeState extends State<Gridsubscripe> {
         child: Stack(
           children: [
             Container(
-              /* width: a.width,
-              height: a.width / 5,*/
-              /*  width: screenWidthDp,
-              height: appBarHeight / 1.35,*/
               height: appBarHeight / 1.42,
               width: screenWidthDp,
               padding: EdgeInsets.symmetric(
                 horizontal: screenWidthDp / 21,
               ),
-              //padding: EdgeInsets.only(left: a.width / 35, right: a.width / 35),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -350,8 +211,28 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                     setState(() => page = index);
                   },
                   controller: controller,
-                  children: <Widget>[following(), interest()],
-                ))
+                  children: <Widget>[
+                    SmartRefresher(
+                        enablePullDown: false,
+                        enablePullUp: true,
+                        onLoading: () {
+                          followingScraps.length > 0
+                              ? loadMoreFollowScrap()
+                              : followingController.loadNoData();
+                        },
+                        controller: followingController,
+                        child: GridFollowing(scraps: followingScraps)),
+                    SmartRefresher(
+                        controller: topController,
+                        enablePullDown: false,
+                        enablePullUp: true,
+                        onLoading: () {
+                          loadMoreScrap();
+                        },
+                        child: GridTopScrap(scraps: scraps, comments: comments))
+                  ],
+                )),
+            loading ? Loading() : SizedBox()
           ],
         ),
       ),

@@ -18,7 +18,6 @@ import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/realtimeDB/ConfigDatabase.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/ImgCacheManger.dart';
-import 'package:scrap/services/jsonConverter.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -28,7 +27,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
-  JsonConverter jsonConverter = JsonConverter();
   ImgCacheManager imgCacheManager = ImgCacheManager();
   DocumentSnapshot appInfo;
   initLocalMessage() {
