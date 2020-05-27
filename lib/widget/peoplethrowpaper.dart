@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
 
@@ -38,7 +39,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   color: Color(0xfff707070),
                                   size: s70,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  nav.pop(context);
+                                },
                               ),
                               //color: Colors.yellow,
                             )),

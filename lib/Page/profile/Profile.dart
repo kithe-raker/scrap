@@ -16,6 +16,7 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:scrap/widget/peoplethrowpaper.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -488,8 +489,8 @@ class _ProfileState extends State<Profile> {
               physics: BouncingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               children: docs
-                  .map(
-                      (data) => scrapPaper(readScrap.contains(data.documentID)))
+                  .map((data) =>
+                      scrapPaper(readScrap.contains(data.documentID), data))
                   .toList())
           : Center(
               child: Text('คุณไม่มีกระดาษที่ปามา',
@@ -590,6 +591,31 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
+
+//ก้อนกระดาษ
+  Widget scrapPaper(bool read, DocumentSnapshot data) {
+    return GestureDetector(
+        child: Transform.scale(
+          scale: 1.1,
+          child: Opacity(
+            opacity: read ? 0.6 : 1,
+            child: Container(
+                width: screenWidthDp / 5.5,
+                child:
+                    Image.asset('assets/paper-mini01.png', fit: BoxFit.cover)),
+          ),
+        ),
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext contwxt) => Paperstranger());
+          if (!read) {
+            cacheHistory.addReadScrap(data);
+            readScrap.add(data.documentID);
+            setState(() {});
+          }
+        });
+  }
 }
 
 //โฆษณา Google Ads แสดงด้านล่างสุดของหน้าจอ
@@ -609,19 +635,6 @@ Widget adsContainer() {
         ),
       ),
     ],
-  );
-}
-
-//ก้อนกระดาษ
-Widget scrapPaper(bool read) {
-  return Transform.scale(
-    scale: 1.1,
-    child: Opacity(
-      opacity: read ? 0.6 : 1,
-      child: Container(
-          width: screenWidthDp / 5.5,
-          child: Image.asset('assets/paper-mini01.png', fit: BoxFit.cover)),
-    ),
   );
 }
 

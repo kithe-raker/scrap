@@ -380,8 +380,8 @@ class _SubpeopleState extends State<Subpeople> {
                           return docs.length > 0
                               ? Column(
                                   children: docs
-                                      .map((doc) => doc['img'] != null &&
-                                              doc.documentID != user.uid
+                                      .map((doc) => doc['img'] != null 
+                                      // &&doc.documentID != user.uid
                                           ? userCard(doc)
                                           : SizedBox())
                                       .toList())
