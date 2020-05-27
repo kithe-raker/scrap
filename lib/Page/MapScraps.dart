@@ -724,9 +724,9 @@ class _MapScrapsState extends State<MapScraps> {
                 userDb.reference().child('users/${widget.uid}/papers').onValue,
             builder: (context, AsyncSnapshot<Event> snapshot) {
               if (snapshot.hasData) {
-                papers = snapshot.data.snapshot?.value ?? 15;
+                papers = snapshot.data.snapshot?.value ?? 10;
                 WidgetsBinding.instance.addPostFrameCallback(
-                    (_) => user.papers = snapshot.data.snapshot?.value ?? 15);
+                    (_) => user.papers = snapshot.data.snapshot?.value ?? 10);
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -781,7 +781,7 @@ class _MapScrapsState extends State<MapScraps> {
                               ),
                       ),
                       onTap: () {
-                        papers == 15
+                        papers == 10
                             ? scrap.toast('กระดาษของคุณยังเต็มอยู่')
                             : dialogvideo(context, widget.uid);
                       },
