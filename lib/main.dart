@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/Page/Gridfavorite.dart';
+import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MainPage.dart';
+import 'package:scrap/Page/profile/OptionSetting_My_Profile.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
+import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
+import 'package:scrap/testt.dart';
+import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
 
 const String testDevice = "34C215009965F34F";
 

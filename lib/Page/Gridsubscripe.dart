@@ -3,6 +3,8 @@ import 'package:scrap/Page/GridFollowing.dart';
 import 'package:scrap/Page/GridTopScrap.dart';
 import 'dart:math' as math;
 
+import 'package:scrap/widget/ScreenUtil.dart';
+
 class Book_Widget extends StatelessWidget {
   //final String text;
   //Ads_Widget(this.text);
@@ -111,8 +113,8 @@ class _GridsubscripeState extends State<Gridsubscripe> {
       child: Stack(
         children: <Widget>[
           Container(
-            height: 407 / a.width * 150,
-            width: 365 / a.width * 150,
+            height: screenWidthDp / 2.16 * 1.21,
+            width: screenWidthDp / 2.16,
             color: Colors.white,
             child: Center(
               child: Text(
@@ -222,23 +224,61 @@ class _GridsubscripeState extends State<Gridsubscripe> {
     );
   }
 
+  Widget appbarProfile(BuildContext context) {
+    return Container(
+      height: appBarHeight / 1.42,
+      width: screenWidthDp,
+      color: Colors.black,
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          GestureDetector(
+              child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
+              onTap: () {
+                Navigator.pop(context);
+              }),
+          IconButton(
+              icon: Icon(
+                Icons.more_horiz,
+                color: Colors.white,
+                size: s60,
+              ),
+              onPressed: () {
+                //showButtonSheet(context);
+              }),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
+    screenutilInit(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Stack(
           children: [
             Container(
-              width: a.width,
-              height: a.width / 5,
-              padding: EdgeInsets.only(
-                  top: a.width / 50, left: a.width / 30, right: a.width / 30),
+              /* width: a.width,
+              height: a.width / 5,*/
+              /*  width: screenWidthDp,
+              height: appBarHeight / 1.35,*/
+              height: appBarHeight / 1.42,
+              width: screenWidthDp,
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidthDp / 21,
+              ),
+              //padding: EdgeInsets.only(left: a.width / 35, right: a.width / 35),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
+                  GestureDetector(
                     child: Container(
                         width: a.width / 18,
                         child: Image.asset(
@@ -277,7 +317,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                         style: TextStyle(
                             color: Colors.white, fontSize: a.width / 20),
                       ),
-                      InkWell(
+                      GestureDetector(
                         child: Text(
                           "สแครปน่าติดตาม",
                           style: page != 1
@@ -304,7 +344,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
             Container(
                 width: a.width,
                 height: a.height,
-                padding: EdgeInsets.only(top: a.width / 5),
+                padding: EdgeInsets.only(top: appBarHeight / 1.35),
                 child: PageView(
                   onPageChanged: (index) {
                     setState(() => page = index);

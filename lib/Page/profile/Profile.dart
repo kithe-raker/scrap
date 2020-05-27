@@ -38,6 +38,12 @@ class _ProfileState extends State<Profile> {
       height: appBarHeight / 1.42,
       width: screenWidthDp,
       color: Colors.black,
+      /* padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),*/
+      /*padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),*/
       padding: EdgeInsets.symmetric(
         horizontal: screenWidthDp / 21,
       ),
@@ -50,13 +56,13 @@ class _ProfileState extends State<Profile> {
               onTap: () {
                 Navigator.pop(context);
               }),
-          IconButton(
-              icon: Icon(
+          GestureDetector(
+              child: Icon(
                 Icons.more_horiz,
                 color: Colors.white,
-                size: s60,
+                size: s65,
               ),
-              onPressed: () {
+              onTap: () {
                 //showButtonSheet(context);
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => OptionSetting()));

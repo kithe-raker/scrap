@@ -17,6 +17,7 @@ import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/services/jsonConverter.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/warning.dart';
 
 class HomePage extends StatefulWidget {
@@ -196,6 +197,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    screenutilInit(context);
     Size a = MediaQuery.of(context).size;
     final user = Provider.of<UserData>(context, listen: false);
     return WillPopScope(
@@ -206,139 +208,169 @@ class _HomePageState extends State<HomePage> {
         return null;
       },
       child: Scaffold(
-        backgroundColor: Colors.grey[900],
-        body: Stack(
-          children: <Widget>[
-            MapScraps(uid: user.uid),
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Container(
-                width: a.width,
-                child: Column(
-                  children: [
-                    Container(
-                      // ส่วนของ แทบสีดำด้านบน
-                      color: Colors.black,
-                      width: a.width,
-                      height: a.width / 5,
-                      padding: EdgeInsets.only(
-                        top: a.height / 36,
-                        right: a.width / 20,
-                        left: a.width / 20,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          //Logo
-                          Container(
-                              margin: EdgeInsets.only(top: a.width / 90),
-                              height: a.width / 7,
-                              alignment: Alignment.center,
-                              child: Image.asset(
-                                'assets/scrapmini.png',
-                                width: a.width / 4,
-                              )),
-                          //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
-                          SizedBox(width: a.width / 4.7),
-                          Container(
-                              height: a.width / 5,
-                              alignment: Alignment.center,
-                              child: InkWell(
-                                child: Container(
-                                  width: a.width / 10,
-                                  height: a.width / 10,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
-                                    color: Colors.pink,
-                                  ),
-                                  child: Icon(Icons.favorite,
-                                      color: Colors.white, size: a.width / 15),
+        backgroundColor: Colors.black, //
+        body: SafeArea(
+          child: Stack(
+            children: <Widget>[
+              MapScraps(uid: user.uid),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Container(
+                  width: a.width,
+                  child: Column(
+                    children: [
+                      Container(
+                        // ส่วนของ แทบสีดำด้านบน
+                        color: Colors.black,
+                        height: appBarHeight / 1.42,
+                        width: screenWidthDp,
+                        /*width: a.width,
+                      height: a.width / 5,*/
+                        /*padding: EdgeInsets.only(
+                          //top: a.height / 36,
+                          right: a.width / 20,
+                          left: a.width / 20,
+                        ),*/
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            //Logo
+                            Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: appBarHeight / 8,
                                 ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              Gridfavorite()));
-                                },
-                              )),
-                          Container(
-                              height: a.width / 5,
-                              alignment: Alignment.center,
-                              child: InkWell(
-                                child: Container(
-                                  width: a.width / 10,
-                                  height: a.width / 10,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(a.width),
-                                    color: Color(0xff26A4FF),
-                                  ),
-                                  child: Icon(Icons.people,
-                                      color: Colors.white, size: a.width / 15),
+                                Container(
+                                    margin: EdgeInsets.only(top: a.width / 90),
+                                    height: a.width / 7,
+                                    alignment: Alignment.center,
+                                    child: Image.asset(
+                                      'assets/scrapmini.png',
+                                      width: a.width / 4,
+                                    )),
+                              ],
+                            ),
+                            //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
+                            // SizedBox(width: a.width / 4.7),
+                            Row(
+                              children: <Widget>[
+                                Container(
+                                    height: a.width / 5,
+                                    alignment: Alignment.center,
+                                    child: InkWell(
+                                      child: Container(
+                                        width: a.width / 11,
+                                        height: a.width / 11,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(a.width),
+                                          color: Color(0xffFF4343),
+                                        ),
+                                        child: Icon(Icons.favorite,
+                                            color: Colors.white,
+                                            size: a.width / 18),
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Gridfavorite()));
+                                      },
+                                    )),
+                                SizedBox(
+                                  width: appBarHeight / 10,
                                 ),
-                                onTap: () {
-                                  nav.push(context, Subpeople());
-                                },
-                              )),
-                          Container(
-                              height: a.width / 5,
-                              alignment: Alignment.center,
-                              child: InkWell(
-                                  child: Container(
-                                    width: a.width / 10,
-                                    height: a.width / 10,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(a.width),
-                                        color: Colors.white,
-                                        border: Border.all(
-                                            width: 1, color: Colors.white)),
-                                    child: initInfoFinish
-                                        ? ClipRRect(
-                                            child: Image.file(File(user.img),
-                                                fit: BoxFit.cover),
-                                            borderRadius: BorderRadius.circular(
-                                                a.width / 10),
-                                          )
-                                        : Icon(Icons.person,
-                                            color: Colors.black,
-                                            size: a.width / 15),
-                                  ),
-                                  onTap: () {
-                                    nav.push(context, Profile());
-                                  })),
-                        ],
+                                Container(
+                                    height: a.width / 5,
+                                    alignment: Alignment.center,
+                                    child: InkWell(
+                                      child: Container(
+                                        width: a.width / 11,
+                                        height: a.width / 11,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(a.width),
+                                          color: Color(0xff26A4FF),
+                                        ),
+                                        child: Icon(Icons.people,
+                                            color: Colors.white,
+                                            size: a.width / 18),
+                                      ),
+                                      onTap: () {
+                                        nav.push(context, Subpeople());
+                                      },
+                                    )),
+                                SizedBox(
+                                  width: appBarHeight / 10,
+                                ),
+                                Container(
+                                    height: a.width / 5,
+                                    alignment: Alignment.center,
+                                    child: InkWell(
+                                        child: Container(
+                                          width: a.width / 11,
+                                          height: a.width / 11,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      a.width),
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                  width: 1,
+                                                  color: Colors.white)),
+                                          child: initInfoFinish
+                                              ? ClipRRect(
+                                                  child: Image.file(
+                                                      File(user.img),
+                                                      fit: BoxFit.cover),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          a.width / 10),
+                                                )
+                                              : Icon(Icons.person,
+                                                  color: Colors.black,
+                                                  size: a.width / 15),
+                                        ),
+                                        onTap: () {
+                                          nav.push(context, Profile());
+                                        })),
+                                SizedBox(
+                                  width: appBarHeight / 8,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                      child: AdmobBanner(
-                          adUnitId: AdmobService().getBannerAdId(),
-                          adSize: AdmobBannerSize.FULL_BANNER),
-                    )
-                  ],
+                      Container(
+                        child: AdmobBanner(
+                            adUnitId: AdmobService().getBannerAdId(),
+                            adSize: AdmobBannerSize.FULL_BANNER),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            // Positioned(
-            //     // left: a.width/4.8,
-            //     width: a.width,
-            //     top: a.height / 7.2,
-            //     child: Row(
-            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         children: <Widget>[
-            //           SizedBox(
-            //             width: 1,
-            //           ),
-            //           scrapLeft(a),
-            //           SizedBox(
-            //             width: 1,
-            //           )
-            //         ])),
-          ],
+              // Positioned(
+              //     // left: a.width/4.8,
+              //     width: a.width,
+              //     top: a.height / 7.2,
+              //     child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: <Widget>[
+              //           SizedBox(
+              //             width: 1,
+              //           ),
+              //           scrapLeft(a),
+              //           SizedBox(
+              //             width: 1,
+              //           )
+              //         ])),
+            ],
+          ),
         ),
       ),
     );
