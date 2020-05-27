@@ -1142,13 +1142,4 @@ class _MapScrapsState extends State<MapScraps> {
       scrapIcon = bitmap;
     });
   }
-
-  increasHistTran(String uid, String date, String docID) {
-    Firestore.instance
-        .collection('Users')
-        .document(uid)
-        .collection('history')
-        .document(date)
-        .updateData({docID: FieldValue.increment(1)});
-  }
 }

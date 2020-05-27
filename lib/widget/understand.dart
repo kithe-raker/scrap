@@ -1,11 +1,6 @@
 import 'dart:ui';
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
-import 'package:scrap/function/toDatabase/scrap.dart';
-import 'package:scrap/services/admob_service.dart';
-import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:scrap/widget/showdialogfinishpaper.dart';
 
 class Understand extends StatefulWidget {
   @override
