@@ -6,7 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:scrap/Page/profile/Dropdown/ChangePhone.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -483,11 +482,11 @@ class _EditProfileState extends State<EditProfile> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ChangePhone()));
+                                  // Navigator.pop(context);
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => ChangePhone()));
                                 },
                               ),
                             ],
