@@ -333,6 +333,7 @@ class _SubpeopleState extends State<Subpeople> {
   }
 
   Widget serachResult() {
+    final user = Provider.of<UserData>(context, listen: false);
     return ListView(
       physics: BouncingScrollPhysics(),
       children: <Widget>[
@@ -375,7 +376,8 @@ class _SubpeopleState extends State<Subpeople> {
                           return docs.length > 0
                               ? Column(
                                   children: docs
-                                      .map((doc) => doc['img'] != null
+                                      .map((doc) => doc['img'] != null &&
+                                              doc.documentID != user.uid
                                           ? userCard(doc)
                                           : SizedBox())
                                       .toList())
