@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:scrap/function/aboutUser/SettingFunction.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/widget/block.dart';
 import 'package:scrap/widget/wrap.dart';
@@ -18,7 +19,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  bool isSwitched = false, initInfoFinish = false;
+  bool initInfoFinish = false;
   bool pickedScrap = true;
   Map profile = {};
   int page = 0;
@@ -80,6 +81,12 @@ class _ProfileState extends State<Profile> {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     return userDb.reference().child('users/$uid/$field').onValue;
+  }
+
+  Future<DataSnapshot> futureTransaction(String uid, String field) {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    return userDb.reference().child('users/$uid/$field').once();
   }
 
   //Run
@@ -146,18 +153,12 @@ class _ProfileState extends State<Profile> {
                                       ],
                                     )),
                           SizedBox(height: screenHeightDp / 24),
-                          FlatButton(
-                            child: Text(
-                              '${profile['status'] ?? 'สเตตัสของคุณ'}',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: s48,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                            onPressed: () {
-                              //showPopup(context);
-                              // showDialogReport(context);
-                            },
+                          Text(
+                            '${profile['status'] ?? 'สเตตัสของคุณ'}',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: s48,
+                                fontStyle: FontStyle.italic),
                           ),
                           SizedBox(height: screenHeightDp / 24),
                           Container(
@@ -178,36 +179,13 @@ class _ProfileState extends State<Profile> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: s60)),
-                                      Transform.scale(
-                                        scale: 1.3,
-                                        child: Switch(
-                                          value: isSwitched,
-                                          onChanged: (value) {
-                                            if (value == false) {
-                                              Fluttertoast.showToast(
-                                                  msg: 'ปิดการโดนปาใส่แล้ว');
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg: 'เปิดการโดนปาใส่แล้ว');
-                                            }
-                                            setState(() {
-                                              isSwitched = value;
-                                            });
-                                          },
-                                          inactiveTrackColor: Colors.grey,
-                                          activeTrackColor: Colors.blue,
-                                          activeColor: Colors.white,
-                                        ),
-                                      ),
+                                      switchThrow(user.uid)
                                     ],
                                   ),
                                 ),
                                 Container(
                                   height: screenHeightDp / 10,
                                   width: screenWidthDp,
-                                  // margin: EdgeInsets.symmetric(
-                                  //   vertical: 5,
-                                  // ),
                                   child: ListView(
                                     physics: BouncingScrollPhysics(),
                                     scrollDirection: Axis.horizontal,
@@ -230,11 +208,7 @@ class _ProfileState extends State<Profile> {
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    bottom: 10,
-                                  ),
-                                ),
+                                SizedBox(height: 7.2),
                                 Divider(color: Colors.grey),
                                 Row(
                                     mainAxisAlignment:
@@ -451,6 +425,35 @@ class _ProfileState extends State<Profile> {
               ),
             ],
           );
+        });
+  }
+
+  Widget switchThrow(String uid) {
+    return FutureBuilder(
+        future: futureTransaction(uid, 'allowThrow'),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            bool isSwitched = snapshot.data.value;
+            return Transform.scale(
+                scale: 1.3,
+                child: Switch(
+                    value: isSwitched,
+                    onChanged: (value) {
+                      if (value == false)
+                        Fluttertoast.showToast(msg: 'ปิดการโดนปาใส่แล้ว');
+                      else
+                        Fluttertoast.showToast(msg: 'เปิดการโดนปาใส่แล้ว');
+                      setting.setAllowThrow(context, value);
+                      setState(() {
+                        isSwitched = value;
+                      });
+                    },
+                    inactiveTrackColor: Colors.grey,
+                    activeTrackColor: Colors.blue,
+                    activeColor: Colors.white));
+          } else {
+            return SizedBox();
+          }
         });
   }
 
