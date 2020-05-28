@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -13,10 +14,7 @@ class GridFollowing extends StatefulWidget {
 }
 
 class _GridFollowingState extends State<GridFollowing> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  var textGroup = AutoSizeGroup();
 
   @override
   Widget build(BuildContext context) {
@@ -31,28 +29,27 @@ class _GridFollowingState extends State<GridFollowing> {
                     spacing: a.width / 42,
                     runSpacing: a.width / 42,
                     alignment: WrapAlignment.center,
-                    children: widget.scraps
-                        .map((scrap) => block(scrap['timeStamp'].toDate()))
-                        .toList()),
+                    children:
+                        widget.scraps.map((scrap) => block(scrap)).toList()),
               )
             : Center(child: guide('ไม่มีการเคลื่อนไหวจากคนที่คุณติดตาม')));
   }
 
-  Widget block(data) {
+  Widget block(DocumentSnapshot data) {
     Size a = MediaQuery.of(context).size;
     return GestureDetector(
       child: Stack(
         children: <Widget>[
           Container(
-            width: a.width / 2.2,
-            height: (a.width / 2.1) * 1.21,
+            height: screenWidthDp / 2.16 * 1.21,
+            width: screenWidthDp / 2.16,
             color: Colors.white,
             child: Center(
-              child: Text(
-                DateFormat('d/M/y').format(data),
-                style: TextStyle(fontSize: 32),
-              ),
-            ),
+                child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+              child: AutoSizeText(data['scrap']['text'],
+                  group: textGroup, style: TextStyle(fontSize: s46)),
+            )),
           ),
           Positioned(
             bottom: 0,

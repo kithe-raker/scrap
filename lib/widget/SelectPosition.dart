@@ -25,8 +25,9 @@ class _SelectPositionState extends State<SelectPosition> {
 
   @override
   void initState() {
-    loadStream =
-        scrap.loading.listen((value) => setState(() => loading = value));
+    loadStream = scrap.loading.listen((value) {
+      if (this.mounted) setState(() => loading = value);
+    });
     initLocation();
     super.initState();
   }

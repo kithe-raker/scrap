@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/GridFollowing.dart';
 import 'package:scrap/Page/GridTopScrap.dart';
+import 'package:scrap/Page/profile/OptionSetting_My_Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/widget/Loading.dart';
@@ -56,7 +57,6 @@ class _GridsubscripeState extends State<Gridsubscripe> {
     data.value.forEach((key, value) {
       docId.add(value['id']);
       comments[value['id']] = value['comment']?.abs() ?? 0;
-      print(comments);
       if (lessPoint == null)
         lessPoint = value['point'].abs();
       else if (lessPoint > value['point'].abs())
@@ -98,7 +98,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
           .collectionGroup('ScrapDailys-th')
           .where('id', whereIn: docId)
           .getDocuments();
-      docId.length < 8 ? lastQuery = true : scraps.add(lessPoint);
+      docs.documents.length < 8 ? lastQuery = true : scraps.add(lessPoint);
       scraps.addAll(docs.documents);
       setState(() => topController.loadComplete());
     } else {
@@ -140,18 +140,13 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    child: Container(
-                        width: a.width / 18,
-                        child: Image.asset(
-                          "assets/Group 74.png",
-                          fit: BoxFit.contain,
-                          /*  width: a.width / 10,
-                          height: a.width / 10,*/
-                        )),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+                      child: Container(
+                          width: a.width / 18,
+                          child: Image.asset("assets/Group 74.png",
+                              fit: BoxFit.contain)),
+                      onTap: () {
+                        Navigator.pop(context);
+                      }),
                   Row(
                     children: [
                       InkWell(
@@ -198,7 +193,12 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                       ),
                     ],
                   ),
-                  Icon(Icons.history, color: Colors.white, size: a.width / 13)
+                  GestureDetector(
+                      child: Icon(Icons.history,
+                          color: Colors.white, size: a.width / 13),
+                      onTap: () {
+                        nav.push(context, HistoryScrap());
+                      })
                 ],
               ),
             ),

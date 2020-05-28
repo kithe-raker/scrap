@@ -1,4 +1,5 @@
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -17,6 +18,7 @@ class GridTopScrap extends StatefulWidget {
 
 class _GridTopScrapState extends State<GridTopScrap> {
   var controller = RefreshController();
+  var textGroup = AutoSizeGroup();
 
   @override
   void initState() {
@@ -50,47 +52,42 @@ class _GridTopScrapState extends State<GridTopScrap> {
       child: Container(
         height: screenWidthDp / 2.16 * 1.21,
         width: screenWidthDp / 2.16,
-        color: Colors.white,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/paper-readed.png'),
+                fit: BoxFit.cover)),
         child: Stack(
           children: <Widget>[
+            Center(
+                child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+              child: AutoSizeText(data['scrap']['text'],
+                  group: textGroup, style: TextStyle(fontSize: s46)),
+            )),
             Positioned(
               bottom: 0,
               right: 0,
               child: Container(
-                margin: EdgeInsets.all(a.width / 45),
-                alignment: Alignment.center,
-                width: a.width / 6,
-                height: a.width / 13,
-                decoration: BoxDecoration(
-                    color: Color(0xff2D2D2F),
-                    borderRadius: BorderRadius.circular(a.width / 80)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text(
-                      widget.comments[data['id']].toString(),
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: a.width / 20),
-                    ),
-                    Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(math.pi),
-                      child: Icon(
-                        Icons.sms,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Center(
-              child: Text(
-                data['scrap']['text'],
-                style: TextStyle(fontSize: 32),
-              ),
+                  margin: EdgeInsets.all(a.width / 45),
+                  alignment: Alignment.center,
+                  width: a.width / 6,
+                  height: a.width / 13,
+                  decoration: BoxDecoration(
+                      color: Color(0xff2D2D2F),
+                      borderRadius: BorderRadius.circular(a.width / 80)),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text(widget.comments[data['id']].toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: a.width / 20)),
+                        Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(math.pi),
+                            child: Icon(Icons.sms, color: Colors.white))
+                      ])),
             ),
           ],
         ),
