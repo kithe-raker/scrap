@@ -41,7 +41,7 @@ class _CommentSheetState extends State<CommentSheet> {
 
   bool isExpired(List commentList, CollectionReference ref, String scrapId,
       {@required String comment}) {
-    DateTime startTime = scrapSnapshot['scrap']['time'].toDate();
+    DateTime startTime = scrapSnapshot['scrap']['timeStamp'].toDate();
     if (DateTime(startTime.year, startTime.month, startTime.day + 1,
             startTime.hour, startTime.second)
         .difference(DateTime.now())
