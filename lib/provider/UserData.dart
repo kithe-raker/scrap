@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 class UserData extends ChangeNotifier {
-  String _id, _uid, _token, _region;
+  String _id, _uid, _token, _region, _imgUrl;
   String _phone, _verifiedId, _password;
   dynamic _img;
   int _papers;
@@ -9,6 +9,7 @@ class UserData extends ChangeNotifier {
   String get id => _id;
   String get uid => _uid;
   dynamic get img => _img;
+  String get imgUrl => _imgUrl;
   String get phone => _phone;
   String get verifiedId => _verifiedId;
   String get password => _password;
@@ -18,6 +19,11 @@ class UserData extends ChangeNotifier {
 
   set img(dynamic val) {
     _img = val;
+    notifyListeners();
+  }
+
+  set imgUrl(String val) {
+    _imgUrl = val;
     notifyListeners();
   }
 

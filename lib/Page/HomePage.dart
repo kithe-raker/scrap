@@ -190,6 +190,7 @@ class _HomePageState extends State<HomePage> {
     var data = await userinfo.readContents();
     user.img = data['img'];
     user.id = data['id'];
+    user.imgUrl = data['imgUrl'];
     setState(() => initInfoFinish = true);
   }
 

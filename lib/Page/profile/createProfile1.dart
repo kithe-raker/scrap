@@ -238,11 +238,12 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                 onChanged: (val2) {
                                                   password.text = val2.trim();
                                                   password.selection =
-                                                      TextSelection.fromPosition(
-                                                          TextPosition(
-                                                              offset: password
-                                                                  .text
-                                                                  .length));
+                                                      TextSelection
+                                                          .fromPosition(
+                                                              TextPosition(
+                                                                  offset: val2
+                                                                      .trim()
+                                                                      .length));
                                                   setState(() {});
                                                 },
                                                 //ถ้าพาสเวิร์ด=='' || == null => toast
