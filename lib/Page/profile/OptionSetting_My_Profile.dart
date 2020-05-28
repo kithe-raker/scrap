@@ -1,15 +1,21 @@
 import 'dart:async';
 import 'dart:wasm';
 import 'dart:ui';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/function/aboutUser/ReportApp.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/Report.dart';
+import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/guide.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
@@ -241,7 +247,7 @@ class _OptionSettingState extends State<OptionSetting> {
                       list_OptionSetting(context, Icons.face,
                           ' จัดการบัญชีของฉัน', Manage_MyProfile()),
                       list_OptionSetting(context, Icons.history,
-                          ' ประวัติการเขียนสแครป', HistoryScrap_MyProfile()),
+                          ' ประวัติการเขียนสแครป', HistoryScrap()),
                       list_OptionSetting(context, Icons.description,
                           ' ข้อกำหนดการให้บริการ', ComingSoon()),
                       list_OptionSetting(context, Icons.extension,
@@ -763,14 +769,33 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
 }
 
 // หน้า ประวัติการเขียนสแครป
-class HistoryScrap_MyProfile extends StatefulWidget {
+class HistoryScrap extends StatefulWidget {
   @override
-  _HistoryScrap_MyProfileState createState() => _HistoryScrap_MyProfileState();
+  _HistoryScrapState createState() => _HistoryScrapState();
 }
 
-class _HistoryScrap_MyProfileState extends State<HistoryScrap_MyProfile> {
+class _HistoryScrapState extends State<HistoryScrap> {
+  var controller = RefreshController();
+  var textGroup = AutoSizeGroup();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  bool isExpired(DocumentSnapshot data) {
+    DateTime startTime = data['scrap']['timeStamp'].toDate();
+    return DateTime(startTime.year, startTime.month, startTime.day + 1,
+            startTime.hour, startTime.second)
+        .difference(DateTime.now())
+        .isNegative;
+  }
+
   @override
   Widget build(BuildContext context) {
+    screenutilInit(context);
+    final user = Provider.of<UserData>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomPadding: false,
@@ -779,82 +804,122 @@ class _HistoryScrap_MyProfileState extends State<HistoryScrap_MyProfile> {
           children: <Widget>[
             appbar_ListOptionSetting(
                 context, Icons.history, ' ประวัติการเขียนสแครป'),
-            Positioned(
-              child: Container(
-                padding: EdgeInsets.only(top: appBarHeight / 1.35),
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  children: <Widget>[
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Wrapblock(),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            Container(
+              padding: EdgeInsets.only(top: appBarHeight / 1.35),
+              margin: EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
+              child: FutureBuilder(
+                  future: fireStore
+                      .collection(
+                          'Users/${user.region}/users/${user.uid}/history')
+                      .orderBy('scrap.timeStamp', descending: true)
+                      .limit(8)
+                      .getDocuments(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List docs = snapshot.data.documents;
+                      return StatefulBuilder(
+                          builder: (context, StateSetter setList) {
+                        return docs.length > 0
+                            ? SmartRefresher(
+                                enablePullDown: false,
+                                enablePullUp: true,
+                                controller: controller,
+                                onLoading: () async {
+                                  if (docs.length > 0) {
+                                    var query = await fireStore
+                                        .collection(
+                                            'Users/${user.region}/users/${user.uid}/history')
+                                        .orderBy('scrap.timeStamp',
+                                            descending: true)
+                                        .startAfterDocument(docs.last)
+                                        .limit(8)
+                                        .getDocuments();
+                                    docs.addAll(query.documents);
+                                    query.documents.length > 0
+                                        ? setList(
+                                            () => controller.loadComplete())
+                                        : controller.loadNoData();
+                                  } else
+                                    controller.loadNoData();
+                                },
+                                physics: BouncingScrollPhysics(),
+                                child: Wrap(
+                                    alignment: WrapAlignment.start,
+                                    spacing: screenWidthDp / 42,
+                                    runSpacing: screenWidthDp / 42,
+                                    children:
+                                        docs.map((doc) => scrap(doc)).toList()),
+                              )
+                            : Center(
+                                child: guide('ไม่มีประวัติการทิ้ง'),
+                              );
+                      });
+                    } else {
+                      return Center(child: LoadNoBlur());
+                    }
+                  }),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-//Grid กระดาษ
-Widget wrap() {
-  return Wrap(
-    direction: Axis.horizontal,
-    alignment: WrapAlignment.center,
-    children: <Widget>[
-      Paper_Widget(),
-      Paper_Widget(),
-      TimeOut_Paper_Widget(),
-      TimeOut_Paper_Widget(),
-      TimeOut_Paper_Widget(),
-      TimeOut_Paper_Widget(),
-      TimeOut_Paper_Widget(),
-      TimeOut_Paper_Widget(),
-    ],
-  );
-}
+  Widget scrap(DocumentSnapshot data) {
+    return Container(
+        height: screenWidthDp / 2.16 * 1.21,
+        width: screenWidthDp / 2.16,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/paper-readed.png'),
+                fit: BoxFit.cover)),
+        child: Stack(children: <Widget>[
+          Center(
+              child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+            child: AutoSizeText(data['scrap']['text'],
+                group: textGroup, style: TextStyle(fontSize: s46)),
+          )),
+          isExpired(data)
+              ? Container(
+                  margin: EdgeInsets.all(4),
+                  height: screenWidthDp / 2.16 * 1.21,
+                  width: screenWidthDp / 2.16,
+                  color: Colors.black38,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.history, size: 50, color: Colors.white),
+                        Text('หมดเวลา',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: s48)),
+                      ]))
+              : SizedBox()
+        ]));
+  }
 
-Widget wrap2() {
-  return Column(
-    children: [
-      Wrap(
-        direction: Axis.horizontal,
-        alignment: WrapAlignment.start,
+  Widget guide(String text) {
+    return Container(
+      height: screenHeightDp / 2.4,
+      width: screenWidthDp,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
-          TimeOut_Paper_Widget(),
+          Image.asset(
+            'assets/paper.png',
+            color: Colors.white60,
+            height: screenHeightDp / 10,
+          ),
+          Text(
+            text,
+            style: TextStyle(
+                fontSize: screenWidthDp / 16,
+                color: Colors.white60,
+                fontWeight: FontWeight.w300),
+          ),
         ],
       ),
-    ],
-  );
-}
-
-//กระดาษที่ยังไม่หมดเวลา
-class Paper_Widget extends StatelessWidget {
-  //final String text;
-  //Ads_Widget(this.text);
-  @override
-  Widget build(BuildContext context) {
-    Size a = MediaQuery.of(context).size;
-    return Container(
-      margin: EdgeInsets.all(4),
-      // width: (174/209)*220,
-      // height: (209/174)*220,
-      width: a.width / 2.2,
-      height: (a.width / 2.1) * 1.21,
-      color: Colors.yellow.shade700,
-      //child: Center(child: Text(text)),
     );
   }
 }
@@ -1013,9 +1078,14 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
                                   borderRadius: BorderRadius.circular(a.width)),
                             ),
                             onTap: () async {
-                              setState(() => loading = true);
-                              await reportApp.reportApp(context);
-                              setState(() => loading = false);
+                              if (key.currentState.validate()) {
+                                key.currentState.save();
+                                setState(() => loading = true);
+                                await reportApp.reportApp(context);
+                                setState(() => loading = false);
+                                toast.toast('ขอบคุณสำหรับการรายงานปัญหาของคุณ');
+                                nav.pop(context);
+                              }
                             },
                           ),
                         )

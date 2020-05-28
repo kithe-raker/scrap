@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/function/aboutUser/SettingFunction.dart';
@@ -31,6 +32,7 @@ class _ProfileState extends State<Profile> {
   List<DocumentSnapshot> pickScrap = [], scrapCrate = [];
   int page = 0;
   var refreshController = RefreshController();
+  var textGroup = AutoSizeGroup();
   var controller = PageController();
 
   //Appbar สำหรับหน้าโปรไฟล์ของฉัน
@@ -535,7 +537,7 @@ class _ProfileState extends State<Profile> {
               spacing: screenWidthDp / 42,
               runSpacing: screenWidthDp / 42,
               alignment: WrapAlignment.start,
-              children: scraps.map((scrap) => Block()).toList())
+              children: scraps.map((doc) => scrap(doc)).toList())
           : Container(
               height: screenHeightDp / 8,
               child: Center(
@@ -544,6 +546,24 @@ class _ProfileState extends State<Profile> {
               ),
             ),
     );
+  }
+
+  Widget scrap(DocumentSnapshot data) {
+    return Container(
+        height: screenWidthDp / 2.16 * 1.21,
+        width: screenWidthDp / 2.16,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/paper-readed.png'),
+                fit: BoxFit.cover)),
+        child: Stack(children: <Widget>[
+          Center(
+              child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+            child: AutoSizeText(data['scrap']['text'],
+                group: textGroup, style: TextStyle(fontSize: s46)),
+          )),
+        ]));
   }
 
   //ข้อมูลผู้ใช้
