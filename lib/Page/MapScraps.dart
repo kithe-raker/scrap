@@ -127,7 +127,7 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   bool isExpired(DocumentSnapshot data) {
-    DateTime startTime = data['scrap']['time'].toDate();
+    DateTime startTime = data['scrap']['timeStamp'].toDate();
     return DateTime(startTime.year, startTime.month, startTime.day + 1,
             startTime.hour, startTime.second)
         .difference(DateTime.now())
@@ -285,21 +285,21 @@ class _MapScrapsState extends State<MapScraps> {
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              data['scrap']['user'] ==
+                                              data['scrap']['writer'] ==
                                                       'ไม่ระบุตัวตน'
                                                   ? 'ใครบางคน'
-                                                  : '@${data['scrap']['user']}',
+                                                  : '@${data['scrap']['writer']}',
                                               style: TextStyle(
                                                   fontSize: s48,
                                                   height: 1.1,
                                                   color: data['scrap']
-                                                              ['user'] ==
+                                                              ['writer'] ==
                                                           'ไม่ระบุตัวตน'
                                                       ? Colors.white
                                                       : Color(0xff26A4FF)),
                                             ),
                                             CountDownText(
-                                                startTime: data['scrap']['time']
+                                                startTime: data['scrap']['timeStamp']
                                                     .toDate())
                                           ],
                                         ),
@@ -1054,13 +1054,13 @@ class _MapScrapsState extends State<MapScraps> {
   addMoreScrap(int limit) async {
     var pos = await Geolocator().getCurrentPosition();
     var ref = recentScrap == null
-        ? Firestore.instance
-            .collection('Scraps/hatyai/test')
-            .orderBy('scrap.time', descending: true)
+        ? fireStore
+            .collectionGroup('ScrapDailys-th')
+            .orderBy('scrap.timeStamp', descending: true)
             .limit(limit)
-        : Firestore.instance
-            .collection('Scraps/hatyai/test')
-            .orderBy('scrap.time', descending: true)
+        : fireStore
+            .collection('ScrapDailys-th')
+            .orderBy('scrap.timeStamp', descending: true)
             .startAfterDocument(recentScrap)
             .limit(limit);
     var doc = await ref.getDocuments();
