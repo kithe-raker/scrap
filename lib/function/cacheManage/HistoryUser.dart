@@ -99,12 +99,15 @@ class HistoryUser {
     final file = await _localFile;
     var map = await read();
     var following = await readHistory(field: 'like');
-    var scrap = following.firstWhere((scp) => scp['id'] == id);
-    following.removeWhere((scp) => scp['id'] == id);
-    scrap['comments'] = comments;
-    following.add(scrap);
-    map['like'] = following;
-    await file.writeAsString(json.encode(map));
+    var scraps = following.where((scp) => scp['id'] == id).toList();
+    if (scraps.length > 0) {
+      var scrap = scraps[0];
+      following.removeWhere((scp) => scp['id'] == id);
+      scrap['comments'] = comments;
+      following.add(scrap);
+      map['like'] = following;
+      await file.writeAsString(json.encode(map));
+    }
   }
 
   Future removeHistory(String field, String id) async {
