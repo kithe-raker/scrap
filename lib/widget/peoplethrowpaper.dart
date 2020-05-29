@@ -26,8 +26,10 @@ class _PaperstrangerState extends State<Paperstranger> {
                       children: <Widget>[
                         Positioned(
                             child: Container(
-                          height: 407 * appBarHeight / 75,
-                          width: 365 * appBarHeight / 75,
+                          /*  height: 407 * appBarHeight / 75,
+                          width: 365 * appBarHeight / 75,*/
+                          height: screenWidthDp / 1.05 * 1.21,
+                          width: screenWidthDp / 1.05,
                           color: Colors.white,
                         )),
                         Positioned(
@@ -121,6 +123,105 @@ class _PaperstrangerState extends State<Paperstranger> {
                   height: appBarHeight / 10,
                 ),
                 Container(
+                  width: screenWidthDp,
+                  height: appBarHeight,
+                  child: Stack(children: <Widget>[
+                    Positioned(
+                        left: appBarHeight / 5,
+                        child: Container(
+                            padding: EdgeInsets.all(appBarHeight / 8),
+                            /* child: IconButton(
+                                icon: Icon(
+                                  Icons.move_to_inbox,
+                                  size: s60 * 1.2,
+                                  color: Color(0xfff0099FF),
+                                ),
+                                onPressed: () {}),*/
+                            child: GestureDetector(
+                              child: Icon(
+                                Icons.move_to_inbox,
+                                color: Color(0xfff0099FF),
+                              ),
+                            ),
+                            /*  height: appBarHeight / 1.8,
+                            width: appBarHeight / 1.8,*/
+
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(22)),
+                            ))),
+                    Positioned(
+                        left: appBarHeight * 0.95,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                              padding: EdgeInsets.only(
+                                  left: appBarHeight / 5,
+                                  right: appBarHeight / 5,
+                                  top: appBarHeight / 8,
+                                  bottom: appBarHeight / 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.reply,
+                                    //  size: s60 * 1.2,
+                                    color: Colors.white,
+                                  ),
+                                  Text('ปากลับ',
+                                      style: TextStyle(
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ))
+                                ],
+                              ),
+                              /*  height: appBarHeight / 1.8,
+                              //width: appBarHeight / 1.8,
+                              width: appBarHeight * 1.5,*/
+                              decoration: BoxDecoration(
+                                color: Color(0xfff26A4FF),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                              )),
+                        )),
+                    Positioned(
+                        left: appBarHeight * 4,
+                        child: Container(
+                          //padding: EdgeInsets.all(appBarHeight / 8),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                  padding: EdgeInsets.all(appBarHeight / 8),
+                                  child: GestureDetector(
+                                    child: Icon(
+                                      Icons.forward,
+                                      color: Colors.black,
+                                      size: s65,
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(50)),
+                                  )),
+                              SizedBox(
+                                height: appBarHeight / 10,
+                              ),
+                              Text(
+                                'ต่อไป',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: s40,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        )),
+                  ]),
+                ),
+                /* Container(
                   height: appBarHeight,
                   width: screenWidthDp,
                   child: Stack(children: <Widget>[
@@ -201,7 +302,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                           ],
                         )),
                   ]),
-                ),
+                ),*/
               ]),
               Positioned(
                   bottom: 0,
