@@ -246,17 +246,10 @@ class _HomePageState extends State<HomePage> {
                                     margin: EdgeInsets.only(top: a.width / 90),
                                     height: a.width / 7,
                                     alignment: Alignment.center,
-<<<<<<< HEAD
-                                    child: Image.asset(
-                                      'assets/scraplogofinal.svg',
-                                      width: a.width / 4,
-                                    )),
-=======
                                     child: SvgPicture.asset(
                                         'assets/scraplogofinal.svg',
                                         width: a.width / 4,
                                         fit: BoxFit.contain)),
->>>>>>> d75005a6ba125a95b43bacfe0b4050db17b40105
                               ],
                             ),
                             //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile
