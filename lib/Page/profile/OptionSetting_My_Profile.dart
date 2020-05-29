@@ -247,6 +247,9 @@ class _OptionSettingState extends State<OptionSetting> {
                     //mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       appbarOptionSetting(context),
+                      SizedBox(
+                        height: appBarHeight / 8,
+                      ),
                       list_OptionSetting(context, Icons.face,
                           ' จัดการบัญชีของฉัน', Manage_MyProfile()),
                       list_OptionSetting(context, Icons.history,
