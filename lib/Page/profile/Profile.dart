@@ -17,6 +17,7 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:scrap/widget/dialog/ScrapDialog.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 
 class Profile extends StatefulWidget {
@@ -140,13 +141,14 @@ class _ProfileState extends State<Profile> {
           child: Stack(
         children: <Widget>[
           Container(
-            margin: EdgeInsets.only(bottom: screenHeightDp / 10),
+            margin: EdgeInsets.only(bottom: screenHeightDp / 21),
             width: screenWidthDp,
             padding: EdgeInsets.only(top: appBarHeight / 1.35),
             child: SmartRefresher(
               controller: refreshController,
               enablePullDown: false,
               enablePullUp: true,
+              footer: footerList(),
               onLoading: () async {
                 if (pickedScrap
                     ? pickScrap.length > 0
@@ -335,6 +337,19 @@ class _ProfileState extends State<Profile> {
         ],
       )),
     );
+  }
+
+  Widget footerList() {
+    return CustomFooter(builder: (BuildContext context, LoadStatus mode) {
+      switch (mode) {
+        case LoadStatus.loading:
+          return Center(child: CircularProgressIndicator());
+          break;
+        default:
+          return SizedBox();
+          break;
+      }
+    });
   }
 
   void showDialogReport(BuildContext context) {
@@ -549,23 +564,30 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget scrap(DocumentSnapshot data) {
-    return Container(
-        height: screenWidthDp / 2.16 * 1.21,
-        width: screenWidthDp / 2.16,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/paper-readed.png'),
-                fit: BoxFit.cover)),
-        child: Stack(children: <Widget>[
-          Center(
-              child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
-            child: AutoSizeText(data['scrap']['text'],
-                textAlign: TextAlign.center,
-                group: textGroup,
-                style: TextStyle(fontSize: s46)),
-          )),
-        ]));
+    return GestureDetector(
+      child: Container(
+          height: screenWidthDp / 2.16 * 1.21,
+          width: screenWidthDp / 2.16,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/paper-readed.png'),
+                  fit: BoxFit.cover)),
+          child: Stack(children: <Widget>[
+            Center(
+                child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+              child: AutoSizeText(data['scrap']['text'],
+                  textAlign: TextAlign.center,
+                  group: textGroup,
+                  style: TextStyle(fontSize: s46)),
+            )),
+          ])),
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => ScrapDialog(data: data));
+      },
+    );
   }
 
   //ข้อมูลผู้ใช้
