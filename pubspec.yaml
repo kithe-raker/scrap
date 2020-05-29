@@ -58,7 +58,7 @@ dependencies:
   stream_transform: ^0.0.19
   social_share: ^2.0.4
   auto_size_text: ^2.1.0
-
+  flutter_svg: ^0.17.4
   
 dev_dependencies:
   flutter_test:

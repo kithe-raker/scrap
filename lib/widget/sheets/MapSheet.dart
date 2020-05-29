@@ -99,11 +99,13 @@ class _MapSheetState extends State<MapSheet> {
       setState(() {
         markers[markerId] = marker;
       });
+      this.mapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: widget.position, zoom: 10)));
     }
   }
 
-  void onMapCreated(GoogleMapController mapController) {
-    this.mapController = mapController;
+  void onMapCreated(GoogleMapController googleMapController) {
+    this.mapController = googleMapController;
     changeMapMode();
     writerMarker();
   }

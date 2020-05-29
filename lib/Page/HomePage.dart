@@ -5,6 +5,7 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
@@ -245,10 +246,17 @@ class _HomePageState extends State<HomePage> {
                                     margin: EdgeInsets.only(top: a.width / 90),
                                     height: a.width / 7,
                                     alignment: Alignment.center,
+<<<<<<< HEAD
                                     child: Image.asset(
                                       'assets/scraplogofinal.svg',
                                       width: a.width / 4,
                                     )),
+=======
+                                    child: SvgPicture.asset(
+                                        'assets/scraplogofinal.svg',
+                                        width: a.width / 4,
+                                        fit: BoxFit.contain)),
+>>>>>>> d75005a6ba125a95b43bacfe0b4050db17b40105
                               ],
                             ),
                             //��่วนของ UI ปุ่ม account เพื่อไปหน้า Profile

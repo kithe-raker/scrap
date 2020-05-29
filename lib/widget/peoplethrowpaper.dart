@@ -1,10 +1,14 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
 
 class Paperstranger extends StatefulWidget {
+  final DocumentSnapshot scrap;
+  Paperstranger({@required this.scrap});
   @override
   _PaperstrangerState createState() => _PaperstrangerState();
 }
@@ -13,6 +17,7 @@ class _PaperstrangerState extends State<Paperstranger> {
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
+    var scrap = widget.scrap['scrap'];
     return Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
@@ -28,7 +33,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                             child: Container(
                           child: Center(
                               child: Text(
-                            'เบื่อไอป้อม',
+                            scrap['text'],
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: s52),
                           )),
@@ -51,7 +56,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   nav.pop(context);
                                 },
                               ),
-                              //color: Colors.yellow,
                             )),
                       ],
                     ),
@@ -76,25 +80,18 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   height: appBarHeight / 8,
                                 ),
                                 Text(
-                                  '@MIKE',
+                                  scrap['writer'] == 'ไม่ระบุตัวตน'
+                                      ? 'ใครบางคน'
+                                      : '@${scrap['writer']}',
                                   style: TextStyle(
-                                      color: Color(0xfff26A4FF), fontSize: s52),
+                                      fontSize: s48,
+                                      height: 1.1,
+                                      color: scrap['writer'] == 'ไม่ระบุตัวตน'
+                                          ? Colors.white
+                                          : Color(0xff26A4FF)),
                                 ),
-                                Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'เหลือเวลาอีก :',
-                                      style:
-                                          TextStyle(color: Color(0xfff969696)),
-                                    ),
-                                    Text(
-                                      '\t23:47:01',
-                                      style: TextStyle(
-                                          color: Color(0xfffFFFFFF),
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
+                                CountDownText(
+                                    startTime: scrap['timeStamp'].toDate())
                               ],
                             ),
                           )),
