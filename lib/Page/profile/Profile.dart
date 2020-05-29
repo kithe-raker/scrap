@@ -1,9 +1,14 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/function/aboutUser/SettingFunction.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/block.dart';
-import 'package:scrap/widget/wrap.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +17,7 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:scrap/widget/peoplethrowpaper.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -22,7 +28,11 @@ class _ProfileState extends State<Profile> {
   bool initInfoFinish = false;
   bool pickedScrap = true;
   Map profile = {};
+  List readScrap = [];
+  List<DocumentSnapshot> pickScrap = [], scrapCrate = [];
   int page = 0;
+  var refreshController = RefreshController();
+  var textGroup = AutoSizeGroup();
   var controller = PageController();
 
   //Appbar สำหรับหน้าโปรไฟล์ของฉัน
@@ -65,14 +75,37 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+  Timestamp yesterDay() {
+    var now = DateTime.now();
+    return Timestamp.fromDate(
+        DateTime(now.year, now.month, now.day - 1, now.hour, now.minute));
+  }
+
   @override
   void initState() {
     initUser();
     super.initState();
   }
 
-  initUser() async {
+  Future<void> initUser() async {
+    final user = Provider.of<UserData>(context, listen: false);
     var data = await userinfo.readContents();
+    var read = await cacheHistory.getReadScrap();
+    var ref =
+        fireStore.collection('Users/${user.region}/users').document(user.uid);
+    var scrapCollection = await ref
+        .collection('scrapCollection')
+        .orderBy('timeStamp', descending: true)
+        .limit(2)
+        .getDocuments();
+    var scrapCrates = await ref
+        .collection('scrapCrate')
+        .orderBy('timeStamp', descending: true)
+        .limit(2)
+        .getDocuments();
+    pickScrap.addAll(scrapCollection.documents);
+    scrapCrate.addAll(scrapCrates.documents);
+    readScrap.addAll(read);
     profile = data;
     setState(() => initInfoFinish = true);
   }
@@ -80,6 +113,7 @@ class _ProfileState extends State<Profile> {
   @override
   void dispose() {
     controller.dispose();
+    refreshController.dispose();
     super.dispose();
   }
 
@@ -103,189 +137,203 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: initInfoFinish
-            ? Stack(
+          child: Stack(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(bottom: screenHeightDp / 10),
+            width: screenWidthDp,
+            padding: EdgeInsets.only(top: appBarHeight / 1.35),
+            child: SmartRefresher(
+              controller: refreshController,
+              enablePullDown: false,
+              enablePullUp: true,
+              onLoading: () async {
+                if (pickedScrap
+                    ? pickScrap.length > 0
+                    : scrapCrate.length > 0) {
+                  var ref = fireStore
+                      .collection('Users/${user.region}/users')
+                      .document(user.uid);
+                  var docs = await ref
+                      .collection(
+                          pickedScrap ? 'scrapCollection' : 'scrapCrate')
+                      .orderBy('timeStamp', descending: true)
+                      .startAfterDocument(
+                          pickedScrap ? pickScrap.last : scrapCrate.last)
+                      .limit(4)
+                      .getDocuments();
+                  pickedScrap
+                      ? pickScrap.addAll(docs.documents)
+                      : scrapCrate.addAll(docs.documents);
+                  docs.documents.length < 1
+                      ? refreshController.loadNoData()
+                      : refreshController.loadComplete();
+                  setState(() {});
+                } else
+                  refreshController.loadNoData();
+              },
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  SizedBox(height: screenHeightDp / 36),
                   Container(
-                    width: screenWidthDp,
-                    padding: EdgeInsets.only(top: appBarHeight / 1.35),
-                    child: SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(height: screenHeightDp / 36),
-                          Container(
-                            height: screenWidthDp / 3.32,
-                            width: screenWidthDp / 3.32,
-                            decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.white, width: 1.2),
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.circular(screenHeightDp),
-                            ),
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(screenHeightDp),
-                              child: profile['img'] == null
-                                  ? Image.asset('assets/userprofile.png')
-                                  : Image.file(File(profile['img']),
-                                      fit: BoxFit.cover),
-                            ),
-                          ),
-                          SizedBox(height: appBarHeight / 5),
-                          Text(
-                            '@${profile['id'] ?? 'ชื่อ'}',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: s60),
-                          ),
-                          SizedBox(
-                            height: appBarHeight / 10,
-                          ),
-                          Container(
-                              child: user.uid == null
-                                  ? null
-                                  : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        dataProfile('เก็บไว้', user.uid,
-                                            field: 'pick'),
-                                        dataProfile('แอทเทนชัน', user.uid,
-                                            field: 'att'),
-                                        dataProfile('โดนปาใส่', user.uid,
-                                            field: 'thrown'),
-                                      ],
-                                    )),
-                          SizedBox(height: screenHeightDp / 24),
-                          Text(
-                            '${profile['status'] ?? 'สเตตัสของคุณ'}',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s48,
-                                fontStyle: FontStyle.italic),
-                          ),
-                          SizedBox(height: screenHeightDp / 24),
-                          Container(
-                            /* margin: EdgeInsets.symmetric(
-                              horizontal: screenWidthDp / 30,
-                            ),*/
-                            child: Column(
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: screenWidthDp / 30,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text('โดนปาใส่ล่าสุด 9 ก้อน',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: s60)),
-                                      switchThrow(user.uid)
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: screenHeightDp / 10,
-                                  width: screenWidthDp,
-                                  child: ListView(
-                                    physics: BouncingScrollPhysics(),
-                                    scrollDirection: Axis.horizontal,
-                                    children: <Widget>[
-                                      // Image.asset('assets/paper-mini01.png'),
-                                      // Image.asset('assets/paper-mini01.png'),
-                                      // Image.asset('assets/paper-mini01.png'),
-                                      // Image.asset('assets/paper-mini01.png'),
-                                      // Image.asset('assets/paper-mini01.png'),
-                                      // Image.asset('assets/paper-mini01.png'),
-                                      scrapPaper(),
-                                      scrapPaper(),
-                                      scrapPaper(),
-                                      scrapPaper(),
-                                      scrapPaper(),
-                                      scrapPaper(),
-                                      scrapPaper(),
-                                      scrapPaper(),
-                                      scrapPaper(),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 7.2),
-                                Divider(color: Colors.grey),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      GestureDetector(
-                                        onTap: () {
-                                          pickedScrap = true;
-                                          setState(() {});
-                                        },
-                                        child: Container(
-                                          height: appBarHeight / 2,
-                                          decoration: BoxDecoration(
-                                            border: pickedScrap
-                                                ? Border(
-                                                    bottom: BorderSide(
-                                                        width: 2.0,
-                                                        color: Colors.white),
-                                                  )
-                                                : null,
-                                          ),
-                                          child: Text(
-                                            'เก็บจากที่ทิ้งไว้',
-                                            style: TextStyle(
-                                                fontSize: s48,
-                                                color: Colors.white,
-                                                fontWeight: pickedScrap
-                                                    ? FontWeight.bold
-                                                    : null),
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                          onTap: () {
-                                            pickedScrap = false;
-                                            setState(() {});
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                border: pickedScrap
-                                                    ? null
-                                                    : Border(
-                                                        bottom: BorderSide(
-                                                            width: 2.0,
-                                                            color:
-                                                                Colors.white))),
-                                            child: Text('เก็บจากโดนปาใส่',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: s48,
-                                                    fontWeight: pickedScrap
-                                                        ? null
-                                                        : FontWeight.bold)),
-                                          ))
-                                    ]),
-                                Divider(color: Colors.grey, height: 0),
-                                SizedBox(height: screenWidthDp / 36),
-                                scrapGrid(),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    height: screenWidthDp / 3.32,
+                    width: screenWidthDp / 3.32,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 1.2),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(screenHeightDp),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(screenHeightDp),
+                      child: profile['img'] == null
+                          ? Image.asset('assets/userprofile.png')
+                          : Image.file(File(profile['img']), fit: BoxFit.cover),
                     ),
                   ),
-                  Positioned(top: 0, child: appbarProfile(context)),
-                  adsContainer(),
+                  SizedBox(height: appBarHeight / 5),
+                  Text(
+                    '@${profile['id'] ?? 'ชื่อ'}',
+                    style: TextStyle(color: Colors.white, fontSize: s60),
+                  ),
+                  SizedBox(
+                    height: appBarHeight / 10,
+                  ),
+                  Container(
+                      child: user.uid == null
+                          ? null
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                dataProfile('เก็บไว้', user.uid, field: 'pick'),
+                                dataProfile('แอทเทนชัน', user.uid,
+                                    field: 'att'),
+                                dataProfile('โดนปาใส่', user.uid,
+                                    field: 'thrown'),
+                              ],
+                            )),
+                  SizedBox(height: screenHeightDp / 24),
+                  Text(
+                    '${profile['status'] ?? 'สเตตัสของคุณ'}',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: s48,
+                        fontStyle: FontStyle.italic),
+                  ),
+                  SizedBox(height: screenHeightDp / 24),
+                  Container(
+                    child: Column(
+                      children: <Widget>[
+                        StreamBuilder(
+                            stream: fireStore
+                                .collection(
+                                    'Users/${user.region}/users/${user.uid}/thrownScraps')
+                                .orderBy('scrap.timeStamp', descending: true)
+                                .where('scrap.timeStamp',
+                                    isGreaterThan: yesterDay())
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                List recentScraps = snapshot.data.documents;
+                                return Column(children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: screenWidthDp / 30),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                              recentScraps.length > 0
+                                                  ? 'โดนปาใส่ล่าสุด ${recentScraps.length} ก้อน'
+                                                  : 'ไม่มีกระดาษที่ปามา',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: s60)),
+                                          switchThrow(user.uid)
+                                        ]),
+                                  ),
+                                  recentlyThrown(recentScraps)
+                                ]);
+                              } else {
+                                return SizedBox(
+                                    height: screenWidthDp / 8.1,
+                                    child: Center(
+                                        child: CircularProgressIndicator()));
+                              }
+                            }),
+                        SizedBox(height: 7.2),
+                        Divider(color: Colors.grey),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              GestureDetector(
+                                child: Container(
+                                  height: appBarHeight / 2,
+                                  decoration: BoxDecoration(
+                                    border: pickedScrap
+                                        ? Border(
+                                            bottom: BorderSide(
+                                                width: 2.0,
+                                                color: Colors.white),
+                                          )
+                                        : null,
+                                  ),
+                                  child: Text(
+                                    'เก็บจากที่ทิ้งไว้',
+                                    style: TextStyle(
+                                        fontSize: s48,
+                                        color: Colors.white,
+                                        fontWeight: pickedScrap
+                                            ? FontWeight.bold
+                                            : null),
+                                  ),
+                                ),
+                                onTap: () {
+                                  pickedScrap = true;
+                                  setState(() {});
+                                },
+                              ),
+                              GestureDetector(
+                                  onTap: () {
+                                    pickedScrap = false;
+                                    setState(() {});
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        border: pickedScrap
+                                            ? null
+                                            : Border(
+                                                bottom: BorderSide(
+                                                    width: 2.0,
+                                                    color: Colors.white))),
+                                    child: Text('เก็บจากโดนปาใส่',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: s48,
+                                            fontWeight: pickedScrap
+                                                ? null
+                                                : FontWeight.bold)),
+                                  ))
+                            ]),
+                        Divider(color: Colors.grey, height: 0),
+                        SizedBox(height: screenWidthDp / 36),
+                        scrapGrid(pickedScrap ? pickScrap : scrapCrate),
+                        SizedBox(height: screenWidthDp / 42),
+                      ],
+                    ),
+                  ),
                 ],
-              )
-            : Center(child: CircularProgressIndicator()),
-      ),
+              ),
+            ),
+          ),
+          Positioned(top: 0, child: appbarProfile(context)),
+          initInfoFinish ? SizedBox() : Loading(),
+          adsContainer(),
+        ],
+      )),
     );
   }
 
@@ -434,6 +482,25 @@ class _ProfileState extends State<Profile> {
         });
   }
 
+  Widget recentlyThrown(List docs) {
+    return Container(
+      height: screenHeightDp / 10,
+      width: screenWidthDp,
+      child: docs.length > 0
+          ? ListView(
+              physics: BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              children: docs
+                  .map((data) =>
+                      scrapPaper(readScrap.contains(data.documentID), data))
+                  .toList())
+          : Center(
+              child: Text('คุณไม่มีกระดาษที่ปามา',
+                  style: TextStyle(color: Colors.white60, fontSize: s46)),
+            ),
+    );
+  }
+
   Widget switchThrow(String uid) {
     return FutureBuilder(
         future: futureTransaction(uid, 'allowThrow'),
@@ -463,20 +530,40 @@ class _ProfileState extends State<Profile> {
         });
   }
 
-  Widget scrapGrid() {
+  Widget scrapGrid(List<DocumentSnapshot> scraps) {
     return Container(
-        margin: EdgeInsets.only(bottom: screenHeightDp / 10),
-        child: Wrap(
-            spacing: screenWidthDp / 42,
-            runSpacing: screenWidthDp / 42,
-            alignment: WrapAlignment.start,
-            children: <Widget>[
-              Block(),
-              Block(),
-              Block(),
-              Block(),
-              Block(),
-            ]));
+      child: scraps.length > 0
+          ? Wrap(
+              spacing: screenWidthDp / 42,
+              runSpacing: screenWidthDp / 42,
+              alignment: WrapAlignment.start,
+              children: scraps.map((doc) => scrap(doc)).toList())
+          : Container(
+              height: screenHeightDp / 8,
+              child: Center(
+                child: Text('ไม่มีกระดาษที่คุณเก็บไว้',
+                    style: TextStyle(color: Colors.white60, fontSize: s46)),
+              ),
+            ),
+    );
+  }
+
+  Widget scrap(DocumentSnapshot data) {
+    return Container(
+        height: screenWidthDp / 2.16 * 1.21,
+        width: screenWidthDp / 2.16,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/paper-readed.png'),
+                fit: BoxFit.cover)),
+        child: Stack(children: <Widget>[
+          Center(
+              child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+            child: AutoSizeText(data['scrap']['text'],
+                group: textGroup, style: TextStyle(fontSize: s46)),
+          )),
+        ]));
   }
 
   //ข้อมูลผู้ใช้
@@ -524,6 +611,31 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
+
+//ก้อนกระดาษ
+  Widget scrapPaper(bool read, DocumentSnapshot data) {
+    return GestureDetector(
+        child: Transform.scale(
+          scale: 1.1,
+          child: Opacity(
+            opacity: read ? 0.6 : 1,
+            child: Container(
+                width: screenWidthDp / 5.5,
+                child:
+                    Image.asset('assets/paper-mini01.png', fit: BoxFit.cover)),
+          ),
+        ),
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext contwxt) => Paperstranger());
+          if (!read) {
+            cacheHistory.addReadScrap(data);
+            readScrap.add(data.documentID);
+            setState(() {});
+          }
+        });
+  }
 }
 
 //โฆษณา Google Ads แสดงด้านล่างสุดของหน้าจอ
@@ -543,16 +655,6 @@ Widget adsContainer() {
         ),
       ),
     ],
-  );
-}
-
-//ก้อนกระดาษ
-Widget scrapPaper() {
-  return Transform.scale(
-    scale: 1.1,
-    child: Container(
-        width: screenWidthDp / 5.5,
-        child: Image.asset('assets/paper-mini01.png', fit: BoxFit.cover)),
   );
 }
 

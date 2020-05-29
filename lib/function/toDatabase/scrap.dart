@@ -40,14 +40,14 @@ class Scraps {
           status: data['status'],
           thrownUid: thrownUID,
           ref: collRef);
-      // userDb
-      //     .reference()
-      //     .child('users/${user.uid}')
-      //     .update({'papers': user.papers - 1});
-      // refDb.child('thrown').once().then((data) => userDb
-      //     .reference()
-      //     .child('users/$thrownUID')
-      //     .update({'thrown': data.value + 1}));
+      userDb
+          .reference()
+          .child('users/${user.uid}')
+          .update({'papers': user.papers - 1});
+      refDb.child('thrown').once().then((data) => userDb
+          .reference()
+          .child('users/$thrownUID')
+          .update({'thrown': data.value + 1}));
       await ref.document(docId).setData({
         'uid': user.uid,
         'scrap': {
@@ -104,8 +104,8 @@ class Scraps {
     batch.setData(ref.document(docId), scrap);
     scrap['default'] = defaultPoint.data;
     batch.setData(
-        Firestore.instance
-            .collection('Users/${user.uid}/history')
+        fireStore
+            .collection('Users/${user.region}/users/${user.uid}/history')
             .document(docId),
         scrap);
 
@@ -200,22 +200,19 @@ class Scraps {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var ref = userDb.reference().child('users/$uid');
+    final user = Provider.of<UserData>(context, listen: false);
     var trans = await ref.child('pick').once();
     if (cancel) {
-      Firestore.instance
-          .collection('Users')
-          .document(uid)
-          .collection('scrapCollection')
+      fireStore
+          .collection('Users/${user.region}/users/${user.uid}/scrapCollection')
           .document(scrap['id'])
           .delete();
       ref.update({'pick': trans.value - 1});
     } else {
       scrap['picker'] = uid;
       scrap['timeStamp'] = FieldValue.serverTimestamp();
-      Firestore.instance
-          .collection('Users')
-          .document(uid)
-          .collection('scrapCollection')
+      fireStore
+          .collection('Users/${user.region}/users/${user.uid}/scrapCollection')
           .document(scrap['id'])
           .setData(scrap);
       ref.update({'pick': trans.value + 1});
@@ -225,7 +222,7 @@ class Scraps {
   resetScrap(BuildContext context, {@required String uid}) async {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
-    await userDb.reference().child('users/$uid').update({'papers': 15});
+    await userDb.reference().child('users/$uid').update({'papers': 10});
   }
 
   Future<bool> blocked(String uid, String thrownUID) async {

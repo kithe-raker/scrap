@@ -203,14 +203,14 @@ class _SubpeopleState extends State<Subpeople> {
                                 ),
                               )
                             : !searching
-                                ? false //recently.length < 1 && following.length < 1
+                                ? recently.length < 1 && following.length < 1
                                     ? Center(
                                         child: guide('ไม่มีคนที่คุณติดตาม'))
                                     : ListView(
                                         physics:
                                             AlwaysScrollableScrollPhysics(),
                                         children: <Widget>[
-                                          true //   recently.length > 0
+                                          recently.length > 0
                                               ? recentlyThrow()
                                               : SizedBox(),
                                           following.length > 0
@@ -241,24 +241,23 @@ class _SubpeopleState extends State<Subpeople> {
         decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Color(0xff292929)))),
         padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 50),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: screenWidthDp / 24),
-              Container(
-                child: Text("\tล่าสุดที่ปาใส่",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: s48,
-                        fontWeight: FontWeight.bold)),
-              ),
-              SizedBox(height: screenWidthDp / 20),
-              /* Column(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+            Widget>[
+          SizedBox(height: screenWidthDp / 24),
+          Container(
+            child: Text("\tล่าสุดที่ปาใส่",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: s48,
+                    fontWeight: FontWeight.bold)),
+          ),
+          SizedBox(height: screenWidthDp / 20),
+          Column(
               children: recently
                   .map((user) => PersonCard(data: user, enableNavigator: true))
-                  .toList()),*/
-              SizedBox(height: screenWidthDp / 30),
-            ]));
+                  .toList()),
+          SizedBox(height: screenWidthDp / 30),
+        ]));
   }
 
   Widget followingList() {
@@ -338,7 +337,7 @@ class _SubpeopleState extends State<Subpeople> {
   }
 
   Widget serachResult() {
-    Size a = MediaQuery.of(context).size;
+    final user = Provider.of<UserData>(context, listen: false);
     return ListView(
       physics: BouncingScrollPhysics(),
       children: <Widget>[
@@ -362,7 +361,7 @@ class _SubpeopleState extends State<Subpeople> {
                           "\tผู้คน",
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: a.width / 18,
+                              fontSize: screenWidthDp / 18,
                               fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -381,7 +380,8 @@ class _SubpeopleState extends State<Subpeople> {
                           return docs.length > 0
                               ? Column(
                                   children: docs
-                                      .map((doc) => doc['img'] != null
+                                      .map((doc) => doc['img'] != null 
+                                      // &&doc.documentID != user.uid
                                           ? userCard(doc)
                                           : SizedBox())
                                       .toList())

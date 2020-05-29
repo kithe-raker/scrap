@@ -41,6 +41,7 @@ class UserInfo {
     String immPath = await storeImage(doc['img']);
     Map userData = {
       'img': immPath,
+      'imgUrl': doc['img'],
       'id': doc['id'],
       'status': doc['status'],
       'region': doc['region']

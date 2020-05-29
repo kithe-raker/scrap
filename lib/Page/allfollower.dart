@@ -95,10 +95,10 @@ class _AllfollowerState extends State<Allfollower> {
                                 child: Column(
                                     children: friends
                                         .map((doc) => PersonCard(
-                                              data: doc.data,
-                                              uid: doc.documentID,
-                                              ref: doc.reference.parent().path,
-                                            ))
+                                            data: doc.data,
+                                            uid: doc.documentID,
+                                            ref: doc.reference.parent().path,
+                                            enableNavigator: true))
                                         .toList()),
                               ),
                             );

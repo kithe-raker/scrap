@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,8 @@ class _OtherProfileState extends State<OtherProfile> {
   int page = 0;
   String uid, ref;
   bool value = false, pickedScrap = true;
-  List followList = [], pickScraps = [];
+  List followList = [];
+  List<DocumentSnapshot> pickScrap = [], scrapCrate = [];
   bool loading = true;
   StreamSubscription loadStream;
   var refreshController = RefreshController();
@@ -61,13 +63,29 @@ class _OtherProfileState extends State<OtherProfile> {
   Future<void> initList() async {
     widget.uid == null ? uid = widget.data['uid'] : uid = widget.uid;
     widget.ref == null ? ref = widget.data['ref'] : ref = widget.ref;
+    var refColl = fireStore.collection(ref).document(uid);
+    var scrapCollection = await refColl
+        .collection('scrapCollection')
+        .orderBy('timeStamp', descending: true)
+        .limit(2)
+        .getDocuments();
+    var scrapCrates = await refColl
+        .collection('scrapCrate')
+        .orderBy('timeStamp', descending: true)
+        .limit(2)
+        .getDocuments();
+    pickScrap.addAll(scrapCollection.documents);
+    scrapCrate.addAll(scrapCrates.documents);
     followList = await cacheFriends.getFollowing();
     setState(() => loading = false);
   }
 
+  Future<void> initUser() async {}
+
   @override
   void dispose() {
     loadStream.cancel();
+    refreshController.dispose();
     super.dispose();
   }
 
@@ -86,10 +104,37 @@ class _OtherProfileState extends State<OtherProfile> {
           child: Stack(
             children: <Widget>[
               Container(
+                margin: EdgeInsets.only(bottom: screenHeightDp / 10),
                 padding: EdgeInsets.only(top: appBarHeight / 1.35),
-                child: SingleChildScrollView(
-                  // controller: refreshController,
+                child: SmartRefresher(
+                  enablePullDown: false,
+                  enablePullUp: true,
+                  controller: refreshController,
+                  onLoading: () async {
+                    if (pickedScrap
+                        ? pickScrap.length > 0
+                        : scrapCrate.length > 0) {
+                      var refColl = fireStore.collection(ref).document(uid);
+                      var docs = await refColl
+                          .collection(
+                              pickedScrap ? 'scrapCollection' : 'scrapCrate')
+                          .orderBy('timeStamp', descending: true)
+                          .startAfterDocument(
+                              pickedScrap ? pickScrap.last : scrapCrate.last)
+                          .limit(4)
+                          .getDocuments();
+                      pickedScrap
+                          ? pickScrap.addAll(docs.documents)
+                          : scrapCrate.addAll(docs.documents);
+                      docs.documents.length < 1
+                          ? refreshController.loadNoData()
+                          : refreshController.loadComplete();
+                      setState(() {});
+                    } else
+                      refreshController.loadNoData();
+                  },
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Container(
                         height: screenWidthDp / 3,
@@ -184,7 +229,8 @@ class _OtherProfileState extends State<OtherProfile> {
                       ),
                       Divider(color: Colors.grey, height: 0),
                       SizedBox(height: screenWidthDp / 36),
-                      scrapGrid()
+                      scrapGrid(pickedScrap ? pickScrap : scrapCrate),
+                      SizedBox(height: screenWidthDp / 36),
                     ],
                   ),
                 ),
@@ -343,20 +389,22 @@ class _OtherProfileState extends State<OtherProfile> {
     );
   }
 
-  Widget scrapGrid() {
+  Widget scrapGrid(List<DocumentSnapshot> scraps) {
     return Container(
-        margin: EdgeInsets.only(bottom: screenHeightDp / 10),
-        child: Wrap(
-            spacing: screenWidthDp / 42,
-            runSpacing: screenWidthDp / 42,
-            alignment: WrapAlignment.start,
-            children: <Widget>[
-              Block(),
-              Block(),
-              Block(),
-              Block(),
-              Block(),
-            ]));
+      child: scraps.length > 0
+          ? Wrap(
+              spacing: screenWidthDp / 42,
+              runSpacing: screenWidthDp / 42,
+              alignment: WrapAlignment.start,
+              children: scraps.map((scrap) => Block()).toList())
+          : Container(
+              height: screenHeightDp / 7.2,
+              child: Center(
+                child: Text('ไม่พบกระดาษที่เก็บไว้',
+                    style: TextStyle(color: Colors.white60, fontSize: s46)),
+              ),
+            ),
+    );
   }
 
   Widget dataProfile(String name, String uid, {@required String field}) {

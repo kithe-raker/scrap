@@ -197,7 +197,7 @@ class AuthenService {
     initFile(context);
     cacheHistory.initHistory();
     userDb.reference().child('users/$uid').set(
-        {'att': 0, 'papers': 15, 'pick': 0, 'thrown': 0, 'allowThrow': false});
+        {'att': 0, 'papers': 10, 'pick': 0, 'thrown': 0, 'allowThrow': false});
     userDb
         .reference()
         .child('users/$uid/follows')

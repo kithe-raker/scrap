@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
 class CommentSheet extends StatefulWidget {
@@ -18,18 +18,29 @@ class CommentSheet extends StatefulWidget {
 }
 
 class _CommentSheetState extends State<CommentSheet> {
-  bool canSend = false;
   List commentList = [];
   DocumentSnapshot scrapSnapshot;
   var controller = RefreshController();
   TextEditingController comment = TextEditingController();
   CollectionReference ref;
+  bool loading = true;
+
   @override
   void initState() {
+    initComments();
+    super.initState();
+  }
+
+  initComments() async {
     ref = Firestore.instance.collection(
         'Users/${widget.scrapSnapshot['uid']}/scraps/${widget.scrapSnapshot.documentID}/comments');
     scrapSnapshot = widget.scrapSnapshot;
-    super.initState();
+    var docs = await ref
+        .orderBy('timeStamp', descending: true)
+        .limit(8)
+        .getDocuments();
+    commentList.addAll(docs.documents);
+    setState(() => loading = false);
   }
 
   @override
@@ -41,7 +52,7 @@ class _CommentSheetState extends State<CommentSheet> {
 
   bool isExpired(List commentList, CollectionReference ref, String scrapId,
       {@required String comment}) {
-    DateTime startTime = scrapSnapshot['scrap']['time'].toDate();
+    DateTime startTime = scrapSnapshot['scrap']['timeStamp'].toDate();
     if (DateTime(startTime.year, startTime.month, startTime.day + 1,
             startTime.hour, startTime.second)
         .difference(DateTime.now())
@@ -56,21 +67,21 @@ class _CommentSheetState extends State<CommentSheet> {
   addComment(List commentList, CollectionReference ref, String scrapId,
       {@required String comment}) async {
     final db = Provider.of<RealtimeDB>(context, listen: false);
+    final user = Provider.of<UserData>(context, listen: false);
     final scrapAll = FirebaseDatabase(app: db.scrapAll);
     final userDb = FirebaseDatabase(app: db.userTransact);
     final defaultDb = FirebaseDatabase.instance;
     var refChild = 'scraps/$scrapId';
 
-    Map data = await userinfo.readContents();
     commentList.insert(0, {
-      'name': data['name'],
-      'image': data['img'],
+      'name': user.id,
+      'image': user.imgUrl,
       'comment': comment,
       'timeStamp': DateTime.now()
     });
     ref.add({
-      'name': data['name'],
-      'image': data['img'],
+      'name': user.id,
+      'image': user.imgUrl,
       'comment': comment,
       'timeStamp': FieldValue.serverTimestamp()
     });
@@ -128,54 +139,40 @@ class _CommentSheetState extends State<CommentSheet> {
                     child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: screenWidthDp / 56),
-                        child: FutureBuilder(
-                            future: ref
-                                .orderBy('timeStamp', descending: true)
-                                .limit(8)
-                                .getDocuments(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                commentList.addAll(snapshot.data.documents);
-                                return StatefulBuilder(
-                                    builder: (context, StateSetter setComment) {
-                                  return SmartRefresher(
-                                      enablePullUp: true,
-                                      enablePullDown: true,
-                                      controller: controller,
-                                      onRefresh: () {
+                        child: loading
+                            ? Center(child: CircularProgressIndicator())
+                            : StatefulBuilder(
+                                builder: (context, StateSetter setComment) {
+                                return SmartRefresher(
+                                    enablePullUp: true,
+                                    enablePullDown: true,
+                                    controller: controller,
+                                    onRefresh: () {
+                                      setComment(() {});
+                                      controller.refreshCompleted();
+                                    },
+                                    onLoading: () async {
+                                      var docs = await ref
+                                          .orderBy('timeStamp',
+                                              descending: true)
+                                          .startAfterDocument(commentList.last)
+                                          .limit(8)
+                                          .getDocuments();
+                                      if (docs.documents.length > 0) {
+                                        commentList.addAll(docs.documents);
                                         setComment(() {});
-                                        controller.refreshCompleted();
-                                      },
-                                      onLoading: () async {
-                                        var docs = await ref
-                                            .orderBy('timeStamp',
-                                                descending: true)
-                                            .startAfterDocument(
-                                                commentList.last)
-                                            .limit(8)
-                                            .getDocuments();
-                                        if (docs.documents.length > 0) {
-                                          commentList.addAll(docs.documents);
-                                          setComment(() {});
-                                          controller.loadComplete();
-                                        } else {
-                                          controller.loadNoData();
-                                        }
-                                      },
-                                      child: ListView(
-                                          children: commentList
-                                              .map((doc) => commentBox(doc))
-                                              .toList()));
-                                });
-                              } else {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            })),
+                                        controller.loadComplete();
+                                      } else {
+                                        controller.loadNoData();
+                                      }
+                                    },
+                                    child: ListView(
+                                        children: commentList
+                                            .map((doc) => commentBox(doc))
+                                            .toList()));
+                              })),
                   ),
                   StatefulBuilder(builder: (context, StateSetter setSheet) {
-                    comment.selection = TextSelection.fromPosition(
-                        TextPosition(offset: comment.text.length));
                     return Container(
                         width: screenWidthDp,
                         height: screenHeightDp / 12,
@@ -195,59 +192,66 @@ class _CommentSheetState extends State<CommentSheet> {
                                   color: Color(0xff313131),
                                   borderRadius: BorderRadius.circular(8)),
                               child: TextField(
-                                controller: comment,
-                                onChanged: (val) {
-                                  val.trim().length > 0
-                                      ? setSheet(() => canSend = true)
-                                      : setSheet(() => canSend = false);
-                                  comment.text = val.trim();
-                                },
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'พิมพ์อะไรสักอย่างสิ',
-                                    hintStyle: TextStyle(
-                                        color: Colors.white38,
-                                        fontSize: s48,
-                                        height: 0.72)),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: s48,
-                                    height: 0.72),
-                                textInputAction: TextInputAction.done,
-                                onSubmitted: (val) {
-                                  if (isExpired(commentList, ref,
-                                      scrapSnapshot.documentID,
-                                      comment: comment.text)) {
-                                    scrap.toast('แสครปนี้ย่อยสลายแล้ว');
-                                  } else {
-                                    comment.clear();
-                                    setSheet(() => canSend = false);
-                                    controller.requestRefresh();
-                                  }
-                                },
-                              ),
+                                  controller: comment,
+                                  onChanged: (val) {
+                                    var trim = val.trim();
+                                    comment.text = trim;
+                                    comment.selection =
+                                        TextSelection.fromPosition(
+                                            TextPosition(offset: trim.length));
+                                    setSheet(() {});
+                                  },
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'พิมพ์อะไรสักอย่างสิ',
+                                      hintStyle: TextStyle(
+                                          color: Colors.white38,
+                                          fontSize: s48,
+                                          height: 0.72)),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: s48,
+                                      height: 0.72),
+                                  textInputAction: TextInputAction.done,
+                                  onSubmitted: comment.text != null &&
+                                          comment.text.length > 0
+                                      ? (val) {
+                                          if (isExpired(commentList, ref,
+                                              scrapSnapshot.documentID,
+                                              comment: comment.text)) {
+                                            scrap.toast('แสครปนี้ย่อยสลายแล้ว');
+                                          } else {
+                                            comment.clear();
+                                            setSheet(() {});
+                                            controller.requestRefresh();
+                                          }
+                                        }
+                                      : null),
                             )),
                             SizedBox(width: screenWidthDp / 32),
                             GestureDetector(
-                              child: Icon(
-                                Icons.send,
-                                color: canSend
-                                    ? Color(0xff26A4FF)
-                                    : Color(0xff6C6C6C),
-                                size: s60,
-                              ),
-                              onTap: () {
-                                if (isExpired(
-                                    commentList, ref, scrapSnapshot.documentID,
-                                    comment: comment.text)) {
-                                  scrap.toast('แสครปนี้ย่อยสลายแล้ว');
-                                } else {
-                                  comment.clear();
-                                  setSheet(() => canSend = false);
-                                  controller.requestRefresh();
-                                }
-                              },
-                            ),
+                                child: Icon(
+                                  Icons.send,
+                                  color: comment.text != null &&
+                                          comment.text.length > 0
+                                      ? Color(0xff26A4FF)
+                                      : Color(0xff6C6C6C),
+                                  size: s60,
+                                ),
+                                onTap: comment.text != null &&
+                                        comment.text.length > 0
+                                    ? () {
+                                        if (isExpired(commentList, ref,
+                                            scrapSnapshot.documentID,
+                                            comment: comment.text)) {
+                                          scrap.toast('แสครปนี้ย่อยสลายแล้ว');
+                                        } else {
+                                          comment.clear();
+                                          setSheet(() {});
+                                          controller.requestRefresh();
+                                        }
+                                      }
+                                    : null),
                             SizedBox(width: screenWidthDp / 32),
                           ],
                         ));

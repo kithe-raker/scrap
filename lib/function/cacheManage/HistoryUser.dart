@@ -20,7 +20,7 @@ class HistoryUser {
 
   Future<void> initHistory() async {
     final file = await _localFile;
-    Map userData = {'like': [], 'picked': [], 'comment': []};
+    Map userData = {'like': [], 'picked': [], 'comment': [], 'read': []};
     await file.writeAsString(json.encode(userData));
   }
 
@@ -68,6 +68,31 @@ class HistoryUser {
           };
     map[field].add(cache);
     await file.writeAsString(json.encode(map));
+  }
+
+  Future<void> addReadScrap(DocumentSnapshot doc) async {
+    final file = await _localFile;
+    var now = DateTime.now();
+    var cache = await read();
+    List readScrap = cache['read'];
+    readScrap.removeWhere((scrap) =>
+        now.difference(DateTime.parse(scrap['timeStamp'])).inHours > 24);
+    readScrap.add({
+      'id': doc.documentID,
+      'timeStamp': DateFormat('yyyyMMdd HH:mm:ss')
+          .format(doc['scrap']['timeStamp'].toDate())
+    });
+    cache['read'] = readScrap;
+    await file.writeAsString(json.encode(cache));
+  }
+
+  Future<List> getReadScrap() async {
+    List scraps = [];
+    var cache = await read();
+    List readCache = cache['read'];
+    if (readCache.length > 0)
+      readCache.forEach((data) => scraps.add(data['id']));
+    return scraps;
   }
 
   updateFollowingScrap(String id, int comments) async {

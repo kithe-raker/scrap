@@ -6,6 +6,7 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/thrown.dart';
 
 class PersonCard extends StatefulWidget {
@@ -99,7 +100,7 @@ class _PersonCardState extends State<PersonCard> {
         future: streamTransaction('allowThrow'),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return snapshot.data.value ?? true
+            return snapshot.data.value ?? false
                 ? GestureDetector(
                     child: Container(
                       width: screenWidthDp / 6,
@@ -119,18 +120,13 @@ class _PersonCardState extends State<PersonCard> {
                       ),
                     ),
                     onTap: () {
-                      writerScrap(context,
-                          isThrow: true,
-                          data: widget.data,
-                          thrownUID: uid,
-                          ref: ref);
-                      // user.papers > 0
-                      //     ?    writerScrap(context,
-                      // isThrow: true,
-                      // data: widget.data,
-                      // thrownUID: uid,
-                      // ref: ref);
-                      //     : toast.toast('กระดาษของคุณหมดแล้ว');
+                      user.papers > 0
+                          ? writerScrap(context,
+                              isThrow: true,
+                              data: widget.data,
+                              thrownUID: uid,
+                              ref: ref)
+                          : toast.toast('กระดาษของคุณหมดแล้ว');
                     })
                 : SizedBox();
           } else {
