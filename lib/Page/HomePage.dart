@@ -246,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                                     height: a.width / 7,
                                     alignment: Alignment.center,
                                     child: Image.asset(
-                                      'assets/scraplogo.svg',
+                                      'assets/scraplogofinal.svg',
                                       width: a.width / 4,
                                     )),
                               ],
