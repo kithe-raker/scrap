@@ -15,6 +15,7 @@ import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/testt.dart';
 import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
+import 'package:scrap/widget/peoplethrowpaper.dart';
 
 const String testDevice = "34C215009965F34F";
 
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: MainPage()),
+          home: Paperstranger()),
     );
   }
 }

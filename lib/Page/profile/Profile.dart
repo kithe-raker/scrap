@@ -408,19 +408,6 @@ class _ProfileState extends State<Profile> {
                               Center(
                                 child: Report_DropDownButton(),
                               ),
-                              // Row(
-                              //   children: [
-                              //     // Text(
-                              //     //   'ถึงผู้พัฒนา',
-                              //     //   style: TextStyle(
-                              //     //     fontSize: s60,
-                              //     //     color: Colors.white,
-                              //     //   ),
-                              //     // ),
-                              //     //DropDownButton<<<<<<<<<<<<<<<<<<<<<<<
-                              //     //Report_DropDownButton(),
-                              //   ],
-                              // ),
                               Container(
                                 margin: EdgeInsets.symmetric(
                                   horizontal: 8,
