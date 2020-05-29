@@ -86,6 +86,9 @@ void showPopup(BuildContext context) {
                                 ),
                               ],
                             ),
+                            SizedBox(
+                              height: appBarHeight / 7,
+                            ),
                             Divider(
                               height: 1.0,
                               color: Color(0xff222222),
@@ -1178,7 +1181,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
               Positioned(
                 //top: appBarHeight / 1.35,
                 child: Container(
-                  padding: EdgeInsets.only(top: appBarHeight / 1.35),
+                  padding: EdgeInsets.only(top: appBarHeight * 0.9),
                   child: ListView(
                     physics: BouncingScrollPhysics(),
                     children: [
