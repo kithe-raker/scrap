@@ -26,6 +26,7 @@ import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/ads.dart';
+import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
@@ -83,6 +84,7 @@ class _MapScrapsState extends State<MapScraps> {
   Future<void> initUserHistory() async {
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
+    history['burn'] = await cacheHistory.readOnlyId(field: 'burn') ?? [];
     setState(() => loadFin = true);
   }
 
@@ -307,8 +309,8 @@ class _MapScrapsState extends State<MapScraps> {
                                         GestureDetector(
                                             child: Icon(Icons.more_horiz,
                                                 color: Colors.white, size: s70),
-                                            onTap: () => showMore(context,
-                                                writerUid: data['uid']))
+                                            onTap: () =>
+                                                showMore(context, scrap: data))
                                       ],
                                     ),
                                   ),
@@ -509,7 +511,7 @@ class _MapScrapsState extends State<MapScraps> {
     }));
   }
 
-  void showMore(context, {@required String writerUid}) {
+  void showMore(context, {@required DocumentSnapshot scrap}) {
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -559,12 +561,26 @@ class _MapScrapsState extends State<MapScraps> {
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(
                                           screenHeightDp)),
-                                  child: Icon(Icons.block,
+                                  child: Icon(Icons.whatshot,
+                                      color: Color(0xffFF8F3A),
                                       size: appBarHeight / 3)),
-                              onTap: () {},
+                              onTap: () {
+                                if (inHistory('burn', scrap.documentID)) {
+                                  toast.toast('คุณเคยเผาสแครปก้อนนี้แล้ว');
+                                } else {
+                                  final report = Provider.of<Report>(context,
+                                      listen: false);
+                                  report.scrapId = scrap.documentID;
+                                  report.scrapRef =
+                                      scrap.reference.parent().path;
+                                  report.targetId = scrap['uid'];
+                                  history['burn'].add(scrap.documentID);
+                                  showdialogBurn(context);
+                                }
+                              },
                             ),
                             Text(
-                              'บล็อคผู้ใช้',
+                              'เผา',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: s42,
@@ -592,8 +608,7 @@ class _MapScrapsState extends State<MapScraps> {
                               onTap: () {
                                 final report =
                                     Provider.of<Report>(context, listen: false);
-                                report.targetId = writerUid;
-                                nav.pop(context);
+                                report.targetId = scrap['uid'];
                                 showDialogReport(context);
                               },
                             ),
@@ -1028,11 +1043,11 @@ class _MapScrapsState extends State<MapScraps> {
 
   void _updateMarkers(List<DocumentSnapshot> documentList, Position position) {
     userMarker(position.latitude, position.longitude);
-    allScrap.addAll(documentList);
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
       GeoPoint loca = data['position']['geopoint'];
-      if (data['uid'] != widget.uid) {
+      if (!inHistory('burn', document.documentID)) {
+        allScrap.add(document);
         _addMarker(loca.latitude, loca.longitude, document, data['uid']);
       }
     });

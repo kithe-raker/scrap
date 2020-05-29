@@ -1,10 +1,14 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/provider/Report.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
+import 'package:scrap/widget/beforeburn.dart';
+import 'package:scrap/widget/showdialogreport.dart';
 
 class Paperstranger extends StatefulWidget {
   final DocumentSnapshot scrap;
@@ -31,6 +35,13 @@ class _PaperstrangerState extends State<Paperstranger> {
                       children: <Widget>[
                         Positioned(
                             child: Container(
+                          height: screenWidthDp / 1.05 * 1.21,
+                          width: screenWidthDp / 1.05,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              image: DecorationImage(
+                                  image: AssetImage('assets/paper-readed.png'),
+                                  fit: BoxFit.cover)),
                           child: Center(
                               child: Text(
                             scrap['text'],
@@ -39,9 +50,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                           )),
                           /*  height: 407 * appBarHeight / 75,
                           width: 365 * appBarHeight / 75,*/
-                          height: screenWidthDp / 1.05 * 1.21,
-                          width: screenWidthDp / 1.05,
-                          color: Colors.white,
                         )),
                         Positioned(
                             right: 0,
@@ -105,7 +113,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                                 color: Colors.white,
                                 size: s70 * 1.2,
                               ),
-                              onTap: () {},
+                              onTap: () {
+                                showMore(context, scrap: widget.scrap);
+                              },
                             ),
                           )),
                     ],
@@ -140,11 +150,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                                 color: Color(0xfff0099FF),
                               ),
                               onPressed: () {}),*/
-                          child: GestureDetector(
-                            child: Icon(
-                              Icons.move_to_inbox,
-                              color: Color(0xfff0099FF),
-                            ),
+                          child: Icon(
+                            Icons.move_to_inbox,
+                            color: Color(0xfff0099FF),
                           ),
                           /*  height: appBarHeight / 1.8,
                           width: appBarHeight / 1.8,*/
@@ -283,5 +291,125 @@ class _PaperstrangerState extends State<Paperstranger> {
             ],
           ),
         ));
+  }
+
+  void showMore(context, {@required DocumentSnapshot scrap}) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return Container(
+            height: appBarHeight * 3.4,
+            decoration: BoxDecoration(
+              color: Color(0xff202020),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
+            child: Stack(
+              children: <Widget>[
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 12, bottom: 4),
+                      width: screenWidthDp / 3.2,
+                      height: screenHeightDp / 81,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(screenHeightDp / 42),
+                        color: Color(0xff929292),
+                      ),
+                    )),
+                Container(
+                  margin: EdgeInsets.only(
+                    bottom: appBarHeight - 20,
+                  ),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                          screenHeightDp)),
+                                  child: Icon(Icons.whatshot,
+                                      color: Color(0xffFF8F3A),
+                                      size: appBarHeight / 3)),
+                              onTap: () {
+                                final report =
+                                    Provider.of<Report>(context, listen: false);
+                                report.scrapId = scrap.documentID;
+                                report.scrapRef = scrap.reference.parent().path;
+                                report.targetId = scrap['uid'];
+                                showdialogBurn(context, thrown: true);
+                              },
+                            ),
+                            Text(
+                              'เผา',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: s42,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                          screenHeightDp)),
+                                  child: Icon(Icons.report_problem,
+                                      size: appBarHeight / 3)),
+                              onTap: () {
+                                final report =
+                                    Provider.of<Report>(context, listen: false);
+                                report.targetId = scrap['uid'];
+                                showDialogReport(context);
+                              },
+                            ),
+                            Text(
+                              'รายงาน',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: s42,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                    bottom: 0,
+                    child: Container(
+                      child: Ads(),
+                    )),
+              ],
+            ),
+          );
+        });
   }
 }

@@ -18,7 +18,7 @@ void writerScrap(BuildContext context,
     String ref,
     bool isThrow = false}) {
   var _key = GlobalKey<FormState>();
-  bool public = false, loading = false;
+  bool private = false, loading = false;
   final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
   showDialog(
       context: context,
@@ -74,9 +74,9 @@ void writerScrap(BuildContext context,
                                           child: Checkbox(
                                             tristate: false,
                                             activeColor: Color(0xfff707070),
-                                            value: public,
+                                            value: private,
                                             onChanged: (bool value) {
-                                              public = value;
+                                              private = value;
                                               setState(() {});
                                             },
                                           ),
@@ -229,7 +229,7 @@ void writerScrap(BuildContext context,
                                       onTap: () {
                                         if (_key.currentState.validate()) {
                                           _key.currentState.save();
-                                          scrapData.public = public;
+                                          scrapData.private = private;
                                           if (isThrow) {
                                             scrap.throwTo(context,
                                                 data: data,

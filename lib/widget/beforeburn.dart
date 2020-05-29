@@ -1,31 +1,13 @@
 import 'dart:ui';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/HistoryUser.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/Report.dart';
 
-class BeforeBurn extends StatefulWidget {
-  @override
-  _BeforeBurnState createState() => _BeforeBurnState();
-}
-
-class _BeforeBurnState extends State<BeforeBurn> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        body: Center(
-          child: InkWell(
-            child: Text('Before Burn'),
-            onTap: () {
-              // _showdialogblock(context);
-              _showdialogwhatshot(context);
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-void _showdialogwhatshot(context) {
+void showdialogBurn(context, {bool thrown = false}) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -43,20 +25,25 @@ void _showdialogwhatshot(context) {
                 Container(
                   width: a.width,
                   alignment: Alignment.centerRight,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                        top: a.width / 20, bottom: a.width / 15),
-                    width: a.width / 12,
-                    height: a.width / 12,
-                    child: Center(
-                      child: Icon(
-                        Icons.clear,
-                        color: Colors.white,
+                  child: GestureDetector(
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          top: a.width / 20, bottom: a.width / 15),
+                      width: a.width / 12,
+                      height: a.width / 12,
+                      child: Center(
+                        child: Icon(
+                          Icons.clear,
+                          color: Colors.white,
+                        ),
                       ),
+                      decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(a.width)),
                     ),
-                    decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(a.width)),
+                    onTap: () {
+                      nav.pop(context);
+                    },
                   ),
                 ),
                 Container(
@@ -145,7 +132,9 @@ void _showdialogwhatshot(context) {
                                     ),
                                   ),
                                   onPressed: () {
-                                    // _whatshot(context);
+                                    thrown
+                                        ? burnThrownScrap(context)
+                                        : burnScrap(context);
                                   }),
                               Text(
                                 '"แน่ใจนะ"',
@@ -158,6 +147,176 @@ void _showdialogwhatshot(context) {
                     ),
                   ),
                 )
+              ],
+            ),
+          ),
+        );
+      });
+}
+
+burnThrownScrap(BuildContext context) async {
+  final report = Provider.of<Report>(context, listen: false);
+  final db = Provider.of<RealtimeDB>(context, listen: false);
+  var userDb = FirebaseDatabase(app: db.userTransact);
+  var papers =
+      await userDb.reference().child('users/${report.targetId}/papers').once();
+  await userDb
+      .reference()
+      .child('users/${report.targetId}')
+      .update({'papers': papers.value - 4});
+  await fireStore.collection(report.scrapRef).document(report.scrapId).delete();
+  burntDialog(context);
+}
+
+burnScrap(BuildContext context) async {
+  final report = Provider.of<Report>(context, listen: false);
+  var ref =
+      FirebaseDatabase.instance.reference().child('scraps/${report.scrapId}');
+  var data = await ref.once();
+  int point = data.value['point'] ?? 0;
+  int burn = data.value['burn'] ?? 0 + 1;
+  await cacheHistory.addBurn(id: report.scrapId);
+  if (point < 26 && burn > 4) {
+    await fireStore.collection('BurntScraps').document(report.scrapId).setData({
+      'id': report.scrapId,
+      'writer': report.targetId,
+      'ref': report.scrapRef
+    });
+    burntDialog(context);
+  } else if (point < 26 && burn < 5) {
+    await ref.update({'burn': burn});
+    notBurntDialog(context);
+  } else if (burn >= point * 0.2) {
+    await fireStore.collection('BurntScraps').document(report.scrapId).setData({
+      'id': report.scrapId,
+      'writer': report.targetId,
+      'ref': report.scrapRef
+    });
+    burntDialog(context);
+  } else {
+    await ref.update({'burn': burn});
+    notBurntDialog(context);
+  }
+}
+
+void burntDialog(context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        Size a = MediaQuery.of(context).size;
+        Future.delayed(Duration(milliseconds: 2400), () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        });
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Stack(
+              children: <Widget>[
+                InkWell(
+                  child: Container(
+                    width: a.width,
+                    height: a.height,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                Container(
+                  width: a.width,
+                  height: a.height,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.whatshot,
+                          size: a.width / 3,
+                          color: Color(0xffFF8F3A),
+                        ),
+                        Text(
+                          "สแครปนี้โดนเผาแล้ว !",
+                          style: TextStyle(
+                              fontSize: a.width / 17,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "ขอบคุณสำหรับการควบคุมเนื้อหา",
+                          style: TextStyle(
+                              fontSize: a.width / 17,
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      });
+}
+
+void notBurntDialog(context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        Size a = MediaQuery.of(context).size;
+        Future.delayed(Duration(milliseconds: 2400), () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        });
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Stack(
+              children: <Widget>[
+                InkWell(
+                  child: Container(
+                    width: a.width,
+                    height: a.height,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                Container(
+                  width: a.width,
+                  height: a.height,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.whatshot,
+                          size: a.width / 3,
+                          color: Color(0xff909090),
+                        ),
+                        SizedBox(
+                          height: a.width / 100,
+                        ),
+                        Text(
+                          "สแครปนี้ยังไม่โดนเผา",
+                          style: TextStyle(
+                              fontSize: a.width / 17,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "ต้องการผู้เผามากกว่านี้",
+                          style: TextStyle(
+                              fontSize: a.width / 17,
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

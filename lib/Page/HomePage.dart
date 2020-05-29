@@ -27,7 +27,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String type, select, text;
-  bool public = false, initInfoFinish = false;
+  bool private = false, initInfoFinish = false;
   Scraps scrap = Scraps();
 
   // _showModalBottomSheet(context) {

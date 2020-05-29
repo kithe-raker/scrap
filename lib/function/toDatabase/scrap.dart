@@ -52,7 +52,7 @@ class Scraps {
         'uid': user.uid,
         'scrap': {
           'text': scrapData.text,
-          'writer': scrapData.public ? user.id : 'ไม่ระบุตัวตน',
+          'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
           'timeStamp': FieldValue.serverTimestamp()
         }
       });
@@ -97,7 +97,7 @@ class Scraps {
       'region': user.region,
       'scrap': {
         'text': scrapData.text,
-        'writer': scrapData.public ? user.id : 'ไม่ระบุตัวตน',
+        'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
         'timeStamp': FieldValue.serverTimestamp(),
       },
       'position': point.data,
@@ -109,11 +109,12 @@ class Scraps {
             .collection('Users/${user.region}/users/${user.uid}/history')
             .document(docId),
         scrap);
+    await allScrap.reference().child('scraps/$docId').set(trans);
+    trans['burn'] = 0;
     await FirebaseDatabase.instance
         .reference()
         .child('scraps/$docId')
         .set(trans);
-    await allScrap.reference().child('scraps/$docId').set(trans);
     await userDb
         .reference()
         .child('users/${user.uid}')

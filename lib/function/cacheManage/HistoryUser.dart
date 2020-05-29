@@ -20,7 +20,13 @@ class HistoryUser {
 
   Future<void> initHistory() async {
     final file = await _localFile;
-    Map userData = {'like': [], 'picked': [], 'comment': [], 'read': []};
+    Map userData = {
+      'like': [],
+      'picked': [],
+      'comment': [],
+      'read': [],
+      'burn': []
+    };
     await file.writeAsString(json.encode(userData));
   }
 
@@ -45,6 +51,23 @@ class HistoryUser {
     List data = await readHistory(field: field);
     data.forEach((element) => listId.add(element['id']));
     return listId;
+  }
+
+  Future<void> addBurn({@required String id}) async {
+    final file = await _localFile;
+    var now = DateTime.now();
+    Map data = await read();
+    List histList = data['burn'] ?? [];
+    if (histList.length > 0) {
+      histList.removeWhere((hist) =>
+          now.difference(DateTime.parse(hist['timeStamp'])).inHours > 24);
+    }
+    histList.add({
+      'id': id,
+      'timeStamp': DateFormat('yyyyMMdd HH:mm:ss').format(DateTime.now())
+    });
+    data['burn'] = histList;
+    await file.writeAsString(json.encode(data));
   }
 
   Future<void> addHistory(DocumentSnapshot scrap,

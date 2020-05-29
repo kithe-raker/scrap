@@ -882,7 +882,9 @@ class _HistoryScrapState extends State<HistoryScrap> {
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
             child: AutoSizeText(data['scrap']['text'],
-                group: textGroup, style: TextStyle(fontSize: s46)),
+                textAlign: TextAlign.center,
+                group: textGroup,
+                style: TextStyle(fontSize: s46)),
           )),
           isExpired(data)
               ? Container(

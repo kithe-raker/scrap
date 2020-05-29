@@ -87,7 +87,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
         .reference()
         .child('scraps')
         .orderByChild('point')
-        .startAt(-(++lessPoint))
+        .startAt(-(lessPoint - 1))
         .limitToFirst(8);
     DataSnapshot data = await ref.once();
     data.value.forEach((key, value) {

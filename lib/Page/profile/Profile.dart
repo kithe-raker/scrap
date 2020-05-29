@@ -639,7 +639,7 @@ class _ProfileState extends State<Profile> {
         onTap: () {
           showDialog(
               context: context,
-              builder: (BuildContext contwxt) => Paperstranger());
+              builder: (BuildContext contwxt) => Paperstranger(scrap: data));
           if (!read) {
             cacheHistory.addReadScrap(data);
             readScrap.add(data.documentID);
