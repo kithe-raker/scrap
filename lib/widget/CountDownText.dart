@@ -35,6 +35,26 @@ class _CountDownTextState extends State<CountDownText> {
   }
 
   @override
+  void didUpdateWidget(CountDownText oldWidget) {
+    if (oldWidget.startTime != widget.startTime) {
+      countDownSub.cancel();
+      var duration = DateTime(
+              widget.startTime.year,
+              widget.startTime.month,
+              widget.startTime.day + 1,
+              widget.startTime.hour,
+              widget.startTime.second)
+          .difference(now);
+      countDown = CountDown(Duration(seconds: duration.inSeconds));
+      secondLeft = duration.inSeconds;
+      countDownSub = countDown.stream.listen((event) {
+        setState(() => secondLeft = event.inSeconds);
+      });
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void dispose() {
     countDownSub.cancel();
     super.dispose();

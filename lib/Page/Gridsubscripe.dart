@@ -67,13 +67,15 @@ class _GridsubscripeState extends State<Gridsubscripe> {
         .where('id', whereIn: docId)
         .getDocuments();
     friends = await cacheFriends.getFollowing();
-    var followDocs = await Firestore.instance
-        .collectionGroup('scrapCollection')
-        .where('picker', whereIn: friends)
-        .orderBy('timeStamp', descending: true)
-        .limit(8)
-        .getDocuments();
-    followingScraps.addAll(followDocs.documents);
+    if (friends.length > 0) {
+      var followDocs = await Firestore.instance
+          .collectionGroup('scrapCollection')
+          .where('picker', whereIn: friends)
+          .orderBy('timeStamp', descending: true)
+          .limit(8)
+          .getDocuments();
+      followingScraps.addAll(followDocs.documents);
+    }
     scraps.addAll(docs.documents);
     scraps.add(lessPoint);
     setState(() => loading = false);
