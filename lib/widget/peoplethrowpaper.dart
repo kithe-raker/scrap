@@ -1,10 +1,14 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
 
 class Paperstranger extends StatefulWidget {
+  final DocumentSnapshot scrap;
+  Paperstranger({@required this.scrap});
   @override
   _PaperstrangerState createState() => _PaperstrangerState();
 }
@@ -26,8 +30,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                       children: <Widget>[
                         Positioned(
                             child: Container(
-                          /*  height: 407 * appBarHeight / 75,
-                          width: 365 * appBarHeight / 75,*/
                           height: screenWidthDp / 1.05 * 1.21,
                           width: screenWidthDp / 1.05,
                           color: Colors.white,
@@ -45,14 +47,13 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   nav.pop(context);
                                 },
                               ),
-                              //color: Colors.yellow,
                             )),
                         Positioned(
                             top: 407 * appBarHeight / 80 / 2,
                             left: 365 * appBarHeight / 80 / 2.5,
                             child: Container(
                                 child: Text(
-                              'เบื่อไอป้อม',
+                              widget.scrap['scrap']['text'],
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: s52),
                             ))),
@@ -79,26 +80,23 @@ class _PaperstrangerState extends State<Paperstranger> {
                                     height: appBarHeight / 8,
                                   ),
                                   Text(
-                                    '@MIKE',
+                                    widget.scrap['scrap']['writer'] ==
+                                            'ไม่ระบุตัวตน'
+                                        ? 'ใครบางคน'
+                                        : '@${widget.scrap['scrap']['writer']}',
                                     style: TextStyle(
-                                        color: Color(0xfff26A4FF),
-                                        fontSize: s52),
+                                        fontSize: s48,
+                                        height: 1.1,
+                                        color: widget.scrap['scrap']
+                                                    ['writer'] ==
+                                                'ไม่ระบุตัวตน'
+                                            ? Colors.white
+                                            : Color(0xff26A4FF)),
                                   ),
-                                  Row(
-                                    children: <Widget>[
-                                      Text(
-                                        'เหลือเวลาอีก :',
-                                        style: TextStyle(
-                                            color: Color(0xfff969696)),
-                                      ),
-                                      Text(
-                                        '\t23:47:01',
-                                        style: TextStyle(
-                                            color: Color(0xfffFFFFFF),
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
+                                  CountDownText(
+                                      startTime: widget.scrap['scrap']
+                                              ['timeStamp']
+                                          .toDate())
                                 ],
                               ),
                             )),
@@ -116,12 +114,8 @@ class _PaperstrangerState extends State<Paperstranger> {
                             )),
                       ],
                     )),
-                Divider(
-                  color: Colors.grey,
-                ),
-                SizedBox(
-                  height: appBarHeight / 10,
-                ),
+                Divider(color: Colors.grey),
+                SizedBox(height: appBarHeight / 10),
                 Container(
                   width: screenWidthDp,
                   height: appBarHeight,
@@ -130,22 +124,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                         left: appBarHeight / 5,
                         child: Container(
                             padding: EdgeInsets.all(appBarHeight / 8),
-                            /* child: IconButton(
-                                icon: Icon(
-                                  Icons.move_to_inbox,
-                                  size: s60 * 1.2,
-                                  color: Color(0xfff0099FF),
-                                ),
-                                onPressed: () {}),*/
                             child: GestureDetector(
-                              child: Icon(
-                                Icons.move_to_inbox,
-                                color: Color(0xfff0099FF),
-                              ),
-                            ),
-                            /*  height: appBarHeight / 1.8,
-                            width: appBarHeight / 1.8,*/
-
+                                child: Icon(Icons.move_to_inbox,
+                                    color: Color(0xfff0099FF))),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius:
@@ -164,11 +145,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Icon(
-                                    Icons.reply,
-                                    //  size: s60 * 1.2,
-                                    color: Colors.white,
-                                  ),
+                                  Icon(Icons.reply, color: Colors.white),
                                   Text('ปากลับ',
                                       style: TextStyle(
                                         fontSize: s42,
@@ -177,9 +154,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                                       ))
                                 ],
                               ),
-                              /*  height: appBarHeight / 1.8,
-                              //width: appBarHeight / 1.8,
-                              width: appBarHeight * 1.5,*/
                               decoration: BoxDecoration(
                                 color: Color(0xfff26A4FF),
                                 borderRadius:
