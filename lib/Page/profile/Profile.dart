@@ -561,7 +561,9 @@ class _ProfileState extends State<Profile> {
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
             child: AutoSizeText(data['scrap']['text'],
-                group: textGroup, style: TextStyle(fontSize: s46)),
+                textAlign: TextAlign.center,
+                group: textGroup,
+                style: TextStyle(fontSize: s46)),
           )),
         ]));
   }

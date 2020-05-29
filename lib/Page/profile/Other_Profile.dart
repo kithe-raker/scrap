@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,6 @@ import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/block.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/thrown.dart';
 
@@ -36,6 +36,7 @@ class _OtherProfileState extends State<OtherProfile> {
   List followList = [];
   List<DocumentSnapshot> pickScrap = [], scrapCrate = [];
   bool loading = true;
+  var textGroup = AutoSizeGroup();
   StreamSubscription loadStream;
   var refreshController = RefreshController();
   var controller = PageController();
@@ -80,8 +81,6 @@ class _OtherProfileState extends State<OtherProfile> {
     setState(() => loading = false);
   }
 
-  Future<void> initUser() async {}
-
   @override
   void dispose() {
     loadStream.cancel();
@@ -91,7 +90,7 @@ class _OtherProfileState extends State<OtherProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserData>(context, listen: false);
+    // final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     return WillPopScope(
       onWillPop: () async {
@@ -104,7 +103,7 @@ class _OtherProfileState extends State<OtherProfile> {
           child: Stack(
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(bottom: screenHeightDp / 10),
+                margin: EdgeInsets.only(bottom: screenHeightDp / 21),
                 padding: EdgeInsets.only(top: appBarHeight / 1.35),
                 child: SmartRefresher(
                   enablePullDown: false,
@@ -133,6 +132,7 @@ class _OtherProfileState extends State<OtherProfile> {
                     } else
                       refreshController.loadNoData();
                   },
+                  footer: footerList(),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -251,6 +251,19 @@ class _OtherProfileState extends State<OtherProfile> {
         ),
       ),
     );
+  }
+
+  Widget footerList() {
+    return CustomFooter(builder: (BuildContext context, LoadStatus mode) {
+      switch (mode) {
+        case LoadStatus.loading:
+          return Center(child: CircularProgressIndicator());
+          break;
+        default:
+          return SizedBox();
+          break;
+      }
+    });
   }
 
   Widget followButton() {
@@ -390,21 +403,42 @@ class _OtherProfileState extends State<OtherProfile> {
   }
 
   Widget scrapGrid(List<DocumentSnapshot> scraps) {
-    return Container(
-      child: scraps.length > 0
-          ? Wrap(
-              spacing: screenWidthDp / 42,
-              runSpacing: screenWidthDp / 42,
-              alignment: WrapAlignment.start,
-              children: scraps.map((scrap) => Block()).toList())
-          : Container(
-              height: screenHeightDp / 7.2,
-              child: Center(
-                child: Text('ไม่พบกระดาษที่เก็บไว้',
-                    style: TextStyle(color: Colors.white60, fontSize: s46)),
-              ),
-            ),
+    return GestureDetector(
+      child: Container(
+          child: scraps.length > 0
+              ? Wrap(
+                  spacing: screenWidthDp / 42,
+                  runSpacing: screenWidthDp / 42,
+                  alignment: WrapAlignment.start,
+                  children: scraps.map((data) => scrap(data)).toList())
+              : Container(
+                  height: screenHeightDp / 7.2,
+                  child: Center(
+                    child: Text('ไม่พบกระดาษที่เก็บไว้',
+                        style: TextStyle(color: Colors.white60, fontSize: s46)),
+                  ))),
+      onTap: () {},
     );
+  }
+
+  Widget scrap(DocumentSnapshot data) {
+    return Container(
+        height: screenWidthDp / 2.16 * 1.21,
+        width: screenWidthDp / 2.16,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/paper-readed.png'),
+                fit: BoxFit.cover)),
+        child: Stack(children: <Widget>[
+          Center(
+              child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+            child: AutoSizeText(data['scrap']['text'],
+                textAlign: TextAlign.center,
+                group: textGroup,
+                style: TextStyle(fontSize: s46)),
+          )),
+        ]));
   }
 
   Widget dataProfile(String name, String uid, {@required String field}) {

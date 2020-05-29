@@ -1,4 +1,5 @@
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
   List scraps = [];
   Map<String, List> history = {};
   bool loading = true;
+  var textGroup = AutoSizeGroup();
 
   @override
   void initState() {
@@ -44,7 +46,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
   }
 
   bool isExpired(DocumentSnapshot data) {
-    DateTime startTime = data['scrap']['time'].toDate();
+    DateTime startTime = data['scrap']['timeStamp'].toDate();
     return DateTime(startTime.year, startTime.month, startTime.day + 1,
             startTime.hour, startTime.second)
         .difference(DateTime.now())
@@ -188,7 +190,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                               ),
                                               CountDownText(
                                                   startTime: data['scrap']
-                                                          ['time']
+                                                          ['timeStamp']
                                                       .toDate())
                                             ],
                                           ),
@@ -360,7 +362,6 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                               doc == scraps.last
                                                   ? index = 0
                                                   : ++index;
-                                              print(index);
                                               setDialog(() {});
                                             },
                                           ),
@@ -476,8 +477,9 @@ class _GridfavoriteState extends State<Gridfavorite> {
                             spacing: a.width / 42,
                             runSpacing: a.width / 42,
                             alignment: WrapAlignment.center,
-                            children:
-                                scraps.map((scrap) => block(scrap)).toList()),
+                            children: scraps
+                                .map((scrap) => scrapWidget(scrap))
+                                .toList()),
                         SizedBox(height: a.width / 5)
                       ],
                     ),
@@ -530,46 +532,49 @@ class _GridfavoriteState extends State<Gridfavorite> {
             fontSize: a.width / 15));
   }
 
-  Widget block(Map data) {
+  Widget scrapWidget(Map data) {
+    Size a = MediaQuery.of(context).size;
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     int ments;
-    Size a = MediaQuery.of(context).size;
     return GestureDetector(
-      child: Stack(
-        children: <Widget>[
-          Container(
-            height: 407 / a.width * 165,
-            width: 365 / a.width * 165,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                image: DecorationImage(
-                    image: AssetImage('assets/paper-readed.png'),
-                    fit: BoxFit.cover)),
-            child: Center(
-              child: Text(
-                data['text'],
-                style: TextStyle(fontSize: 32),
-              ),
-            ),
-          ),
-          Positioned(
-              bottom: 0,
-              right: 0,
-              child: FutureBuilder(
-                  future:
-                      scrapAll.reference().child('scraps/${data['id']}').once(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      ments = snapshot.data.value['comment'];
-                      return commentTransactionBox(
-                          a, ments.abs(), data['comments'].abs());
-                    } else {
-                      return commentTransactionBox(
-                          a, data['comments'].abs(), data['comments'].abs());
-                    }
-                  }))
-        ],
+      child: Container(
+        height: screenWidthDp / 2.16 * 1.21,
+        width: screenWidthDp / 2.16,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/paper-readed.png'),
+                fit: BoxFit.cover)),
+        child: Stack(
+          children: <Widget>[
+            Center(
+                child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+              child: AutoSizeText(data['text'],
+                  textAlign: TextAlign.center,
+                  group: textGroup,
+                  style: TextStyle(fontSize: s46)),
+            )),
+            Positioned(
+                bottom: 0,
+                right: 0,
+                child: FutureBuilder(
+                    future: scrapAll
+                        .reference()
+                        .child('scraps/${data['id']}')
+                        .once(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        ments = snapshot.data.value['comment'];
+                        return commentTransactionBox(
+                            a, ments.abs(), data['comments'].abs());
+                      } else {
+                        return commentTransactionBox(
+                            a, data['comments'].abs(), data['comments'].abs());
+                      }
+                    })),
+          ],
+        ),
       ),
       onTap: () {
         if (ments != null) {
@@ -585,6 +590,33 @@ class _GridfavoriteState extends State<Gridfavorite> {
 
   Widget commentTransactionBox(Size a, int comments, int cacheComment) {
     return Container(
+        margin: EdgeInsets.all(a.width / 45),
+        alignment: Alignment.center,
+        width: a.width / 6,
+        height: a.width / 13,
+        decoration: BoxDecoration(
+            color: comments == cacheComment
+                ? Color(0xff707070)
+                : Color(0xff0077CC),
+            borderRadius: BorderRadius.circular(a.width / 80)),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text('$comments',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: a.width / 20)),
+              Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.rotationY(math.pi),
+                  child: Icon(Icons.sms, color: Colors.white))
+            ]));
+  }
+}
+
+/*
+   Container(
         margin: EdgeInsets.all(a.width / 45),
         alignment: Alignment.center,
         width: a.width / 5.5,
@@ -607,6 +639,4 @@ class _GridfavoriteState extends State<Gridfavorite> {
               transform: Matrix4.rotationY(math.pi),
               child: Icon(Icons.sms, color: Colors.white)),
           SizedBox(width: a.width / 64)
-        ]));
-  }
-}
+        ])); */

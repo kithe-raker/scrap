@@ -299,7 +299,8 @@ class _MapScrapsState extends State<MapScraps> {
                                                       : Color(0xff26A4FF)),
                                             ),
                                             CountDownText(
-                                                startTime: data['scrap']['timeStamp']
+                                                startTime: data['scrap']
+                                                        ['timeStamp']
                                                     .toDate())
                                           ],
                                         ),
@@ -1051,16 +1052,24 @@ class _MapScrapsState extends State<MapScraps> {
         )));
   }
 
+  Timestamp yesterDay() {
+    var now = DateTime.now();
+    return Timestamp.fromDate(
+        DateTime(now.year, now.month, now.day - 1, now.hour, now.minute));
+  }
+
   addMoreScrap(int limit) async {
     var pos = await Geolocator().getCurrentPosition();
     var ref = recentScrap == null
         ? fireStore
             .collectionGroup('ScrapDailys-th')
             .orderBy('scrap.timeStamp', descending: true)
+            .where('scrap.timeStamp', isGreaterThan: yesterDay())
             .limit(limit)
         : fireStore
             .collection('ScrapDailys-th')
             .orderBy('scrap.timeStamp', descending: true)
+            .where('scrap.timeStamp', isGreaterThan: yesterDay())
             .startAfterDocument(recentScrap)
             .limit(limit);
     var doc = await ref.getDocuments();

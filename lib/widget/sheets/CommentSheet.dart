@@ -33,7 +33,7 @@ class _CommentSheetState extends State<CommentSheet> {
 
   initComments() async {
     ref = Firestore.instance.collection(
-        'Users/${widget.scrapSnapshot['uid']}/scraps/${widget.scrapSnapshot.documentID}/comments');
+        'Users/${widget.scrapSnapshot['region']}/users/${widget.scrapSnapshot['uid']}/history/${widget.scrapSnapshot.documentID}/comments');
     scrapSnapshot = widget.scrapSnapshot;
     var docs = await ref
         .orderBy('timeStamp', descending: true)
@@ -99,7 +99,7 @@ class _CommentSheetState extends State<CommentSheet> {
     userDb.reference().child('users/${scrapSnapshot['uid']}/att').once().then(
         (data) => userDb
             .reference()
-            .child('users/${scrapSnapshot['uid']}/att')
+            .child('users/${scrapSnapshot['uid']}')
             .update({'att': data.value + 2}));
   }
 

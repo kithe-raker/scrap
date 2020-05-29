@@ -94,6 +94,7 @@ class Scraps {
     Map<String, dynamic> scrap = {
       'id': docId,
       'uid': user.uid,
+      'region': user.region,
       'scrap': {
         'text': scrapData.text,
         'writer': scrapData.public ? user.id : 'ไม่ระบุตัวตน',
@@ -108,10 +109,12 @@ class Scraps {
             .collection('Users/${user.region}/users/${user.uid}/history')
             .document(docId),
         scrap);
-
-    FirebaseDatabase.instance.reference().child('scraps/$docId').set(trans);
-    allScrap.reference().child('scraps/$docId').set(trans);
-    userDb
+    await FirebaseDatabase.instance
+        .reference()
+        .child('scraps/$docId')
+        .set(trans);
+    await allScrap.reference().child('scraps/$docId').set(trans);
+    await userDb
         .reference()
         .child('users/${user.uid}')
         .update({'papers': user.papers - 1});
@@ -152,11 +155,8 @@ class Scraps {
       });
 
       userDb.reference().child('users/${scrap['uid']}/att').once().then(
-          (data) => userDb
-              .reference()
-              .child('users/${scrap['uid']}/att')
-              .update(
-                  {'att': field == 'like' ? data.value - 1 : data.value - 3}));
+          (data) => userDb.reference().child('users/${scrap['uid']}').update(
+              {'att': field == 'like' ? data.value - 1 : data.value - 3}));
 
       if (field == 'like')
         fcm.unsubscribeFromTopic(scrap.documentID);
@@ -179,11 +179,8 @@ class Scraps {
         });
       });
       userDb.reference().child('users/${scrap['uid']}/att').once().then(
-          (data) => userDb
-              .reference()
-              .child('users/${scrap['uid']}/att')
-              .update(
-                  {'att': field == 'like' ? data.value + 1 : data.value + 3}));
+          (data) => userDb.reference().child('users/${scrap['uid']}').update(
+              {'att': field == 'like' ? data.value + 1 : data.value + 3}));
 
       if (field == 'like')
         fcm.subscribeToTopic(scrap.documentID);
