@@ -17,6 +17,7 @@ class _PaperstrangerState extends State<Paperstranger> {
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
+    var scrap = widget.scrap['scrap'];
     return Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
@@ -24,12 +25,20 @@ class _PaperstrangerState extends State<Paperstranger> {
             children: <Widget>[
               Column(children: <Widget>[
                 Container(
-                  padding: EdgeInsets.only(top: appBarHeight) / 2,
+                  padding: EdgeInsets.only(top: appBarHeight / 5),
                   child: Center(
                     child: Stack(
                       children: <Widget>[
                         Positioned(
                             child: Container(
+                          child: Center(
+                              child: Text(
+                            scrap['text'],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: s52),
+                          )),
+                          /*  height: 407 * appBarHeight / 75,
+                          width: 365 * appBarHeight / 75,*/
                           height: screenWidthDp / 1.05 * 1.21,
                           width: screenWidthDp / 1.05,
                           color: Colors.white,
@@ -48,15 +57,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                                 },
                               ),
                             )),
-                        Positioned(
-                            top: 407 * appBarHeight / 80 / 2,
-                            left: 365 * appBarHeight / 80 / 2.5,
-                            child: Container(
-                                child: Text(
-                              widget.scrap['scrap']['text'],
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: s52),
-                            ))),
                       ],
                     ),
                   ),
@@ -65,135 +65,132 @@ class _PaperstrangerState extends State<Paperstranger> {
                   height: appBarHeight / 10,
                 ),
                 Container(
-                    height: appBarHeight * 1,
-                    width: screenWidthDp,
-                    child: Stack(
-                      children: <Widget>[
-                        Positioned(
-                            left: appBarHeight / 7,
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: appBarHeight / 8,
-                                  ),
-                                  Text(
-                                    widget.scrap['scrap']['writer'] ==
-                                            'ไม่ระบุตัวตน'
-                                        ? 'ใครบางคน'
-                                        : '@${widget.scrap['scrap']['writer']}',
-                                    style: TextStyle(
-                                        fontSize: s48,
-                                        height: 1.1,
-                                        color: widget.scrap['scrap']
-                                                    ['writer'] ==
-                                                'ไม่ระบุตัวตน'
-                                            ? Colors.white
-                                            : Color(0xff26A4FF)),
-                                  ),
-                                  CountDownText(
-                                      startTime: widget.scrap['scrap']
-                                              ['timeStamp']
-                                          .toDate())
-                                ],
-                              ),
-                            )),
-                        Positioned(
-                            top: appBarHeight / 8,
-                            right: appBarHeight / 7,
-                            child: Container(
-                              child: GestureDetector(
-                                child: Icon(
-                                  Icons.more_horiz,
-                                  color: Colors.white,
+                  height: appBarHeight * 1,
+                  width: screenWidthDp,
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                          left: appBarHeight / 7,
+                          child: Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(
+                                  height: appBarHeight / 8,
                                 ),
-                                onTap: () {},
+                                Text(
+                                  scrap['writer'] == 'ไม่ระบุตัวตน'
+                                      ? 'ใครบางคน'
+                                      : '@${scrap['writer']}',
+                                  style: TextStyle(
+                                      fontSize: s48,
+                                      height: 1.1,
+                                      color: scrap['writer'] == 'ไม่ระบุตัวตน'
+                                          ? Colors.white
+                                          : Color(0xff26A4FF)),
+                                ),
+                                CountDownText(
+                                    startTime: scrap['timeStamp'].toDate())
+                              ],
+                            ),
+                          )),
+                      Positioned(
+                          top: appBarHeight / 8,
+                          right: appBarHeight / 7,
+                          child: Container(
+                            child: GestureDetector(
+                              child: Icon(
+                                Icons.more_horiz,
+                                color: Colors.white,
+                                size: s70 * 1.2,
                               ),
-                            )),
-                      ],
-                    )),
-                Divider(color: Colors.grey),
-                SizedBox(height: appBarHeight / 10),
+                              onTap: () {},
+                            ),
+                          )),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(width: 1.0, color: Color(0xff5D5D5D)),
+                    ),
+                  ),
+                ),
+                /* Divider(
+                  color: Colors.grey,
+                ),*/
+                SizedBox(
+                  height: appBarHeight / 10,
+                ),
                 Container(
                   width: screenWidthDp,
                   height: appBarHeight,
-                  child: Stack(children: <Widget>[
-                    Positioned(
-                        left: appBarHeight / 5,
-                        child: Container(
-                            padding: EdgeInsets.all(appBarHeight / 8),
-                            child: GestureDetector(
-                                child: Icon(Icons.move_to_inbox,
-                                    color: Color(0xfff0099FF))),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(22)),
-                            ))),
-                    Positioned(
-                        left: appBarHeight * 0.95,
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                              padding: EdgeInsets.only(
-                                  left: appBarHeight / 5,
-                                  right: appBarHeight / 5,
-                                  top: appBarHeight / 8,
-                                  bottom: appBarHeight / 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(Icons.reply, color: Colors.white),
-                                  Text('ปากลับ',
-                                      style: TextStyle(
-                                        fontSize: s42,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ))
-                                ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        width: appBarHeight / 5,
+                      ),
+                      Container(
+                          padding: EdgeInsets.all(appBarHeight / 8),
+                          /* child: IconButton(
+                              icon: Icon(
+                                Icons.move_to_inbox,
+                                size: s60 * 1.2,
+                                color: Color(0xfff0099FF),
                               ),
-                              decoration: BoxDecoration(
-                                color: Color(0xfff26A4FF),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(50)),
-                              )),
-                        )),
-                    Positioned(
-                        left: appBarHeight * 4,
-                        child: Container(
-                          //padding: EdgeInsets.all(appBarHeight / 8),
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                  padding: EdgeInsets.all(appBarHeight / 8),
-                                  child: GestureDetector(
-                                    child: Icon(
-                                      Icons.forward,
-                                      color: Colors.black,
-                                      size: s65,
-                                    ),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50)),
-                                  )),
-                              SizedBox(
-                                height: appBarHeight / 10,
-                              ),
-                              Text(
-                                'ต่อไป',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: s40,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
+                              onPressed: () {}),*/
+                          child: GestureDetector(
+                            child: Icon(
+                              Icons.move_to_inbox,
+                              color: Color(0xfff0099FF),
+                            ),
                           ),
-                        )),
-                  ]),
+                          /*  height: appBarHeight / 1.8,
+                          width: appBarHeight / 1.8,*/
+
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(22)),
+                          )),
+                      SizedBox(
+                        width: appBarHeight / 5,
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                            padding: EdgeInsets.only(
+                                left: appBarHeight / 5,
+                                right: appBarHeight / 5,
+                                top: appBarHeight / 8,
+                                bottom: appBarHeight / 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.reply,
+                                  //  size: s60 * 1.2,
+                                  color: Colors.white,
+                                ),
+                                Text('ปากลับ',
+                                    style: TextStyle(
+                                      fontSize: s42,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ))
+                              ],
+                            ),
+                            /*  height: appBarHeight / 1.8,
+                            //width: appBarHeight / 1.8,
+                            width: appBarHeight * 1.5,*/
+                            decoration: BoxDecoration(
+                              color: Color(0xfff26A4FF),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50)),
+                            )),
+                      ),
+                    ],
+                  ),
                 ),
                 /* Container(
                   height: appBarHeight,

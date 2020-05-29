@@ -148,7 +148,7 @@ class _MainPageState extends State<MainPage> {
             width: a.width / 2,
             height: a.width / 5,
             child: SplashScreen.callback(
-              name: 'assets/splash.flr',
+              name: 'assets/scarplogo.flr',
               startAnimation: 'Untitled',
               onSuccess: (data) async {
                 await serverChecker()
