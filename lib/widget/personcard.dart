@@ -89,8 +89,8 @@ class _PersonCardState extends State<PersonCard> {
           ),
         ),
         onTap: widget.enableNavigator
-            ? () => nav.push(context,
-                OtherProfile(data: widget.data, uid: uid, ref: widget.ref))
+            ? () => nav.push(
+                context, OtherProfile(data: widget.data, uid: uid, ref: ref))
             : null);
   }
 
