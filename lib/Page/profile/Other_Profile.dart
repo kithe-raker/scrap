@@ -32,6 +32,7 @@ class OtherProfile extends StatefulWidget {
 class _OtherProfileState extends State<OtherProfile> {
   int page = 0;
   String uid, ref;
+  bool initScrapFinish = false;
   bool value = false, pickedScrap = true;
   List followList = [];
   List<DocumentSnapshot> pickScrap = [], scrapCrate = [];
@@ -56,6 +57,7 @@ class _OtherProfileState extends State<OtherProfile> {
   @override
   void initState() {
     initList();
+    initScrap();
     loadStream =
         followFunc.loading.listen((value) => setState(() => loading = value));
     super.initState();
@@ -64,6 +66,11 @@ class _OtherProfileState extends State<OtherProfile> {
   Future<void> initList() async {
     widget.uid == null ? uid = widget.data['uid'] : uid = widget.uid;
     widget.ref == null ? ref = widget.data['ref'] : ref = widget.ref;
+    followList = await cacheFriends.getFollowing();
+    setState(() => loading = false);
+  }
+
+  Future<void> initScrap() async {
     var refColl = fireStore.collection(ref).document(uid);
     var scrapCollection = await refColl
         .collection('scrapCollection')
@@ -77,8 +84,7 @@ class _OtherProfileState extends State<OtherProfile> {
         .getDocuments();
     pickScrap.addAll(scrapCollection.documents);
     scrapCrate.addAll(scrapCrates.documents);
-    followList = await cacheFriends.getFollowing();
-    setState(() => loading = false);
+    setState(() => initScrapFinish = true);
   }
 
   @override
@@ -237,7 +243,12 @@ class _OtherProfileState extends State<OtherProfile> {
                       ),
                       Divider(color: Colors.grey, height: 0),
                       SizedBox(height: screenWidthDp / 36),
-                      scrapGrid(pickedScrap ? pickScrap : scrapCrate),
+                      initScrapFinish
+                          ? scrapGrid(pickedScrap ? pickScrap : scrapCrate)
+                          : Container(
+                              height: screenHeightDp / 8,
+                              child:
+                                  Center(child: CircularProgressIndicator())),
                       SizedBox(height: screenWidthDp / 36),
                     ],
                   ),

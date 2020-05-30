@@ -9,14 +9,17 @@ import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/SelectPosition.dart';
 import 'package:scrap/widget/Ads.dart';
+import 'package:scrap/widget/Toast.dart';
 
 //ฟังก์ชั่นปากระดาษ
 void writerScrap(BuildContext context,
     {LatLng latLng,
     Map data,
-    String thrownUID,
     String ref,
-    bool isThrow = false}) {
+    String thrownUID,
+    bool isThrow = false,
+    String region,
+    bool isThrowBack = false}) {
   var _key = GlobalKey<FormState>();
   bool private = false, loading = false;
   final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
@@ -60,39 +63,45 @@ void writerScrap(BuildContext context,
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Container(
-                                          width: a.width / 13,
-                                          height: a.width / 13,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                              border: Border.all(
-                                                  color: Colors.transparent)),
-                                          child: Checkbox(
-                                            tristate: false,
-                                            activeColor: Color(0xfff707070),
-                                            value: private,
-                                            onChanged: (bool value) {
-                                              private = value;
-                                              setState(() {});
-                                            },
+                                  isThrowBack
+                                      ? SizedBox()
+                                      : Container(
+                                          child: Row(
+                                            children: <Widget>[
+                                              Container(
+                                                width: a.width / 13,
+                                                height: a.width / 13,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                    border: Border.all(
+                                                        color: Colors
+                                                            .transparent)),
+                                                child: Checkbox(
+                                                  tristate: false,
+                                                  activeColor:
+                                                      Color(0xfff707070),
+                                                  value: private,
+                                                  onChanged: (bool value) {
+                                                    private = value;
+                                                    setState(() {});
+                                                  },
+                                                ),
+                                              ),
+                                              Container(
+                                                child: Text(
+                                                  "\t" + "ไม่ระบุตัวตน",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: a.width / 20),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         ),
-                                        Container(
-                                          child: Text(
-                                            "\t" + "ไม่ระบุตัวตน",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                                fontSize: a.width / 20),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
                                   //ออกจากหน้าปากระดาษ
                                 ],
                               ),
@@ -118,7 +127,6 @@ void writerScrap(BuildContext context,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-
                                   Positioned(
                                       child: Container(
                                     //color: Colors.red,
@@ -145,6 +153,7 @@ void writerScrap(BuildContext context,
                                           maxLines: null,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
+                                            errorStyle: TextStyle(height: 0.0),
                                             counterText: "",
                                             counterStyle: TextStyle(
                                                 color: Colors.transparent),
@@ -159,7 +168,7 @@ void writerScrap(BuildContext context,
                                           ),
                                           validator: (val) {
                                             return val.trim() == ""
-                                                ? scrap.toast(
+                                                ? toast.validateToast(
                                                     "ลองเขียนข้อความบางอย่างสิ")
                                                 : null;
                                           },
@@ -218,7 +227,11 @@ void writerScrap(BuildContext context,
                                                 BorderRadius.circular(5)),
                                         alignment: Alignment.center,
                                         child: Text(
-                                            isThrow ? "ปาใส่" : 'โยนไว้',
+                                            isThrow
+                                                ? "ปาใส่"
+                                                : isThrowBack
+                                                    ? 'ปากลับ'
+                                                    : 'โยนไว้',
                                             style: TextStyle(
                                                 color: isThrow
                                                     ? Color(0xff26A4FF)
@@ -235,6 +248,10 @@ void writerScrap(BuildContext context,
                                                 data: data,
                                                 thrownUID: thrownUID,
                                                 collRef: ref);
+                                          } else if (isThrowBack) {
+                                            scrap.throwBack(context,
+                                                thrownUID: thrownUID,
+                                                region: region);
                                           } else {
                                             nav.pop(context);
                                             nav.push(

@@ -26,13 +26,22 @@ class Scraps {
     loading.add(true);
     final db = Provider.of<RealtimeDB>(context, listen: false);
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
+    final batch = fireStore.batch();
     var userDb = FirebaseDatabase(app: db.userTransact);
     final user = Provider.of<UserData>(context, listen: false);
     var refDb = userDb.reference().child('users/$thrownUID');
     bool allow = (await refDb.child('allowThrow').once()).value;
     if (allow ?? true) {
-      var ref =
-          Firestore.instance.collection('$collRef/$thrownUID/thrownScraps');
+      var ref = fireStore.collection('$collRef/$thrownUID/thrownScraps');
+      var scrap = {
+        'uid': user.uid,
+        'region': user.region,
+        'scrap': {
+          'text': scrapData.text,
+          'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
+          'timeStamp': FieldValue.serverTimestamp()
+        }
+      };
       var docId = ref.document().documentID;
       cacheFriends.addRecently(
           id: data['id'],
@@ -48,14 +57,60 @@ class Scraps {
           .reference()
           .child('users/$thrownUID')
           .update({'thrown': data.value + 1}));
-      await ref.document(docId).setData({
+      batch.setData(
+          fireStore
+              .collection('Users/${user.region}/users/${user.uid}/thrownLog')
+              .document(docId),
+          scrap);
+      batch.setData(ref.document(docId), scrap);
+      await batch.commit();
+      loading.add(false);
+      toast('ปาสำเร็จแล้ว');
+      nav.pop(context);
+    } else {
+      loading.add(false);
+      toast('ผู้ใช้คนนี้พึ่งปิดการปาเมื่อไม่นานมานี้');
+    }
+  }
+
+  throwBack(BuildContext context,
+      {@required String thrownUID, @required String region}) async {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
+    final user = Provider.of<UserData>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    var batch = fireStore.batch();
+    loading.add(true);
+    var refDb = userDb.reference().child('users/$thrownUID');
+    bool allow = (await refDb.child('allowThrow').once()).value;
+    if (allow) {
+      var scrap = {
         'uid': user.uid,
+        'region': user.region,
         'scrap': {
           'text': scrapData.text,
-          'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
+          'writer': user.id,
           'timeStamp': FieldValue.serverTimestamp()
         }
-      });
+      };
+      var ref =
+          fireStore.collection('Users/$region/users/$thrownUID/thrownScraps');
+      var docId = ref.document().documentID;
+      userDb
+          .reference()
+          .child('users/${user.uid}')
+          .update({'papers': user.papers - 1});
+      refDb.child('thrown').once().then((data) => userDb
+          .reference()
+          .child('users/$thrownUID')
+          .update({'thrown': data.value + 1}));
+      batch.setData(
+          fireStore
+              .collection('Users/${user.region}/users/${user.uid}/thrownLog')
+              .document(docId),
+          scrap);
+      batch.setData(ref.document(docId), scrap);
+      await batch.commit();
       loading.add(false);
       toast('ปาสำเร็จแล้ว');
       nav.pop(context);

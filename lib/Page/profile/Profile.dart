@@ -8,7 +8,6 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/widget/Loading.dart';
-import 'package:scrap/widget/block.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +25,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  bool initInfoFinish = false;
+  bool initInfoFinish = false, initScrapFinish = false;
   bool pickedScrap = true;
   Map profile = {};
   List readScrap = [];
@@ -79,13 +78,20 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     initUser();
+    initScraps();
     super.initState();
   }
 
   Future<void> initUser() async {
-    final user = Provider.of<UserData>(context, listen: false);
     var data = await userinfo.readContents();
     var read = await cacheHistory.getReadScrap();
+    readScrap.addAll(read);
+    profile = data;
+    setState(() => initInfoFinish = true);
+  }
+
+  initScraps() async {
+    final user = Provider.of<UserData>(context, listen: false);
     var ref =
         fireStore.collection('Users/${user.region}/users').document(user.uid);
     var scrapCollection = await ref
@@ -100,9 +106,7 @@ class _ProfileState extends State<Profile> {
         .getDocuments();
     pickScrap.addAll(scrapCollection.documents);
     scrapCrate.addAll(scrapCrates.documents);
-    readScrap.addAll(read);
-    profile = data;
-    setState(() => initInfoFinish = true);
+    setState(() => initScrapFinish = true);
   }
 
   @override
@@ -317,7 +321,12 @@ class _ProfileState extends State<Profile> {
                             ]),
                         Divider(color: Colors.grey, height: 0),
                         SizedBox(height: screenWidthDp / 36),
-                        scrapGrid(pickedScrap ? pickScrap : scrapCrate),
+                        initScrapFinish
+                            ? scrapGrid(pickedScrap ? pickScrap : scrapCrate)
+                            : Container(
+                                height: screenHeightDp / 8,
+                                child:
+                                    Center(child: CircularProgressIndicator())),
                         SizedBox(height: screenWidthDp / 42),
                       ],
                     ),

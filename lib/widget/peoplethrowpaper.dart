@@ -9,6 +9,7 @@ import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
 import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/showdialogreport.dart';
+import 'package:scrap/widget/thrown.dart';
 
 class Paperstranger extends StatefulWidget {
   final DocumentSnapshot scrap;
@@ -165,7 +166,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                         width: appBarHeight / 5,
                       ),
                       GestureDetector(
-                        onTap: () {},
                         child: Container(
                             padding: EdgeInsets.only(
                                 left: appBarHeight / 5,
@@ -196,6 +196,12 @@ class _PaperstrangerState extends State<Paperstranger> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(50)),
                             )),
+                        onTap: () {
+                          writerScrap(context,
+                              isThrowBack: true,
+                              region: widget.scrap['region'],
+                              thrownUID: widget.scrap['uid']);
+                        },
                       ),
                     ],
                   ),
