@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -157,15 +158,15 @@ void showdialogBurn(context, {bool thrown = false}) {
 burnThrownScrap(BuildContext context) async {
   final report = Provider.of<Report>(context, listen: false);
   final db = Provider.of<RealtimeDB>(context, listen: false);
+  final rand = Random();
   var userDb = FirebaseDatabase(app: db.userTransact);
+  var burn = rand.nextInt(1) + 2;
   var papers =
       await userDb.reference().child('users/${report.targetId}/papers').once();
-  await userDb
-      .reference()
-      .child('users/${report.targetId}')
-      .update({'papers': papers.value - 4});
+  await userDb.reference().child('users/${report.targetId}').update(
+      {'papers': (papers.value - burn).isNegative ? 0 : papers.value - burn});
   await fireStore.collection(report.scrapRef).document(report.scrapId).delete();
-  burntDialog(context);
+  burntDialog(context, thrownScrap: true);
 }
 
 burnScrap(BuildContext context) async {
@@ -199,7 +200,7 @@ burnScrap(BuildContext context) async {
   }
 }
 
-void burntDialog(context) {
+void burntDialog(BuildContext context, {bool thrownScrap = false}) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -230,20 +231,17 @@ void burntDialog(context) {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
-                          Icons.whatshot,
-                          size: a.width / 3,
-                          color: Color(0xffFF8F3A),
-                        ),
+                        Icon(Icons.whatshot,
+                            size: a.width / 3, color: Color(0xffFF8F3A)),
+                        Text("สแครปนี้โดนเผาแล้ว !",
+                            style: TextStyle(
+                                fontSize: a.width / 17,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
                         Text(
-                          "สแครปนี้โดนเผาแล้ว !",
-                          style: TextStyle(
-                              fontSize: a.width / 17,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "ขอบคุณสำหรับการควบคุมเนื้อหา",
+                          thrownScrap
+                              ? 'ไฟได้ลามไปยังกระดาษของคนที่ปาแล้ว'
+                              : "ขอบคุณสำหรับการควบคุมเนื้อหา",
                           style: TextStyle(
                               fontSize: a.width / 17,
                               color: Colors.white,
