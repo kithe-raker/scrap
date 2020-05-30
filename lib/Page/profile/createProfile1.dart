@@ -17,23 +17,17 @@ class CreateProfile1 extends StatefulWidget {
 
 class _CreateProfile1State extends State<CreateProfile1> {
   var _formKey = GlobalKey<FormState>();
-  TextEditingController id = TextEditingController();
-  TextEditingController password = TextEditingController();
+  String id = '';
+  String password = '';
   File image;
   StreamSubscription loadStatus;
   bool loading = false;
 
   @override
   void initState() {
-    initID();
     loadStatus =
         authService.loading.listen((value) => setState(() => loading = value));
     super.initState();
-  }
-
-  initID() {
-    final user = Provider.of<UserData>(context, listen: false);
-    id.text = user.id;
   }
 
   sendCam() async {
@@ -54,8 +48,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
 
   @override
   void dispose() {
-    id.dispose();
-    password.dispose();
     loadStatus.cancel();
     super.dispose();
   }
@@ -64,6 +56,8 @@ class _CreateProfile1State extends State<CreateProfile1> {
   Widget build(BuildContext context) {
     Size scr = MediaQuery.of(context).size;
     screenutilInit(context);
+    final user = Provider.of<UserData>(context, listen: false);
+
     return WillPopScope(
       onWillPop: () => null,
       child: Scaffold(
@@ -171,7 +165,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       BorderRadius.all(
                                                           Radius.circular(7))),
                                               child: TextFormField(
-                                                controller: id,
+                                                initialValue: user.id,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: Colors.white,
@@ -191,14 +185,8 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                 onChanged: (gId) {
                                                   var trim = gId.trim();
                                                   trim[0] == '@'
-                                                      ? id.text =
-                                                          trim.substring(1)
-                                                      : id.text = trim;
-                                                  id.selection = TextSelection
-                                                      .fromPosition(
-                                                          TextPosition(
-                                                              offset: id.text
-                                                                  .length));
+                                                      ? id = trim.substring(1)
+                                                      : id = trim;
                                                 },
                                                 textInputAction:
                                                     TextInputAction.done,
@@ -216,7 +204,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       BorderRadius.all(
                                                           Radius.circular(7))),
                                               child: TextFormField(
-                                                controller: password,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: Colors.white,
@@ -224,8 +211,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                   fontWeight: FontWeight.w900,
                                                 ),
                                                 obscureText: true,
-                                                //autofocus: false,
-                                                //obscureText: true,
+
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
                                                   hintText: 'password',
@@ -236,14 +222,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                           .withOpacity(0.15)),
                                                 ),
                                                 onChanged: (val2) {
-                                                  password.text = val2.trim();
-                                                  password.selection =
-                                                      TextSelection
-                                                          .fromPosition(
-                                                              TextPosition(
-                                                                  offset: val2
-                                                                      .trim()
-                                                                      .length));
+                                                  password = val2.trim();
                                                   setState(() {});
                                                 },
                                                 //ถ้าพาสเวิร์ด=='' || == null => toast
@@ -286,7 +265,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
   Widget next() {
     final user = Provider.of<UserData>(context, listen: false);
     Size scr = MediaQuery.of(context).size;
-    if (password.text != '' && id.text != '' && image != null) {
+    if (password != '' && id != '' && image != null) {
       return Container(
         child: GestureDetector(
           child: Container(
@@ -307,19 +286,18 @@ class _CreateProfile1State extends State<CreateProfile1> {
           ),
           onTap: () async {
             authService.loading.add(true);
-            if (password.text.length >= 6) {
-              var docs =
-                  (await authService.getDocuments('id', id.text)).documents;
+            if (password.length >= 6) {
+              var docs = (await authService.getDocuments('id', id)).documents;
               if (docs.length > 0 && docs[0].documentID != user.uid) {
                 authService.warn('idนี้มีคนใช้แล้ว');
               } else {
-                user.id = id.text;
+                user.id = id;
                 user.img = image;
-                user.password = password.text;
+                user.password = password;
                 await fireStore
                     .collection('Account')
                     .document(user.uid)
-                    .setData({'id': id.text}, merge: true);
+                    .setData({'id': id}, merge: true);
                 authService.loading.add(false);
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => CreateProfile2()));

@@ -285,7 +285,7 @@ class _OptionSettingState extends State<OptionSetting> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Container(
-                                      width: appBarHeight / 1.8,
+                                      width: appBarHeight / 1.6,
                                       child: Image.asset(
                                         'assets/bualoi.png',
                                         scale: 5,
@@ -516,6 +516,48 @@ Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
   return Container(
     height: appBarHeight / 1.42,
     width: screenWidthDp,
+    color: Colors.black,
+    /* padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),*/
+    /*padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),*/
+    padding: EdgeInsets.symmetric(
+      horizontal: screenWidthDp / 21,
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        GestureDetector(
+            child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
+            onTap: () {
+              Navigator.pop(context);
+            }),
+        Text(
+          name,
+          style: TextStyle(
+            fontSize: s52,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        GestureDetector(
+            child: Icon(
+              Icons.more_horiz,
+              color: Colors.black,
+              size: s65,
+            ),
+            onTap: () {
+              //showButtonSheet(context);
+            }),
+      ],
+    ),
+  );
+  /*Container(
+    height: appBarHeight / 1.42,
+    width: screenWidthDp,
     /* margin: EdgeInsets.symmetric(
       horizontal: screenWidthDp / 100,
     ),*/
@@ -559,7 +601,7 @@ Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
             onPressed: null),
       ],
     ),
-  );
+  );*/
 }
 
 //หน้า จัดการบัญชีของฉัน
@@ -571,202 +613,201 @@ class Manage_MyProfile extends StatefulWidget {
 class _Manage_MyProfileState extends State<Manage_MyProfile> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      resizeToAvoidBottomPadding: false,
-      body: Column(
-        children: [
-          Container(
-            height: appBarHeight / 2,
-          ),
-          appbar_ListOptionSetting(context, Icons.face, ' จัดการบัญชีของฉัน'),
-          Container(
-            margin: EdgeInsets.only(
-              bottom: 10,
-            ),
-            height: screenHeightDp / 5.5,
-            width: screenWidthDp / 1.1,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
-              color: Color(0xff1a1a1a),
-            ),
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: screenWidthDp / 16,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        resizeToAvoidBottomPadding: false,
+        body: Column(
+          children: [
+            appbar_ListOptionSetting(context, Icons.face, ' จัดการบัญชีของฉัน'),
+            Container(
+              margin: EdgeInsets.only(
+                bottom: 10,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              height: screenHeightDp / 5.5,
+              width: screenWidthDp / 1.1,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(3),
+                color: Color(0xff1a1a1a),
+              ),
+              child: Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: screenWidthDp / 16,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      height: screenWidthDp / 4,
+                      width: screenWidthDp / 4,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(screenHeightDp),
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '@naveeharn',
+                          style: TextStyle(
+                            fontSize: s60,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Join 15/02/2020',
+                          style: TextStyle(
+                            fontSize: s60,
+                            color: Color(0xfff26A4FF),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: appBarHeight / 15,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                bottom: 10,
+              ),
+              height: screenHeightDp / 3,
+              width: screenWidthDp / 1.1,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(3),
+                color: Color(0xff1a1a1a),
+              ),
+              child: Column(
                 children: [
                   Container(
-                    height: screenWidthDp / 4,
-                    width: screenWidthDp / 4,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(screenHeightDp),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            GestureDetector(
+                              child: Text(
+                                'เพิ่มสเตตัส',
+                                style: TextStyle(
+                                  fontSize: s48,
+                                  color: Color(0xfff26A4FF),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onTap: () {
+                                showPopup(context);
+                              },
+                            ),
+                          ],
+                        )
+                      ],
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '@naveeharn',
+                  Container(
+                    height: screenHeightDp / 3.85,
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(3),
+                      color: Color(0xff222222),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'ไม่รู้อะไร',
                         style: TextStyle(
-                          fontSize: s60,
+                          fontStyle: FontStyle.italic,
+                          fontSize: s42,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                bottom: 10,
+              ),
+              height: screenHeightDp / 4.5,
+              width: screenWidthDp / 1.1,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(3),
+                color: Color(0xff1a1a1a),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'เบอร์โทรศัพท์',
+                    style: TextStyle(
+                      fontSize: s42,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    '044-112-1011',
+                    style: TextStyle(
+                      fontSize: s65,
+                      color: Color(0xfff26A4FF),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.phone,
+                        color: Colors.white,
+                        size: s52,
+                      ),
                       Text(
-                        'Join 15/02/2020',
+                        ' เปลี่ยนเบอร์โทรศัพท์',
                         style: TextStyle(
-                          fontSize: s60,
-                          color: Color(0xfff26A4FF),
                           fontWeight: FontWeight.bold,
+                          fontSize: s42,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(
-                    width: appBarHeight / 15,
+                    height: appBarHeight / 9,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.lock,
+                        color: Colors.white,
+                        size: s52,
+                      ),
+                      Text(
+                        ' เปลี่ยนรหัสผ่าน',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: s42,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              bottom: 10,
-            ),
-            height: screenHeightDp / 3,
-            width: screenWidthDp / 1.1,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
-              color: Color(0xff1a1a1a),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            child: Text(
-                              'เพิ่มสเตตัส',
-                              style: TextStyle(
-                                fontSize: s48,
-                                color: Color(0xfff26A4FF),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            onTap: () {
-                              showPopup(context);
-                            },
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  height: screenHeightDp / 3.85,
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(3),
-                    color: Color(0xff222222),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'ไม่รู้อะไร',
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: s42,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              bottom: 10,
-            ),
-            height: screenHeightDp / 4.5,
-            width: screenWidthDp / 1.1,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
-              color: Color(0xff1a1a1a),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'เบอร์โทรศัพท์',
-                  style: TextStyle(
-                    fontSize: s42,
-                    color: Colors.grey,
-                  ),
-                ),
-                Text(
-                  '044-112-1011',
-                  style: TextStyle(
-                    fontSize: s65,
-                    color: Color(0xfff26A4FF),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.phone,
-                      color: Colors.white,
-                      size: s52,
-                    ),
-                    Text(
-                      ' เปลี่ยนเบอร์โทรศัพท์',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: s42,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: appBarHeight / 9,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.lock,
-                      color: Colors.white,
-                      size: s52,
-                    ),
-                    Text(
-                      ' เปลี่ยนรหัสผ่าน',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: s42,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -993,115 +1034,117 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomPadding: false,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Container(
-                height: appBarHeight / 2,
-              ),
-              appbar_ListOptionSetting(
-                  context, Icons.bug_report, ' แจ้งปัญหาระบบ'),
-              SizedBox(
-                height: appBarHeight / 3,
-              ),
-              Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  height: screenHeightDp / 1.5,
-                  width: screenWidthDp / 1.1,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color(0xff202020),
-                  ),
-                  child: Container(
-                    margin: EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: screenWidthDp / 1.1,
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Color(0xff383838), width: 1))),
-                          child: Text(
-                            'ถึงผู้พัฒนา',
-                            style:
-                                TextStyle(fontSize: s60, color: Colors.white),
-                          ),
-                        ),
-                        Expanded(
-                          child: Form(
-                            key: key,
-                            child: TextFormField(
-                              style:
-                                  TextStyle(fontSize: s52, color: Colors.white),
-                              maxLines: null,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'แจ้งรายละเอียดเกี่ยวกับปัญหา',
-                                hintStyle: TextStyle(
-                                  fontSize: s54,
-                                  height: 0.08,
-                                  color: Colors.white30,
-                                ),
-                              ),
-                              validator: (val) {
-                                return val.trim() == ''
-                                    ? toast.validateToast(
-                                        'ไม่อธิบายแล้วเราจะรู้ได้ยังไง')
-                                    : null;
-                              },
-                              onSaved: (val) {
-                                final report =
-                                    Provider.of<Report>(context, listen: false);
-                                report.reportText = val.trim();
-                              },
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: GestureDetector(
-                            child: Container(
-                              padding: EdgeInsets.only(left: appBarHeight / 15),
-                              margin: EdgeInsets.symmetric(
-                                horizontal: a.width / 40,
-                                vertical: a.width / 40,
-                              ),
-                              width: a.width / 8,
-                              height: a.width / 8,
-                              //alignment: Alignment.center,
-                              child: Icon(
-                                Icons.send,
-                                color: Color(0xff26A4FF),
-                                size: s60 * 0.8,
-                              ),
-
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(a.width)),
-                            ),
-                            onTap: () async {
-                              if (key.currentState.validate()) {
-                                key.currentState.save();
-                                setState(() => loading = true);
-                                await reportApp.reportApp(context);
-                                setState(() => loading = false);
-                                toast.toast('ขอบคุณสำหรับการรายงานปัญหาของคุณ');
-                                nav.pop(context);
-                              }
-                            },
-                          ),
-                        )
-                      ],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                appbar_ListOptionSetting(
+                    context, Icons.bug_report, ' แจ้งปัญหาระบบ'),
+                SizedBox(
+                  height: appBarHeight / 3,
+                ),
+                Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    height: screenHeightDp / 1.5,
+                    width: screenWidthDp / 1.1,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color(0xff202020),
                     ),
-                  ))
-            ],
-          ),
-          loading ? Loading() : SizedBox()
-        ],
+                    child: Container(
+                      margin: EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: screenWidthDp / 1.1,
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: Color(0xff383838), width: 1))),
+                            child: Text(
+                              'ถึงผู้พัฒนา',
+                              style:
+                                  TextStyle(fontSize: s60, color: Colors.white),
+                            ),
+                          ),
+                          Expanded(
+                            child: Form(
+                              key: key,
+                              child: TextFormField(
+                                style: TextStyle(
+                                    fontSize: s52, color: Colors.white),
+                                maxLines: null,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'แจ้งรายละเอียดเกี่ยวกับปัญหา',
+                                  hintStyle: TextStyle(
+                                    fontSize: s54,
+                                    height: 0.08,
+                                    color: Colors.white30,
+                                  ),
+                                ),
+                                validator: (val) {
+                                  return val.trim() == ''
+                                      ? toast.validateToast(
+                                          'ไม่อธิบายแล้วเราจะรู้ได้ยังไง')
+                                      : null;
+                                },
+                                onSaved: (val) {
+                                  final report = Provider.of<Report>(context,
+                                      listen: false);
+                                  report.reportText = val.trim();
+                                },
+                              ),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: GestureDetector(
+                              child: Container(
+                                padding:
+                                    EdgeInsets.only(left: appBarHeight / 15),
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: a.width / 40,
+                                  vertical: a.width / 40,
+                                ),
+                                width: a.width / 8,
+                                height: a.width / 8,
+                                //alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.send,
+                                  color: Color(0xff26A4FF),
+                                  size: s60 * 0.8,
+                                ),
+
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.circular(a.width)),
+                              ),
+                              onTap: () async {
+                                if (key.currentState.validate()) {
+                                  key.currentState.save();
+                                  setState(() => loading = true);
+                                  await reportApp.reportApp(context);
+                                  setState(() => loading = false);
+                                  toast.toast(
+                                      'ขอบคุณสำหรับการรายงานปัญหาของคุณ');
+                                  nav.pop(context);
+                                }
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ))
+              ],
+            ),
+            loading ? Loading() : SizedBox()
+          ],
+        ),
       ),
     );
   }
@@ -1218,36 +1261,13 @@ class _ComingSoonState extends State<ComingSoon> {
         child: Stack(
           children: [
             Positioned(
-              child: Container(
-                //  padding: EdgeInsets.only(top: appBarHeight / 1.35),
-                height: appBarHeight / 1.35,
-                width: screenWidthDp,
-                /*    margin: EdgeInsets.symmetric(
-                  horizontal: screenWidthDp / 100,
-                ),*/
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        }),
-                  ],
-                ),
-              ),
+              child: appbar_ListOptionSetting(context, Icons.block, ' '),
             ),
             Center(
-              child: Container(
                 child: Text(
-                  'C O M I N G S O O N',
-                  style: TextStyle(fontSize: s70, color: Colors.white),
-                ),
-              ),
-            ),
+              'COMINGSOON',
+              style: TextStyle(color: Colors.white, fontSize: s70 * 1.5),
+            )),
           ],
         ),
       ),
