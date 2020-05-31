@@ -193,26 +193,42 @@ burnScrap(BuildContext context) async {
   var ref =
       FirebaseDatabase.instance.reference().child('scraps/${report.scrapId}');
   var data = await ref.once();
+  var batch = fireStore.batch();
   int point = data.value['point'] ?? 0;
   int burn = data.value['burn'] + 1;
   await cacheHistory.addBurn(id: report.scrapId);
   if (point < 26 && burn > 4) {
-    await fireStore.collection('BurntScraps').document(report.scrapId).setData({
+    batch.setData(
+        fireStore.collection('BurntScraps').document(report.scrapId), {
       'id': report.scrapId,
       'writer': report.targetId,
       'ref': report.scrapRef
     });
+    batch.updateData(
+        fireStore
+            .collection(
+                'Users/${report.region}/users/${report.targetId}/history')
+            .document(report.scrapId),
+        {'burnt': true});
+    await batch.commit();
     burntDialog(context);
   } else if (point < 26 && burn < 5) {
     await ref.update({'burn': burn});
     notBurntDialog(context);
   } else if (burn >= point * 0.2) {
-    await fireStore.collection('BurntScraps').document(report.scrapId).setData({
+    batch.setData(
+        fireStore.collection('BurntScraps').document(report.scrapId), {
       'id': report.scrapId,
       'writer': report.targetId,
-      'ref': report.scrapRef,
-      'region': report.region
+      'ref': report.scrapRef
     });
+    batch.updateData(
+        fireStore
+            .collection(
+                'Users/${report.region}/users/${report.targetId}/history')
+            .document(report.scrapId),
+        {'burnt': true});
+    await batch.commit();
     burntDialog(context);
   } else {
     await ref.update({'burn': burn});
