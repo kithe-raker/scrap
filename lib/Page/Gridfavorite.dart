@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
@@ -561,11 +560,11 @@ class _GridfavoriteState extends State<Gridfavorite> {
                 child: FutureBuilder(
                     future: scrapAll
                         .reference()
-                        .child('scraps/${data['id']}')
+                        .child('scraps/${data['id']}/comment')
                         .once(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        ments = snapshot.data.value['comment'];
+                        ments = snapshot.data.value;
                         return commentTransactionBox(
                             a, ments.abs(), data['comments'].abs());
                       } else {

@@ -1,5 +1,6 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -7,6 +8,7 @@ import 'package:scrap/services/admob_service.dart';
 import 'dart:math' as math;
 
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/dialog/ScrapFeedDialog.dart';
 
 class GridTopScrap extends StatefulWidget {
   final List scraps;
@@ -94,7 +96,14 @@ class _GridTopScrapState extends State<GridTopScrap> {
           ],
         ),
       ),
-      onTap: () {},
+      onTap: () {
+        var scraps = widget.scraps;
+        scraps.removeWhere((element) => element.runtimeType == int);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => ScrapFeedDialog(
+                scraps: scraps, currentIndex: scraps.indexOf(data)));
+      },
     );
   }
 
