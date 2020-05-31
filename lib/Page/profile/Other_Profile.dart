@@ -143,9 +143,10 @@ class _OtherProfileState extends State<OtherProfile> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Container(
-                        height: screenWidthDp / 3,
-                        width: screenWidthDp / 3,
+                        height: screenWidthDp / 3.32,
+                        width: screenWidthDp / 3.32,
                         decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 1.2),
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(screenHeightDp),
                             image: DecorationImage(
@@ -168,7 +169,13 @@ class _OtherProfileState extends State<OtherProfile> {
                       SizedBox(height: appBarHeight / 10),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[followButton(), throwButton()]),
+                          children: <Widget>[
+                            followButton(),
+                            SizedBox(
+                              width: appBarHeight / 10,
+                            ),
+                            throwButton()
+                          ]),
                       Container(height: screenHeightDp / 40),
                       Container(
                         margin: EdgeInsets.symmetric(
@@ -214,6 +221,7 @@ class _OtherProfileState extends State<OtherProfile> {
                               setState(() {});
                             },
                             child: Container(
+                              height: appBarHeight / 2,
                               decoration: BoxDecoration(
                                   border: pickedScrap
                                       ? null
@@ -281,18 +289,24 @@ class _OtherProfileState extends State<OtherProfile> {
     return StatefulBuilder(builder: (context, StateSetter setButton) {
       return GestureDetector(
           child: Container(
-            padding: EdgeInsets.fromLTRB(appBarHeight / 3, appBarHeight / 50,
-                appBarHeight / 3, appBarHeight / 50),
+            /* padding: EdgeInsets.fromLTRB(appBarHeight / 3, appBarHeight / 50,
+                appBarHeight / 3, appBarHeight / 50),*/
+            height: appBarHeight / 2.2,
+            width: appBarHeight * 1.5,
             decoration: BoxDecoration(
-              border: Border.all(color: Color(0xfff26A4FF)),
-              borderRadius: BorderRadius.circular(5),
-            ),
+                border: Border.all(color: Color(0xfff26A4FF)),
+                borderRadius: BorderRadius.circular(5),
+                color: followList.contains(uid)
+                    ? Colors.black
+                    : Color(0xfff26A4FF)),
             child: Text(
               followList.contains(uid) ? 'กำลังติดตาม' : 'ติดตาม',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Color(0xfff26A4FF),
+                  color: followList.contains(uid)
+                      ? Color(0xfff26A4FF)
+                      : Colors.white,
                   fontSize: s52),
             ),
           ),
@@ -327,12 +341,14 @@ class _OtherProfileState extends State<OtherProfile> {
                     child: GestureDetector(
                         child: Container(
                           margin: EdgeInsets.only(left: appBarHeight / 6),
-                          width: appBarHeight * 1.55,
-                          padding: EdgeInsets.fromLTRB(
+                          height: appBarHeight / 2.2,
+                          width: appBarHeight * 1.5,
+                          //  width: appBarHeight * 1.55,
+                          /*  padding: EdgeInsets.fromLTRB(
                               appBarHeight / 5,
                               appBarHeight / 50,
                               appBarHeight / 5,
-                              appBarHeight / 50),
+                              appBarHeight / 50),*/
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(5),
@@ -366,8 +382,9 @@ class _OtherProfileState extends State<OtherProfile> {
   // Appbar สำหรับ หน้า Profile ของคนอื่น
   Widget appbar_OtherProfile(BuildContext context) {
     return Container(
-      height: appBarHeight / 1.35,
+      height: appBarHeight / 1.42,
       width: screenWidthDp,
+      color: Colors.black,
       padding: EdgeInsets.symmetric(
         horizontal: screenWidthDp / 21,
       ),
@@ -375,7 +392,7 @@ class _OtherProfileState extends State<OtherProfile> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           GestureDetector(
-              child: Icon(Icons.arrow_back, color: Colors.white, size: s54),
+              child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
               onTap: () {
                 Navigator.pop(context, true);
               }),

@@ -70,6 +70,50 @@ class _SubpeopleState extends State<Subpeople> {
           height: a.height,
           child: Stack(
             children: <Widget>[
+              Positioned(
+                  child: Container(
+                height: appBarHeight / 1.42,
+                width: screenWidthDp,
+                color: Colors.black,
+                /* padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),*/
+                /*padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),*/
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidthDp / 21,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                        child: Icon(Icons.arrow_back,
+                            color: Colors.white, size: s60),
+                        onTap: () {
+                          Navigator.pop(context);
+                        }),
+                    Text(
+                      'name',
+                      style: TextStyle(
+                        fontSize: s52,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    GestureDetector(
+                        child: Icon(
+                          Icons.more_horiz,
+                          color: Colors.black,
+                          size: s65,
+                        ),
+                        onTap: () {
+                          //showButtonSheet(context);
+                        }),
+                  ],
+                ),
+              )),
               Column(
                 children: <Widget>[
                   Container(
@@ -83,32 +127,18 @@ class _SubpeopleState extends State<Subpeople> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                            width: a.width,
-                            height: screenHeightDp / 12.4,
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  InkWell(
-                                    child: Icon(Icons.arrow_back,
-                                        color: Colors.white,
-                                        size: a.width / 15),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  // followerButton(),
-                                ])),
+                          width: a.width,
+                          height: screenHeightDp / 12.4,
+                        ),
                         Text(
-                          searching ? "\tติดตามผู้คน" : "\tค้นหาผู้คน",
+                          searching ? "ติดตามผู้คน" : "ค้นหาผู้คน",
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: s54,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "\tค้นหาผู้คนเพื่ออ่านสแครปหรือปาสแครปหาพวกเขา",
+                          "ค้นหาผู้คนเพื่ออ่านสแครปหรือปาสแครปหาพวกเขา",
                           style: TextStyle(
                               height: 1.2, color: Colors.white, fontSize: s42),
                         ),
@@ -121,11 +151,6 @@ class _SubpeopleState extends State<Subpeople> {
                                 margin: EdgeInsets.only(
                                     left: appBarHeight / 8,
                                     right: appBarHeight / 8),
-                                /*  padding: EdgeInsets.only(
-                                    left: a.width / 10,
-                                    right: a.width / 10,
-                                    top: a.width / 500,
-                                    bottom: 0),*/
                                 decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(50.0)),
@@ -142,9 +167,9 @@ class _SubpeopleState extends State<Subpeople> {
                                     // fillColor: Colors.red,
                                     hintText: '@someone',
                                     hintStyle: TextStyle(
-                                        fontSize: a.width / 18,
-                                        color: Colors.grey[600],
-                                        height: a.width / 150),
+                                      fontSize: a.width / 18,
+                                      color: Colors.grey[600],
+                                    ),
                                   ),
                                   onTap: () {
                                     focus.requestFocus();
@@ -162,18 +187,23 @@ class _SubpeopleState extends State<Subpeople> {
                             ),
                             SizedBox(width: a.width / 100),
                             searching
-                                ? GestureDetector(
-                                    child: Text(
-                                      '\t\tยกเลิก\t',
-                                      style: TextStyle(
-                                          fontSize: a.width / 18,
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.white),
-                                    ),
-                                    onTap: () {
-                                      focus.unfocus();
-                                      setState(() => searching = false);
-                                    },
+                                ? Row(
+                                    children: <Widget>[
+                                      GestureDetector(
+                                        child: Text(
+                                          'ยกเลิก',
+                                          style: TextStyle(
+                                              fontSize: a.width / 18,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.white),
+                                        ),
+                                        onTap: () {
+                                          focus.unfocus();
+                                          setState(() => searching = false);
+                                        },
+                                      ),
+                                      SizedBox(width: a.width / 100),
+                                    ],
                                   )
                                 : SizedBox()
                           ],
@@ -380,8 +410,8 @@ class _SubpeopleState extends State<Subpeople> {
                           return docs.length > 0
                               ? Column(
                                   children: docs
-                                      .map((doc) => doc['img'] != null 
-                                      // &&doc.documentID != user.uid
+                                      .map((doc) => doc['img'] != null
+                                          // &&doc.documentID != user.uid
                                           ? userCard(doc)
                                           : SizedBox())
                                       .toList())

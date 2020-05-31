@@ -41,12 +41,6 @@ class _ProfileState extends State<Profile> {
       height: appBarHeight / 1.42,
       width: screenWidthDp,
       color: Colors.black,
-      /* padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
-      ),*/
-      /*padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
-      ),*/
       padding: EdgeInsets.symmetric(
         horizontal: screenWidthDp / 21,
       ),
@@ -308,6 +302,7 @@ class _ProfileState extends State<Profile> {
                                     setState(() {});
                                   },
                                   child: Container(
+                                    height: appBarHeight / 2,
                                     decoration: BoxDecoration(
                                         border: pickedScrap
                                             ? null

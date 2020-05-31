@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     screenutilInit(context);
     return Scaffold(
       backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: <Widget>[
           ListView(
