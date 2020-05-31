@@ -86,21 +86,24 @@ class _CommentSheetState extends State<CommentSheet> {
       'timeStamp': FieldValue.serverTimestamp()
     });
 
-    scrapAll.reference().child(refChild).once().then((mutableData) {
-      defaultDb.reference().child(refChild).update({
-        'comment': mutableData.value['comment'] - 1,
-        'point': mutableData.value['point'] - 2
-      });
-      scrapAll.reference().child(refChild).update({
-        'comment': mutableData.value['comment'] - 1,
-        'point': mutableData.value['point'] - 2
-      });
-    });
+    var mutableData = await defaultDb.reference().child(refChild).once();
+    var newPoint = mutableData.value['point'] - 0.3;
+    defaultDb.reference().child(refChild).update(
+        {'comment': mutableData.value['comment'] - 1, 'point': newPoint});
+
+    scrap.pushNotification(widget.scrapSnapshot,
+        notiRate: mutableData.value['CPN'],
+        currentPoint: newPoint,
+        isComment: true);
+
+    scrapAll.reference().child(refChild).update(
+        {'comment': mutableData.value['comment'] - 1, 'point': newPoint});
+
     userDb.reference().child('users/${scrapSnapshot['uid']}/att').once().then(
         (data) => userDb
             .reference()
             .child('users/${scrapSnapshot['uid']}')
-            .update({'att': data.value + 2}));
+            .update({'att': data.value + 0.3}));
   }
 
   @override

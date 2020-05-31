@@ -484,8 +484,8 @@ class _MapScrapsState extends State<MapScraps> {
                                                     streamLimit.add(
                                                         16 - allScrap.length);
                                                   } else {
-                                                    Taoast()
-                                                        .toast('กระดาษหมดแล้ว');
+                                                    toast.toast(
+                                                        'คุณตามทันสแครปทั้งหมดแล้ว');
                                                   }
                                                 },
                                               ),

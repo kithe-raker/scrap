@@ -95,7 +95,7 @@ class _CountDownTextState extends State<CountDownText> {
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');
 
     if (hours == 0) {
-      return "$minutesStr:$secondsStr";
+      return "00:$minutesStr:$secondsStr";
     }
     return "$hoursStr:$minutesStr:$secondsStr";
   }
