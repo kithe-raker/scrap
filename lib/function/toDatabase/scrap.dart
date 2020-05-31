@@ -36,6 +36,7 @@ class Scraps {
       var scrap = {
         'uid': user.uid,
         'region': user.region,
+        'thrown': thrownUID,
         'scrap': {
           'text': scrapData.text,
           'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
@@ -57,12 +58,14 @@ class Scraps {
           .reference()
           .child('users/$thrownUID')
           .update({'thrown': data.value + 1}));
+
+      batch.setData(ref.document(docId), scrap);
+      scrap['burnt'] = false;
       batch.setData(
           fireStore
               .collection('Users/${user.region}/users/${user.uid}/thrownLog')
               .document(docId),
           scrap);
-      batch.setData(ref.document(docId), scrap);
       await batch.commit();
       loading.add(false);
       toast('ปาสำเร็จแล้ว');
@@ -87,6 +90,7 @@ class Scraps {
       var scrap = {
         'uid': user.uid,
         'region': user.region,
+        'thrown': thrownUID,
         'scrap': {
           'text': scrapData.text,
           'writer': user.id,
@@ -104,12 +108,14 @@ class Scraps {
           .reference()
           .child('users/$thrownUID')
           .update({'thrown': data.value + 1}));
+
+      batch.setData(ref.document(docId), scrap);
+      scrap['burnt'] = false;
       batch.setData(
           fireStore
               .collection('Users/${user.region}/users/${user.uid}/thrownLog')
               .document(docId),
           scrap);
-      batch.setData(ref.document(docId), scrap);
       await batch.commit();
       loading.add(false);
       toast('ปาสำเร็จแล้ว');
@@ -144,8 +150,8 @@ class Scraps {
       'id': docId,
       'point': 0,
       'burn': 0,
-      'PPN': 5,
-      'CPN': 5
+      'PPN': -5,
+      'CPN': -5
     };
     Map<String, dynamic> scrap = {
       'id': docId,
@@ -160,6 +166,7 @@ class Scraps {
     };
     batch.setData(ref.document(docId), scrap);
     scrap['default'] = defaultPoint.data;
+    scrap['burnt'] = false;
     batch.setData(
         fireStore
             .collection('Users/${user.region}/users/${user.uid}/history')
@@ -217,6 +224,7 @@ class Scraps {
     } else {
       cacheHistory.addHistory(scrap, field: field, comments: comments);
       var mutableData = await defaultDb.reference().child(ref).once();
+      var transac = await scrapAll.reference().child('$ref/$field').once();
       var newPoint = field == 'like'
           ? mutableData.value['point'] - 2
           : mutableData.value['point'] - 3;
@@ -224,7 +232,7 @@ class Scraps {
       scrapAll
           .reference()
           .child(ref)
-          .update({field: mutableData.value[field] - 1, 'point': newPoint});
+          .update({field: transac.value - 1, 'point': newPoint});
 
       pushNotification(scrap,
           notiRate: mutableData.value['PPN'], currentPoint: newPoint);
@@ -276,7 +284,11 @@ class Scraps {
       fireStore
           .collection('ScrapNotification')
           .document(scrap.documentID)
-          .setData({'id': scrap.documentID, 'writer': scrap['uid']});
+          .setData({
+        'id': scrap.documentID,
+        'isComment': isComment,
+        'writer': scrap['uid']
+      });
       FirebaseDatabase.instance
           .reference()
           .child('scraps/${scrap.documentID}')

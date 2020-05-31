@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 class Report extends ChangeNotifier {
   String _text, _targetId;
-  String _scrapId, _scrapRef;
+  String _scrapId, _scrapRef, _region;
   String _topic = 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ';
 
   String get reportText => _text;
@@ -10,6 +10,7 @@ class Report extends ChangeNotifier {
   String get scrapRef => _scrapRef;
   String get scrapId => _scrapId;
   String get topic => _topic;
+  String get region => _region;
 
   set reportText(String val) {
     _text = val;
@@ -33,6 +34,11 @@ class Report extends ChangeNotifier {
 
   set targetId(String val) {
     _targetId = val;
+    notifyListeners();
+  }
+
+  set region(String val) {
+    _region = val;
     notifyListeners();
   }
 }

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/Report.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
+import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/thrown.dart';
@@ -22,6 +24,7 @@ class _PaperstrangerState extends State<Paperstranger> {
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
+    final user = Provider.of<UserData>(context, listen: false);
     var scrap = widget.scrap['scrap'];
     return Scaffold(
         backgroundColor: Colors.black,
@@ -197,10 +200,12 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   BorderRadius.all(Radius.circular(50)),
                             )),
                         onTap: () {
-                          writerScrap(context,
-                              isThrowBack: true,
-                              region: widget.scrap['region'],
-                              thrownUID: widget.scrap['uid']);
+                          user.papers > 0
+                              ? writerScrap(context,
+                                  isThrowBack: true,
+                                  region: widget.scrap['region'],
+                                  thrownUID: widget.scrap['uid'])
+                              : toast.toast('กระดาษของคุณหมดแล้ว');
                         },
                       ),
                     ],
@@ -358,6 +363,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                                 report.scrapId = scrap.documentID;
                                 report.scrapRef = scrap.reference.parent().path;
                                 report.targetId = scrap['uid'];
+                                report.region = scrap['region'];
                                 showdialogBurn(context, thrown: true);
                               },
                             ),

@@ -574,6 +574,7 @@ class _MapScrapsState extends State<MapScraps> {
                                   report.scrapRef =
                                       scrap.reference.parent().path;
                                   report.targetId = scrap['uid'];
+                                  report.region = scrap['region'];
                                   history['burn'].add(scrap.documentID);
                                   showdialogBurn(context);
                                 }

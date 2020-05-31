@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
           title: 'Scrap.',
           theme: ThemeData(
               fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-          home: CreateProfile1()),
+          home: MainPage()),
     );
   }
 }
