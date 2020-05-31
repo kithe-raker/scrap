@@ -822,6 +822,27 @@ class HistoryScrap extends StatefulWidget {
 class _HistoryScrapState extends State<HistoryScrap> {
   var controller = RefreshController();
   var textGroup = AutoSizeGroup();
+  List<DocumentSnapshot> scraps = [];
+  List<DocumentSnapshot> throwScrap = [];
+  bool initFinish = false;
+  String dropdownValue = 'ประวัติการเขียนสแครป';
+
+  @override
+  void initState() {
+    initScrap();
+    super.initState();
+  }
+
+  initScrap() async {
+    final user = Provider.of<UserData>(context, listen: false);
+    var docs = await fireStore
+        .collection('Users/${user.region}/users/${user.uid}/history')
+        .orderBy('scrap.timeStamp', descending: true)
+        .limit(8)
+        .getDocuments();
+    scraps.addAll(docs.documents);
+    setState(() => initFinish = true);
+  }
 
   @override
   void dispose() {
@@ -840,74 +861,139 @@ class _HistoryScrapState extends State<HistoryScrap> {
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
-    final user = Provider.of<UserData>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomPadding: false,
       body: SafeArea(
         child: Stack(
           children: <Widget>[
-            appbar_ListOptionSetting(
-                context, Icons.history, ' ประวัติการเขียนสแครป'),
+            appBar(),
             Container(
-              padding: EdgeInsets.only(top: appBarHeight / 1.35),
-              margin: EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
-              child: FutureBuilder(
-                  future: fireStore
-                      .collection(
-                          'Users/${user.region}/users/${user.uid}/history')
-                      .orderBy('scrap.timeStamp', descending: true)
-                      .limit(8)
-                      .getDocuments(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      List docs = snapshot.data.documents;
-                      return StatefulBuilder(
-                          builder: (context, StateSetter setList) {
-                        return docs.length > 0
-                            ? SmartRefresher(
-                                enablePullDown: false,
-                                enablePullUp: true,
-                                controller: controller,
-                                onLoading: () async {
-                                  if (docs.length > 0) {
-                                    var query = await fireStore
-                                        .collection(
-                                            'Users/${user.region}/users/${user.uid}/history')
-                                        .orderBy('scrap.timeStamp',
-                                            descending: true)
-                                        .startAfterDocument(docs.last)
-                                        .limit(8)
-                                        .getDocuments();
-                                    docs.addAll(query.documents);
-                                    query.documents.length > 0
-                                        ? setList(
-                                            () => controller.loadComplete())
-                                        : controller.loadNoData();
-                                  } else
-                                    controller.loadNoData();
-                                },
-                                physics: BouncingScrollPhysics(),
-                                child: Wrap(
-                                    alignment: WrapAlignment.start,
-                                    spacing: screenWidthDp / 42,
-                                    runSpacing: screenWidthDp / 42,
-                                    children:
-                                        docs.map((doc) => scrap(doc)).toList()),
-                              )
-                            : Center(
-                                child: guide('ไม่มีประวัติการทิ้ง'),
-                              );
-                      });
-                    } else {
-                      return Center(child: LoadNoBlur());
-                    }
-                  }),
-            ),
+                padding: EdgeInsets.only(top: appBarHeight / 1.35),
+                margin: EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
+                child: initFinish
+                    ? body(dropdownValue == 'ประวัติการเขียนสแครป'
+                        ? scraps
+                        : throwScrap)
+                    : Center(child: LoadNoBlur())),
           ],
         ),
       ),
     );
+  }
+
+  Widget appBar() {
+    final user = Provider.of<UserData>(context, listen: false);
+    return Container(
+      height: appBarHeight / 1.42,
+      width: screenWidthDp,
+      color: Colors.black,
+      padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          GestureDetector(
+              child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
+              onTap: () {
+                Navigator.pop(context);
+              }),
+          DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                  dropdownColor: Colors.grey[900],
+                  value: dropdownValue,
+                  style: TextStyle(
+                      fontSize: s52,
+                      fontFamily: 'ThaiSans',
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.white,
+                  ),
+                  iconSize: s60,
+                  onChanged: (String newValue) async {
+                    if (newValue == 'ประวัติการปาสแครป' &&
+                        throwScrap.length < 1) {
+                      setState(() => initFinish = false);
+                      var docs = await fireStore
+                          .collection(
+                              'Users/${user.region}/users/${user.uid}/thrownLog')
+                          .orderBy('scrap.timeStamp', descending: true)
+                          .limit(8)
+                          .getDocuments();
+                      scraps.addAll(docs.documents);
+                      dropdownValue = newValue;
+                      setState(() => initFinish = true);
+                    } else
+                      setState(() => dropdownValue = newValue);
+                  },
+                  items: <String>['ประวัติการเขียนสแครป', 'ประวัติการปาสแครป']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value,
+                            style:
+                                TextStyle(fontSize: s54, color: Colors.white)));
+                  }).toList())),
+          SizedBox()
+        ],
+      ),
+    );
+  }
+
+  Widget body(List<DocumentSnapshot> listScraps) {
+    final user = Provider.of<UserData>(context, listen: false);
+    return StatefulBuilder(builder: (context, StateSetter setList) {
+      return listScraps.length > 0
+          ? SmartRefresher(
+              enablePullDown: false,
+              enablePullUp: true,
+              controller: controller,
+              onLoading: () async {
+                if (listScraps.length > 0) {
+                  var ref = dropdownValue == 'ประวัติการเขียนสแครป'
+                      ? fireStore.collection(
+                          'Users/${user.region}/users/${user.uid}/history')
+                      : fireStore.collection(
+                          'Users/${user.region}/users/${user.uid}/thrownLog');
+                  var query = await ref
+                      .orderBy('scrap.timeStamp', descending: true)
+                      .startAfterDocument(listScraps.last)
+                      .limit(8)
+                      .getDocuments();
+                  listScraps.addAll(query.documents);
+                  query.documents.length > 0
+                      ? setList(() => controller.loadComplete())
+                      : controller.loadNoData();
+                } else
+                  controller.loadNoData();
+              },
+              physics: BouncingScrollPhysics(),
+              child: scrapGrid(listScraps))
+          : Center(
+              child: guide('ไม่มีประวัติการทิ้ง'),
+            );
+    });
+  }
+
+  /*
+  Row(children: <Widget>[
+              Text(name,
+                  style: TextStyle(
+                      fontSize: s52,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold)),
+              Icon(Icons.arrow_drop_down, size: s54, color: Colors.white)
+            ]),
+   */
+
+  Widget scrapGrid(List docs) {
+    return Wrap(
+        alignment: WrapAlignment.start,
+        spacing: screenWidthDp / 42,
+        runSpacing: screenWidthDp / 42,
+        children: docs.map((doc) => scrap(doc)).toList());
   }
 
   Widget scrap(DocumentSnapshot data) {
@@ -927,7 +1013,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
                 group: textGroup,
                 style: TextStyle(fontSize: s46)),
           )),
-          isExpired(data)
+          data['burnt'] ?? false
               ? Container(
                   margin: EdgeInsets.all(4),
                   height: screenWidthDp / 2.16 * 1.21,
@@ -936,12 +1022,27 @@ class _HistoryScrapState extends State<HistoryScrap> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.history, size: 50, color: Colors.white),
-                        Text('หมดเวลา',
+                        Icon(Icons.whatshot,
+                            size: 50, color: Color(0xffFF8F3A)),
+                        Text('ถูกเผา',
                             style:
                                 TextStyle(color: Colors.white, fontSize: s48)),
                       ]))
-              : SizedBox()
+              : isExpired(data)
+                  ? Container(
+                      margin: EdgeInsets.all(4),
+                      height: screenWidthDp / 2.16 * 1.21,
+                      width: screenWidthDp / 2.16,
+                      color: Colors.black38,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.history, size: 50, color: Colors.white),
+                            Text('หมดเวลา',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: s48)),
+                          ]))
+                  : SizedBox()
         ]));
   }
 
