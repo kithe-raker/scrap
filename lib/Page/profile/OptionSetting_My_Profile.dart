@@ -972,7 +972,9 @@ class _HistoryScrapState extends State<HistoryScrap> {
               physics: BouncingScrollPhysics(),
               child: scrapGrid(listScraps))
           : Center(
-              child: guide('ไม่มีประวัติการทิ้ง'),
+              child: guide(dropdownValue == 'ประวัติการเขียนสแครป'
+                  ? 'ไม่มีประวัติการทิ้ง'
+                  : 'ไม่มีประวัติการปา'),
             );
     });
   }
