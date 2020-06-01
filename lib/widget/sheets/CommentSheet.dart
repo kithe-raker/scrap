@@ -199,10 +199,10 @@ class _CommentSheetState extends State<CommentSheet> {
                                   onChanged: (val) {
                                     //  var text = val.trimLeft();
 
-                                    comment.text = val;
+                                    /* comment.text = val;
                                     comment.selection =
                                         TextSelection.fromPosition(
-                                            TextPosition(offset: val.length));
+                                            TextPosition(offset: val.length));*/
                                     setSheet(() {});
                                   },
                                   decoration: InputDecoration(

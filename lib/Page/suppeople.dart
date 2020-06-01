@@ -18,6 +18,8 @@ import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/Page/allfollower.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import 'HomePage.dart';
+
 class Subpeople extends StatefulWidget {
   @override
   _SubpeopleState createState() => _SubpeopleState();
@@ -27,6 +29,7 @@ class _SubpeopleState extends State<Subpeople> {
   List following = [], recently = [];
   bool loading = true, searching = false;
   String search;
+  final TextEditingController _controller = new TextEditingController();
   var focus = FocusNode();
   StreamController<String> streamController = StreamController();
 
@@ -70,17 +73,11 @@ class _SubpeopleState extends State<Subpeople> {
           height: a.height,
           child: Stack(
             children: <Widget>[
-              Positioned(
+              /* Positioned(
                   child: Container(
                 height: appBarHeight / 1.42,
                 width: screenWidthDp,
                 color: Colors.black,
-                /* padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
-      ),*/
-                /*padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
-      ),*/
                 padding: EdgeInsets.symmetric(
                   horizontal: screenWidthDp / 21,
                 ),
@@ -94,28 +91,35 @@ class _SubpeopleState extends State<Subpeople> {
                         onTap: () {
                           Navigator.pop(context);
                         }),
-                    Text(
-                      'name',
-                      style: TextStyle(
-                        fontSize: s52,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    GestureDetector(
-                        child: Icon(
-                          Icons.more_horiz,
-                          color: Colors.black,
-                          size: s65,
-                        ),
-                        onTap: () {
-                          //showButtonSheet(context);
-                        }),
+                    SizedBox(),
+                    SizedBox()
                   ],
                 ),
-              )),
+              )),*/
               Column(
                 children: <Widget>[
+                  Container(
+                    height: appBarHeight / 1.42,
+                    width: screenWidthDp,
+                    color: Colors.black,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidthDp / 21,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        GestureDetector(
+                            child: Icon(Icons.arrow_back,
+                                color: Colors.white, size: s60),
+                            onTap: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(),
+                        SizedBox()
+                      ],
+                    ),
+                  ),
                   Container(
                     height: screenHeightDp / 3.4,
                     decoration: BoxDecoration(
@@ -126,10 +130,10 @@ class _SubpeopleState extends State<Subpeople> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
+                        /*   Container(
                           width: a.width,
                           height: screenHeightDp / 12.4,
-                        ),
+                        ),*/
                         Text(
                           searching ? "ติดตามผู้คน" : "ค้นหาผู้คน",
                           style: TextStyle(
@@ -157,6 +161,7 @@ class _SubpeopleState extends State<Subpeople> {
                                   color: Color(0xff262626),
                                 ),
                                 child: TextField(
+                                  controller: _controller,
                                   focusNode: focus,
                                   style: TextStyle(
                                       color: Colors.white,
@@ -165,8 +170,10 @@ class _SubpeopleState extends State<Subpeople> {
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     // fillColor: Colors.red,
+
                                     hintText: '@someone',
                                     hintStyle: TextStyle(
+                                      height: appBarHeight / 65,
                                       fontSize: a.width / 18,
                                       color: Colors.grey[600],
                                     ),
@@ -199,6 +206,7 @@ class _SubpeopleState extends State<Subpeople> {
                                         ),
                                         onTap: () {
                                           focus.unfocus();
+                                          _controller.clear();
                                           setState(() => searching = false);
                                         },
                                       ),
