@@ -165,6 +165,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                       BorderRadius.all(
                                                           Radius.circular(7))),
                                               child: TextFormField(
+                                                maxLength: 16,
                                                 initialValue: user.id,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
@@ -173,6 +174,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                   fontWeight: FontWeight.w900,
                                                 ),
                                                 decoration: InputDecoration(
+                                                  counterText: '',
                                                   border: InputBorder.none,
                                                   hintText: '@somename',
                                                   hintStyle: TextStyle(

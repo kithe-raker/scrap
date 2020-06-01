@@ -595,7 +595,7 @@ class _ProfileState extends State<Profile> {
                 if (snapshot.hasData) {
                   var trans = snapshot.data.snapshot.value;
                   return Text(
-                    '$trans',
+                    '${trans.floor()}',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: s70 * 1.2,

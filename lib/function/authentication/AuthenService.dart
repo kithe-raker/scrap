@@ -182,6 +182,7 @@ class AuthenService {
     var userDb = FirebaseDatabase(app: db.userTransact);
     final userData = Provider.of<UserData>(context, listen: false);
     var user = await fireAuth.currentUser();
+    var now = DateTime.now();
     String uid = user.uid;
     var accRef = fireStore.collection('Account').document(uid);
     var userRef =
@@ -193,7 +194,8 @@ class AuthenService {
     if (userData.img.runtimeType != String) {
       var resizeImg = await resize.resize(image: userData.img, quality: 32);
       userData.img = await resize.uploadImg(
-          img: resizeImg, imageName: uid + '/' + '${uid}_pro0');
+          img: resizeImg,
+          imageName: uid + '/' + '${uid}_${now.toIso8601String()}');
     }
     initFile(context);
     cacheHistory.initHistory();
@@ -242,6 +244,7 @@ class AuthenService {
     if (doc.exists) {
       var map = doc.data;
       map['region'] = user.region;
+      map['phone'] = user.phone;
       await userinfo.initUserInfo(doc: map);
       loading.add(false);
       nav.pushReplacement(context, MainStream());

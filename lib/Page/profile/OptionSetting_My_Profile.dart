@@ -6,10 +6,12 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/function/aboutUser/ReportApp.dart';
+import 'package:scrap/function/aboutUser/SettingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/provider/Report.dart';
@@ -615,13 +617,17 @@ class Manage_MyProfile extends StatefulWidget {
 }
 
 class _Manage_MyProfileState extends State<Manage_MyProfile> {
-  bool initInfoFinish = false;
+  bool initInfoFinish = false, loading = false;
   String status, id;
-  File img;
+  var _key = GlobalKey<FormState>();
+  File image;
+  StreamSubscription loadStream;
 
   @override
   void initState() {
     initUser();
+    loadStream =
+        setting.loading.listen((value) => setState(() => loading = value));
     super.initState();
   }
 
@@ -629,6 +635,28 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
     var data = await userinfo.readContents();
     status = data['status'];
     setState(() => initInfoFinish = true);
+  }
+
+  sendCam() async {
+    File img = await ImagePicker.pickImage(source: ImageSource.camera);
+    if (img != null) {
+      image = img;
+      setState(() {});
+    }
+  }
+
+  sendPic() async {
+    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (img != null) {
+      image = img;
+      setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    loadStream.cancel();
+    super.dispose();
   }
 
   @override
@@ -639,200 +667,347 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
       child: Scaffold(
           backgroundColor: Colors.black,
           resizeToAvoidBottomPadding: false,
-          body: initInfoFinish
-              ? Column(
-                  children: [
-                    appbar_ListOptionSetting(
-                        context, Icons.face, ' จัดการบัญชีของฉัน'),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      height: screenHeightDp / 5.5,
-                      width: screenWidthDp / 1.1,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3),
-                        color: Color(0xff1a1a1a),
-                      ),
-                      child: Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: screenWidthDp / 16,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          body: Stack(
+            children: <Widget>[
+              initInfoFinish
+                  ? SingleChildScrollView(
+                      child: Form(
+                        key: _key,
+                        child: Column(
                           children: [
+                            appbar_ListOptionSetting(
+                                context, Icons.face, ' จัดการบัญชีของฉัน'),
                             Container(
-                              height: screenWidthDp / 4,
-                              width: screenWidthDp / 4,
-                              margin:
-                                  EdgeInsets.only(right: screenHeightDp / 42),
+                              margin: EdgeInsets.only(bottom: 10),
+                              height: screenHeightDp / 5.5,
+                              width: screenWidthDp / 1.1,
                               decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.circular(screenHeightDp),
-                                  image: DecorationImage(
-                                      image: FileImage(
-                                          img == null ? File(user.img) : img),
-                                      fit: BoxFit.cover)),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: screenWidthDp / 1.4,
-                                    child: TextFormField(
-                                      initialValue: user.id ?? 'name',
-                                      style: TextStyle(
-                                          height: 0.64,
-                                          fontSize: s60,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          prefixText: '@',
-                                          prefixStyle: TextStyle(
-                                              fontSize: s60,
+                                borderRadius: BorderRadius.circular(3),
+                                color: Color(0xff1a1a1a),
+                              ),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: screenWidthDp / 16,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                        child: Container(
+                                          height: screenWidthDp / 4,
+                                          width: screenWidthDp / 4,
+                                          margin: EdgeInsets.only(
+                                              right: screenHeightDp / 42),
+                                          decoration: BoxDecoration(
                                               color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      screenHeightDp),
+                                              image: DecorationImage(
+                                                  image: FileImage(image == null
+                                                      ? File(user.img)
+                                                      : image),
+                                                  fit: BoxFit.cover)),
+                                        ),
+                                        onTap: () => selectImg(context)),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            width: screenWidthDp / 1.4,
+                                            child: TextFormField(
+                                                maxLength: 16,
+                                                initialValue: user.id ?? 'name',
+                                                style: TextStyle(
+                                                    height: 0.64,
+                                                    fontSize: s60,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                decoration: InputDecoration(
+                                                    counterText: '',
+                                                    border: InputBorder.none,
+                                                    prefixText: '@',
+                                                    prefixStyle: TextStyle(
+                                                        fontSize: s60,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                validator: (val) {
+                                                  var trim = val.trim();
+                                                  return trim.length < 1
+                                                      ? toast.validateToast(
+                                                          'ใส่สเตตัสของคุณ')
+                                                      : null;
+                                                },
+                                                onSaved: (val) =>
+                                                    id = val.trim()),
+                                          ),
+                                          Text(
+                                            'Thailand',
+                                            style: TextStyle(
+                                              fontSize: s60,
+                                              color: Color(0xfff26A4FF),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: appBarHeight / 15),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                bottom: 10,
+                              ),
+                              height: screenHeightDp / 3,
+                              width: screenWidthDp / 1.1,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3),
+                                color: Color(0xff1a1a1a),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 6),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'แก้ไขสเตตัสของคุณ',
+                                      style: TextStyle(
+                                        fontSize: s48,
+                                        color: Color(0xfff26A4FF),
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
-                                  Text(
-                                    'Thailand',
-                                    style: TextStyle(
-                                      fontSize: s60,
-                                      color: Color(0xfff26A4FF),
-                                      fontWeight: FontWeight.bold,
+                                  Container(
+                                    alignment: Alignment.center,
+                                    height: screenHeightDp / 3.85,
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(3),
+                                      color: Color(0xff222222),
                                     ),
+                                    child: TextFormField(
+                                        initialValue: status ?? '',
+                                        maxLength: 60,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: s42,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: 'สเตตัสของคุณ',
+                                            hintStyle: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: s42,
+                                                color: Colors.white54,
+                                                fontWeight: FontWeight.bold)),
+                                        validator: (val) {
+                                          var trim = val.trim();
+                                          return trim.length < 1
+                                              ? toast.validateToast(
+                                                  'ใส่สเตตัสของคุณ')
+                                              : null;
+                                        },
+                                        onSaved: (val) => status = val.trim()),
                                   ),
                                 ],
                               ),
                             ),
-                            SizedBox(width: appBarHeight / 15),
+                            Container(
+                              margin: EdgeInsets.only(
+                                bottom: 10,
+                              ),
+                              height: screenHeightDp / 4.5,
+                              width: screenWidthDp / 1.1,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3),
+                                color: Color(0xff1a1a1a),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'เบอร์โทรศัพท์',
+                                    style: TextStyle(
+                                      fontSize: s42,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(phoneFormat(user.phone ?? '0000000000'),
+                                      style: TextStyle(
+                                          fontSize: s65,
+                                          color: Color(0xfff26A4FF))),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.phone,
+                                        color: Colors.white,
+                                        size: s52,
+                                      ),
+                                      Text(
+                                        ' เปลี่ยนเบอร์โทรศัพท์',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: s42,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: appBarHeight / 9),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.lock,
+                                        color: Colors.white,
+                                        size: s52,
+                                      ),
+                                      Text(
+                                        ' เปลี่ยนรหัสผ่าน',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: s42,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            GestureDetector(
+                              child: Container(
+                                alignment: Alignment.center,
+                                width: screenWidthDp / 3.2,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: screenWidthDp / 21,
+                                    vertical: screenWidthDp / 72),
+                                decoration: BoxDecoration(
+                                  color: Color(0xfff26A4FF),
+                                  borderRadius:
+                                      BorderRadius.circular(screenWidthDp / 54),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Text('บันทึก',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: s54,
+                                          color: Colors.white,
+                                        )),
+                                    SizedBox(width: 2.1),
+                                    Icon(Icons.save,
+                                        color: Colors.white, size: s46)
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                if (_key.currentState.validate()) {
+                                  _key.currentState.save();
+                                  setting.updateProfile(context,
+                                      id: id, status: status, image: image);
+                                }
+                              },
+                            )
                           ],
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      height: screenHeightDp / 3,
-                      width: screenWidthDp / 1.1,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3),
-                        color: Color(0xff1a1a1a),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                                alignment: Alignment.centerLeft,
-                            child: Text(
-                              'แก้ไขสเตตัสของคุณ',
-                              style: TextStyle(
-                                fontSize: s48,
-                                color: Color(0xfff26A4FF),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: screenHeightDp / 3.85,
-                            margin: EdgeInsets.symmetric(
-                              horizontal: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3),
-                              color: Color(0xff222222),
-                            ),
-                            child: Center(
-                              child: Text(
-                                status ?? 'สเตตัสของคุณ',
-                                style: TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  fontSize: s42,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      height: screenHeightDp / 4.5,
-                      width: screenWidthDp / 1.1,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3),
-                        color: Color(0xff1a1a1a),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'เบอร์โทรศัพท์',
-                            style: TextStyle(
-                              fontSize: s42,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          Text(
-                            phoneFormat(user.phone ?? '0000000000'),
-                            style: TextStyle(
-                              fontSize: s65,
-                              color: Color(0xfff26A4FF),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.phone,
-                                color: Colors.white,
-                                size: s52,
-                              ),
-                              Text(
-                                ' เปลี่ยนเบอร์โทรศัพท์',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: s42,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: appBarHeight / 9,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.lock,
-                                color: Colors.white,
-                                size: s52,
-                              ),
-                              Text(
-                                ' เปลี่ยนรหัสผ่าน',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: s42,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                )
-              : Center(child: CircularProgressIndicator())),
+                    )
+                  : Center(child: CircularProgressIndicator()),
+              loading ? Loading() : SizedBox()
+            ],
+          )),
+    );
+  }
+
+  selectImg(BuildContext context) {
+    Size scr = MediaQuery.of(context).size;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        contentPadding: EdgeInsets.all(3),
+        content: Container(
+          height: scr.height / 3.8,
+          width: scr.width / 1.1,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: 20, top: 20),
+                child: Text(
+                  "อัปโหลดรูปภาพ",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  iconImg(
+                    Icons.image,
+                    () {
+                      sendPic();
+                      Navigator.pop(context);
+                    },
+                  ),
+                  iconImg(Icons.camera_alt, () {
+                    sendCam();
+                    Navigator.pop(context);
+                  })
+                ],
+              )
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              'ยกเลิก',
+              style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget iconImg(IconData icon, Function func) {
+    Size scr = MediaQuery.of(context).size;
+    return Container(
+      width: scr.width / 1.1 / 2.8,
+      height: scr.height / 6.4,
+      decoration: BoxDecoration(
+          color: Colors.grey[200], borderRadius: BorderRadius.circular(18)),
+      child: IconButton(
+          icon: Icon(
+            icon,
+            size: scr.width / 6,
+            color: Colors.grey[800],
+          ),
+          onPressed: func),
     );
   }
 

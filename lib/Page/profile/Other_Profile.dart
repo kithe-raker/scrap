@@ -479,7 +479,7 @@ class _OtherProfileState extends State<OtherProfile> {
               if (snapshot.hasData) {
                 var trans = snapshot.data.value;
                 return Text(
-                  '$trans',
+                  '${trans.floor()}',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: s70 * 1.2,

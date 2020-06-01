@@ -21,15 +21,6 @@ class UserInfo {
     return file.exists();
   }
 
-  // Future<bool> checkFileExist() async {
-  //   if(!await fileExist()){
-  //      var doc = await fireStore
-  //       .collection('Users/${}/users')
-  //       .document(user.uid)
-  //       .get();
-  //   }
-  //   return (await fileExist());
-  // }
   Future<void> initSignIn(
       {@required String region, @required String phone}) async {
     final file = await _localFile;
@@ -51,6 +42,13 @@ class UserInfo {
     await file.writeAsString(json.encode(userData));
   }
 
+  Future<void> updateInfo(Map data) async {
+    final file = await _localFile;
+    var cache = await readContents();
+    data.forEach((key, value) => cache[key] = value);
+    await file.writeAsString(json.encode(cache));
+  }
+
   Future<Map> readContents() async {
     final file = await _localFile;
     Map data = json.decode(await file.readAsString());
@@ -66,8 +64,9 @@ class UserInfo {
 
   Future<String> storeImage(String url) async {
     var response = await get(url);
+    var now = DateTime.now().toIso8601String();
     var documentDirectory = await _localPath;
-    var filePathAndName = documentDirectory + '/propic.jpg';
+    var filePathAndName = documentDirectory + '/$now.jpg';
     File file2 = new File(filePathAndName);
     file2.writeAsBytesSync(response.bodyBytes);
     return file2.uri.path;
