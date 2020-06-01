@@ -167,7 +167,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                             //ช���้นที่ 1 ส่วนของก���ะดาษ
                             Container(
                               child: Image.asset(
-                                'assets/paper-readed.png',
+                                'assets/paperscrap.jpg',
                                 width: a.width / 1,
                                 height: a.height / 1.8,
                                 fit: BoxFit.cover,

@@ -40,58 +40,62 @@ class _PersonCardState extends State<PersonCard> {
   Widget build(BuildContext context) {
     screenutilInit(context);
     Size a = MediaQuery.of(context).size;
-    return GestureDetector(
-        child: Container(
-          color: Colors.transparent,
-          width: a.width,
-          height: a.width / 5,
-          margin: EdgeInsets.only(bottom: a.width / 100, left: a.width / 100),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Container(
-                    width: a.width / 6,
-                    height: a.width / 6,
-                    decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(a.width),
-                        image: widget.data['img'] == null
-                            ? null
-                            : DecorationImage(
-                                image: NetworkImage(widget.data['img']),
-                                fit: BoxFit.cover)),
-                  ),
-                  SizedBox(
-                    width: a.width / 30,
-                  ),
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text("@${widget.data['id']}",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: a.width / 18,
-                                fontWeight: FontWeight.bold)),
-                        Text(widget.data['status'] ?? '',
-                            style: TextStyle(color: Colors.grey, fontSize: s38))
-                      ],
+    return Container(
+      padding: EdgeInsets.only(left: a.width / 25),
+      child: GestureDetector(
+          child: Container(
+            color: Colors.transparent,
+            width: a.width,
+            height: a.width / 5,
+            margin: EdgeInsets.only(bottom: a.width / 100, left: a.width / 100),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Container(
+                      width: a.width / 6,
+                      height: a.width / 6,
+                      decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(a.width),
+                          image: widget.data['img'] == null
+                              ? null
+                              : DecorationImage(
+                                  image: NetworkImage(widget.data['img']),
+                                  fit: BoxFit.cover)),
                     ),
-                  )
-                ],
-              ),
-              throwButton()
-            ],
+                    SizedBox(
+                      width: a.width / 30,
+                    ),
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("@${widget.data['id']}",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: a.width / 18,
+                                  fontWeight: FontWeight.bold)),
+                          Text(widget.data['status'] ?? '',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: s38))
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                throwButton()
+              ],
+            ),
           ),
-        ),
-        onTap: widget.enableNavigator
-            ? () => nav.push(
-                context, OtherProfile(data: widget.data, uid: uid, ref: ref))
-            : null);
+          onTap: widget.enableNavigator
+              ? () => nav.push(
+                  context, OtherProfile(data: widget.data, uid: uid, ref: ref))
+              : null),
+    );
   }
 
   Widget throwButton() {

@@ -45,7 +45,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               image: DecorationImage(
-                                  image: AssetImage('assets/paper-readed.png'),
+                                  image: AssetImage('assets/paperscrap.jpg'),
                                   fit: BoxFit.cover)),
                           child: Center(
                               child: Text(

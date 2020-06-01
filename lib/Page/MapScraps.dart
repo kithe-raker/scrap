@@ -215,7 +215,7 @@ class _MapScrapsState extends State<MapScraps> {
                                       children: <Widget>[
                                         Container(
                                           child: Image.asset(
-                                            'assets/paper-readed.png',
+                                            'assets/paperscrap.jpg',
                                             width: a.width / 1.04,
                                             height: a.width / 1.04 * 1.115,
                                             fit: BoxFit.cover,
@@ -749,6 +749,11 @@ class _MapScrapsState extends State<MapScraps> {
                   children: [
                     GestureDetector(
                       child: Container(
+                        margin: EdgeInsets.only(
+                            left: screenWidthDp / 24,
+                            top: screenWidthDp / 36,
+                            right: screenWidthDp / 24,
+                            bottom: screenWidthDp / 36),
                         padding: EdgeInsets.fromLTRB(
                             screenWidthDp / 24,
                             screenWidthDp / 36,
@@ -782,7 +787,7 @@ class _MapScrapsState extends State<MapScraps> {
                                           color: Colors.white,
                                           fontFamily: 'ThaiSans'),
                                       children: <TextSpan>[
-                                        TextSpan(text: ' เหลือกระดาษ '),
+                                        TextSpan(text: 'เหลือกระดาษ '),
                                         TextSpan(
                                             text: '$papers',
                                             style: TextStyle(
@@ -1148,8 +1153,7 @@ class _MapScrapsState extends State<MapScraps> {
     if (_curcon == null) {
       final ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context);
-      BitmapDescriptor.fromAssetImage(
-              imageConfiguration, 'assets/yourlocation-icon-l.png')
+      BitmapDescriptor.fromAssetImage(imageConfiguration, 'assets/pinsmall.png')
           .then(_updateBitmap);
     }
   }
@@ -1161,8 +1165,8 @@ class _MapScrapsState extends State<MapScraps> {
       BitmapDescriptor.fromAssetImage(
               imageConfiguration,
               checkPlatform
-                  ? 'assets/paper-mini01.png'
-                  : 'assets/paper-mini01.png')
+                  ? 'assets/paper-small.png'
+                  : 'assets/paper-small.png')
           .then(_updateBitScrap);
     }
   }

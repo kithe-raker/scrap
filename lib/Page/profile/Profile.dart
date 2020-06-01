@@ -133,6 +133,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
+    Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -241,6 +242,12 @@ class _ProfileState extends State<Profile> {
                                   Container(
                                     margin: EdgeInsets.symmetric(
                                         horizontal: screenWidthDp / 30),
+                                    padding: EdgeInsets.only(
+                                        left: a.width / 50,
+                                        right: a.width / 50),
+                                    /*  margin: EdgeInsets.only(
+                                        left: a.width / 25,
+                                        right: a.width / 25),*/
                                     child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -561,7 +568,7 @@ class _ProfileState extends State<Profile> {
           width: screenWidthDp / 2.16,
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/paper-readed.png'),
+                  image: AssetImage('assets/paperscrap.jpg'),
                   fit: BoxFit.cover)),
           child: Stack(children: <Widget>[
             Center(
@@ -637,7 +644,7 @@ class _ProfileState extends State<Profile> {
             child: Container(
                 width: screenWidthDp / 5.5,
                 child:
-                    Image.asset('assets/paper-mini01.png', fit: BoxFit.cover)),
+                    Image.asset('assets/paper-small.png', fit: BoxFit.cover)),
           ),
         ),
         onTap: () {
