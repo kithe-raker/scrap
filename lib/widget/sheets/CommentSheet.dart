@@ -197,11 +197,11 @@ class _CommentSheetState extends State<CommentSheet> {
                               child: TextField(
                                   controller: comment,
                                   onChanged: (val) {
-                                    var trim = val.trim();
-                                    comment.text = trim;
+                                    var text = val.trimLeft();
+                                    comment.text = text;
                                     comment.selection =
                                         TextSelection.fromPosition(
-                                            TextPosition(offset: trim.length));
+                                            TextPosition(offset: text.length));
                                     setSheet(() {});
                                   },
                                   decoration: InputDecoration(
