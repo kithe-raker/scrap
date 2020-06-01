@@ -15,7 +15,9 @@ import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/dialog/ScrapDialog.dart';
 import 'package:scrap/widget/guide.dart';
+import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
@@ -922,7 +924,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
                           .orderBy('scrap.timeStamp', descending: true)
                           .limit(8)
                           .getDocuments();
-                      scraps.addAll(docs.documents);
+                      throwScrap.addAll(docs.documents);
                       dropdownValue = newValue;
                       setState(() => initFinish = true);
                     } else
@@ -999,53 +1001,64 @@ class _HistoryScrapState extends State<HistoryScrap> {
   }
 
   Widget scrap(DocumentSnapshot data) {
-    return Container(
-        height: screenWidthDp / 2.16 * 1.21,
-        width: screenWidthDp / 2.16,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/paper-readed.png'),
-                fit: BoxFit.cover)),
-        child: Stack(children: <Widget>[
-          Center(
-              child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
-            child: AutoSizeText(data['scrap']['text'],
-                textAlign: TextAlign.center,
-                group: textGroup,
-                style: TextStyle(fontSize: s46)),
-          )),
-          data['burnt'] ?? false
-              ? Container(
-                  margin: EdgeInsets.all(4),
-                  height: screenWidthDp / 2.16 * 1.21,
-                  width: screenWidthDp / 2.16,
-                  color: Colors.black38,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.whatshot,
-                            size: 50, color: Color(0xffFF8F3A)),
-                        Text('ถูกเผา',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: s48)),
-                      ]))
-              : isExpired(data)
-                  ? Container(
-                      margin: EdgeInsets.all(4),
-                      height: screenWidthDp / 2.16 * 1.21,
-                      width: screenWidthDp / 2.16,
-                      color: Colors.black38,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.history, size: 50, color: Colors.white),
-                            Text('หมดเวลา',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: s48)),
-                          ]))
-                  : SizedBox()
-        ]));
+    return GestureDetector(
+      child: Container(
+          height: screenWidthDp / 2.16 * 1.21,
+          width: screenWidthDp / 2.16,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/paper-readed.png'),
+                  fit: BoxFit.cover)),
+          child: Stack(children: <Widget>[
+            Center(
+                child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+              child: AutoSizeText(data['scrap']['text'],
+                  textAlign: TextAlign.center,
+                  group: textGroup,
+                  style: TextStyle(fontSize: s46)),
+            )),
+            data['burnt'] ?? false
+                ? Container(
+                    margin: EdgeInsets.all(4),
+                    height: screenWidthDp / 2.16 * 1.21,
+                    width: screenWidthDp / 2.16,
+                    color: Colors.black38,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.whatshot,
+                              size: 50, color: Color(0xffFF8F3A)),
+                          Text('ถูกเผา',
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: s48)),
+                        ]))
+                : isExpired(data)
+                    ? Container(
+                        margin: EdgeInsets.all(4),
+                        height: screenWidthDp / 2.16 * 1.21,
+                        width: screenWidthDp / 2.16,
+                        color: Colors.black38,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.history,
+                                  size: 50, color: Colors.white),
+                              Text('หมดเวลา',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: s48)),
+                            ]))
+                    : SizedBox()
+          ])),
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) =>
+                dropdownValue == 'ประวัติการเขียนสแครป'
+                    ? ScrapDialog(data: data)
+                    : Paperstranger(scrap: data, self: true));
+      },
+    );
   }
 
   Widget guide(String text) {
