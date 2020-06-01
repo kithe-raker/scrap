@@ -115,7 +115,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                             children: <Widget>[
                               Container(
                                 child: Image.asset(
-                                  'assets/paper-readed.png',
+                                  'assets/paperscrap.jpg',
                                   width: screenWidthDp / 1.04,
                                   height: screenWidthDp / 1.04 * 1.115,
                                   fit: BoxFit.cover,

@@ -63,7 +63,7 @@ class _AboutState extends State<About> {
                         children: <Widget>[
                           Container(
                             child: Image.asset(
-                              "assets/paper-readed.png",
+                              "assets/paperscrap.jpg",
                               width: a.width / 1.1,
                               height: a.height / 1.72,
                               fit: BoxFit.cover,
@@ -174,7 +174,7 @@ class _AboutState extends State<About> {
                               bottom: 0,
                               child: Container(
                                 width: a.width / 1.1,
-                                padding: EdgeInsets.all(a.width/21),
+                                padding: EdgeInsets.all(a.width / 21),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[

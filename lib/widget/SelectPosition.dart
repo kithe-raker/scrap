@@ -207,7 +207,7 @@ class _SelectPositionState extends State<SelectPosition> {
     final ImageConfiguration imageConfiguration =
         createLocalImageConfiguration(context);
     BitmapDescriptor.fromAssetImage(
-            imageConfiguration, 'assets/paper-mini01.png')
+            imageConfiguration, 'assets/paper-small.png')
         .then(_updateBitScrap);
   }
 

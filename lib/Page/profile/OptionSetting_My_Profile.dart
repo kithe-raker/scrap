@@ -22,6 +22,47 @@ import 'package:scrap/widget/guide.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
+class MyWebView extends StatelessWidget {
+  final String title;
+  final String selectedUrl;
+
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
+
+  MyWebView({
+    @required this.title,
+    @required this.selectedUrl,
+  });
+  Widget web() {
+    return WebView(
+      initialUrl: selectedUrl,
+      javascriptMode: JavascriptMode.unrestricted,
+      onWebViewCreated: (WebViewController webViewController) {
+        _controller.complete(webViewController);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    screenutilInit(context);
+    return Scaffold(
+        /*  appBar: AppBar(
+          title: Text(title),
+        ),*/
+        //appbar_ListOptionSetting(context,Icons.block, ' '),
+        body: SafeArea(
+            child: Stack(
+      children: <Widget>[
+        Container(
+            padding: EdgeInsets.only(top: appBarHeight / 1.5), child: web()),
+        appbar_ListOptionSetting(context, Icons.web, title),
+      ],
+    )));
+  }
+}
 
 //textfield popup
 void showPopup(BuildContext context) {
@@ -256,12 +297,25 @@ class _OptionSettingState extends State<OptionSetting> {
                           ' จัดการบัญชีของฉัน', Manage_MyProfile()),
                       list_OptionSetting(context, Icons.history,
                           ' ประวัติการเขียนสแครป', HistoryScrap()),
-                      list_OptionSetting(context, Icons.description,
-                          ' ข้อกำหนดการให้บริการ', ComingSoon()),
-                      list_OptionSetting(context, Icons.extension,
-                          ' อธิบายฟีเจอร์', ComingSoon()),
-                      list_OptionSetting(context, Icons.markunread,
-                          ' สารจากผู้พัฒนา', ComingSoon()),
+                      list_OptionSettingweb(
+                          context,
+                          Icons.description,
+                          ' ข้อกำหนดการให้บริการ',
+                          'https://scrap.bualoitech.com/termsofservice-and-policy.html#term'),
+                      /*  list_OptionSettingweb(
+                          context,
+                          Icons.extension,
+                          ' อธิบายฟีเจอร์',
+                          'https://scrap.bualoitech.com/termsofservice-and-policy.html#term'), */ // null
+                      /* list_OptionSetting(context, Icons.extension,
+                          ' อธิบายฟีเจอร์', ComingSoon()),*/
+                      /* list_OptionSetting(context, Icons.markunread,
+                          ' สารจากผู้พัฒนา', ComingSoon()),*/
+                      list_OptionSettingweb(
+                          context,
+                          Icons.markunread,
+                          ' สารจากผู้พัฒนา',
+                          'https://scrap.bualoitech.com/massage-from-us.html'),
                       list_OptionSetting(context, Icons.bug_report,
                           ' แจ้งปัญหาระบบ', ReportToScrap_MyProfile()),
                       list_OptionSetting(context, Icons.block,
@@ -354,36 +408,38 @@ class _OptionSettingState extends State<OptionSetting> {
                   /* SizedBox(
                   height: appBarHeight * 1,
                 ),*/
-                  Column(
-                    children: [
-                      SizedBox(
-                        height: appBarHeight / 3,
-                      ),
-                      GestureDetector(
-                        child: ClipRRect(
-                          child: Image.asset(
-                            'assets/scrapbig.png',
-                            scale: appBarHeight / 5,
-                          ),
-                        ),
-                        onTap: () async {
-                          await FirebaseAuth.instance.signOut();
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginPage()));
-                        },
-                      ),
-                      Text(
-                        'version 2.0.1\n\n',
-                        style: TextStyle(color: Colors.white, fontSize: s42),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
-            loading ? Loading() : SizedBox()
+            loading ? Loading() : SizedBox(),
+            Positioned(
+              bottom: screenWidthDp / 20,
+              child: Container(
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      child: ClipRRect(
+                        child: Image.asset(
+                          'assets/scrapmini.png',
+                          //scale: appBarHeight / 5,
+                        ),
+                      ),
+                      onTap: () async {
+                        await FirebaseAuth.instance.signOut();
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()));
+                      },
+                    ),
+                    Text(
+                      'version 2.0.1\n\n',
+                      style: TextStyle(color: Colors.white, fontSize: s42),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -482,11 +538,6 @@ Widget list_OptionSetting(context, icon, name, stateful) {
             context, MaterialPageRoute(builder: (context) => stateful));
       },
       child: Container(
-        /* margin: EdgeInsets.symmetric(
-          //horizontal: 10,
-          vertical: 5,
-
-        ),*/
         margin:
             EdgeInsets.only(left: appBarHeight / 100, bottom: appBarHeight / 4),
         child: Row(
@@ -496,6 +547,47 @@ Widget list_OptionSetting(context, icon, name, stateful) {
               children: [
                 Icon(
                   icon,
+                  color: Colors.white,
+                  size: s60,
+                ),
+                Text(
+                  name,
+                  style: TextStyle(color: Colors.white, fontSize: s52),
+                )
+              ],
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.white,
+              size: s42,
+            )
+          ],
+        ),
+      ));
+}
+
+//webview
+Widget list_OptionSettingweb(context, iconweb, String name, String url) {
+  return FlatButton(
+      onPressed: () {
+        /*  Navigator.push(
+            context, MaterialPageRoute(builder: (context) => stateful));*/
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => MyWebView(
+                  title: name,
+                  selectedUrl: url,
+                )));
+      },
+      child: Container(
+        margin:
+            EdgeInsets.only(left: appBarHeight / 100, bottom: appBarHeight / 4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  iconweb,
                   color: Colors.white,
                   size: s60,
                 ),
@@ -727,7 +819,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                           Container(
                             margin: EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
-                                alignment: Alignment.centerLeft,
+                            alignment: Alignment.centerLeft,
                             child: Text(
                               'แก้ไขสเตตัสของคุณ',
                               style: TextStyle(
@@ -1033,7 +1125,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
           width: screenWidthDp / 2.16,
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/paper-readed.png'),
+                  image: AssetImage('assets/paperscrap.jpg'),
                   fit: BoxFit.cover)),
           child: Stack(children: <Widget>[
             Center(

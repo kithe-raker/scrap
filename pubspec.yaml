@@ -59,7 +59,8 @@ dependencies:
   social_share: ^2.0.4
   auto_size_text: ^2.1.0
   flutter_svg: ^0.17.4
-  
+  webview_flutter: ^0.3.22+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

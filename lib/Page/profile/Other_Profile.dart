@@ -455,8 +455,7 @@ class _OtherProfileState extends State<OtherProfile> {
         width: screenWidthDp / 2.16,
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/paper-readed.png'),
-                fit: BoxFit.cover)),
+                image: AssetImage('assets/paperscrap.jpg'), fit: BoxFit.cover)),
         child: Stack(children: <Widget>[
           Center(
               child: Padding(

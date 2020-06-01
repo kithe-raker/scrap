@@ -66,7 +66,8 @@ class _BlockingListState extends State<BlockingList> {
             ),
           ),
         ),
-        body: Center(child: nullReturn(scr, 'ไม่มีผู้ใช้ที่คุณบล็อค', scr.height / 2))
+        body: Center(
+            child: nullReturn(scr, 'ไม่มีผู้ใช้ที่คุณบล็อค', scr.height / 2))
         // StreamBuilder(
         //     stream: Firestore.instance
         //         .collection('Users')
@@ -155,7 +156,7 @@ class _BlockingListState extends State<BlockingList> {
           child: Stack(
             children: <Widget>[
               Image.asset(
-                'assets/paper-readed.png',
+                'assets/paperscrap.jpg',
                 width: scr.width / 2.1,
                 height: scr.height,
                 fit: BoxFit.cover,
@@ -235,7 +236,7 @@ class _BlockingListState extends State<BlockingList> {
                                 Container(
                                   width: a.width,
                                   child: Image.asset(
-                                    'assets/paper-readed.png',
+                                    'assets/paperscrap.jpg',
                                     width: a.width,
                                     height: a.height / 1.6,
                                     fit: BoxFit.cover,

@@ -173,7 +173,7 @@ class _HistoryState extends State<History> {
           child: Stack(
             children: <Widget>[
               Image.asset(
-                'assets/paper-readed.png',
+                'assets/paperscrap.jpg',
                 width: scr.width / 3.2,
                 height: scr.height / 4.2,
                 fit: BoxFit.cover,
@@ -301,7 +301,7 @@ class _HistoryState extends State<History> {
                                 Container(
                                   width: a.width,
                                   child: Image.asset(
-                                    'assets/paper-readed.png',
+                                    'assets/paperscrap.jpg',
                                     width: a.width,
                                     height: a.height / 1.6,
                                     fit: BoxFit.cover,

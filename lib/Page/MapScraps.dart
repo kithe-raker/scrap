@@ -147,7 +147,6 @@ class _MapScrapsState extends State<MapScraps> {
         return Scaffold(
             key: _scaffoldKey,
             backgroundColor: Colors.black,
-            resizeToAvoidBottomInset: false,
             body: SafeArea(
               child: Container(
                   padding: EdgeInsets.symmetric(

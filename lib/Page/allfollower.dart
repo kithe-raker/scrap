@@ -45,77 +45,138 @@ class _AllfollowerState extends State<Allfollower> {
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
-    return Scaffold(
-        backgroundColor: Colors.black,
-        body: Container(
-          width: screenWidthDp,
-          height: screenHeightDp,
-          child: Stack(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  SizedBox(height: screenHeightDp / 64),
-                  appbar(),
-                  loading
-                      ? Expanded(
-                          child: Center(
-                              child: Container(
-                                  width: screenWidthDp / 3.6,
-                                  height: screenWidthDp / 3.6,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.42),
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: FlareActor('assets/scrapld.flr',
-                                      animation: 'Untitled',
-                                      fit: BoxFit.cover))),
-                        )
-                      : Expanded(
-                          child: StatefulBuilder(
-                              builder: (context, StateSetter setList) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: screenWidthDp / 36),
-                              child: SmartRefresher(
-                                enablePullDown: false,
-                                controller: controller,
-                                onLoading: () async {
-                                  var queryList = friendsUid.take(12).toList();
-                                  var docs = await fireStore
-                                      .collectionGroup('users')
-                                      .where('uid', whereIn: queryList)
-                                      .getDocuments();
-                                  friends.addAll(docs.documents);
-                                  friendsUid.length < 12
-                                      ? friendsUid.clear()
-                                      : friendsUid.removeRange(0, 12);
-                                  setList(() {});
-                                  controller.loadComplete();
-                                },
-                                physics: BouncingScrollPhysics(),
-                                child: Column(
-                                    children: friends
-                                        .map((doc) => PersonCard(
-                                            data: doc.data,
-                                            uid: doc.documentID,
-                                            ref: doc.reference.parent().path,
-                                            enableNavigator: true))
-                                        .toList()),
-                              ),
-                            );
-                          }),
-                        ),
-                ],
-              ),
-            ],
-          ),
-        ));
+    Size a = MediaQuery.of(context).size;
+    return SafeArea(
+      child: Scaffold(
+          backgroundColor: Colors.black,
+          body: Container(
+            width: screenWidthDp,
+            height: screenHeightDp,
+            child: Stack(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    // appbar(),
+                    Container(
+                      height: appBarHeight / 1.42,
+                      width: screenWidthDp,
+                      color: Colors.black,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidthDp / 21,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          GestureDetector(
+                              child: Icon(Icons.arrow_back,
+                                  color: Colors.white, size: s60),
+                              onTap: () {
+                                Navigator.pop(context);
+                              }),
+                          Text(
+                            'ผู้ติดตาม',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: a.width / 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            width: screenWidthDp / 14,
+                          )
+                        ],
+                      ),
+                    ),
+                    loading
+                        ? Expanded(
+                            child: Center(
+                                child: Container(
+                                    width: screenWidthDp / 3.6,
+                                    height: screenWidthDp / 3.6,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.42),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    child: FlareActor('assets/scrapld.flr',
+                                        animation: 'Untitled',
+                                        fit: BoxFit.cover))),
+                          )
+                        : Expanded(
+                            child: StatefulBuilder(
+                                builder: (context, StateSetter setList) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: screenWidthDp / 36),
+                                child: SmartRefresher(
+                                  enablePullDown: false,
+                                  controller: controller,
+                                  onLoading: () async {
+                                    var queryList =
+                                        friendsUid.take(12).toList();
+                                    var docs = await fireStore
+                                        .collectionGroup('users')
+                                        .where('uid', whereIn: queryList)
+                                        .getDocuments();
+                                    friends.addAll(docs.documents);
+                                    friendsUid.length < 12
+                                        ? friendsUid.clear()
+                                        : friendsUid.removeRange(0, 12);
+                                    setList(() {});
+                                    controller.loadComplete();
+                                  },
+                                  physics: BouncingScrollPhysics(),
+                                  child: Column(
+                                      children: friends
+                                          .map((doc) => PersonCard(
+                                              data: doc.data,
+                                              uid: doc.documentID,
+                                              ref: doc.reference.parent().path,
+                                              enableNavigator: true))
+                                          .toList()),
+                                ),
+                              );
+                            }),
+                          ),
+                  ],
+                ),
+              ],
+            ),
+          )),
+    );
   }
 
-  Widget appbar() {
+  /*Widget appbar() {
     Size a = MediaQuery.of(context).size;
     return Container(
-      width: a.width,
-      height: a.width / 5.4,
+      height: appBarHeight / 1.42,
+      width: screenWidthDp,
+      color: Colors.black,
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          GestureDetector(
+              child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
+              onTap: () {
+                Navigator.pop(context);
+              }),
+          Text(
+            'ผู้ติดตาม',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: a.width / 18,
+                fontWeight: FontWeight.bold),
+          ),
+          SizedBox()
+        ],
+      ),
+    );*/
+  /*Container(
+       height: appBarHeight / 1.42,
+                    width: screenWidthDp,
       color: Colors.black,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -138,6 +199,6 @@ class _AllfollowerState extends State<Allfollower> {
           SizedBox(width: a.width / 7.5),
         ],
       ),
-    );
-  }
+    )*/
+
 }

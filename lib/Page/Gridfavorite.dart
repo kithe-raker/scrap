@@ -104,7 +104,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                         children: <Widget>[
                                           Container(
                                             child: Image.asset(
-                                              'assets/paper-readed.png',
+                                              'assets/paperscrap.jpg',
                                               width: a.width / 1.04,
                                               height: a.width / 1.04 * 1.115,
                                               fit: BoxFit.cover,
@@ -209,7 +209,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                       decoration: BoxDecoration(
                                           image: DecorationImage(
                                               image: AssetImage(
-                                                  'assets/paper-readed.png'),
+                                                  'assets/paperscrap.jpg'),
                                               fit: BoxFit.cover)),
                                       child: Center(
                                           child: CircularProgressIndicator()),
@@ -542,8 +542,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
         width: screenWidthDp / 2.16,
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/paper-readed.png'),
-                fit: BoxFit.cover)),
+                image: AssetImage('assets/paperscrap.jpg'), fit: BoxFit.cover)),
         child: Stack(
           children: <Widget>[
             Center(

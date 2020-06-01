@@ -32,6 +32,7 @@ void writerScrap(BuildContext context,
           scrap.loading.listen((value) => setState(() => loading = value));
           return Scaffold(
             backgroundColor: Colors.black,
+            resizeToAvoidBottomInset: false,
             body: Stack(
               children: <Widget>[
                 GestureDetector(
@@ -121,7 +122,7 @@ void writerScrap(BuildContext context,
                                   Container(
                                     margin: EdgeInsets.all(s10 / 5),
                                     child: Image.asset(
-                                      'assets/paper-readed.png',
+                                      'assets/paperscrap.jpg',
                                       width: a.width / 1.04,
                                       height: a.width / 1.04 * 1.115,
                                       fit: BoxFit.cover,

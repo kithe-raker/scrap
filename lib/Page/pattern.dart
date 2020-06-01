@@ -86,7 +86,7 @@ class _PatternScrapState extends State<PatternScrap> {
                       Container(
                         width: a.width,
                         child: Image.asset(
-                          'assets/paper-readed.png',
+                          'assets/paperscrap.jpg',
                           width: a.width,
                           height: a.height / 2.1,
                           fit: BoxFit.cover,

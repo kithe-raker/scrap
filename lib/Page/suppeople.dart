@@ -67,35 +67,13 @@ class _SubpeopleState extends State<Subpeople> {
     screenutilInit(context);
     return Scaffold(
       backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           width: a.width,
           height: a.height,
           child: Stack(
             children: <Widget>[
-              /* Positioned(
-                  child: Container(
-                height: appBarHeight / 1.42,
-                width: screenWidthDp,
-                color: Colors.black,
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidthDp / 21,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    GestureDetector(
-                        child: Icon(Icons.arrow_back,
-                            color: Colors.white, size: s60),
-                        onTap: () {
-                          Navigator.pop(context);
-                        }),
-                    SizedBox(),
-                    SizedBox()
-                  ],
-                ),
-              )),*/
               Column(
                 children: <Widget>[
                   Container(
@@ -121,7 +99,7 @@ class _SubpeopleState extends State<Subpeople> {
                     ),
                   ),
                   Container(
-                    height: screenHeightDp / 3.4,
+                    height: screenWidthDp / 2.7,
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(color: Color(0xff262626)))),
@@ -130,21 +108,25 @@ class _SubpeopleState extends State<Subpeople> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        /*   Container(
-                          width: a.width,
-                          height: screenHeightDp / 12.4,
-                        ),*/
-                        Text(
-                          searching ? "ติดตามผู้คน" : "ค้นหาผู้คน",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: s54,
-                              fontWeight: FontWeight.bold),
+                        Container(
+                          padding: EdgeInsets.only(left: a.width / 25),
+                          child: Text(
+                            searching ? "ติดตามผู้คน" : "ค้นหาผู้คน",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: s54,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
-                        Text(
-                          "ค้นหาผู้คนเพื่ออ่านสแครปหรือปาสแครปหาพวกเขา",
-                          style: TextStyle(
-                              height: 1.2, color: Colors.white, fontSize: s42),
+                        Container(
+                          padding: EdgeInsets.only(left: a.width / 25),
+                          child: Text(
+                            "ค้นหาผู้คนเพื่ออ่านสแครปหรือปาสแครปหาพวกเขา",
+                            style: TextStyle(
+                                height: 1.2,
+                                color: Colors.white,
+                                fontSize: s42),
+                          ),
                         ),
                         SizedBox(height: a.width / 30),
                         Row(
@@ -153,8 +135,7 @@ class _SubpeopleState extends State<Subpeople> {
                               child: Container(
                                 height: a.width / 8,
                                 margin: EdgeInsets.only(
-                                    left: appBarHeight / 8,
-                                    right: appBarHeight / 8),
+                                    left: a.width / 25, right: a.width / 25),
                                 decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(50.0)),
@@ -274,6 +255,8 @@ class _SubpeopleState extends State<Subpeople> {
   }
 
   Widget recentlyThrow() {
+    Size a = MediaQuery.of(context).size;
+    screenutilInit(context);
     return Container(
         width: screenWidthDp,
         decoration: BoxDecoration(
@@ -283,7 +266,8 @@ class _SubpeopleState extends State<Subpeople> {
             Widget>[
           SizedBox(height: screenWidthDp / 24),
           Container(
-            child: Text("\tล่าสุดที่ปาใส่",
+            padding: EdgeInsets.only(left: a.width / 25),
+            child: Text("ล่าสุดที่ปาใส่",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: s48,
@@ -304,9 +288,7 @@ class _SubpeopleState extends State<Subpeople> {
       padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 50),
       child: Column(
         children: <Widget>[
-          SizedBox(
-            height: screenWidthDp / 45,
-          ),
+          SizedBox(height: screenWidthDp / 24),
           Container(
               width: screenWidthDp,
               height: screenWidthDp / 10,
@@ -336,40 +318,51 @@ class _SubpeopleState extends State<Subpeople> {
   }
 
   Widget allFollowingButton() {
+    Size a = MediaQuery.of(context).size;
     return StreamBuilder(
         stream: streamTransaction('following'),
         builder: (context, snapshot) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                snapshot?.data == null
-                    ? "กำลังติดตาม 0"
-                    : 'กำลังติดตาม ${snapshot.data.snapshot?.value ?? 0}',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: s48,
-                    fontWeight: FontWeight.bold),
-              ),
-              GestureDetector(
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        "ทั้งหมด",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: s48,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Icon(Icons.keyboard_arrow_right,
-                          color: Colors.white, size: screenWidthDp / 15)
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Allfollower()));
-                  })
-            ],
+          return Container(
+            padding: EdgeInsets.only(left: a.width / 25, right: a.width / 25),
+            child: Column(
+              children: <Widget>[
+                // SizedBox(height: screenWidthDp / 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      snapshot?.data == null
+                          ? "กำลังติดตาม 0"
+                          : 'กำลังติดตาม ${snapshot.data.snapshot?.value ?? 0}',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: s48,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    GestureDetector(
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              "ทั้งหมด",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: s48,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            Icon(Icons.keyboard_arrow_right,
+                                color: Colors.white, size: screenWidthDp / 15)
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Allfollower()));
+                        })
+                  ],
+                ),
+              ],
+            ),
           );
         });
   }
