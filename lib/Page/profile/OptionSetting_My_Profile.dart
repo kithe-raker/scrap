@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:wasm';
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -10,6 +11,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/function/aboutUser/ReportApp.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
@@ -613,205 +615,229 @@ class Manage_MyProfile extends StatefulWidget {
 }
 
 class _Manage_MyProfileState extends State<Manage_MyProfile> {
+  bool initInfoFinish = false;
+  String status, id;
+  File img;
+
+  @override
+  void initState() {
+    initUser();
+    super.initState();
+  }
+
+  initUser() async {
+    var data = await userinfo.readContents();
+    status = data['status'];
+    setState(() => initInfoFinish = true);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserData>(context, listen: false);
+    screenutilInit(context);
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.black,
-        resizeToAvoidBottomPadding: false,
-        body: Column(
-          children: [
-            appbar_ListOptionSetting(context, Icons.face, ' จัดการบัญชีของฉัน'),
-            Container(
-              margin: EdgeInsets.only(
-                bottom: 10,
-              ),
-              height: screenHeightDp / 5.5,
-              width: screenWidthDp / 1.1,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(3),
-                color: Color(0xff1a1a1a),
-              ),
-              child: Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: screenWidthDp / 16,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          backgroundColor: Colors.black,
+          resizeToAvoidBottomPadding: false,
+          body: initInfoFinish
+              ? Column(
                   children: [
+                    appbar_ListOptionSetting(
+                        context, Icons.face, ' จัดการบัญชีของฉัน'),
                     Container(
-                      height: screenWidthDp / 4,
-                      width: screenWidthDp / 4,
+                      margin: EdgeInsets.only(bottom: 10),
+                      height: screenHeightDp / 5.5,
+                      width: screenWidthDp / 1.1,
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(screenHeightDp),
+                        borderRadius: BorderRadius.circular(3),
+                        color: Color(0xff1a1a1a),
+                      ),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: screenWidthDp / 16,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              height: screenWidthDp / 4,
+                              width: screenWidthDp / 4,
+                              margin:
+                                  EdgeInsets.only(right: screenHeightDp / 42),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.circular(screenHeightDp),
+                                  image: DecorationImage(
+                                      image: FileImage(
+                                          img == null ? File(user.img) : img),
+                                      fit: BoxFit.cover)),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: screenWidthDp / 1.4,
+                                    child: TextFormField(
+                                      initialValue: user.id ?? 'name',
+                                      style: TextStyle(
+                                          height: 0.64,
+                                          fontSize: s60,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          prefixText: '@',
+                                          prefixStyle: TextStyle(
+                                              fontSize: s60,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Thailand',
+                                    style: TextStyle(
+                                      fontSize: s60,
+                                      color: Color(0xfff26A4FF),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: appBarHeight / 15),
+                          ],
+                        ),
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '@naveeharn',
-                          style: TextStyle(
-                            fontSize: s60,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                    Container(
+                      margin: EdgeInsets.only(
+                        bottom: 10,
+                      ),
+                      height: screenHeightDp / 3,
+                      width: screenWidthDp / 1.1,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(3),
+                        color: Color(0xff1a1a1a),
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                                alignment: Alignment.centerLeft,
+                            child: Text(
+                              'แก้ไขสเตตัสของคุณ',
+                              style: TextStyle(
+                                fontSize: s48,
+                                color: Color(0xfff26A4FF),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Join 15/02/2020',
-                          style: TextStyle(
-                            fontSize: s60,
-                            color: Color(0xfff26A4FF),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: appBarHeight / 15,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                bottom: 10,
-              ),
-              height: screenHeightDp / 3,
-              width: screenWidthDp / 1.1,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(3),
-                color: Color(0xff1a1a1a),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            GestureDetector(
+                          Container(
+                            height: screenHeightDp / 3.85,
+                            margin: EdgeInsets.symmetric(
+                              horizontal: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(3),
+                              color: Color(0xff222222),
+                            ),
+                            child: Center(
                               child: Text(
-                                'เพิ่มสเตตัส',
+                                status ?? 'สเตตัสของคุณ',
                                 style: TextStyle(
-                                  fontSize: s48,
-                                  color: Color(0xfff26A4FF),
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: s42,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              onTap: () {
-                                showPopup(context);
-                              },
                             ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: screenHeightDp / 3.85,
-                    margin: EdgeInsets.symmetric(
-                      horizontal: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(3),
-                      color: Color(0xff222222),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'ไม่รู้อะไร',
-                        style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: s42,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                bottom: 10,
-              ),
-              height: screenHeightDp / 4.5,
-              width: screenWidthDp / 1.1,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(3),
-                color: Color(0xff1a1a1a),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'เบอร์โทรศัพท์',
-                    style: TextStyle(
-                      fontSize: s42,
-                      color: Colors.grey,
+                    Container(
+                      margin: EdgeInsets.only(
+                        bottom: 10,
+                      ),
+                      height: screenHeightDp / 4.5,
+                      width: screenWidthDp / 1.1,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(3),
+                        color: Color(0xff1a1a1a),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'เบอร์โทรศัพท์',
+                            style: TextStyle(
+                              fontSize: s42,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Text(
+                            phoneFormat(user.phone ?? '0000000000'),
+                            style: TextStyle(
+                              fontSize: s65,
+                              color: Color(0xfff26A4FF),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.phone,
+                                color: Colors.white,
+                                size: s52,
+                              ),
+                              Text(
+                                ' เปลี่ยนเบอร์โทรศัพท์',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: s42,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: appBarHeight / 9,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.lock,
+                                color: Colors.white,
+                                size: s52,
+                              ),
+                              Text(
+                                ' เปลี่ยนรหัสผ่าน',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: s42,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Text(
-                    '044-112-1011',
-                    style: TextStyle(
-                      fontSize: s65,
-                      color: Color(0xfff26A4FF),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.phone,
-                        color: Colors.white,
-                        size: s52,
-                      ),
-                      Text(
-                        ' เปลี่ยนเบอร์โทรศัพท์',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: s42,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: appBarHeight / 9,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.lock,
-                        color: Colors.white,
-                        size: s52,
-                      ),
-                      Text(
-                        ' เปลี่ยนรหัสผ่าน',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: s42,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+                  ],
+                )
+              : Center(child: CircularProgressIndicator())),
     );
+  }
+
+  String phoneFormat(String phone) {
+    return "${phone.substring(0, 3)}-${phone.substring(3, 6)}-${phone.substring(6, 10)}";
   }
 }
 

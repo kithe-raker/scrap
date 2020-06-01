@@ -30,9 +30,10 @@ class UserInfo {
   //   }
   //   return (await fileExist());
   // }
-  Future<void> initRegion({@required String region}) async {
+  Future<void> initSignIn(
+      {@required String region, @required String phone}) async {
     final file = await _localFile;
-    Map userData = {'region': region};
+    Map userData = {'region': region, 'phone': phone};
     await file.writeAsString(json.encode(userData));
   }
 
@@ -43,6 +44,7 @@ class UserInfo {
       'img': immPath,
       'imgUrl': doc['img'],
       'id': doc['id'],
+      'phone': doc['phone'],
       'status': doc['status'],
       'region': doc['region']
     };

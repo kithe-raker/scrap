@@ -50,7 +50,7 @@ class AuthenService {
     loading.add(true);
     var docs = await getDocuments('phone', user.phone);
     user.region = 'th';
-    userinfo.initRegion(region: 'th');
+    userinfo.initSignIn(region: 'th', phone: user.phone);
     await phoneVerified(context);
     if (docs.documentChanges.length > 0) {
       var userDoc = docs.documents[0];
@@ -159,8 +159,9 @@ class AuthenService {
       if (docs[0]['password'] == password) {
         initFriends(context);
         cacheHistory.initHistory();
+        user.phone = docs[0]['phone'];
         user.region = docs[0]['region'];
-        userinfo.initRegion(region: docs[0]['region']);
+        userinfo.initSignIn(region: docs[0]['region'], phone: docs[0]['phone']);
         var uid = docs[0].documentID;
         user.uid = uid;
         await fireAuth.signInWithEmailAndPassword(
@@ -255,6 +256,7 @@ class AuthenService {
     userinfo.initUserInfo(doc: {
       'img': user.img,
       'id': user.id,
+      'phone': user.phone,
       'status': '',
       'region': user.region
     });
