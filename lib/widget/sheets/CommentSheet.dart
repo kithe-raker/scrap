@@ -93,7 +93,7 @@ class _CommentSheetState extends State<CommentSheet> {
 
     scrap.pushNotification(widget.scrapSnapshot,
         notiRate: mutableData.value['CPN'],
-        currentPoint: newPoint,
+        currentPoint: mutableData.value['comment'] - 1,
         isComment: true);
 
     scrapAll.reference().child(refChild).update(

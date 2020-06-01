@@ -282,11 +282,11 @@ class Scraps {
   }
 
   pushNotification(DocumentSnapshot scrap,
-      {@required double notiRate,
-      @required double currentPoint,
+      {@required int notiRate,
+      @required dynamic currentPoint,
       bool isComment = false}) {
     var target = isComment ? 'CPN' : 'PPN';
-    if (currentPoint >= notiRate) {
+    if (currentPoint <= notiRate) {
       fireStore
           .collection('ScrapNotification')
           .document(scrap.documentID)
