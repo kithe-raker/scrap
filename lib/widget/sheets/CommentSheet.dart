@@ -197,11 +197,12 @@ class _CommentSheetState extends State<CommentSheet> {
                               child: TextField(
                                   controller: comment,
                                   onChanged: (val) {
-                                    var text = val.trimLeft();
-                                    comment.text = text;
+                                    //  var text = val.trimLeft();
+
+                                    comment.text = val;
                                     comment.selection =
                                         TextSelection.fromPosition(
-                                            TextPosition(offset: text.length));
+                                            TextPosition(offset: val.length));
                                     setSheet(() {});
                                   },
                                   decoration: InputDecoration(
@@ -221,7 +222,7 @@ class _CommentSheetState extends State<CommentSheet> {
                                       ? (val) {
                                           if (isExpired(commentList, ref,
                                               scrapSnapshot.documentID,
-                                              comment: comment.text)) {
+                                              comment: comment.text.trim())) {
                                             scrap.toast('แสครปนี้ย่อยสลายแล้ว');
                                           } else {
                                             comment.clear();
@@ -246,7 +247,7 @@ class _CommentSheetState extends State<CommentSheet> {
                                     ? () {
                                         if (isExpired(commentList, ref,
                                             scrapSnapshot.documentID,
-                                            comment: comment.text)) {
+                                            comment: comment.text.trim())) {
                                           scrap.toast('แสครปนี้ย่อยสลายแล้ว');
                                         } else {
                                           comment.clear();
