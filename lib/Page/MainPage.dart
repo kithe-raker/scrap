@@ -115,6 +115,7 @@ class _MainPageState extends State<MainPage> {
     if (fileExist) {
       var map = await userinfo.readContents();
       user.region = map['region'];
+      user.phone = map['phone'];
       img = map['img'];
       if (img == null) {
         doc = await fireStore

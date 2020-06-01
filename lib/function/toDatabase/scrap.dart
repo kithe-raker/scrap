@@ -144,11 +144,17 @@ class Scraps {
     var ref = Firestore.instance.collection(
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
-    var trans = {'comment': 0, 'id': docId, 'point': 0, 'like': 0, 'picked': 0};
+    var trans = {
+      'comment': 0,
+      'id': docId,
+      'point': 0.0,
+      'like': 0,
+      'picked': 0
+    };
     var mainTrans = {
       'comment': 0,
       'id': docId,
-      'point': 0,
+      'point': 0.0,
       'burn': 0,
       'PPN': -5,
       'CPN': -5
@@ -276,11 +282,11 @@ class Scraps {
   }
 
   pushNotification(DocumentSnapshot scrap,
-      {@required double notiRate,
-      @required double currentPoint,
+      {@required int notiRate,
+      @required dynamic currentPoint,
       bool isComment = false}) {
     var target = isComment ? 'CPN' : 'PPN';
-    if (notiRate == currentPoint) {
+    if (currentPoint <= notiRate) {
       fireStore
           .collection('ScrapNotification')
           .document(scrap.documentID)
