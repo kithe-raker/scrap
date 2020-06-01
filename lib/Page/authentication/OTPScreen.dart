@@ -11,7 +11,8 @@ import 'package:scrap/widget/ScreenUtil.dart';
 
 class OTPScreen extends StatefulWidget {
   final bool register;
-  OTPScreen({this.register = false});
+  final bool edit;
+  OTPScreen({this.register = false, this.edit = false});
   @override
   _OTPScreenState createState() => _OTPScreenState();
 }
@@ -151,7 +152,9 @@ class _OTPScreenState extends State<OTPScreen> {
       if (docs.length > 0) user.id = docs[0]['id'];
 
       authService.signUpWithPhone(context, smsCode: otp);
-    } else
+    } else if (widget.edit)
+      authService.changePhoneNumber(context, otp: otp);
+    else
       authService.signInWithPhone(context, smsCode: otp);
   }
 }

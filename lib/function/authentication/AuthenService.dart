@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/authentication/OTPScreen.dart';
 import 'package:scrap/Page/mainstream.dart';
@@ -61,6 +62,41 @@ class AuthenService {
     }
   }
 
+  changePhoneNumber(BuildContext context, {@required String otp}) async {
+    try {
+      loading.add(true);
+      final user = Provider.of<UserData>(context, listen: false);
+      var doc = await fireStore.collection('Account').document(user.uid).get();
+      var acc = await fireAuth.currentUser();
+      var emailProvider = EmailAuthProvider.getCredential(
+          email: '${user.uid}@gmail.com', password: doc['password']);
+      var phoneProvider = PhoneAuthProvider.getCredential(
+          verificationId: user.verifiedId, smsCode: otp);
+      await acc.reauthenticateWithCredential(emailProvider);
+      await acc.updatePhoneNumberCredential(phoneProvider);
+      await userinfo.updateInfo({'phone': user.phone});
+      await fireStore
+          .collection('Account')
+          .document(user.uid)
+          .updateData({'phone': user.phone});
+      loading.add(false);
+      nav.pushReplacement(context, HomePage());
+    } catch (e) {
+      print(e.toString());
+      switch (e.code) {
+        case 'ERROR_NETWORK_REQUEST_FAILED':
+          warn('ตรวจสอบการเชื่อมต่อของคุณ');
+          break;
+        case 'ERROR_INVALID_VERIFICATION_CODE':
+          warn('ตรวจสอบรหัสOTPของคุณ');
+          break;
+        default:
+          warn('OTPของคุณหมดอายุแล้ว');
+          break;
+      }
+    }
+  }
+
   Future<void> phoneVerified(BuildContext context) async {
     final user = Provider.of<UserData>(context, listen: false);
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {};
@@ -109,13 +145,13 @@ class AuthenService {
       print(e.toString());
       switch (e.code) {
         case 'ERROR_NETWORK_REQUEST_FAILED':
-          warn('ตรวจสอบการเชื่อมต่อ');
+          warn('ตรวจสอบการเชื่อมต่อของคุณ');
           break;
         case 'ERROR_INVALID_VERIFICATION_CODE':
-          warn('เช็คใหม่');
+          warn('ตรวจสอบรหัสOTPของคุณ');
           break;
         default:
-          warn('OTPอาจหมดอายุ');
+          warn('OTPของคุณหมดอายุแล้ว');
           break;
       }
     }
@@ -295,6 +331,7 @@ class AuthenService {
   ///sign current user out then laed to [AuthenPage]
   Future<void> signOut(BuildContext context) async {
     loading.add(true);
+    await cacheFriends.deleteFile();
     await userinfo.deleteFile();
     await cacheHistory.deleteFile();
     await fireAuth.signOut();

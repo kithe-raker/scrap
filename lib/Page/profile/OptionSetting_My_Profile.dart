@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
+import 'package:scrap/Page/setting/ChangePhone.dart';
 import 'package:scrap/function/aboutUser/ReportApp.dart';
 import 'package:scrap/function/aboutUser/SettingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
@@ -943,23 +944,27 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                       style: TextStyle(
                                           fontSize: s65,
                                           color: Color(0xfff26A4FF))),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.phone,
-                                        color: Colors.white,
-                                        size: s52,
-                                      ),
-                                      Text(
-                                        ' เปลี่ยนเบอร์โทรศัพท์',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: s42,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
+                                  GestureDetector(
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.phone,
+                                            color: Colors.white,
+                                            size: s52,
+                                          ),
+                                          Text(
+                                            ' เปลี่ยนเบอร์โทรศัพท์',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: s42,
+                                                color: Colors.white),
+                                          )
+                                        ]),
+                                    onTap: () {
+                                      nav.push(context, ChangePhone());
+                                    },
                                   ),
                                   SizedBox(height: appBarHeight / 9),
                                   Row(

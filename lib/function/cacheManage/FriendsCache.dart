@@ -96,6 +96,11 @@ class FriendsCache {
     }
     return randomList;
   }
+
+  Future<void> deleteFile() async {
+    final file = await _localFile;
+    await file.delete();
+  }
 }
 
 final cacheFriends = FriendsCache();
