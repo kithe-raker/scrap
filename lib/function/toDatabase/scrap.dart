@@ -276,8 +276,8 @@ class Scraps {
   }
 
   pushNotification(DocumentSnapshot scrap,
-      {@required int notiRate,
-      @required int currentPoint,
+      {@required double notiRate,
+      @required double currentPoint,
       bool isComment = false}) {
     var target = isComment ? 'CPN' : 'PPN';
     if (notiRate == currentPoint) {

@@ -15,7 +15,8 @@ import 'package:scrap/widget/thrown.dart';
 
 class Paperstranger extends StatefulWidget {
   final DocumentSnapshot scrap;
-  Paperstranger({@required this.scrap});
+  final bool self;
+  Paperstranger({@required this.scrap, this.self = false});
   @override
   _PaperstrangerState createState() => _PaperstrangerState();
 }
@@ -107,21 +108,23 @@ class _PaperstrangerState extends State<Paperstranger> {
                               ],
                             ),
                           )),
-                      Positioned(
-                          top: appBarHeight / 8,
-                          right: appBarHeight / 7,
-                          child: Container(
-                            child: GestureDetector(
-                              child: Icon(
-                                Icons.more_horiz,
-                                color: Colors.white,
-                                size: s70 * 1.2,
-                              ),
-                              onTap: () {
-                                showMore(context, scrap: widget.scrap);
-                              },
-                            ),
-                          )),
+                      widget.self
+                          ? SizedBox()
+                          : Positioned(
+                              top: appBarHeight / 8,
+                              right: appBarHeight / 7,
+                              child: Container(
+                                child: GestureDetector(
+                                  child: Icon(
+                                    Icons.more_horiz,
+                                    color: Colors.white,
+                                    size: s70 * 1.2,
+                                  ),
+                                  onTap: () {
+                                    showMore(context, scrap: widget.scrap);
+                                  },
+                                ),
+                              )),
                     ],
                   ),
                   decoration: BoxDecoration(
@@ -133,84 +136,85 @@ class _PaperstrangerState extends State<Paperstranger> {
                 /* Divider(
                   color: Colors.grey,
                 ),*/
-                SizedBox(
-                  height: appBarHeight / 10,
-                ),
-                Container(
-                  width: screenWidthDp,
-                  height: appBarHeight,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        width: appBarHeight / 5,
-                      ),
-                      Container(
-                          padding: EdgeInsets.all(appBarHeight / 8),
-                          /* child: IconButton(
+                SizedBox(height: appBarHeight / 10),
+                widget.self
+                    ? SizedBox()
+                    : Container(
+                        width: screenWidthDp,
+                        height: appBarHeight,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              width: appBarHeight / 5,
+                            ),
+                            Container(
+                                padding: EdgeInsets.all(appBarHeight / 8),
+                                /* child: IconButton(
                               icon: Icon(
                                 Icons.move_to_inbox,
                                 size: s60 * 1.2,
                                 color: Color(0xfff0099FF),
                               ),
                               onPressed: () {}),*/
-                          child: Icon(
-                            Icons.move_to_inbox,
-                            color: Color(0xfff0099FF),
-                          ),
-                          /*  height: appBarHeight / 1.8,
+                                child: Icon(
+                                  Icons.move_to_inbox,
+                                  color: Color(0xfff0099FF),
+                                ),
+                                /*  height: appBarHeight / 1.8,
                           width: appBarHeight / 1.8,*/
 
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(22)),
-                          )),
-                      SizedBox(
-                        width: appBarHeight / 5,
-                      ),
-                      GestureDetector(
-                        child: Container(
-                            padding: EdgeInsets.only(
-                                left: appBarHeight / 5,
-                                right: appBarHeight / 5,
-                                top: appBarHeight / 8,
-                                bottom: appBarHeight / 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.reply,
-                                  //  size: s60 * 1.2,
+                                decoration: BoxDecoration(
                                   color: Colors.white,
-                                ),
-                                Text('ปากลับ',
-                                    style: TextStyle(
-                                      fontSize: s42,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ))
-                              ],
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(22)),
+                                )),
+                            SizedBox(
+                              width: appBarHeight / 5,
                             ),
-                            /*  height: appBarHeight / 1.8,
+                            GestureDetector(
+                              child: Container(
+                                  padding: EdgeInsets.only(
+                                      left: appBarHeight / 5,
+                                      right: appBarHeight / 5,
+                                      top: appBarHeight / 8,
+                                      bottom: appBarHeight / 8),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.reply,
+                                        //  size: s60 * 1.2,
+                                        color: Colors.white,
+                                      ),
+                                      Text('ปากลับ',
+                                          style: TextStyle(
+                                            fontSize: s42,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ))
+                                    ],
+                                  ),
+                                  /*  height: appBarHeight / 1.8,
                             //width: appBarHeight / 1.8,
                             width: appBarHeight * 1.5,*/
-                            decoration: BoxDecoration(
-                              color: Color(0xfff26A4FF),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            )),
-                        onTap: () {
-                          user.papers > 0
-                              ? writerScrap(context,
-                                  isThrowBack: true,
-                                  region: widget.scrap['region'],
-                                  thrownUID: widget.scrap['uid'])
-                              : toast.toast('กระดาษของคุณหมดแล้ว');
-                        },
+                                  decoration: BoxDecoration(
+                                    color: Color(0xfff26A4FF),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(50)),
+                                  )),
+                              onTap: () {
+                                user.papers > 0
+                                    ? writerScrap(context,
+                                        isThrowBack: true,
+                                        region: widget.scrap['region'],
+                                        thrownUID: widget.scrap['uid'])
+                                    : toast.toast('กระดาษของคุณหมดแล้ว');
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
                 /* Container(
                   height: appBarHeight,
                   width: screenWidthDp,

@@ -418,7 +418,7 @@ class _MapScrapsState extends State<MapScraps> {
                                                     onTap: () {
                                                       if (isExpired(data)) {
                                                         scrap.toast(
-                                                            'สเเครปนี้ย่อยสลายแล้ว');
+                                                            'สแครปนี้ย่อยสลายแล้ว');
                                                       } else {
                                                         scrap.updateScrapTrans(
                                                             'picked',
