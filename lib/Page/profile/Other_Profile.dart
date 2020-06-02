@@ -17,6 +17,8 @@ import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/dialog/ScrapDialog.dart';
+import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/thrown.dart';
 
@@ -78,7 +80,8 @@ class _OtherProfileState extends State<OtherProfile> {
         .limit(2)
         .getDocuments();
     var scrapCrates = await refColl
-        .collection('scrapCrate')
+        .collection('thrownScraps')
+        .where('pick', isEqualTo: true)
         .orderBy('timeStamp', descending: true)
         .limit(2)
         .getDocuments();
@@ -119,15 +122,17 @@ class _OtherProfileState extends State<OtherProfile> {
                     if (pickedScrap
                         ? pickScrap.length > 0
                         : scrapCrate.length > 0) {
-                      var refColl = fireStore.collection(ref).document(uid);
-                      var docs = await refColl
-                          .collection(
-                              pickedScrap ? 'scrapCollection' : 'scrapCrate')
-                          .orderBy('timeStamp', descending: true)
-                          .startAfterDocument(
-                              pickedScrap ? pickScrap.last : scrapCrate.last)
-                          .limit(4)
-                          .getDocuments();
+                      var refColl = pickedScrap
+                          ? fireStore
+                              .collection('$ref/$uid/scrapCollection')
+                              .orderBy('timeStamp', descending: true)
+                              .startAfterDocument(pickScrap.last)
+                          : fireStore
+                              .collection('$ref/$uid/thrownScraps')
+                              .where('pick', isEqualTo: true)
+                              .orderBy('timeStamp', descending: true)
+                              .startAfterDocument(scrapCrate.last);
+                      var docs = await refColl.limit(4).getDocuments();
                       pickedScrap
                           ? pickScrap.addAll(docs.documents)
                           : scrapCrate.addAll(docs.documents);
@@ -450,22 +455,32 @@ class _OtherProfileState extends State<OtherProfile> {
   }
 
   Widget scrap(DocumentSnapshot data) {
-    return Container(
-        height: screenWidthDp / 2.16 * 1.21,
-        width: screenWidthDp / 2.16,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/paperscrap.jpg'), fit: BoxFit.cover)),
-        child: Stack(children: <Widget>[
-          Center(
-              child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
-            child: AutoSizeText(data['scrap']['text'],
-                textAlign: TextAlign.center,
-                group: textGroup,
-                style: TextStyle(fontSize: s46)),
-          )),
-        ]));
+    return GestureDetector(
+      child: Container(
+          height: screenWidthDp / 2.16 * 1.21,
+          width: screenWidthDp / 2.16,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/paperscrap.jpg'),
+                  fit: BoxFit.cover)),
+          child: Stack(children: <Widget>[
+            Center(
+                child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+              child: AutoSizeText(data['scrap']['text'],
+                  textAlign: TextAlign.center,
+                  group: textGroup,
+                  style: TextStyle(fontSize: s46)),
+            )),
+          ])),
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => pickedScrap
+                ? ScrapDialog(data: data)
+                : Paperstranger(scrap: data, self: true));
+      },
+    );
   }
 
   Widget dataProfile(String name, String uid, {@required String field}) {

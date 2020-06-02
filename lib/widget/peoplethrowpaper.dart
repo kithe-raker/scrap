@@ -22,6 +22,20 @@ class Paperstranger extends StatefulWidget {
 }
 
 class _PaperstrangerState extends State<Paperstranger> {
+  bool pick;
+
+  @override
+  void initState() {
+    pick = widget.scrap['pick'] ?? false;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(Paperstranger oldWidget) {
+    if (widget.scrap != oldWidget.scrap) pick = widget.scrap['pick'] ?? false;
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
@@ -148,27 +162,26 @@ class _PaperstrangerState extends State<Paperstranger> {
                             SizedBox(
                               width: appBarHeight / 5,
                             ),
-                            Container(
-                                padding: EdgeInsets.all(appBarHeight / 8),
-                                /* child: IconButton(
-                              icon: Icon(
-                                Icons.move_to_inbox,
-                                size: s60 * 1.2,
-                                color: Color(0xfff0099FF),
-                              ),
-                              onPressed: () {}),*/
-                                child: Icon(
-                                  Icons.move_to_inbox,
-                                  color: Color(0xfff0099FF),
-                                ),
-                                /*  height: appBarHeight / 1.8,
-                          width: appBarHeight / 1.8,*/
-
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(22)),
-                                )),
+                            GestureDetector(
+                              child: Container(
+                                  padding: EdgeInsets.all(appBarHeight / 8),
+                                  child: Icon(
+                                    Icons.move_to_inbox,
+                                    color: pick
+                                        ? Colors.white
+                                        : Color(0xfff0099FF),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: pick
+                                        ? Color(0xfff0099FF)
+                                        : Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(22)),
+                                  )),
+                              onTap: () {
+                                pick ? unPick() : pickScrap();
+                              },
+                            ),
                             SizedBox(
                               width: appBarHeight / 5,
                             ),
@@ -195,9 +208,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                                           ))
                                     ],
                                   ),
-                                  /*  height: appBarHeight / 1.8,
-                            //width: appBarHeight / 1.8,
-                            width: appBarHeight * 1.5,*/
                                   decoration: BoxDecoration(
                                     color: Color(0xfff26A4FF),
                                     borderRadius:
@@ -215,94 +225,8 @@ class _PaperstrangerState extends State<Paperstranger> {
                           ],
                         ),
                       ),
-                /* Container(
-                  height: appBarHeight,
-                  width: screenWidthDp,
-                  child: Stack(children: <Widget>[
-                    Positioned(
-                        left: appBarHeight / 5,
-                        child: Container(
-                            child: IconButton(
-                                icon: Icon(
-                                  Icons.move_to_inbox,
-                                  size: s60 * 1.2,
-                                  color: Color(0xfff0099FF),
-                                ),
-                                onPressed: () {}),
-                            height: appBarHeight / 1.5,
-                            width: appBarHeight / 1.5,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ))),
-                    Positioned(
-                        left: appBarHeight * 1.05,
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.reply,
-                                    size: s60 * 1.2,
-                                    color: Colors.white,
-                                  ),
-                                  Text('ปากลับ',
-                                      style: TextStyle(
-                                        fontSize: s52,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ))
-                                ],
-                              ),
-                              height: appBarHeight / 1.5,
-                              width: appBarHeight * 1.5,
-                              decoration: BoxDecoration(
-                                color: Color(0xfff26A4FF),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(50)),
-                              )),
-                        )),
-                    Positioned(
-                        left: appBarHeight * 4,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                                child: IconButton(
-                                    icon: Icon(
-                                      Icons.forward,
-                                      size: s60 * 1.2,
-                                    ),
-                                    onPressed: () {}),
-                                height: appBarHeight / 1.5,
-                                width: appBarHeight / 1.5,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(50)),
-                                )),
-                            SizedBox(
-                              height: appBarHeight / 10,
-                            ),
-                            Text(
-                              'ต่อไป',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: s40,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        )),
-                  ]),
-                ),*/
               ]),
-              Positioned(
-                  bottom: 0,
-                  child: Container(
-                    child: Ads(),
-                  )),
+              Positioned(bottom: 0, child: Container(child: Ads())),
             ],
           ),
         ));
@@ -404,28 +328,34 @@ class _PaperstrangerState extends State<Paperstranger> {
                                 showDialogReport(context);
                               },
                             ),
-                            Text(
-                              'รายงาน',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s42,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            Text('รายงาน',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: s42,
+                                    fontWeight: FontWeight.bold))
                           ],
                         ),
                       ],
                     ),
                   ),
                 ),
-                Positioned(
-                    bottom: 0,
-                    child: Container(
-                      child: Ads(),
-                    )),
+                Positioned(bottom: 0, child: Container(child: Ads())),
               ],
             ),
           );
         });
+  }
+
+  pickScrap() async {
+    widget.scrap.reference
+        .updateData({'pick': true, 'timeStamp': FieldValue.serverTimestamp()});
+    setState(() => pick = true);
+    toast.toast('เก็บสแครปก้อนนี้แล้ว');
+  }
+
+  unPick() async {
+    widget.scrap.reference
+        .updateData({'pick': false, 'timeStamp': FieldValue.delete()});
+    setState(() => pick = false);
   }
 }

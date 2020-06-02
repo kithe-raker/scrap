@@ -100,7 +100,8 @@ class _ProfileState extends State<Profile> {
         .limit(2)
         .getDocuments();
     var scrapCrates = await ref
-        .collection('scrapCrate')
+        .collection('thrownScraps')
+        .where('pick', isEqualTo: true)
         .orderBy('timeStamp', descending: true)
         .limit(2)
         .getDocuments();
@@ -152,17 +153,19 @@ class _ProfileState extends State<Profile> {
                 if (pickedScrap
                     ? pickScrap.length > 0
                     : scrapCrate.length > 0) {
-                  var ref = fireStore
-                      .collection('Users/${user.region}/users')
-                      .document(user.uid);
-                  var docs = await ref
-                      .collection(
-                          pickedScrap ? 'scrapCollection' : 'scrapCrate')
-                      .orderBy('timeStamp', descending: true)
-                      .startAfterDocument(
-                          pickedScrap ? pickScrap.last : scrapCrate.last)
-                      .limit(4)
-                      .getDocuments();
+                  var ref = pickedScrap
+                      ? fireStore
+                          .collection(
+                              'Users/${user.region}/users/${user.uid}/scrapCollection')
+                          .orderBy('timeStamp', descending: true)
+                          .startAfterDocument(pickScrap.last)
+                      : fireStore
+                          .collection(
+                              'Users/${user.region}/users/${user.uid}/thrownScraps')
+                          .where('pick', isEqualTo: true)
+                          .orderBy('timeStamp', descending: true)
+                          .startAfterDocument(scrapCrate.last);
+                  var docs = await ref.limit(4).getDocuments();
                   pickedScrap
                       ? pickScrap.addAll(docs.documents)
                       : scrapCrate.addAll(docs.documents);
@@ -583,7 +586,9 @@ class _ProfileState extends State<Profile> {
       onTap: () {
         showDialog(
             context: context,
-            builder: (BuildContext context) => ScrapDialog(data: data));
+            builder: (BuildContext context) => pickedScrap
+                ? ScrapDialog(data: data)
+                : Paperstranger(scrap: data, self: true));
       },
     );
   }
