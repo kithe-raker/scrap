@@ -15,6 +15,8 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 
+final db = FirebaseDatabase.instance;
+
 class Scraps {
   PublishSubject<bool> loading = PublishSubject();
   final FirebaseMessaging fcm = FirebaseMessaging();
@@ -210,51 +212,55 @@ class Scraps {
     if (history[field].contains(scrap.documentID)) {
       cacheHistory.removeHistory(field, scrap.documentID);
       var mutableData = await scrapAll.reference().child(ref).once();
-      var newPoint = field == 'like'
-          ? mutableData.value['point'] + 2
-          : mutableData.value['point'] + 3;
-      defaultDb.reference().child(ref).update({'point': newPoint});
-      scrapAll
-          .reference()
-          .child(ref)
-          .update({field: mutableData.value[field] + 1, 'point': newPoint});
+      if (mutableData?.value != null) {
+        var newPoint = field == 'like'
+            ? mutableData.value['point'] + 2
+            : mutableData.value['point'] + 3;
+        defaultDb.reference().child(ref).update({'point': newPoint});
+        scrapAll
+            .reference()
+            .child(ref)
+            .update({field: mutableData.value[field] + 1, 'point': newPoint});
 
-      userDb.reference().child('users/${scrap['uid']}/att').once().then(
-          (data) => userDb.reference().child('users/${scrap['uid']}').update(
-              {'att': field == 'like' ? data.value - 1 : data.value - 3}));
+        userDb.reference().child('users/${scrap['uid']}/att').once().then(
+            (data) => userDb.reference().child('users/${scrap['uid']}').update(
+                {'att': field == 'like' ? data.value - 1 : data.value - 3}));
 
-      if (field == 'like')
-        fcm.unsubscribeFromTopic(scrap.documentID);
-      else
-        pickScrap(scrap.data, user.uid, context, cancel: true);
+        if (field == 'like')
+          fcm.unsubscribeFromTopic(scrap.documentID);
+        else
+          pickScrap(scrap.data, user.uid, context, cancel: true);
+      } else
+        toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     } else {
-      cacheHistory.addHistory(scrap, field: field, comments: comments);
-      var mutableData = await defaultDb.reference().child(ref).once();
       var transac = await scrapAll.reference().child('$ref/$field').once();
-      var newPoint = field == 'like'
-          ? mutableData.value['point'] - 2
-          : mutableData.value['point'] - 3;
-      defaultDb.reference().child(ref).update({'point': newPoint});
-      scrapAll
-          .reference()
-          .child(ref)
-          .update({field: transac.value - 1, 'point': newPoint});
+      if (transac?.value != null) {
+        cacheHistory.addHistory(scrap, field: field, comments: comments);
+        var mutableData = await defaultDb.reference().child(ref).once();
 
-      pushNotification(scrap,
-          notiRate: mutableData.value['PPN'], currentPoint: newPoint);
+        var newPoint = field == 'like'
+            ? mutableData.value['point'] - 2
+            : mutableData.value['point'] - 3;
+        defaultDb.reference().child(ref).update({'point': newPoint});
+        scrapAll
+            .reference()
+            .child(ref)
+            .update({field: transac.value - 1, 'point': newPoint});
 
-      userDb.reference().child('users/${scrap['uid']}/att').once().then(
-          (data) => userDb.reference().child('users/${scrap['uid']}').update(
-              {'att': field == 'like' ? data.value + 2 : data.value + 3}));
+        pushNotification(scrap,
+            notiRate: mutableData.value['PPN'], currentPoint: newPoint);
 
-      if (field == 'like')
-        fcm.subscribeToTopic(scrap.documentID);
-      else
-        pickScrap(scrap.data, user.uid, context);
+        userDb.reference().child('users/${scrap['uid']}/att').once().then(
+            (data) => userDb.reference().child('users/${scrap['uid']}').update(
+                {'att': field == 'like' ? data.value + 2 : data.value + 3}));
+
+        if (field == 'like')
+          fcm.subscribeToTopic(scrap.documentID);
+        else
+          pickScrap(scrap.data, user.uid, context);
+      } else
+        toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     }
-    // } else {
-    //   toast('แสครปนี้ย่อยสลายแล้ว');
-    // }
   }
 
   pickScrap(Map scrap, String uid, BuildContext context,

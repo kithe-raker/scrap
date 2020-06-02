@@ -271,7 +271,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                         : Color(0xffFF4343)),
                                                 onTap: () {
                                                   if (isExpired(widget.data)) {
-                                                    scrap.toast(
+                                                    toast.toast(
                                                         'สเเครปนี้ย่อยสลายแล้ว');
                                                   } else {
                                                     scrap.updateScrapTrans(

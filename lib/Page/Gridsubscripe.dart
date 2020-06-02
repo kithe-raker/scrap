@@ -25,7 +25,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
   //top scrap
   List scraps = [];
   Map<String, int> comments = {};
-  int lessPoint;
+  dynamic lessPoint;
   bool lastQuery = false;
 
   //following
@@ -100,8 +100,8 @@ class _GridsubscripeState extends State<Gridsubscripe> {
           .collectionGroup('ScrapDailys-th')
           .where('id', whereIn: docId)
           .getDocuments();
-      docs.documents.length < 8 ? lastQuery = true : scraps.add(lessPoint);
       scraps.addAll(docs.documents);
+      docs.documents.length < 8 ? lastQuery = true : scraps.add(lessPoint);
       setState(() => topController.loadComplete());
     } else {
       topController.loadNoData();

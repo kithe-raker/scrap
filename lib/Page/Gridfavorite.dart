@@ -537,43 +537,59 @@ class _GridfavoriteState extends State<Gridfavorite> {
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     int ments;
     return GestureDetector(
-      child: Container(
-        height: screenWidthDp / 2.16 * 1.21,
-        width: screenWidthDp / 2.16,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/paperscrap.jpg'), fit: BoxFit.cover)),
-        child: Stack(
-          children: <Widget>[
-            Center(
-                child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
-              child: AutoSizeText(data['text'],
-                  textAlign: TextAlign.center,
-                  group: textGroup,
-                  style: TextStyle(fontSize: s46)),
-            )),
-            Positioned(
-                bottom: 0,
-                right: 0,
-                child: FutureBuilder(
-                    future: scrapAll
-                        .reference()
-                        .child('scraps/${data['id']}/comment')
-                        .once(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        ments = snapshot.data.value;
-                        return commentTransactionBox(
-                            a, ments.abs(), data['comments'].abs());
-                      } else {
-                        return commentTransactionBox(
-                            a, data['comments'].abs(), data['comments'].abs());
-                      }
-                    })),
-          ],
-        ),
-      ),
+      child: FutureBuilder(
+          future:
+              scrapAll.reference().child('scraps/${data['id']}/comment').once(),
+          builder: (context, snapshot) {
+            ments = snapshot.data?.value ?? null;
+            return Container(
+              height: screenWidthDp / 2.16 * 1.21,
+              width: screenWidthDp / 2.16,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/paperscrap.jpg'),
+                      fit: BoxFit.cover)),
+              child: Stack(
+                children: <Widget>[
+                  Center(
+                      child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+                    child: AutoSizeText(data['text'],
+                        textAlign: TextAlign.center,
+                        group: textGroup,
+                        style: TextStyle(fontSize: s46)),
+                  )),
+                  snapshot.data?.value == null
+                      ? Container(
+                          margin: EdgeInsets.all(4),
+                          height: screenWidthDp / 2.16 * 1.21,
+                          width: screenWidthDp / 2.16,
+                          color: Colors.black38,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.whatshot,
+                                    size: 50, color: Color(0xffFF8F3A)),
+                                Text('ถูกเผาแล้ว',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: s48)),
+                              ]))
+                      : SizedBox(),
+                  Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: snapshot.hasData
+                          ? ments != null
+                              ? commentTransactionBox(
+                                  a, ments.abs(), data['comments'].abs())
+                              : SizedBox()
+                          : commentTransactionBox(a, data['comments'].abs(),
+                              data['comments'].abs()))
+                ],
+              ),
+            );
+          }),
       onTap: () {
         if (ments != null) {
           cacheHistory.updateFollowingScrap(data['id'], ments);

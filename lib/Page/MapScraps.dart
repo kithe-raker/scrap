@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +24,7 @@ import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
+import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/ads.dart';
@@ -153,362 +155,510 @@ class _MapScrapsState extends State<MapScraps> {
                       horizontal: (a.width - a.width / 1.04) / 2),
                   width: a.width,
                   height: a.height,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        counter.count == adsRate
-                            ? Center(
-                                child: Text(
-                                'โฆษณา',
-                                style: TextStyle(
-                                    fontSize: s42,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ))
-                            : SizedBox(height: a.height / 42),
-                        counter.count == adsRate
-                            ? SizedBox(
-                                width: a.width / 1.04,
-                                height: a.width / 1.04 * 1.29,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Container(
-                                      width: a.width / 1.04,
-                                      height: a.width / 1.04 * 1.29,
-                                      child: AdmobBanner(
-                                          adUnitId:
-                                              AdmobService().getBannerAdId(),
-                                          adSize: AdmobBannerSize.FULL_BANNER),
-                                    ),
-                                    Positioned(
-                                        top: 12,
-                                        right: 12,
-                                        child: GestureDetector(
-                                            child: Container(
-                                              width: screenWidthDp / 16,
-                                              height: screenWidthDp / 16,
-                                              decoration: BoxDecoration(
-                                                  color: Color(0xff000000)
-                                                      .withOpacity(0.47),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          screenWidthDp / 18)),
-                                              child: Icon(Icons.close,
-                                                  color: Colors.white,
-                                                  size: s42),
-                                            ),
-                                            onTap: () {
-                                              randomAdsRate();
-                                              counter.count = 0;
-                                              Navigator.pop(context);
-                                            }))
-                                  ],
-                                ),
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  GestureDetector(
-                                    child: Stack(
-                                      children: <Widget>[
-                                        Container(
-                                          child: Image.asset(
-                                            'assets/paperscrap.jpg',
-                                            width: a.width / 1.04,
-                                            height: a.width / 1.04 * 1.115,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        Container(
-                                          alignment: Alignment.center,
-                                          padding: EdgeInsets.only(
-                                              left: 25, right: 25),
-                                          height: a.width / 1.04 * 1.115,
+                  child: FutureBuilder(
+                      future: scrapTransaction(data.documentID),
+                      builder: (context, AsyncSnapshot<DataSnapshot> event) {
+                        if (event.hasData && event.data?.value != null) {
+                          var trans = event.data;
+                          var like = trans.value['like'];
+                          var pick = trans.value['picked'];
+                          return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                counter.count == adsRate
+                                    ? Center(
+                                        child: Text(
+                                        'โฆษณา',
+                                        style: TextStyle(
+                                            fontSize: s42,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ))
+                                    : SizedBox(height: a.height / 42),
+                                counter.count == adsRate
+                                    ? Expanded(
+                                        child: Container(
                                           width: a.width / 1.04,
-                                          child: Text(
-                                            data['scrap']['text'],
-                                            style: TextStyle(
-                                              height: 1.35,
-                                              fontSize: s60,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
+                                          child: AdmobBanner(
+                                              adUnitId: AdmobService()
+                                                  .getBannerAdId(),
+                                              adSize:
+                                                  AdmobBannerSize.FULL_BANNER),
                                         ),
-                                        Positioned(
-                                          top: 12,
-                                          right: 12,
-                                          child: GestureDetector(
-                                            child: Container(
-                                              width: screenWidthDp / 16,
-                                              height: screenWidthDp / 16,
-                                              decoration: BoxDecoration(
-                                                  color: Color(0xff000000)
-                                                      .withOpacity(0.47),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          screenWidthDp / 18)),
-                                              child: Icon(Icons.close,
-                                                  color: Colors.white,
-                                                  size: s42),
+                                      )
+                                    : Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            child: Stack(
+                                              children: <Widget>[
+                                                Container(
+                                                  child: Image.asset(
+                                                    'assets/paperscrap.jpg',
+                                                    width: a.width / 1.04,
+                                                    height:
+                                                        a.width / 1.04 * 1.115,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  padding: EdgeInsets.only(
+                                                      left: 25, right: 25),
+                                                  height:
+                                                      a.width / 1.04 * 1.115,
+                                                  width: a.width / 1.04,
+                                                  child: Text(
+                                                    data['scrap']['text'],
+                                                    style: TextStyle(
+                                                      height: 1.35,
+                                                      fontSize: s60,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: 12,
+                                                  right: 12,
+                                                  child: GestureDetector(
+                                                    child: Container(
+                                                      width: screenWidthDp / 16,
+                                                      height:
+                                                          screenWidthDp / 16,
+                                                      decoration: BoxDecoration(
+                                                          color:
+                                                              Color(0xff000000)
+                                                                  .withOpacity(
+                                                                      0.47),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  screenWidthDp /
+                                                                      18)),
+                                                      child: Icon(Icons.close,
+                                                          color: Colors.white,
+                                                          size: s42),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                            onTap: () {
-                                              Navigator.pop(context);
+                                            onDoubleTap: () {
+                                              _scaffoldKey.currentState
+                                                  .showBottomSheet(
+                                                (context) => MapSheet(
+                                                  position: LatLng(
+                                                      data['position']
+                                                              ['geopoint']
+                                                          .latitude,
+                                                      data['position']
+                                                              ['geopoint']
+                                                          .longitude),
+                                                ),
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                              );
                                             },
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                    onDoubleTap: () {
-                                      _scaffoldKey.currentState.showBottomSheet(
-                                        (context) => MapSheet(
-                                          position: LatLng(
-                                              data['position']['geopoint']
-                                                  .latitude,
-                                              data['position']['geopoint']
-                                                  .longitude),
-                                        ),
-                                        backgroundColor: Colors.transparent,
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: screenWidthDp / 21),
-                                  Container(
+                                          SizedBox(height: screenWidthDp / 21),
+                                          Container(
+                                            width: a.width,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: screenWidthDp / 36),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      data['scrap']['writer'] ==
+                                                              'ไม่ระบุตัวตน'
+                                                          ? 'ใครบางคน'
+                                                          : '@${data['scrap']['writer']}',
+                                                      style: TextStyle(
+                                                          fontSize: s48,
+                                                          height: 1.1,
+                                                          color: data['scrap'][
+                                                                      'writer'] ==
+                                                                  'ไม่ระบุตัวตน'
+                                                              ? Colors.white
+                                                              : Color(
+                                                                  0xff26A4FF)),
+                                                    ),
+                                                    CountDownText(
+                                                        startTime: data['scrap']
+                                                                ['timeStamp']
+                                                            .toDate())
+                                                  ],
+                                                ),
+                                                GestureDetector(
+                                                    child: Icon(
+                                                        Icons.more_horiz,
+                                                        color: Colors.white,
+                                                        size: s70),
+                                                    onTap: () => showMore(
+                                                        context,
+                                                        scrap: data))
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                SizedBox(height: screenWidthDp / 42),
+                                Divider(
+                                    color: Color(0xff5D5D5D), thickness: 1.2),
+                                SizedBox(height: screenWidthDp / 46),
+                                SizedBox(
                                     width: a.width,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: screenWidthDp / 36),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              data['scrap']['writer'] ==
-                                                      'ไม่ระบุตัวตน'
-                                                  ? 'ใครบางคน'
-                                                  : '@${data['scrap']['writer']}',
-                                              style: TextStyle(
-                                                  fontSize: s48,
-                                                  height: 1.1,
-                                                  color: data['scrap']
-                                                              ['writer'] ==
-                                                          'ไม่ระบุตัวตน'
-                                                      ? Colors.white
-                                                      : Color(0xff26A4FF)),
-                                            ),
-                                            CountDownText(
-                                                startTime: data['scrap']
-                                                        ['timeStamp']
-                                                    .toDate())
-                                          ],
-                                        ),
-                                        GestureDetector(
-                                            child: Icon(Icons.more_horiz,
-                                                color: Colors.white, size: s70),
-                                            onTap: () =>
-                                                showMore(context, scrap: data))
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                        SizedBox(height: screenWidthDp / 42),
-                        Divider(color: Color(0xff5D5D5D), thickness: 1.2),
-                        SizedBox(height: screenWidthDp / 46),
-                        SizedBox(
-                          width: a.width,
-                          height: screenHeightDp / 9.6,
-                          child: counter.count == adsRate
-                              ? Center(
-                                  child: GestureDetector(
-                                      child: iconWithLabel('ต่อไป',
-                                          iconColor: Color(0xff000000),
-                                          icon: Icons.forward),
-                                      onTap: () {
-                                        randomAdsRate();
-                                        counter.count = 0;
-                                        setDialog(() {});
-                                      }))
-                              : FutureBuilder(
-                                  future: scrapTransaction(data.documentID),
-                                  builder: (context,
-                                      AsyncSnapshot<DataSnapshot> event) {
-                                    if (event.hasData) {
-                                      var trans = event.data;
-                                      var like = trans.value['like'];
-                                      var pick = trans.value['picked'];
-                                      return StatefulBuilder(builder:
-                                          (context, StateSetter setTrans) {
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              width: screenWidthDp / 2,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: <Widget>[
-                                                  GestureDetector(
-                                                    child: iconWithLabel(
-                                                        like.abs().toString(),
-                                                        icon: inHistory('like',
-                                                                data.documentID)
-                                                            ? Icons.favorite
-                                                            : Icons
-                                                                .favorite_border,
-                                                        background: inHistory(
-                                                                'like',
-                                                                data.documentID)
-                                                            ? Color(0xffFF4343)
-                                                            : Colors.white,
-                                                        iconColor: inHistory(
-                                                                'like',
-                                                                data.documentID)
-                                                            ? Colors.white
-                                                            : Color(
-                                                                0xffFF4343)),
-                                                    onTap: () {
-                                                      if (isExpired(data)) {
-                                                        scrap.toast(
-                                                            'สเเครปนี้ย่อยสลายแล้ว');
-                                                      } else {
-                                                        scrap.updateScrapTrans(
-                                                            'like',
-                                                            data,
-                                                            context,
-                                                            comments:
-                                                                trans.value[
-                                                                    'comment']);
-                                                        if (inHistory('like',
-                                                            data.documentID)) {
-                                                          ++like;
-                                                          history['like']
-                                                              .remove(data
-                                                                  .documentID);
-                                                        } else {
-                                                          --like;
-                                                          history['like'].add(
-                                                              data.documentID);
-                                                        }
-                                                        setTrans(() {});
-                                                      }
-                                                    },
-                                                  ),
-                                                  GestureDetector(
-                                                    child: iconWithLabel(
-                                                        pick.abs().toString(),
-                                                        background: inHistory(
-                                                                'picked',
-                                                                data.documentID)
-                                                            ? Color(0xff0099FF)
-                                                            : Colors.white,
-                                                        iconColor: inHistory(
-                                                                'picked',
-                                                                data.documentID)
-                                                            ? Colors.white
-                                                            : Color(0xff0099FF),
-                                                        icon: Icons
-                                                            .move_to_inbox),
-                                                    onTap: () {
-                                                      if (isExpired(data)) {
-                                                        scrap.toast(
-                                                            'สแครปนี้ย่อยสลายแล้ว');
-                                                      } else {
-                                                        scrap.updateScrapTrans(
-                                                            'picked',
-                                                            data,
-                                                            context);
-                                                        if (inHistory('picked',
-                                                            data.documentID)) {
-                                                          ++pick;
-                                                          history['picked']
-                                                              .remove(data
-                                                                  .documentID);
-                                                        } else {
-                                                          --pick;
-                                                          history['picked'].add(
-                                                              data.documentID);
-                                                        }
-                                                        setTrans(() {});
-                                                      }
-                                                    },
-                                                  ),
-                                                  GestureDetector(
-                                                    child: iconWithLabel(
-                                                        trans?.value['comment']
-                                                            .abs()
-                                                            .toString(),
-                                                        iconColor: Color(
-                                                                0xff000000)
-                                                            .withOpacity(0.83),
-                                                        icon: Icons.sms),
-                                                    onTap: () {
-                                                      Scaffold.of(context)
-                                                          .showBottomSheet(
-                                                        (BuildContext
-                                                                context) =>
-                                                            CommentSheet(
-                                                                scrapSnapshot:
-                                                                    data),
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                      );
-                                                    },
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  right: screenWidthDp / 42),
-                                              child: GestureDetector(
+                                    height: screenHeightDp / 9.6,
+                                    child: counter.count == adsRate
+                                        ? Center(
+                                            child: GestureDetector(
                                                 child: iconWithLabel('ต่อไป',
                                                     iconColor:
                                                         Color(0xff000000),
                                                     icon: Icons.forward),
                                                 onTap: () {
-                                                  counter.count += 1;
-                                                  allScrap.remove(data);
-                                                  markers.remove(MarkerId(
-                                                      data.documentID));
-                                                  if (allScrap.isNotEmpty &&
-                                                      allScrap.length > 0) {
-                                                    setDialog(() =>
-                                                        data = allScrap.first);
-                                                    streamLimit.add(
-                                                        16 - allScrap.length);
-                                                  } else {
-                                                    toast.toast(
-                                                        'คุณตามทันสแครปทั้งหมดแล้ว');
-                                                  }
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        );
-                                      });
-                                    } else {
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                  }),
-                        ),
-                        SizedBox(height: screenWidthDp / 36),
-                        Expanded(
-                          child: AdmobBanner(
-                              adUnitId: AdmobService().getBannerAdId(),
-                              adSize: AdmobBannerSize.FULL_BANNER),
-                        )
-                      ])),
+                                                  randomAdsRate();
+                                                  counter.count = 0;
+                                                  setDialog(() {});
+                                                }))
+                                        : StatefulBuilder(builder:
+                                            (context, StateSetter setTrans) {
+                                            return Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Container(
+                                                  width: screenWidthDp / 2,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    children: <Widget>[
+                                                      GestureDetector(
+                                                        child: iconWithLabel(
+                                                            like
+                                                                .abs()
+                                                                .toString(),
+                                                            icon: inHistory(
+                                                                    'like',
+                                                                    data
+                                                                        .documentID)
+                                                                ? Icons.favorite
+                                                                : Icons
+                                                                    .favorite_border,
+                                                            background: inHistory(
+                                                                    'like',
+                                                                    data
+                                                                        .documentID)
+                                                                ? Color(
+                                                                    0xffFF4343)
+                                                                : Colors.white,
+                                                            iconColor: inHistory(
+                                                                    'like',
+                                                                    data
+                                                                        .documentID)
+                                                                ? Colors.white
+                                                                : Color(
+                                                                    0xffFF4343)),
+                                                        onTap: () {
+                                                          if (isExpired(data)) {
+                                                            scrap.toast(
+                                                                'สเเครปนี้ย่อยสลายแล้ว');
+                                                          } else {
+                                                            scrap.updateScrapTrans(
+                                                                'like',
+                                                                data,
+                                                                context,
+                                                                comments: trans
+                                                                        .value[
+                                                                    'comment']);
+                                                            if (inHistory(
+                                                                'like',
+                                                                data.documentID)) {
+                                                              ++like;
+                                                              history['like']
+                                                                  .remove(data
+                                                                      .documentID);
+                                                            } else {
+                                                              --like;
+                                                              history['like']
+                                                                  .add(data
+                                                                      .documentID);
+                                                            }
+                                                            setTrans(() {});
+                                                          }
+                                                        },
+                                                      ),
+                                                      GestureDetector(
+                                                        child: iconWithLabel(
+                                                            pick
+                                                                .abs()
+                                                                .toString(),
+                                                            background: inHistory(
+                                                                    'picked',
+                                                                    data
+                                                                        .documentID)
+                                                                ? Color(
+                                                                    0xff0099FF)
+                                                                : Colors.white,
+                                                            iconColor: inHistory(
+                                                                    'picked',
+                                                                    data
+                                                                        .documentID)
+                                                                ? Colors.white
+                                                                : Color(
+                                                                    0xff0099FF),
+                                                            icon: Icons
+                                                                .move_to_inbox),
+                                                        onTap: () {
+                                                          if (isExpired(data)) {
+                                                            scrap.toast(
+                                                                'สเเครปนี้ย่อยสลายแล้ว');
+                                                          } else {
+                                                            scrap
+                                                                .updateScrapTrans(
+                                                                    'picked',
+                                                                    data,
+                                                                    context);
+                                                            if (inHistory(
+                                                                'picked',
+                                                                data.documentID)) {
+                                                              ++pick;
+                                                              history['picked']
+                                                                  .remove(data
+                                                                      .documentID);
+                                                            } else {
+                                                              --pick;
+                                                              history['picked']
+                                                                  .add(data
+                                                                      .documentID);
+                                                            }
+                                                            setTrans(() {});
+                                                          }
+                                                        },
+                                                      ),
+                                                      GestureDetector(
+                                                        child: iconWithLabel(
+                                                            trans?.value[
+                                                                    'comment']
+                                                                .abs()
+                                                                .toString(),
+                                                            iconColor: Color(
+                                                                    0xff000000)
+                                                                .withOpacity(
+                                                                    0.83),
+                                                            icon: Icons.sms),
+                                                        onTap: () {
+                                                          Scaffold.of(context)
+                                                              .showBottomSheet(
+                                                            (BuildContext
+                                                                    context) =>
+                                                                CommentSheet(
+                                                                    scrapSnapshot:
+                                                                        data),
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .transparent,
+                                                          );
+                                                        },
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right:
+                                                          screenWidthDp / 42),
+                                                  child: GestureDetector(
+                                                    child: iconWithLabel(
+                                                        'ต่อไป',
+                                                        iconColor:
+                                                            Color(0xff000000),
+                                                        icon: Icons.forward),
+                                                    onTap: () {
+                                                      counter.count += 1;
+                                                      allScrap.remove(data);
+                                                      markers.remove(MarkerId(
+                                                          data.documentID));
+                                                      if (allScrap.isNotEmpty &&
+                                                          allScrap.length > 0) {
+                                                        setDialog(() => data =
+                                                            allScrap.first);
+                                                        streamLimit.add(16 -
+                                                            allScrap.length);
+                                                      } else {
+                                                        toast.toast(
+                                                            'คุณตามทันสแครปทั้งหมดแล้ว');
+                                                      }
+                                                    },
+                                                  ),
+                                                )
+                                              ],
+                                            );
+                                          })
+
+                                    // }),
+                                    ),
+                                SizedBox(height: screenWidthDp / 36),
+                                counter.count == adsRate
+                                    ? SizedBox()
+                                    : Expanded(
+                                        child: AdmobBanner(
+                                            adUnitId:
+                                                AdmobService().getBannerAdId(),
+                                            adSize:
+                                                AdmobBannerSize.FULL_BANNER),
+                                      )
+                              ]);
+                        } else if (event.connectionState ==
+                            ConnectionState.waiting) {
+                          return Stack(
+                            children: <Widget>[
+                              Container(
+                                margin:
+                                    EdgeInsets.only(top: screenHeightDp / 42),
+                                width: screenWidthDp / 1.04,
+                                height: screenWidthDp / 1.04 * 1.115,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image:
+                                            AssetImage('assets/paperscrap.jpg'),
+                                        fit: BoxFit.cover)),
+                              ),
+                              Positioned(
+                                top: 12,
+                                right: 12,
+                                child: GestureDetector(
+                                  child: Container(
+                                    width: screenWidthDp / 16,
+                                    height: screenWidthDp / 16,
+                                    decoration: BoxDecoration(
+                                        color:
+                                            Color(0xff000000).withOpacity(0.47),
+                                        borderRadius: BorderRadius.circular(
+                                            screenWidthDp / 18)),
+                                    child: Icon(Icons.close,
+                                        color: Colors.white, size: s42),
+                                  ),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                              Center(child: LoadNoBlur())
+                            ],
+                          );
+                        } else {
+                          return burntScrap(onNext: () {
+                            counter.count += 1;
+                            allScrap.remove(data);
+                            markers.remove(MarkerId(data.documentID));
+                            if (allScrap.isNotEmpty && allScrap.length > 0) {
+                              setDialog(() => data = allScrap.first);
+                              streamLimit.add(16 - allScrap.length);
+                            } else
+                              toast.toast('คุณตามทันสแครปทั้งหมดแล้ว');
+                          });
+                        }
+                      })),
             ));
       });
     }));
+  }
+
+  Widget burntScrap({@required Function onNext}) {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: screenHeightDp / 42),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                    width: screenWidthDp / 1.04,
+                    height: screenWidthDp / 1.04 * 1.115,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage('assets/paperscrap.jpg'),
+                            fit: BoxFit.cover)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 3.2, sigmaY: 3.2),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.whatshot,
+                              size: screenWidthDp / 3,
+                              color: Color(0xffFF8F3A)),
+                          Text("สแครปนี้โดนเผาแล้ว !",
+                              style: TextStyle(
+                                  fontSize: s54,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    )),
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: GestureDetector(
+                    child: Container(
+                      width: screenWidthDp / 16,
+                      height: screenWidthDp / 16,
+                      decoration: BoxDecoration(
+                          color: Color(0xff000000).withOpacity(0.47),
+                          borderRadius:
+                              BorderRadius.circular(screenWidthDp / 18)),
+                      child: Icon(Icons.close, color: Colors.white, size: s42),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: screenWidthDp / 21),
+          SizedBox(height: screenWidthDp / 42),
+          Divider(color: Color(0xff5D5D5D), thickness: 1.2),
+          SizedBox(height: screenWidthDp / 46),
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 36),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'กระดาษแผ่นนี้ถูกเผาแล้ว🔥',
+                    style: TextStyle(color: Colors.white, fontSize: s46),
+                  ),
+                  GestureDetector(
+                    child: iconWithLabel('ต่อไป',
+                        iconColor: Color(0xff000000), icon: Icons.forward),
+                    onTap: onNext,
+                  ),
+                ],
+              )),
+          SizedBox(height: screenWidthDp / 36),
+          Expanded(
+            child: AdmobBanner(
+                adUnitId: AdmobService().getBannerAdId(),
+                adSize: AdmobBannerSize.FULL_BANNER),
+          )
+        ]);
   }
 
   void showMore(context, {@required DocumentSnapshot scrap}) {
