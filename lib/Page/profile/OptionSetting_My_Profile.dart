@@ -1021,11 +1021,20 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                   ],
                                 ),
                               ),
-                              onTap: () {
+                              onTap: () async {
                                 if (_key.currentState.validate()) {
+                                  setting.loading.add(true);
                                   _key.currentState.save();
-                                  setting.updateProfile(context,
-                                      id: id, status: status, image: image);
+                                  if (id != user.id) {
+                                    await authService.hasAccount('id', id)
+                                        ? toast.toast('ไอดีนี้มีคนใช้แล้ว')
+                                        : setting.updateProfile(context,
+                                            id: id,
+                                            status: status,
+                                            image: image);
+                                  } else
+                                    setting.updateProfile(context,
+                                        id: id, status: status, image: image);
                                 }
                               },
                             )
