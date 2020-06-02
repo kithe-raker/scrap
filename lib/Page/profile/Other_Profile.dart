@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -13,6 +14,7 @@ import 'package:scrap/function/follows/FollowsFunction.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
@@ -262,7 +264,9 @@ class _OtherProfileState extends State<OtherProfile> {
               Positioned(
                   bottom: 0,
                   child: Container(
-                    child: Ads(),
+                    child: AdmobBanner(
+                        adUnitId: AdmobService().getBannerAdId(),
+                        adSize: AdmobBannerSize.FULL_BANNER),
                   )),
               loading ? Loading() : SizedBox()
             ],
@@ -468,44 +472,103 @@ class _OtherProfileState extends State<OtherProfile> {
         ]));
   }
 
+  Widget checkValue(trans) {
+    // < K
+    if (trans < 1000 && trans >= 0) {
+      return Container(
+        child: Text(
+          '${trans.floor()}',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+    // K <= value < M
+    else if (trans < 10000) {
+      return Container(
+        child: Text(
+          '${(trans / 1000).toStringAsFixed(2)}K',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+    // 10K
+    else if (trans < 100000) {
+      return Container(
+        child: Text(
+          '${(trans / 1000).toStringAsFixed(1)}K',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    } else if (trans < 1000000) {
+      return Container(
+        child: Text(
+          '${(trans ~/ 1000)}K',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+    // >= M
+    else {
+      return Container(
+        child: Text(
+          '${(trans / 1000000).toStringAsFixed(2)}M',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+  }
+
   Widget dataProfile(String name, String uid, {@required String field}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        FutureBuilder(
-            future: futureTransaction(uid, field),
-            builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-              if (snapshot.hasData) {
-                var trans = snapshot.data.value;
-                return Text(
-                  '${trans.floor()}',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: s70 * 1.2,
-                      fontWeight: FontWeight.bold),
-                );
-              } else {
-                return Text(
-                  '0',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: s70 * 1.2,
-                      fontWeight: FontWeight.bold),
-                );
-              }
-            }),
-        Container(
-          child: Text(
-            name,
-            style: TextStyle(
-              height: 0.21,
-              color: Color(0xfff727272),
-              fontWeight: FontWeight.bold,
-              fontSize: s36,
+    return SizedBox(
+      width: screenWidthDp / 5.2,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          FutureBuilder(
+              future: futureTransaction(uid, field),
+              builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  var trans = snapshot.data.value;
+                  return Container(
+                      height: screenWidthDp / 6, child: checkValue(trans));
+                } else {
+                  return Text(
+                    '0',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: s70 * 1.2,
+                        fontWeight: FontWeight.bold),
+                  );
+                }
+              }),
+          Container(
+            child: Text(
+              name,
+              style: TextStyle(
+                height: 0.21,
+                color: Color(0xfff727272),
+                fontWeight: FontWeight.bold,
+                fontSize: s36,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -617,7 +680,9 @@ class _OtherProfileState extends State<OtherProfile> {
                 Positioned(
                     bottom: 0,
                     child: Container(
-                      child: Ads(),
+                      child: AdmobBanner(
+                          adUnitId: AdmobService().getBannerAdId(),
+                          adSize: AdmobBannerSize.FULL_BANNER),
                     )),
               ],
             ),

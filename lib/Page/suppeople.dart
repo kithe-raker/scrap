@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
@@ -478,8 +479,10 @@ class _SubpeopleState extends State<Subpeople> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Image.asset('assets/paper.png',
-              color: Colors.white60, height: screenHeightDp / 10),
+          SvgPicture.asset('assets/paper.svg',
+              color: Colors.white60,
+              height: screenWidthDp / 3.5,
+              fit: BoxFit.contain),
           Text(
             text,
             style: TextStyle(

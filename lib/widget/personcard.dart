@@ -41,7 +41,7 @@ class _PersonCardState extends State<PersonCard> {
     screenutilInit(context);
     Size a = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.only(left: a.width / 25),
+      padding: EdgeInsets.only(left: a.width / 25, right: a.width / 25),
       child: GestureDetector(
           child: Container(
             color: Colors.transparent,

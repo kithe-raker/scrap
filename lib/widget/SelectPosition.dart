@@ -198,8 +198,7 @@ class _SelectPositionState extends State<SelectPosition> {
   Future<void> _createMarkerImageFromAsset(BuildContext context) async {
     final ImageConfiguration imageConfiguration =
         createLocalImageConfiguration(context);
-    BitmapDescriptor.fromAssetImage(
-            imageConfiguration, 'assets/yourlocation-icon-l.png')
+    BitmapDescriptor.fromAssetImage(imageConfiguration, 'assets/pinsmall.png')
         .then(_updateBitmap);
   }
 

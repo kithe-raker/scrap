@@ -478,7 +478,13 @@ class _ScrapDialogState extends State<ScrapDialog> {
                     ),
                   ),
                 ),
-                Positioned(bottom: 0, child: Container(child: Ads())),
+                Positioned(
+                    bottom: 0,
+                    child: Container(
+                      child: AdmobBanner(
+                          adUnitId: AdmobService().getBannerAdId(),
+                          adSize: AdmobBannerSize.FULL_BANNER),
+                    )),
               ],
             ),
           );

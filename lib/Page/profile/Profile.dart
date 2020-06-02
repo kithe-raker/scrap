@@ -134,6 +134,7 @@ class _ProfileState extends State<Profile> {
     final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     Size a = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -588,11 +589,72 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+  Widget checkValue(trans) {
+    // < K
+    if (trans < 1000 && trans >= 0) {
+      return Container(
+        child: Text(
+          '${trans.floor()}',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+    // K <= value < M
+    else if (trans < 10000) {
+      return Container(
+        child: Text(
+          '${(trans / 1000).toStringAsFixed(2)}K',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+    // 10K
+    else if (trans < 100000) {
+      return Container(
+        child: Text(
+          '${(trans / 1000).toStringAsFixed(1)}K',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    } else if (trans < 1000000) {
+      return Container(
+        child: Text(
+          '${(trans ~/ 1000)}K',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+    // >= M
+    else {
+      return Container(
+        child: Text(
+          '${(trans / 1000000).toStringAsFixed(2)}M',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: s70 * 1.2,
+              fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+  }
+
   //ข้อมูลผู้ใช้
 //name = [เก็บไว้, คนให้ความสนใจ, โดนปาใส่]
   Widget dataProfile(String name, String uid, {@required String field}) {
     return SizedBox(
-      width: screenWidthDp / 5.4,
+      width: screenWidthDp / 5.2,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -601,13 +663,8 @@ class _ProfileState extends State<Profile> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   var trans = snapshot.data.snapshot.value;
-                  return Text(
-                    '${trans.floor()}',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: s70 * 1.2,
-                        fontWeight: FontWeight.bold),
-                  );
+                  return Container(
+                      height: screenWidthDp / 6, child: checkValue(trans));
                 } else {
                   return Text(
                     '0',

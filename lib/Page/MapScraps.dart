@@ -630,7 +630,9 @@ class _MapScrapsState extends State<MapScraps> {
                 Positioned(
                     bottom: 0,
                     child: Container(
-                      child: Ads(),
+                      child: AdmobBanner(
+                          adUnitId: AdmobService().getBannerAdId(),
+                          adSize: AdmobBannerSize.FULL_BANNER),
                     )),
               ],
             ),
@@ -1162,8 +1164,11 @@ class _MapScrapsState extends State<MapScraps> {
     if (scrapIcon == null) {
       final ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context);
-      BitmapDescriptor.fromAssetImage(imageConfiguration,
-              checkPlatform ? 'assets/new-paper.svg' : 'assets/new-paper.svg')
+      BitmapDescriptor.fromAssetImage(
+              imageConfiguration,
+              checkPlatform
+                  ? 'assets/paper-small.png'
+                  : 'assets/paper-small.png')
           .then(_updateBitScrap);
     }
   }
