@@ -102,37 +102,41 @@ class _OTPScreenState extends State<OTPScreen> {
                   },
                 ),
                 SizedBox(height: screenHeightDp / 4.6),
-                GestureDetector(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Text(
-                          'มีไอดี\tSCRAP.',
-                          style: TextStyle(
-                              //decoration: TextDecoration.underline,
-                              color: Colors.white,
-                              fontSize: s52,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        /* Image.asset(
+                widget.edit
+                    ? SizedBox()
+                    : GestureDetector(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              'มีไอดี\tSCRAP.',
+                              style: TextStyle(
+                                  //decoration: TextDecoration.underline,
+                                  color: Colors.white,
+                                  fontSize: s52,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            /* Image.asset(
                           'assets/scrapmini.png',
                           scale: s10 / 2,
                         ),*/
-                        Text(
-                          '\tแล้ว',
-                          style: TextStyle(
-                              //decoration: TextDecoration.underline,
-                              color: Colors.white,
-                              fontSize: s52,
-                              fontWeight: FontWeight.w600),
+                            Text(
+                              '\tแล้ว',
+                              style: TextStyle(
+                                  //decoration: TextDecoration.underline,
+                                  color: Colors.white,
+                                  fontSize: s52,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => LoginID()));
-                    }),
+                        onTap: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginID()));
+                        }),
                 SizedBox(height: screenHeightDp / 12)
               ],
             ),

@@ -210,6 +210,27 @@ class AuthenService {
       warn('ไม่พบบัญชีดังกล่าว');
   }
 
+  changePassword(BuildContext context,
+      {@required String newPassword, @required String oldPassword}) async {
+    var acc = await fireAuth.currentUser();
+    final user = Provider.of<UserData>(context, listen: false);
+    var doc = await fireStore.collection('Account').document(user.uid).get();
+    if (oldPassword == doc['password']) {
+      var emailProv = EmailAuthProvider.getCredential(
+          email: '${user.uid}@gmail.com', password: oldPassword);
+      await acc.reauthenticateWithCredential(emailProv);
+      await acc.updatePassword(newPassword);
+      await fireStore
+          .collection('Account')
+          .document(user.uid)
+          .updateData({'password': newPassword});
+      loading.add(false);
+      nav.pushReplacement(context, HomePage());
+    } else {
+      warn('ตรวจสอบรหัสผ่านเก่าของคุณ');
+    }
+  }
+
   Future<void> setAccount(BuildContext context,
       {@required DateTime birthday, @required String gender}) async {
     loading.add(true);

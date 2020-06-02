@@ -57,7 +57,6 @@ class _CreateProfile1State extends State<CreateProfile1> {
     Size scr = MediaQuery.of(context).size;
     screenutilInit(context);
     final user = Provider.of<UserData>(context, listen: false);
-
     return WillPopScope(
       onWillPop: () => null,
       child: Scaffold(
