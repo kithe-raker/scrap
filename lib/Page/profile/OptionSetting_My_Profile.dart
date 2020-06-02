@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
+import 'package:scrap/Page/setting/ChangePassword.dart';
 import 'package:scrap/Page/setting/ChangePhone.dart';
 import 'package:scrap/function/aboutUser/ReportApp.dart';
 import 'package:scrap/function/aboutUser/SettingFunction.dart';
@@ -967,24 +968,28 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                     },
                                   ),
                                   SizedBox(height: appBarHeight / 9),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.lock,
-                                        color: Colors.white,
-                                        size: s52,
+                                  GestureDetector(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.lock,
+                                            color: Colors.white,
+                                            size: s52,
+                                          ),
+                                          Text(
+                                            ' เปลี่ยนรหัสผ่าน',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: s42,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        ' เปลี่ยนรหัสผ่าน',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: s42,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                      onTap: () =>
+                                          nav.push(context, ChangePassword())),
                                 ],
                               ),
                             ),
