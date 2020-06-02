@@ -1162,11 +1162,8 @@ class _MapScrapsState extends State<MapScraps> {
     if (scrapIcon == null) {
       final ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context);
-      BitmapDescriptor.fromAssetImage(
-              imageConfiguration,
-              checkPlatform
-                  ? 'assets/paper-small.png'
-                  : 'assets/paper-small.png')
+      BitmapDescriptor.fromAssetImage(imageConfiguration,
+              checkPlatform ? 'assets/new-paper.svg' : 'assets/new-paper.svg')
           .then(_updateBitScrap);
     }
   }
