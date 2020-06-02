@@ -6,6 +6,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -27,6 +28,16 @@ import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+// stateless  ที่ทำให้ อ่าน webview ได้ [plugin webview]
+// มันจะพาไปหน้า ที่ เราใส่แค่ url
+// ใช้ navigator ไปยัง url เลย
+// ex.   Navigator.of(context).push(MaterialPageRoute(
+//ฟังก์ชั่นส่งไปยัง MyWebView ซึ่งเป็น stl less มาจาก plugin webview
+// builder: (BuildContext context) => MyWebView(
+//       title: name,
+//       selectedUrl: url,
+//     )));
 
 class MyWebView extends StatelessWidget {
   final String title;
@@ -53,10 +64,6 @@ class MyWebView extends StatelessWidget {
   Widget build(BuildContext context) {
     screenutilInit(context);
     return Scaffold(
-        /*  appBar: AppBar(
-          title: Text(title),
-        ),*/
-        //appbar_ListOptionSetting(context,Icons.block, ' '),
         body: SafeArea(
             child: Stack(
       children: <Widget>[
@@ -84,11 +91,6 @@ void showPopup(BuildContext context) {
                 Container(
                   height: screenHeightDp / 2,
                   width: screenWidthDp / 1.1,
-                  /*   decoration: BoxDecoration(
-                    //  color: Color(0xff1a1a1a),
-                    /* color: Colors.black,
-                  borderRadius: BorderRadius.circular(5),*/
-                    ),*/
                   child: Container(
                     child: Scaffold(
                       backgroundColor: Colors.transparent,
@@ -279,12 +281,46 @@ class _OptionSettingState extends State<OptionSetting> {
     super.dispose();
   }
 
+// ตัวให้ logout
+  Widget logout() {
+    return FlatButton(
+        onPressed: () {
+          authService.signOut(context);
+        },
+        child: Container(
+          margin: EdgeInsets.only(
+              left: appBarHeight / 100, bottom: appBarHeight / 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.exit_to_app,
+                    color: Colors.white,
+                    size: s60,
+                  ),
+                  SizedBox(
+                    width: screenWidthDp / 50,
+                  ),
+                  Text(
+                    'ออกจากระบบ',
+                    style: TextStyle(color: Colors.white, fontSize: s52),
+                  )
+                ],
+              ),
+              SizedBox()
+            ],
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
+    Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      //resizeToAvoidBottomPadding: false,
       body: SafeArea(
         child: Stack(
           children: [
@@ -293,157 +329,67 @@ class _OptionSettingState extends State<OptionSetting> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-                    //mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       appbarOptionSetting(context),
-                      SizedBox(height: appBarHeight / 8),
+                      SizedBox(height: screenWidthDp / 15),
                       list_OptionSetting(context, Icons.face,
-                          ' จัดการบัญชีของฉัน', Manage_MyProfile()),
+                          'จัดการบัญชีของฉัน', Manage_MyProfile()),
                       list_OptionSetting(context, Icons.history,
-                          ' ประวัติการเขียนสแครป', HistoryScrap()),
+                          'ประวัติการเขียนสแครป', HistoryScrap()),
+                      //ไปยัง เว็บ ข้อกำหนดการให้บริการ
                       list_OptionSettingweb(
                           context,
                           Icons.description,
-                          ' ข้อกำหนดการให้บริการ',
+                          'ข้อกำหนดการให้บริการ',
                           'https://scrap.bualoitech.com/termsofservice-and-policy.html#term'),
-                      /*  list_OptionSettingweb(
-                          context,
-                          Icons.extension,
-                          ' อธิบายฟีเจอร์',
-                          'https://scrap.bualoitech.com/termsofservice-and-policy.html#term'), */ // null
-                      /* list_OptionSetting(context, Icons.extension,
-                          ' อธิบายฟีเจอร์', ComingSoon()),*/
-                      /* list_OptionSetting(context, Icons.markunread,
-                          ' สารจากผู้พัฒนา', ComingSoon()),*/
+                      //ไปยัง เว็บ สารจากผู้พัฒนา
                       list_OptionSettingweb(
                           context,
                           Icons.markunread,
-                          ' สารจากผู้พัฒนา',
+                          'สารจากผู้พัฒนา',
                           'https://scrap.bualoitech.com/massage-from-us.html'),
                       list_OptionSetting(context, Icons.bug_report,
-                          ' แจ้งปัญหาระบบ', ReportToScrap_MyProfile()),
+                          'แจ้งปัญหาระบบ', ReportToScrap_MyProfile()),
                       list_OptionSetting(context, Icons.block,
-                          ' ประวัติการบล็อค', BlockUser_MyProfile()),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ComingSoon()));
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(left: appBarHeight / 10),
-                          /*   margin: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          //vertical: 5,
-                        ),*/
-                          margin: EdgeInsets.only(
-                              left: appBarHeight / 100,
-                              bottom: appBarHeight / 4),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                      width: appBarHeight / 1.6,
-                                      child: Image.asset(
-                                        'assets/bualoi.png',
-                                        scale: 5,
-                                      )),
-                                  Text(
-                                    'เกี่ยวกับ Bualoitech Co.,Ltd.',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: s52),
-                                  )
-                                ],
-                              ),
-                              Container(
-                                margin:
-                                    EdgeInsets.only(right: appBarHeight) / 5,
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.white,
-                                  size: s42,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                          'ประวัติการบล็อค', BlockUser_MyProfile()),
                       //ออกจากระบบ
-                      GestureDetector(
-                        child: Container(
-                            padding: EdgeInsets.only(left: appBarHeight / 10),
-                            margin: EdgeInsets.only(
-                                left: appBarHeight / 100,
-                                bottom: appBarHeight / 4),
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: appBarHeight / 1.5,
-                                          child: Icon(
-                                            Icons.exit_to_app,
-                                            color: Colors.white,
-                                            size: s60,
-                                          ),
-                                        ),
-                                        Text(
-                                          'ออกจากระบบ',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: s52),
-                                        )
-                                      ])
-                                ])),
-                        onTap: () {
-                          authService.signOut(context);
-                        },
+                      logout(),
+                      //ระยะห่างจาก ออกจากระบบ ถึง scrap version บลาๆๆๆ
+                      SizedBox(
+                        height: screenWidthDp / 5,
+                      ),
+                      // ไฟล์ svg ชัดกว่า png,jpg
+                      Container(
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              child: ClipRRect(
+                                  child: SvgPicture.asset(
+                                      'assets/scraplogofinal.svg',
+                                      width: a.width / 4,
+                                      fit: BoxFit.contain)),
+                              onTap: () async {
+                                await FirebaseAuth.instance.signOut();
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginPage()));
+                              },
+                            ),
+                            Text(
+                              'version 2.0.1\n\n',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: s42),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  /* SizedBox(
-                  height: appBarHeight * 1,
-                ),*/
                 ],
               ),
             ),
             loading ? Loading() : SizedBox(),
-            Positioned(
-              bottom: screenWidthDp / 20,
-              child: Container(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      child: ClipRRect(
-                        child: Image.asset(
-                          'assets/scrapmini.png',
-                          //scale: appBarHeight / 5,
-                        ),
-                      ),
-                      onTap: () async {
-                        await FirebaseAuth.instance.signOut();
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
-                      },
-                    ),
-                    Text(
-                      'version 2.0.1\n\n',
-                      style: TextStyle(color: Colors.white, fontSize: s42),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -451,17 +397,12 @@ class _OptionSettingState extends State<OptionSetting> {
   }
 }
 
+// appbar ที่หน้า optionsetting
 Widget appbarOptionSetting(BuildContext context) {
   return Container(
     height: appBarHeight / 1.42,
     width: screenWidthDp,
     color: Colors.black,
-    /* padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
-      ),*/
-    /*padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
-      ),*/
     padding: EdgeInsets.symmetric(
       horizontal: screenWidthDp / 21,
     ),
@@ -474,43 +415,6 @@ Widget appbarOptionSetting(BuildContext context) {
             onTap: () {
               Navigator.pop(context);
             }),
-        GestureDetector(
-            child: Icon(
-              Icons.more_horiz,
-              color: Colors.white,
-              size: s65,
-            ),
-            onTap: () {
-              //showButtonSheet(context);
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => OptionSetting()));
-            }),
-      ],
-    ),
-  ) /*Container(
-    height: appBarHeight / 1.35,
-    width: screenWidthDp,
-    /* margin: EdgeInsets.symmetric(
-      horizontal: screenWidthDp / 100,
-    ),*/
-    //padding: EdgeInsets.only(top: appBarHeight / 1.35),
-    margin: EdgeInsets.symmetric(
-      horizontal: screenWidthDp / 21,
-    ),
-    // EdgeInsets.only(left: screenWidthDp / 100, bottom: appBarHeight / 2.5),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-              size: s60,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
         Text(
           'การตั้งค่า',
           style: TextStyle(
@@ -519,22 +423,15 @@ Widget appbarOptionSetting(BuildContext context) {
             fontWeight: FontWeight.bold,
           ),
         ),
-        IconButton(
-          icon: Icon(
-            Icons.more_horiz,
-            //color: Colors.white,
-          ),
-          onPressed: null,
-        ),
+        SizedBox(),
       ],
     ),
-  )*/
-      ;
+  );
 }
 
 // list_OptionSetting เป็น Widget ที่แสดงลิสต์ต่างๆในการตั้งค่า
 // (context , ชื่อicon, ชื่อการตั้งค่า, หน้าstatefulที่หลังจากกด)
-//  หน้า stateful บางหน้าที่เป็น web view จะเชื่อมต่อไปหน้า stateful ที่ชื่อ ComingSoon()
+
 Widget list_OptionSetting(context, icon, name, stateful) {
   return FlatButton(
       onPressed: () {
@@ -554,6 +451,9 @@ Widget list_OptionSetting(context, icon, name, stateful) {
                   color: Colors.white,
                   size: s60,
                 ),
+                SizedBox(
+                  width: screenWidthDp / 50,
+                ),
                 Text(
                   name,
                   style: TextStyle(color: Colors.white, fontSize: s52),
@@ -571,12 +471,14 @@ Widget list_OptionSetting(context, icon, name, stateful) {
 }
 
 //webview
+
+// list_OptionSettingweb เป็น Widget ที่แสดงลิสต์ที่มากจากเว็บในการตั้งค่า
+// (context , ชื่อicon, ชื่อการตั้งค่า, url )
 Widget list_OptionSettingweb(context, iconweb, String name, String url) {
   return FlatButton(
       onPressed: () {
-        /*  Navigator.push(
-            context, MaterialPageRoute(builder: (context) => stateful));*/
         Navigator.of(context).push(MaterialPageRoute(
+            //ฟังก์ชั่นส่งไปยัง MyWebView ซึ่งเป็น stl less มาจาก plugin webview
             builder: (BuildContext context) => MyWebView(
                   title: name,
                   selectedUrl: url,
@@ -594,6 +496,9 @@ Widget list_OptionSettingweb(context, iconweb, String name, String url) {
                   iconweb,
                   color: Colors.white,
                   size: s60,
+                ),
+                SizedBox(
+                  width: screenWidthDp / 50,
                 ),
                 Text(
                   name,
@@ -617,12 +522,6 @@ Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
     height: appBarHeight / 1.42,
     width: screenWidthDp,
     color: Colors.black,
-    /* padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
-      ),*/
-    /*padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
-      ),*/
     padding: EdgeInsets.symmetric(
       horizontal: screenWidthDp / 21,
     ),
@@ -643,6 +542,7 @@ Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
             fontWeight: FontWeight.bold,
           ),
         ),
+        // เปลี่ยนเป็น sizedbox ก็ได้
         GestureDetector(
             child: Icon(
               Icons.more_horiz,
@@ -650,58 +550,11 @@ Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
               size: s65,
             ),
             onTap: () {
-              //showButtonSheet(context);
+              // null only
             }),
       ],
     ),
   );
-  /*Container(
-    height: appBarHeight / 1.42,
-    width: screenWidthDp,
-    /* margin: EdgeInsets.symmetric(
-      horizontal: screenWidthDp / 100,
-    ),*/
-    padding: EdgeInsets.symmetric(
-      horizontal: screenWidthDp / 21,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-              size: s60,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
-        Row(
-          children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: s60,
-            ),
-            Text(
-              name,
-              style: TextStyle(
-                fontSize: s52,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        IconButton(
-            icon: Icon(
-              Icons.more_horiz,
-              //color: Colors.white,
-            ),
-            onPressed: null),
-      ],
-    ),
-  );*/
 }
 
 //หน้า จัดการบัญชีของฉัน
@@ -955,8 +808,11 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                             color: Colors.white,
                                             size: s52,
                                           ),
+                                          SizedBox(
+                                            width: screenWidthDp / 50,
+                                          ),
                                           Text(
-                                            ' เปลี่ยนเบอร์โทรศัพท์',
+                                            'เปลี่ยนเบอร์โทรศัพท์',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: s42,
@@ -978,8 +834,11 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                             color: Colors.white,
                                             size: s52,
                                           ),
+                                          SizedBox(
+                                            width: screenWidthDp / 50,
+                                          ),
                                           Text(
-                                            ' เปลี่ยนรหัสผ่าน',
+                                            'เปลี่ยนรหัสผ่าน',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: s42,

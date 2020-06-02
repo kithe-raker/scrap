@@ -758,7 +758,9 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                 Positioned(
                     bottom: 0,
                     child: Container(
-                      child: Ads(),
+                      child: AdmobBanner(
+                          adUnitId: AdmobService().getBannerAdId(),
+                          adSize: AdmobBannerSize.FULL_BANNER),
                     )),
               ],
             ),

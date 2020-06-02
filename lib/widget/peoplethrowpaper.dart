@@ -1,10 +1,12 @@
 import 'dart:ui';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Ads.dart';
@@ -226,7 +228,13 @@ class _PaperstrangerState extends State<Paperstranger> {
                         ),
                       ),
               ]),
-              Positioned(bottom: 0, child: Container(child: Ads())),
+              Positioned(
+                  bottom: 0,
+                  child: Container(
+                    child: AdmobBanner(
+                        adUnitId: AdmobService().getBannerAdId(),
+                        adSize: AdmobBannerSize.FULL_BANNER),
+                  )),
             ],
           ),
         ));
@@ -339,7 +347,13 @@ class _PaperstrangerState extends State<Paperstranger> {
                     ),
                   ),
                 ),
-                Positioned(bottom: 0, child: Container(child: Ads())),
+                Positioned(
+                    bottom: 0,
+                    child: Container(
+                      child: AdmobBanner(
+                          adUnitId: AdmobService().getBannerAdId(),
+                          adSize: AdmobBannerSize.FULL_BANNER),
+                    )),
               ],
             ),
           );

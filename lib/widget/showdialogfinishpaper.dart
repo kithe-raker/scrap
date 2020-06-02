@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:admob_flutter/admob_flutter.dart';
+import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/Ads.dart';
 import 'package:flutter/material.dart';
 
@@ -151,7 +153,9 @@ void dialogfinishpaper(BuildContext context) {
                 Positioned(
                     bottom: 0,
                     child: Container(
-                      child: Ads(),
+                      child: AdmobBanner(
+                          adUnitId: AdmobService().getBannerAdId(),
+                          adSize: AdmobBannerSize.FULL_BANNER),
                     )),
               ],
             ),
