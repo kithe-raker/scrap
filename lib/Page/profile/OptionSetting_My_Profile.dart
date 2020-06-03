@@ -13,9 +13,11 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/setting/ChangePassword.dart';
 import 'package:scrap/Page/setting/ChangePhone.dart';
+import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/aboutUser/ReportApp.dart';
 import 'package:scrap/function/aboutUser/SettingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
@@ -1444,92 +1446,281 @@ class BlockUser_MyProfile extends StatefulWidget {
 }
 
 class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
-  Widget blockUser(username) {
-    return Container(
-      margin: EdgeInsets.only(
-        left: screenWidthDp / 20,
-        //top: 5,
-        bottom: 15,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                height: 55,
-                width: 55,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(screenHeightDp),
-                ),
-              ),
-              Text(
-                username,
-                style: TextStyle(
-                  fontSize: s42,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          FlatButton(
-            onPressed: () {},
-            child: Container(
-              width: appBarHeight * 1.2,
-              height: appBarHeight / 2.3,
-              padding: EdgeInsets.fromLTRB(appBarHeight / 20, appBarHeight / 20,
-                  appBarHeight / 120, appBarHeight / 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(screenHeightDp),
-              ),
-              child: Text(
-                'ปลดบล๊อค',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: s42,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  var controller = RefreshController();
+  var textGroup = AutoSizeGroup();
+  List blockedUid = [];
+  List<DocumentSnapshot> blocked = [], blockedScrap = [];
+  bool initBlocked = true, loading = false;
+  String dropdownValue = 'บัญชีที่ระบุตัวตน';
+
+  @override
+  void initState() {
+    initBlockedusers();
+    super.initState();
+  }
+
+  initBlockedusers() async {
+    blockedUid = await cacheFriends.getBlockedUser();
+    if (blockedUid.length > 0) {
+      var queryList = blockedUid.take(12).toList();
+      var docs = await fireStore
+          .collectionGroup('users')
+          .where('uid', whereIn: queryList)
+          .getDocuments();
+      blocked.addAll(docs.documents);
+      blockedUid.length < 12
+          ? blockedUid.clear()
+          : blockedUid.removeRange(0, 12);
+    }
+    setState(() => initBlocked = false);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    screenutilInit(context);
     return Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
           child: Stack(
             children: [
-              Positioned(
-                child: appbar_ListOptionSetting(
-                    context, Icons.block, ' ประวัติการบล็อค'),
-              ),
-              Positioned(
-                //top: appBarHeight / 1.35,
-                child: Container(
-                  padding: EdgeInsets.only(top: appBarHeight * 0.9),
-                  child: ListView(
-                    physics: BouncingScrollPhysics(),
-                    children: [
-                      blockUser(' @somename'),
-                      blockUser(' @somename'),
-                      blockUser(' @somename'),
-                      blockUser(' @somename'),
-                      blockUser(' @somename'),
-                    ],
-                  ),
-                ),
+              Positioned(child: appBar()),
+              Stack(
+                children: <Widget>[
+                  initBlocked
+                      ? Center(child: LoadNoBlur())
+                      : StatefulBuilder(
+                          builder: (context, StateSetter setList) {
+                          return Container(
+                              margin: EdgeInsets.only(top: appBarHeight * 0.9),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidthDp / 36),
+                              child: SmartRefresher(
+                                  enablePullDown: false,
+                                  controller: controller,
+                                  onLoading: () async {
+                                    var queryList =
+                                        blockedUid.take(12).toList();
+                                    if (queryList.length > 0) {
+                                      var docs = await fireStore
+                                          .collectionGroup('users')
+                                          .where('uid', whereIn: queryList)
+                                          .getDocuments();
+                                      blocked.addAll(docs.documents);
+                                      blockedUid.length < 12
+                                          ? blockedUid.clear()
+                                          : blockedUid.removeRange(0, 12);
+                                      setList(() {});
+                                      docs.documents.length > 0
+                                          ? controller.loadComplete()
+                                          : controller.loadNoData();
+                                    } else {
+                                      controller.loadNoData();
+                                    }
+                                  },
+                                  physics: BouncingScrollPhysics(),
+                                  child: dropdownValue == 'บัญชีที่ระบุตัวตน'
+                                      ? blocked.length > 0
+                                          ? Column(
+                                              children: blocked
+                                                  .map((doc) => blockUser(doc))
+                                                  .toList())
+                                          : Center(
+                                              child: guide(
+                                                  Size(screenWidthDp,
+                                                      screenHeightDp),
+                                                  'ไม่พบผู้ใช้ที่คุณบล็อคอยู่'),
+                                            )
+                                      : blockedScrap.length > 0
+                                          ? scrapGrid(blockedScrap)
+                                          : Center(
+                                              child: guide(
+                                                  Size(screenWidthDp,
+                                                      screenHeightDp),
+                                                  'ไม่พบผู้ใช้ที่คุณบล็อคอยู่'),
+                                            )));
+                        }),
+                  loading ? Loading() : SizedBox()
+                ],
               )
             ],
           ),
         ));
+  }
+
+  Widget appBar() {
+    final user = Provider.of<UserData>(context, listen: false);
+    return Container(
+      height: appBarHeight / 1.42,
+      width: screenWidthDp,
+      color: Colors.black,
+      padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          GestureDetector(
+              child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
+              onTap: () => Navigator.pop(context)),
+          DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                  dropdownColor: Colors.grey[900],
+                  value: dropdownValue,
+                  style: TextStyle(
+                      fontSize: s52,
+                      fontFamily: 'ThaiSans',
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.white,
+                  ),
+                  iconSize: s60,
+                  onChanged: (String newValue) async {
+                    if (newValue == 'บัญชีไม่ระบุตัวตน' &&
+                        blockedScrap.length < 1) {
+                      setState(() => initBlocked = true);
+                      var docs = await fireStore
+                          .collection(
+                              'Users/${user.region}/users/${user.uid}/blockedScraps')
+                          .orderBy('scrap.timeStamp', descending: true)
+                          .limit(8)
+                          .getDocuments();
+                      blockedScrap.addAll(docs.documents);
+                      dropdownValue = newValue;
+                      setState(() => initBlocked = false);
+                    } else
+                      setState(() => dropdownValue = newValue);
+                  },
+                  items: <String>['บัญชีที่ระบุตัวตน', 'บัญชีไม่ระบุตัวตน']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value,
+                            style:
+                                TextStyle(fontSize: s54, color: Colors.white)));
+                  }).toList())),
+          SizedBox()
+        ],
+      ),
+    );
+  }
+
+  Widget scrapGrid(List<DocumentSnapshot> docs) {
+    return GridView(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            mainAxisSpacing: screenWidthDp / 42,
+            crossAxisSpacing: screenWidthDp / 42,
+            childAspectRatio: 0.826,
+            crossAxisCount: 2),
+        children: docs.map((doc) => scrap(doc)).toList());
+  }
+
+  Widget scrap(DocumentSnapshot data) {
+    return Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/paperscrap.jpg'), fit: BoxFit.cover)),
+        child: Stack(children: <Widget>[
+          Center(
+              child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+            child: AutoSizeText(data['scrap']['text'],
+                textAlign: TextAlign.center,
+                group: textGroup,
+                style: TextStyle(fontSize: s46)),
+          )),
+          Positioned(
+            top: 0,
+            right: screenWidthDp / 108,
+            child: RaisedButton(
+              color: Colors.black,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(screenWidthDp / 54)),
+              child: Text(
+                'ปลดบล็อค',
+                style: TextStyle(
+                    fontSize: s36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              onPressed: () async {
+                setState(() => loading = true);
+                blockedScrap.remove(data);
+                await blocking.unBlockUser(context,
+                    otherUid: data['uid'], public: false);
+                setState(() => loading = false);
+              },
+            ),
+          )
+        ]));
+  }
+
+  Widget blockUser(DocumentSnapshot data) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
+      color: Colors.transparent,
+      width: screenWidthDp,
+      height: screenWidthDp / 5,
+      margin: EdgeInsets.only(bottom: screenWidthDp / 100),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                width: screenWidthDp / 6,
+                height: screenWidthDp / 6,
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(screenWidthDp),
+                    image: DecorationImage(
+                        image: NetworkImage(data['img']), fit: BoxFit.cover)),
+              ),
+              SizedBox(width: screenWidthDp / 30),
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("@${data['id']}",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenWidthDp / 18,
+                            fontWeight: FontWeight.bold)),
+                    Text(data['status'] ?? '',
+                        style: TextStyle(color: Colors.grey, fontSize: s38))
+                  ],
+                ),
+              )
+            ],
+          ),
+          RaisedButton(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(screenWidthDp / 42)),
+            child: Text(
+              'ปลดบล็อค',
+              style: TextStyle(fontSize: s46, fontWeight: FontWeight.bold),
+            ),
+            onPressed: () async {
+              setState(() => loading = true);
+              cacheFriends.unBlock(uid: data['uid']);
+              blocked.remove(data);
+              await blocking.unBlockUser(context,
+                  otherUid: data['uid'], public: true);
+              setState(() => loading = false);
+            },
+          )
+        ],
+      ),
+    );
   }
 }
 

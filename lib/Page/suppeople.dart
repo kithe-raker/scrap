@@ -19,8 +19,6 @@ import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/Page/allfollower.dart';
 import 'package:stream_transform/stream_transform.dart';
 
-import 'HomePage.dart';
-
 class Subpeople extends StatefulWidget {
   @override
   _SubpeopleState createState() => _SubpeopleState();

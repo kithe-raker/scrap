@@ -26,13 +26,17 @@ class _AllfollowerState extends State<Allfollower> {
 
   initFriends() async {
     friendsUid = await cacheFriends.getFollowing();
-    var queryList = friendsUid.take(12).toList();
-    var docs = await fireStore
-        .collectionGroup('users')
-        .where('uid', whereIn: queryList)
-        .getDocuments();
-    friends.addAll(docs.documents);
-    friendsUid.length < 12 ? friendsUid.clear() : friendsUid.removeRange(0, 12);
+    if (friendsUid.length > 0) {
+      var queryList = friendsUid.take(12).toList();
+      var docs = await fireStore
+          .collectionGroup('users')
+          .where('uid', whereIn: queryList)
+          .getDocuments();
+      friends.addAll(docs.documents);
+      friendsUid.length < 12
+          ? friendsUid.clear()
+          : friendsUid.removeRange(0, 12);
+    }
     setState(() => loading = false);
   }
 
