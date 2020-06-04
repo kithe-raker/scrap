@@ -53,13 +53,17 @@ class _GridFollowingState extends State<GridFollowing> {
             .once(),
         builder: (context, snapshot) {
           return GestureDetector(
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  height: screenWidthDp / 2.16 * 1.21,
-                  width: screenWidthDp / 2.16,
+            child: Container(
+              height: screenWidthDp / 2.16 * 1.21,
+              width: screenWidthDp / 2.16,
+              decoration: BoxDecoration(
                   color: Colors.white,
-                  child: Center(
+                  image: DecorationImage(
+                      image: AssetImage('assets/paperscrap.jpg'),
+                      fit: BoxFit.cover)),
+              child: Stack(
+                children: <Widget>[
+                  Center(
                       child: Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
@@ -68,30 +72,30 @@ class _GridFollowingState extends State<GridFollowing> {
                         group: textGroup,
                         style: TextStyle(fontSize: s46)),
                   )),
-                ),
-                snapshot.data?.value == null
-                    ? Container(
-                        margin: EdgeInsets.all(4),
-                        height: screenWidthDp / 2.16 * 1.21,
-                        width: screenWidthDp / 2.16,
-                        color: Colors.black38,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.whatshot,
-                                  size: 50, color: Color(0xffFF8F3A)),
-                              Text('ถูกเผาแล้ว',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: s48)),
-                            ]))
-                    : SizedBox(),
-                snapshot.data?.value != null
-                    ? Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: commentTransactionBox(a, snapshot.data.value))
-                    : SizedBox(),
-              ],
+                  snapshot.hasData && snapshot.data?.value == null
+                      ? Container(
+                          margin: EdgeInsets.all(4),
+                          height: screenWidthDp / 2.16 * 1.21,
+                          width: screenWidthDp / 2.16,
+                          color: Colors.black38,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.whatshot,
+                                    size: 50, color: Color(0xffFF8F3A)),
+                                Text('ถูกเผาแล้ว',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: s48)),
+                              ]))
+                      : SizedBox(),
+                  snapshot.data?.value != null
+                      ? Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: commentTransactionBox(a, snapshot.data.value))
+                      : SizedBox(),
+                ],
+              ),
             ),
             onTap: snapshot.data?.value == null
                 ? null
@@ -118,7 +122,7 @@ class _GridFollowingState extends State<GridFollowing> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text('$comments',
+              Text('${comments.abs()}',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
