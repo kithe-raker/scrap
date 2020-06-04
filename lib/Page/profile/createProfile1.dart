@@ -266,7 +266,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
   Widget next() {
     final user = Provider.of<UserData>(context, listen: false);
     Size scr = MediaQuery.of(context).size;
-    if (password != '' && id != '' && image != null) {
+    if (password != '' && id != '' && image != null || user.id != null) {
       return Container(
         child: GestureDetector(
           child: Container(
