@@ -52,17 +52,17 @@ class AuthenService {
     var docs = await getDocuments('phone', user.phone);
     user.region = 'th';
     userinfo.initSignIn(region: 'th', phone: user.phone);
-    await phoneVerified(context);
     if (docs.documentChanges.length > 0) {
       var userDoc = docs.documents[0];
       user.region = userDoc['region'];
-      nav.push(context, OTPScreen());
+      await phoneVerified(context);
     } else {
-      nav.push(context, OTPScreen(register: true));
+      await phoneVerified(context, register: true);
     }
   }
 
-  changePhoneNumber(BuildContext context, {@required String otp}) async {
+  changePhoneNumber(BuildContext context,
+      {String otp, AuthCredential credential}) async {
     try {
       loading.add(true);
       final user = Provider.of<UserData>(context, listen: false);
@@ -70,8 +70,10 @@ class AuthenService {
       var acc = await fireAuth.currentUser();
       var emailProvider = EmailAuthProvider.getCredential(
           email: '${user.uid}@gmail.com', password: doc['password']);
-      var phoneProvider = PhoneAuthProvider.getCredential(
-          verificationId: user.verifiedId, smsCode: otp);
+      var phoneProvider = credential == null
+          ? PhoneAuthProvider.getCredential(
+              verificationId: user.verifiedId, smsCode: otp)
+          : credential;
       await acc.reauthenticateWithCredential(emailProvider);
       await acc.updatePhoneNumberCredential(phoneProvider);
       await userinfo.updateInfo({'phone': user.phone});
@@ -97,7 +99,8 @@ class AuthenService {
     }
   }
 
-  Future<void> phoneVerified(BuildContext context) async {
+  Future<void> phoneVerified(BuildContext context,
+      {bool register = false, bool edit = false}) async {
     final user = Provider.of<UserData>(context, listen: false);
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {};
     final PhoneCodeSent smsCode = (String id, [int resendCode]) {
@@ -105,7 +108,15 @@ class AuthenService {
       loading.add(false);
     };
     final PhoneVerificationCompleted success = (AuthCredential credent) async {
-      user.verifiedId != null ? print('use OTP') : print('succese');
+      if (user.verifiedId == null) {
+        register
+            ? signUpWithPhone(context, credential: credent)
+            : edit
+                ? changePhoneNumber(context, credential: credent)
+                : signInWithPhone(context, credential: credent);
+      } else {
+        nav.push(context, OTPScreen(register: register, edit: edit));
+      }
     };
     PhoneVerificationFailed failed = (AuthException error) {
       warn('เกิดข้อผิดพลาดกรุณาลองใหม่');
@@ -126,12 +137,14 @@ class AuthenService {
   }
 
   Future<void> signUpWithPhone(BuildContext context,
-      {@required String smsCode}) async {
+      {String smsCode, AuthCredential credential}) async {
     try {
       final user = Provider.of<UserData>(context, listen: false);
       loading.add(true);
-      var phoneCredent = PhoneAuthProvider.getCredential(
-          verificationId: user.verifiedId, smsCode: smsCode);
+      var phoneCredent = credential == null
+          ? PhoneAuthProvider.getCredential(
+              verificationId: user.verifiedId, smsCode: smsCode)
+          : credential;
 
       var curUser = await fireAuth.signInWithCredential(phoneCredent);
       user.uid = curUser.user.uid;
@@ -157,12 +170,15 @@ class AuthenService {
     }
   }
 
-  signInWithPhone(BuildContext context, {@required String smsCode}) async {
+  signInWithPhone(BuildContext context,
+      {String smsCode, AuthCredential credential}) async {
     try {
       final userData = Provider.of<UserData>(context, listen: false);
       loading.add(true);
-      var credent = PhoneAuthProvider.getCredential(
-          verificationId: userData.verifiedId, smsCode: smsCode);
+      var credent = credential == null
+          ? PhoneAuthProvider.getCredential(
+              verificationId: userData.verifiedId, smsCode: smsCode)
+          : credential;
       var curUser = await fireAuth.signInWithCredential(credent);
       var uid = curUser.user.uid;
       userData.uid = uid;

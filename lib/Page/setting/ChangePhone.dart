@@ -186,8 +186,7 @@ class _ChangePhoneState extends State<ChangePhone> {
       toast.toast('เบอร์นี้ได้ลงทะเบียนไว้แล้ว');
       authService.loading.add(false);
     } else {
-      await authService.phoneVerified(context);
-      nav.push(context, OTPScreen(edit: true));
+      await authService.phoneVerified(context, edit: true);
     }
   }
 }
