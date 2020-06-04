@@ -52,7 +52,7 @@ class _LoginIDState extends State<LoginID> {
                         "เข้าสู่ระบบด้วยไอดี",
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: s70,
+                            fontSize: s60,
                             fontFamily: 'ThaiSans',
                             fontWeight: FontWeight.bold),
                       ),
@@ -233,8 +233,9 @@ class _LoginIDState extends State<LoginID> {
                             Text(
                               ' เข้าสู่ระบบด้วยเบอร์โทรศัพท์',
                               style: TextStyle(
+                                  decoration: TextDecoration.underline,
                                   color: Colors.white,
-                                  fontSize: s54,
+                                  fontSize: s52,
                                   fontWeight: FontWeight.bold),
                             ),
                           ],

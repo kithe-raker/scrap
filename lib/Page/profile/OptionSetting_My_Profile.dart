@@ -65,15 +65,16 @@ class MyWebView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
-    return Scaffold(
-        body: SafeArea(
-            child: Stack(
-      children: <Widget>[
-        Container(
-            padding: EdgeInsets.only(top: appBarHeight / 1.5), child: web()),
-        appbar_ListOptionSetting(context, Icons.web, title),
-      ],
-    )));
+    return SafeArea(
+      child: Scaffold(
+          body: Stack(
+        children: <Widget>[
+          Container(
+              padding: EdgeInsets.only(top: appBarHeight / 1.5), child: web()),
+          appbar_ListOptionSetting(context, Icons.web, title),
+        ],
+      )),
+    );
   }
 }
 
@@ -425,7 +426,16 @@ Widget appbarOptionSetting(BuildContext context) {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(),
+        GestureDetector(
+            child: Icon(
+              Icons.more_horiz,
+              color: Colors.black,
+              size: s65,
+            ),
+            onTap: () {
+              // null only
+            }),
+        //SizedBox(),
       ],
     ),
   );
