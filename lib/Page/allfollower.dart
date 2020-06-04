@@ -7,12 +7,12 @@ import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/personcard.dart';
 
-class Allfollower extends StatefulWidget {
+class Allfollowing extends StatefulWidget {
   @override
-  _AllfollowerState createState() => _AllfollowerState();
+  _AllfollowingState createState() => _AllfollowingState();
 }
 
-class _AllfollowerState extends State<Allfollower> {
+class _AllfollowingState extends State<Allfollowing> {
   var controller = RefreshController();
   List friendsUid = [];
   List<DocumentSnapshot> friends = [];
@@ -117,16 +117,22 @@ class _AllfollowerState extends State<Allfollower> {
                                   onLoading: () async {
                                     var queryList =
                                         friendsUid.take(12).toList();
-                                    var docs = await fireStore
-                                        .collectionGroup('users')
-                                        .where('uid', whereIn: queryList)
-                                        .getDocuments();
-                                    friends.addAll(docs.documents);
-                                    friendsUid.length < 12
-                                        ? friendsUid.clear()
-                                        : friendsUid.removeRange(0, 12);
-                                    setList(() {});
-                                    controller.loadComplete();
+                                    if (queryList.length > 0) {
+                                      var docs = await fireStore
+                                          .collectionGroup('users')
+                                          .where('uid', whereIn: queryList)
+                                          .getDocuments();
+                                      friends.addAll(docs.documents);
+                                      friendsUid.length < 12
+                                          ? friendsUid.clear()
+                                          : friendsUid.removeRange(0, 12);
+                                      setList(() {});
+                                      docs.documents.length > 0
+                                          ? controller.loadComplete()
+                                          : controller.loadNoData();
+                                    } else {
+                                      controller.loadNoData();
+                                    }
                                   },
                                   physics: BouncingScrollPhysics(),
                                   child: Column(

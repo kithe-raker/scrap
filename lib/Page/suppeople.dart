@@ -356,7 +356,7 @@ class _SubpeopleState extends State<Subpeople> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Allfollower()));
+                                  builder: (context) => Allfollowing()));
                         })
                   ],
                 ),
