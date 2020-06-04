@@ -1,11 +1,132 @@
 import 'dart:async';
-
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+
+class MyWebView extends StatelessWidget {
+  final String title;
+  final String selectedUrl;
+
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
+
+  MyWebView({
+    @required this.title,
+    @required this.selectedUrl,
+  });
+
+// list_OptionSettingweb เป็น Widget ที่แสดงลิสต์ที่มากจากเว็บในการตั้งค่า
+// (context , ชื่อicon, ชื่อการตั้งค่า, url )
+  Widget list_OptionSettingweb(context, iconweb, String name, String url) {
+    return FlatButton(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              //ฟังก์ชั่นส่งไปยัง MyWebView ซึ่งเป็น stl less มาจาก plugin webview
+              builder: (BuildContext context) => MyWebView(
+                    title: name,
+                    selectedUrl: url,
+                  )));
+        },
+        child: Container(
+          margin: EdgeInsets.only(
+              left: appBarHeight / 100, bottom: appBarHeight / 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    iconweb,
+                    color: Colors.white,
+                    size: s60,
+                  ),
+                  SizedBox(
+                    width: screenWidthDp / 50,
+                  ),
+                  Text(
+                    name,
+                    style: TextStyle(color: Colors.white, fontSize: s52),
+                  )
+                ],
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white,
+                size: s42,
+              )
+            ],
+          ),
+        ));
+  }
+
+  Widget web() {
+    return WebView(
+      initialUrl: selectedUrl,
+      javascriptMode: JavascriptMode.unrestricted,
+      onWebViewCreated: (WebViewController webViewController) {
+        _controller.complete(webViewController);
+      },
+    );
+  }
+
+  Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
+    return Container(
+      height: appBarHeight / 1.42,
+      width: screenWidthDp,
+      color: Colors.black,
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidthDp / 21,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          GestureDetector(
+              child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
+              onTap: () {
+                Navigator.pop(context);
+              }),
+          Text(
+            '\t' + name,
+            style: TextStyle(
+              fontSize: s52,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          // เปลี่ยนเป็น sizedbox ก็ได้
+          GestureDetector(
+              child: Icon(
+                Icons.more_horiz,
+                color: Colors.black,
+                size: s65,
+              ),
+              onTap: () {
+                // null only
+              }),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    screenutilInit(context);
+    return Scaffold(
+        body: SafeArea(
+            child: Stack(
+      children: <Widget>[
+        Container(
+            padding: EdgeInsets.only(top: appBarHeight / 1.5), child: web()),
+        appbar_ListOptionSetting(context, Icons.web, title),
+      ],
+    )));
+  }
+}
 
 class CreateProfile2 extends StatefulWidget {
   @override
@@ -214,7 +335,16 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                     fontSize: s42,
                                     fontWeight: FontWeight.bold),
                               ),
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    //ฟังก์ชั่นส่งไปยัง MyWebView ซึ่งเป็น stl less มาจาก plugin webview
+                                    builder: (BuildContext context) =>
+                                        MyWebView(
+                                          title: "นโยบายและข้อกำหนด",
+                                          selectedUrl:
+                                              'https://scrap.bualoitech.com/termsofservice-and-policy.html',
+                                        )));
+                              },
                             ),
                           ],
                         ),
