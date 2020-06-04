@@ -27,8 +27,8 @@ class _LoadingState extends State<Loading> {
               ),
               Center(
                 child: Container(
-                  width: a.width / 3.6,
-                  height: a.width / 3.6,
+                  width: a.width / 4.2,
+                  height: a.width / 4.2,
                   decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.42),
                       borderRadius: BorderRadius.circular(12)),
