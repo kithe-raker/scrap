@@ -205,13 +205,16 @@ class _CreateProfile2State extends State<CreateProfile2> {
                                   fontSize: s42,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Text(
-                              'นโยบายและข้อกำหนด',
-                              style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  color: Color(0xfff26A4FF),
-                                  fontSize: s42,
-                                  fontWeight: FontWeight.bold),
+                            GestureDetector(
+                              child: Text(
+                                'นโยบายและข้อกำหนด',
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    color: Color(0xfff26A4FF),
+                                    fontSize: s42,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              onTap: () {},
                             ),
                           ],
                         ),
