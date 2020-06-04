@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/setting/blockingList.dart';
+import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/function/follows/FollowsFunction.dart';
@@ -17,7 +18,6 @@ import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:scrap/widget/Ads.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/dialog/ScrapDialog.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
@@ -178,9 +178,7 @@ class _OtherProfileState extends State<OtherProfile> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             followButton(),
-                            SizedBox(
-                              width: appBarHeight / 10,
-                            ),
+                            SizedBox(width: appBarHeight / 10),
                             throwButton()
                           ]),
                       Container(height: screenHeightDp / 40),
@@ -198,10 +196,7 @@ class _OtherProfileState extends State<OtherProfile> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           GestureDetector(
-                            onTap: () {
-                              pickedScrap = true;
-                              setState(() {});
-                            },
+                            onTap: () => setState(() => pickedScrap = true),
                             child: Container(
                               height: appBarHeight / 2,
                               decoration: BoxDecoration(
@@ -407,34 +402,8 @@ class _OtherProfileState extends State<OtherProfile> {
               }),
           GestureDetector(
               child: Icon(Icons.more_horiz, color: Colors.white, size: s54),
-              onTap: () {
-                showButtonSheet(context);
-              }),
+              onTap: () => showButtonSheet(context)),
         ],
-      ),
-    );
-  }
-
-  Widget followed() {
-    return Container(
-      child: GestureDetector(
-        onTap: () {},
-        //color: Colors.grey,
-        child: Container(
-          padding: EdgeInsets.fromLTRB(appBarHeight / 3, appBarHeight / 50,
-              appBarHeight / 3, appBarHeight / 50),
-          decoration: BoxDecoration(
-            border: Border.all(color: Color(0xfff26A4FF)),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Text(
-            'ติดตาม',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: s40,
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -617,9 +586,7 @@ class _OtherProfileState extends State<OtherProfile> {
                       ),
                     )),
                 Container(
-                  margin: EdgeInsets.only(
-                    bottom: appBarHeight - 20,
-                  ),
+                  margin: EdgeInsets.only(bottom: appBarHeight - 20),
                   child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -640,8 +607,14 @@ class _OtherProfileState extends State<OtherProfile> {
                                           screenHeightDp)),
                                   child: Icon(Icons.block,
                                       size: appBarHeight / 3)),
-                              onTap: () {
-                                nav.push(context, BlockingList(uid: null));
+                              onTap: () async {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        Loading());
+                                await blocking.blockUser(context,
+                                    otherUid: uid, public: true);
+                                nav.pop(context);
                               },
                             ),
                             Text(

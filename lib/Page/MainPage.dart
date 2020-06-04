@@ -103,8 +103,14 @@ class _MainPageState extends State<MainPage> {
   Future<bool> isNotLogin() async {
     await confgiDB.initRTDB(context);
     final user = Provider.of<UserData>(context, listen: false);
-    final auth = await FirebaseAuth.instance.currentUser();
-    if (auth != null) user.uid = auth.uid;
+    var auth = await FirebaseAuth.instance.currentUser();
+    if (auth != null) {
+      user.uid = auth.uid;
+      if (auth.phoneNumber == null) {
+        await fireAuth.signOut();
+        auth = null;
+      }
+    }
     return auth == null;
   }
 

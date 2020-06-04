@@ -328,13 +328,17 @@ class AuthenService {
     var docs = await fireStore
         .collection('Users/${user.region}/users/${user.uid}/following')
         .getDocuments();
+    var blockDocs = await fireStore
+        .collection('Users/${user.region}/users/${user.uid}/blocks')
+        .document('blockedUsers')
+        .get();
     await cacheFriends.intitFile();
+    cacheFriends.addBlockUsers(
+        blocked: blockDocs.exists ? blockDocs['list'] : []);
     if (docs.documents.length > 0)
       for (var doc in docs.documents) {
         cacheFriends.addFollowing(following: doc['list']);
       }
-    else
-      cacheFriends.intitFile();
   }
 
   Future<String> getToken() async {

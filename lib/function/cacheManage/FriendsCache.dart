@@ -20,7 +20,7 @@ class FriendsCache {
 
   Future<void> intitFile() async {
     final file = await _localFile;
-    Map userData = {'following': [], 'recently': []};
+    Map userData = {'following': [], 'recently': [], 'blockedUsers': []};
     await file.writeAsString(json.encode(userData));
   }
 
@@ -33,6 +33,20 @@ class FriendsCache {
     final file = await _localFile;
     var data = json.decode(await file.readAsString());
     return data;
+  }
+
+  Future<void> addBlockUsers({@required List blocked}) async {
+    final file = await _localFile;
+    var data = await read();
+    data['blockedUsers'].addAll(blocked);
+    await file.writeAsString(json.encode(data));
+  }
+
+  Future unBlock({@required String uid}) async {
+    final file = await _localFile;
+    var data = await read();
+    data['blockedUsers'].remove(uid);
+    await file.writeAsString(json.encode(data));
   }
 
   Future<void> addFollowing({@required List following}) async {
@@ -72,6 +86,11 @@ class FriendsCache {
     await file.writeAsString(json.encode(data));
   }
 
+  Future<List> getBlockedUser() async {
+    var list = await read();
+    return list['blockedUsers'];
+  }
+
   Future<List> getRecently() async {
     var list = await read();
     return list['recently'];
@@ -95,6 +114,11 @@ class FriendsCache {
       randomList.addAll(list);
     }
     return randomList;
+  }
+
+  Future<bool> isBlocking(String uid) async {
+    var list = await getBlockedUser();
+    return list.contains(uid);
   }
 
   Future<void> deleteFile() async {

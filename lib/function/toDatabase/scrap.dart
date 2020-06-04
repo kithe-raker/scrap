@@ -33,42 +33,49 @@ class Scraps {
     final user = Provider.of<UserData>(context, listen: false);
     var refDb = userDb.reference().child('users/$thrownUID');
     bool allow = (await refDb.child('allowThrow').once()).value;
-    if (allow ?? true) {
+    if (allow) {
       var ref = fireStore.collection('$collRef/$thrownUID/thrownScraps');
-      var scrap = {
-        'uid': user.uid,
-        'region': user.region,
-        'thrown': thrownUID,
-        'scrap': {
-          'text': scrapData.text,
-          'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
-          'timeStamp': FieldValue.serverTimestamp()
-        }
-      };
-      var docId = ref.document().documentID;
-      cacheFriends.addRecently(
-          id: data['id'],
-          img: data['img'],
-          status: data['status'],
-          thrownUid: thrownUID,
-          ref: collRef);
-      userDb
-          .reference()
-          .child('users/${user.uid}')
-          .update({'papers': user.papers - 1});
-      refDb.child('thrown').once().then((data) => userDb
-          .reference()
-          .child('users/$thrownUID')
-          .update({'thrown': data.value + 1}));
+      var blockDoc = await fireStore
+          .collection('$collRef/$thrownUID/blocks')
+          .where('list', arrayContains: user.uid)
+          .limit(1)
+          .getDocuments();
+      if (blockDoc.documents.length < 1) {
+        var scrap = {
+          'uid': user.uid,
+          'region': user.region,
+          'thrown': thrownUID,
+          'scrap': {
+            'text': scrapData.text,
+            'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
+            'timeStamp': FieldValue.serverTimestamp()
+          }
+        };
+        var docId = ref.document().documentID;
+        cacheFriends.addRecently(
+            id: data['id'],
+            img: data['img'],
+            status: data['status'],
+            thrownUid: thrownUID,
+            ref: collRef);
+        userDb
+            .reference()
+            .child('users/${user.uid}')
+            .update({'papers': user.papers - 1});
+        refDb.child('thrown').once().then((data) => userDb
+            .reference()
+            .child('users/$thrownUID')
+            .update({'thrown': data.value + 1}));
 
-      batch.setData(ref.document(docId), scrap);
-      scrap['burnt'] = false;
-      batch.setData(
-          fireStore
-              .collection('Users/${user.region}/users/${user.uid}/thrownLog')
-              .document(docId),
-          scrap);
-      await batch.commit();
+        batch.setData(ref.document(docId), scrap);
+        scrap['burnt'] = false;
+        batch.setData(
+            fireStore
+                .collection('Users/${user.region}/users/${user.uid}/thrownLog')
+                .document(docId),
+            scrap);
+        await batch.commit();
+      }
       loading.add(false);
       toast('ปาสำเร็จแล้ว');
       nav.pop(context);
@@ -89,36 +96,43 @@ class Scraps {
     var refDb = userDb.reference().child('users/$thrownUID');
     bool allow = (await refDb.child('allowThrow').once()).value;
     if (allow) {
-      var scrap = {
-        'uid': user.uid,
-        'region': user.region,
-        'thrown': thrownUID,
-        'scrap': {
-          'text': scrapData.text,
-          'writer': user.id,
-          'timeStamp': FieldValue.serverTimestamp()
-        }
-      };
-      var ref =
-          fireStore.collection('Users/$region/users/$thrownUID/thrownScraps');
-      var docId = ref.document().documentID;
-      userDb
-          .reference()
-          .child('users/${user.uid}')
-          .update({'papers': user.papers - 1});
-      refDb.child('thrown').once().then((data) => userDb
-          .reference()
-          .child('users/$thrownUID')
-          .update({'thrown': data.value + 1}));
+      var blockDoc = await fireStore
+          .collection('Users/$region/users/$thrownUID/blocks')
+          .where('list', arrayContains: user.uid)
+          .limit(1)
+          .getDocuments();
+      if (blockDoc.documents.length < 1) {
+        var scrap = {
+          'uid': user.uid,
+          'region': user.region,
+          'thrown': thrownUID,
+          'scrap': {
+            'text': scrapData.text,
+            'writer': user.id,
+            'timeStamp': FieldValue.serverTimestamp()
+          }
+        };
+        var ref =
+            fireStore.collection('Users/$region/users/$thrownUID/thrownScraps');
+        var docId = ref.document().documentID;
+        userDb
+            .reference()
+            .child('users/${user.uid}')
+            .update({'papers': user.papers - 1});
+        refDb.child('thrown').once().then((data) => userDb
+            .reference()
+            .child('users/$thrownUID')
+            .update({'thrown': data.value + 1}));
 
-      batch.setData(ref.document(docId), scrap);
-      scrap['burnt'] = false;
-      batch.setData(
-          fireStore
-              .collection('Users/${user.region}/users/${user.uid}/thrownLog')
-              .document(docId),
-          scrap);
-      await batch.commit();
+        batch.setData(ref.document(docId), scrap);
+        scrap['burnt'] = false;
+        batch.setData(
+            fireStore
+                .collection('Users/${user.region}/users/${user.uid}/thrownLog')
+                .document(docId),
+            scrap);
+        await batch.commit();
+      }
       loading.add(false);
       toast('ปาสำเร็จแล้ว');
       nav.pop(context);

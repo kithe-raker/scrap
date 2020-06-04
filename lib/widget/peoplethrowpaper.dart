@@ -3,13 +3,14 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
+import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:scrap/widget/Ads.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/showdialogreport.dart';
@@ -294,10 +295,12 @@ class _PaperstrangerState extends State<Paperstranger> {
                                       color: Color(0xffFF8F3A),
                                       size: appBarHeight / 3)),
                               onTap: () {
-                                final report =
-                                    Provider.of<Report>(context, listen: false);
+                                final report = Provider.of<Report>(
+                                    context,
+                                    listen: false);
                                 report.scrapId = scrap.documentID;
-                                report.scrapRef = scrap.reference.parent().path;
+                                report.scrapRef =
+                                    scrap.reference.parent().path;
                                 report.targetId = scrap['uid'];
                                 report.region = scrap['region'];
                                 showdialogBurn(context, thrown: true);
@@ -305,6 +308,45 @@ class _PaperstrangerState extends State<Paperstranger> {
                             ),
                             Text(
                               'เผา',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: s42,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                          screenHeightDp)),
+                                  child: Icon(Icons.block,
+                                      size: appBarHeight / 3)),
+                              onTap: () async {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        Loading());
+                                await blocking.blockUser(context,
+                                    otherUid: widget.scrap['uid'],
+                                    public: widget.scrap['scrap']
+                                            ['writer'] !=
+                                        'ไม่ระบุตัวตน',
+                                    scrap: widget.scrap);
+                                nav.pop(context);
+                              },
+                            ),
+                            Text(
+                              'ปิดกั้นการปา',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: s42,
@@ -330,8 +372,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   child: Icon(Icons.report_problem,
                                       size: appBarHeight / 3)),
                               onTap: () {
-                                final report =
-                                    Provider.of<Report>(context, listen: false);
+                                final report = Provider.of<Report>(
+                                    context,
+                                    listen: false);
                                 report.targetId = scrap['uid'];
                                 showDialogReport(context);
                               },
