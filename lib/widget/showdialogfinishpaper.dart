@@ -115,35 +115,7 @@ void dialogfinishpaper(BuildContext context) {
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                               },
-                            ),
-                            InkWell(
-                                child: Container(
-                                  margin: EdgeInsets.only(left: a.width / 20),
-                                  width: a.width / 2.85,
-                                  height: a.width / 6.8,
-                                  decoration: BoxDecoration(
-                                      color: Color(0xff26A4FF),
-                                      borderRadius:
-                                          BorderRadius.circular(a.width)),
-                                  alignment: Alignment.center,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.create,
-                                        color: Colors.white,
-                                        size: a.width / 15,
-                                      ),
-                                      Text("\tเขียนเลย",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: a.width / 15 / 1.2,
-                                              fontWeight: FontWeight.bold)),
-                                    ],
-                                  ),
-                                ),
-                                //ให้ dialog แรกหายไปก่อนแล้วเปิด dialog2
-                                onTap: () {}),
+                            )
                           ],
                         ),
                       )

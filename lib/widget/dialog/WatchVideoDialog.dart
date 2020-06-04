@@ -148,7 +148,10 @@ void dialogvideo(BuildContext context, String uid) {
                                                 AdmobService().getVideoAdId(),
                                             listener: (event) async {
                                               if (event ==
-                                                  MobileAdEvent.impression) {
+                                                      MobileAdEvent
+                                                          .impression ||
+                                                  event ==
+                                                      MobileAdEvent.closed) {
                                                 await scrap.resetScrap(context,
                                                     uid: uid);
                                                 setState(() => loading = false);
