@@ -105,17 +105,16 @@ class AuthenService {
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {};
     final PhoneCodeSent smsCode = (String id, [int resendCode]) {
       user.verifiedId = id;
+      nav.push(context, OTPScreen(register: register, edit: edit));
       loading.add(false);
     };
     final PhoneVerificationCompleted success = (AuthCredential credent) async {
       if (user.verifiedId == null) {
         register
-            ? signUpWithPhone(context, credential: credent)
+            ? await signUpWithPhone(context, credential: credent)
             : edit
-                ? changePhoneNumber(context, credential: credent)
-                : signInWithPhone(context, credential: credent);
-      } else {
-        nav.push(context, OTPScreen(register: register, edit: edit));
+                ? await changePhoneNumber(context, credential: credent)
+                : await signInWithPhone(context, credential: credent);
       }
     };
     PhoneVerificationFailed failed = (AuthException error) {
@@ -304,8 +303,8 @@ class AuthenService {
     var emailCredent = EmailAuthProvider.getCredential(
         email: '$uid@gmail.com', password: userData.password);
     await user.linkWithCredential(emailCredent);
-    nav.pushReplacement(context, MainStream());
     loading.add(false);
+    nav.pushReplacement(context, MainStream());
   }
 
   Future<void> checkFinishSignUp(BuildContext context) async {
