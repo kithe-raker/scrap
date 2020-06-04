@@ -100,18 +100,12 @@ class _MainPageState extends State<MainPage> {
     return false; // recent != incoming;
   }
 
-  Future<bool> isNotLogin() async {
+  Future<bool> isLogin() async {
     await confgiDB.initRTDB(context);
     final user = Provider.of<UserData>(context, listen: false);
     var auth = await FirebaseAuth.instance.currentUser();
-    if (auth != null) {
-      user.uid = auth.uid;
-      if (auth.phoneNumber == null) {
-        await fireAuth.signOut();
-        auth = null;
-      }
-    }
-    return auth == null;
+    if (auth != null) user.uid = auth.uid;
+    return auth != null && auth?.phoneNumber != null;
   }
 
   Future<bool> finishProfile() async {
@@ -162,11 +156,11 @@ class _MainPageState extends State<MainPage> {
                     ? navigator(Sorry())
                     : olderVersion()
                         ? navigator(Update())
-                        : await isNotLogin()
-                            ? navigator(LoginPage())
-                            : await finishProfile()
+                        : await isLogin()
+                            ? await finishProfile()
                                 ? navigator(MainStream())
-                                : navigator(CreateProfile1());
+                                : navigator(CreateProfile1())
+                            : navigator(LoginPage());
               },
               loopAnimation: '1',
               until: () => Future.delayed(Duration(seconds: 1)),
