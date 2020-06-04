@@ -529,7 +529,8 @@ class _OtherProfileState extends State<OtherProfile> {
                 if (snapshot.hasData) {
                   var trans = snapshot.data.value;
                   return Container(
-                      height: screenWidthDp / 6, child: checkValue(trans));
+                      height: screenWidthDp / 6,
+                      child: checkValue(trans.abs()));
                 } else {
                   return Text(
                     '0',

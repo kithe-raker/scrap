@@ -348,13 +348,16 @@ class _ProfileState extends State<Profile> {
               ),
             ),
           ),
-          Positioned(bottom: 0, child: appbarProfile(context)),
+          Positioned(top: 0, child: appbarProfile(context)),
           initInfoFinish ? SizedBox() : Loading(),
-          Container(
-            child: AdmobBanner(
-                adUnitId: AdmobService().getBannerAdId(),
-                adSize: AdmobBannerSize.FULL_BANNER),
-          ),
+          Positioned(
+            bottom: 0,
+            child: Container(
+              child: AdmobBanner(
+                  adUnitId: AdmobService().getBannerAdId(),
+                  adSize: AdmobBannerSize.FULL_BANNER),
+            ),
+          )
           // adsContainer(),
         ],
       )),
@@ -676,7 +679,8 @@ class _ProfileState extends State<Profile> {
                 if (snapshot.hasData) {
                   var trans = snapshot.data.snapshot.value;
                   return Container(
-                      height: screenWidthDp / 6, child: checkValue(trans));
+                      height: screenWidthDp / 6,
+                      child: checkValue(trans.abs()));
                 } else {
                   return Text(
                     '0',
