@@ -12,12 +12,16 @@ class _LoadNoBlurState extends State<LoadNoBlur> {
   Widget build(BuildContext context) {
     screenutilInit(context);
     return Container(
-        width: screenWidthDp / 4.2,
-        height: screenWidthDp / 4.2,
+        width: screenWidthDp / 3.6,
+        height: screenWidthDp / 3.6,
         decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.42),
             borderRadius: BorderRadius.circular(12)),
-        child: FlareActor('assets/loadingpaper.flr',
-            animation: 'Untitled', fit: BoxFit.cover));
+        child: Container(
+          width: screenWidthDp / 4.2,
+          height: screenWidthDp / 4.2,
+          child: FlareActor('assets/loadingpaper.flr',
+              animation: 'Untitled', fit: BoxFit.cover),
+        ));
   }
 }
