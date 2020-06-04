@@ -242,8 +242,15 @@ void burntDialog(BuildContext context, {bool thrownScrap = false}) {
       builder: (BuildContext context) {
         Size a = MediaQuery.of(context).size;
         Future.delayed(Duration(milliseconds: 2400), () {
-          Navigator.pop(context);
-          Navigator.pop(context);
+          if (thrownScrap) {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+          } else {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }
         });
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),

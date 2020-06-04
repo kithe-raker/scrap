@@ -47,7 +47,7 @@ class _MapScrapsState extends State<MapScraps> {
   final random = Random();
   Position currentLocation;
   StreamSubscription subLimit;
-  int adsRate = 0;
+  // int adsRate = 0;
   int i = 0, papers;
   PublishSubject<int> streamLimit = PublishSubject();
   DocumentSnapshot recentScrap;
@@ -58,7 +58,6 @@ class _MapScrapsState extends State<MapScraps> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   GoogleMapController mapController;
-  Set ads = {};
   Map randData = {};
   Map<String, List> history = {};
   Scraps scrap = Scraps();
@@ -73,15 +72,15 @@ class _MapScrapsState extends State<MapScraps> {
             .getPositionStream()
             .listen((event) => setState(() => currentLocation = event))
         : streamLocation.resume();
-    randomAdsRate();
+    // randomAdsRate();
     initUserHistory();
     super.initState();
   }
 
-  void randomAdsRate() {
-    adsRate = 3;
-    adsRate += random.nextInt(2) + 1;
-  }
+  // void randomAdsRate() {
+  //   adsRate = 3;
+  //   adsRate += random.nextInt(2) + 1;
+  // }
 
   Future<void> initUserHistory() async {
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
@@ -139,7 +138,7 @@ class _MapScrapsState extends State<MapScraps> {
   }
 
   void dialog(DocumentSnapshot doc) {
-    final counter = Provider.of<AdsCounterProvider>(context, listen: false);
+    // final counter = Provider.of<AdsCounterProvider>(context, listen: false);
     final _scaffoldKey = GlobalKey<ScaffoldState>();
     var data = doc;
     Navigator.of(context)
@@ -166,28 +165,34 @@ class _MapScrapsState extends State<MapScraps> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                counter.count == adsRate
-                                    ? Center(
-                                        child: Text(
-                                        'โฆษณา',
-                                        style: TextStyle(
-                                            fontSize: s42,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ))
-                                    : SizedBox(height: a.height / 42),
-                                counter.count == adsRate
-                                    ? Expanded(
-                                        child: Container(
-                                          width: a.width / 1.04,
-                                          child: AdmobBanner(
-                                              adUnitId: AdmobService()
-                                                  .getBannerAdId(),
-                                              adSize:
-                                                  AdmobBannerSize.FULL_BANNER),
-                                        ),
-                                      )
-                                    : Column(
+                                // counter.count == adsRate
+                                //     ? Center(
+                                //         child: Text(
+                                //         'โฆษณา',
+                                //         style: TextStyle(
+                                //             fontSize: s42,
+                                //             color: Colors.white,
+                                //             fontWeight: FontWeight.bold),
+                                //       ))
+                                //     : 
+                                    SizedBox(height: a.height / 42),
+                                // counter.count == adsRate
+                                //     ? Container(
+                                //         width: a.width / 1.04,
+                                //         height: a.width / 1.04 * 1.115,
+                                //         decoration: BoxDecoration(
+                                //             image: DecorationImage(
+                                //                 image: AssetImage(
+                                //                     'assets/paperscrap.jpg'),
+                                //                 fit: BoxFit.cover)),
+                                //         child: AdmobBanner(
+                                //             adUnitId:
+                                //                 AdmobService().getBannerAdId(),
+                                //             adSize: AdmobBannerSize
+                                //                 .MEDIUM_RECTANGLE),
+                                //       )
+                                //     :
+                                     Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         crossAxisAlignment:
@@ -321,19 +326,21 @@ class _MapScrapsState extends State<MapScraps> {
                                 SizedBox(
                                     width: a.width,
                                     height: screenHeightDp / 9.6,
-                                    child: counter.count == adsRate
-                                        ? Center(
-                                            child: GestureDetector(
-                                                child: iconWithLabel('ต่อไป',
-                                                    iconColor:
-                                                        Color(0xff000000),
-                                                    icon: Icons.forward),
-                                                onTap: () {
-                                                  randomAdsRate();
-                                                  counter.count = 0;
-                                                  setDialog(() {});
-                                                }))
-                                        : StatefulBuilder(builder:
+                                    child: 
+                                    // counter.count == adsRate
+                                    //     ? Center(
+                                    //         child: GestureDetector(
+                                    //             child: iconWithLabel('ต่อไป',
+                                    //                 iconColor:
+                                    //                     Color(0xff000000),
+                                    //                 icon: Icons.forward),
+                                    //             onTap: () {
+                                    //               randomAdsRate();
+                                    //               counter.count = 0;
+                                    //               setDialog(() {});
+                                    //             }))
+                                    //     : 
+                                        StatefulBuilder(builder:
                                             (context, StateSetter setTrans) {
                                             return Row(
                                               mainAxisAlignment:
@@ -489,7 +496,7 @@ class _MapScrapsState extends State<MapScraps> {
                                                             Color(0xff000000),
                                                         icon: Icons.forward),
                                                     onTap: () {
-                                                      counter.count += 1;
+                                                      // counter.count += 1;
                                                       allScrap.remove(data);
                                                       markers.remove(MarkerId(
                                                           data.documentID));
@@ -509,61 +516,57 @@ class _MapScrapsState extends State<MapScraps> {
                                               ],
                                             );
                                           })
-
                                     // }),
                                     ),
                                 SizedBox(height: screenWidthDp / 36),
-                                counter.count == adsRate
-                                    ? SizedBox()
-                                    : Expanded(
-                                        child: AdmobBanner(
-                                            adUnitId:
-                                                AdmobService().getBannerAdId(),
-                                            adSize:
-                                                AdmobBannerSize.FULL_BANNER),
-                                      )
+                                Expanded(
+                                  child: AdmobBanner(
+                                      adUnitId: AdmobService().getBannerAdId(),
+                                      adSize: AdmobBannerSize.FULL_BANNER),
+                                )
                               ]);
                         } else if (event.connectionState ==
                             ConnectionState.waiting) {
-                          return Stack(
-                            children: <Widget>[
-                              Container(
-                                margin:
-                                    EdgeInsets.only(top: screenHeightDp / 42),
-                                width: screenWidthDp / 1.04,
-                                height: screenWidthDp / 1.04 * 1.115,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image:
-                                            AssetImage('assets/paperscrap.jpg'),
-                                        fit: BoxFit.cover)),
-                              ),
-                              Positioned(
-                                top: 12,
-                                right: 12,
-                                child: GestureDetector(
-                                  child: Container(
-                                    width: screenWidthDp / 16,
-                                    height: screenWidthDp / 16,
-                                    decoration: BoxDecoration(
-                                        color:
-                                            Color(0xff000000).withOpacity(0.47),
-                                        borderRadius: BorderRadius.circular(
-                                            screenWidthDp / 18)),
-                                    child: Icon(Icons.close,
-                                        color: Colors.white, size: s42),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
+                          return Container(
+                            margin: EdgeInsets.only(top: screenHeightDp / 42),
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  width: screenWidthDp / 1.04,
+                                  height: a.width / 1.04 * 1.115,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/paperscrap.jpg'),
+                                          fit: BoxFit.cover)),
                                 ),
-                              ),
-                              Center(child: LoadNoBlur())
-                            ],
+                                Positioned(
+                                  top: 12,
+                                  right: 12,
+                                  child: GestureDetector(
+                                    child: Container(
+                                      width: screenWidthDp / 16,
+                                      height: screenWidthDp / 16,
+                                      decoration: BoxDecoration(
+                                          color: Color(0xff000000)
+                                              .withOpacity(0.47),
+                                          borderRadius: BorderRadius.circular(
+                                              screenWidthDp / 18)),
+                                      child: Icon(Icons.close,
+                                          color: Colors.white, size: s42),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                Center(child: LoadNoBlur())
+                              ],
+                            ),
                           );
                         } else {
                           return burntScrap(onNext: () {
-                            counter.count += 1;
+                            // counter.count += 1;
                             allScrap.remove(data);
                             markers.remove(MarkerId(data.documentID));
                             if (allScrap.isNotEmpty && allScrap.length > 0) {
@@ -1271,7 +1274,7 @@ class _MapScrapsState extends State<MapScraps> {
           markers.remove(markerId);
           setState(() {});
           dialog(doc);
-          counter.count += 1;
+          // counter.count += 1;
           streamLimit.add(16 - allScrap.length);
         } catch (e) {
           print(e.toString());
