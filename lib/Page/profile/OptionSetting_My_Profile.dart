@@ -425,7 +425,16 @@ Widget appbarOptionSetting(BuildContext context) {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(),
+        GestureDetector(
+            child: Icon(
+              Icons.more_horiz,
+              color: Colors.black,
+              size: s65,
+            ),
+            onTap: () {
+              // null only
+            }),
+        //SizedBox(),
       ],
     ),
   );
