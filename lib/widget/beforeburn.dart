@@ -252,49 +252,43 @@ void burntDialog(BuildContext context, {bool thrownScrap = false}) {
             Navigator.pop(context);
           }
         });
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(
-              children: <Widget>[
-                InkWell(
-                  child: Container(
+        return WillPopScope(
+          onWillPop: () => null,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Stack(
+                children: <Widget>[
+                  Container(
                     width: a.width,
                     height: a.height,
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Container(
-                  width: a.width,
-                  height: a.height,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.whatshot,
-                            size: a.width / 3, color: Color(0xffFF8F3A)),
-                        Text("สแครปนี้โดนเผาแล้ว !",
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.whatshot,
+                              size: a.width / 3, color: Color(0xffFF8F3A)),
+                          Text("สแครปนี้โดนเผาแล้ว !",
+                              style: TextStyle(
+                                  fontSize: a.width / 17,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
+                          Text(
+                            thrownScrap
+                                ? 'ไฟได้ลามไปยังกระดาษของคนที่ปาแล้ว'
+                                : "ขอบคุณสำหรับการควบคุมเนื้อหา",
                             style: TextStyle(
                                 fontSize: a.width / 17,
                                 color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                        Text(
-                          thrownScrap
-                              ? 'ไฟได้ลามไปยังกระดาษของคนที่ปาแล้ว'
-                              : "ขอบคุณสำหรับการควบคุมเนื้อหา",
-                          style: TextStyle(
-                              fontSize: a.width / 17,
-                              color: Colors.white,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ],
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -310,55 +304,49 @@ void notBurntDialog(context) {
           Navigator.pop(context);
           Navigator.pop(context);
         });
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(
-              children: <Widget>[
-                InkWell(
-                  child: Container(
+        return WillPopScope(
+          onWillPop: () => null,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Stack(
+                children: <Widget>[
+                  Container(
                     width: a.width,
                     height: a.height,
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Container(
-                  width: a.width,
-                  height: a.height,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.whatshot,
-                          size: a.width / 3,
-                          color: Color(0xff909090),
-                        ),
-                        SizedBox(
-                          height: a.width / 100,
-                        ),
-                        Text(
-                          "สแครปนี้ยังไม่โดนเผา",
-                          style: TextStyle(
-                              fontSize: a.width / 17,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "ต้องการผู้เผามากกว่านี้",
-                          style: TextStyle(
-                              fontSize: a.width / 17,
-                              color: Colors.white,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ],
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.whatshot,
+                            size: a.width / 3,
+                            color: Color(0xff909090),
+                          ),
+                          SizedBox(
+                            height: a.width / 100,
+                          ),
+                          Text(
+                            "สแครปนี้ยังไม่โดนเผา",
+                            style: TextStyle(
+                                fontSize: a.width / 17,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "ต้องการผู้เผามากกว่านี้",
+                            style: TextStyle(
+                                fontSize: a.width / 17,
+                                color: Colors.white,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
