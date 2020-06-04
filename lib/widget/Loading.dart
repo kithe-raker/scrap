@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 
+import 'ScreenUtil.dart';
+
 class Loading extends StatefulWidget {
   @override
   _LoadingState createState() => _LoadingState();
@@ -12,6 +14,7 @@ class _LoadingState extends State<Loading> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
+    screenutilInit(context);
     return Container(
       width: a.width,
       height: a.height,
@@ -27,15 +30,19 @@ class _LoadingState extends State<Loading> {
               ),
               Center(
                 child: Container(
-                  width: a.width / 4.2,
-                  height: a.width / 4.2,
+                  width: a.width / 3.6,
+                  height: a.width / 3.6,
                   decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.42),
                       borderRadius: BorderRadius.circular(12)),
-                  child: FlareActor(
-                    'assets/loadingpaper.flr',
-                    animation: 'Untitled',
-                    fit: BoxFit.cover,
+                  child: Container(
+                    width: screenWidthDp / 4.2,
+                    height: screenWidthDp / 4.2,
+                    child: FlareActor(
+                      'assets/loadingpaper.flr',
+                      animation: 'Untitled',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               )

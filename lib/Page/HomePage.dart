@@ -418,8 +418,8 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             Center(
               child: Container(
-                width: a.width / 3.2,
-                height: a.width / 3.2,
+                width: a.width / 4.2,
+                height: a.width / 4.2,
                 child: FlareActor(
                   'assets/loadingpaper.flr',
                   animation: 'Untitled',
