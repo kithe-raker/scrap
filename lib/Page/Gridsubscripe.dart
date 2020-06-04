@@ -90,11 +90,13 @@ class _GridsubscripeState extends State<Gridsubscripe> {
         .startAt(-(lessPoint - 1))
         .limitToFirst(8);
     DataSnapshot data = await ref.once();
-    data.value.forEach((key, value) {
-      docId.add(value['id']);
-      comments[value['id']] = value['comment']?.abs() ?? 0;
-      if (lessPoint > value['point'].abs()) lessPoint = value['point'].abs();
-    });
+    if (data.value?.length != null && data.value.length > 0) {
+      data.value.forEach((key, value) {
+        docId.add(value['id']);
+        comments[value['id']] = value['comment']?.abs() ?? 0;
+        if (lessPoint > value['point'].abs()) lessPoint = value['point'].abs();
+      });
+    }
     if (docId.length > 1 && !lastQuery) {
       var docs = await Firestore.instance
           .collectionGroup('ScrapDailys-th')

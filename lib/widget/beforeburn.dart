@@ -194,7 +194,7 @@ burnScrap(BuildContext context) async {
       FirebaseDatabase.instance.reference().child('scraps/${report.scrapId}');
   var data = await ref.once();
   var batch = fireStore.batch();
-  int point = data.value['point'] ?? 0;
+  dynamic point = data.value['point'] ?? 0;
   int burn = data.value['burn'] + 1;
   await cacheHistory.addBurn(id: report.scrapId);
   if (point < 26 && burn > 4) {

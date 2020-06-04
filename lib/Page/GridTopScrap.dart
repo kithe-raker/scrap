@@ -76,7 +76,7 @@ class _GridTopScrapState extends State<GridTopScrap> {
                   width: a.width / 6,
                   height: a.width / 13,
                   decoration: BoxDecoration(
-                      color: Color(0xff2D2D2F),
+                      color: Color(0xff707070),
                       borderRadius: BorderRadius.circular(a.width / 80)),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
