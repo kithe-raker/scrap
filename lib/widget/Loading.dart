@@ -32,17 +32,14 @@ class _LoadingState extends State<Loading> {
                 child: Container(
                   width: a.width / 3.6,
                   height: a.width / 3.6,
+                  //  padding: EdgeInsets.all(screenWidthDp/10),
                   decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.42),
                       borderRadius: BorderRadius.circular(12)),
-                  child: Container(
-                    width: screenWidthDp / 4.2,
-                    height: screenWidthDp / 4.2,
-                    child: FlareActor(
-                      'assets/loadingpaper.flr',
-                      animation: 'Untitled',
-                      fit: BoxFit.cover,
-                    ),
+                  child: FlareActor(
+                    'assets/RollinPaper.flr',
+                    animation: 'Untitled',
+                    fit: BoxFit.cover,
                   ),
                 ),
               )
