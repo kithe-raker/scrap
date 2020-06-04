@@ -348,7 +348,7 @@ class _ProfileState extends State<Profile> {
               ),
             ),
           ),
-          Positioned(top: 0, child: appbarProfile(context)),
+          Positioned(bottom: 0, child: appbarProfile(context)),
           initInfoFinish ? SizedBox() : Loading(),
           Container(
             child: AdmobBanner(
