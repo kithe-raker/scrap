@@ -151,7 +151,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                       }),
                   Row(
                     children: [
-                      InkWell(
+                      GestureDetector(
                         child: Text(
                           "จากผู้คนที่ติดตาม",
                           style: page != 0

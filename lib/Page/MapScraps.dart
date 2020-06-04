@@ -1138,7 +1138,7 @@ class _MapScrapsState extends State<MapScraps> {
                 width: a.width / 3.2,
                 height: a.width / 3.2,
                 child: FlareActor(
-                  'assets/paper_loading.flr',
+                  'assets/loadingpaper.flr',
                   animation: 'Untitled',
                   fit: BoxFit.cover,
                 ),

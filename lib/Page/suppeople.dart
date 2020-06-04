@@ -214,7 +214,7 @@ class _SubpeopleState extends State<Subpeople> {
                                       color: Colors.white.withOpacity(0.42),
                                       borderRadius: BorderRadius.circular(12)),
                                   child: FlareActor(
-                                    'assets/paper_loading.flr',
+                                    'assets/loadingpaper.flr',
                                     animation: 'Untitled',
                                     fit: BoxFit.cover,
                                   ),

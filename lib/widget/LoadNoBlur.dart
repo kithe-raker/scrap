@@ -17,7 +17,7 @@ class _LoadNoBlurState extends State<LoadNoBlur> {
         decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.42),
             borderRadius: BorderRadius.circular(12)),
-        child: FlareActor('assets/paper_loading.flr',
+        child: FlareActor('assets/loadingpaper.flr',
             animation: 'Untitled', fit: BoxFit.cover));
   }
 }
