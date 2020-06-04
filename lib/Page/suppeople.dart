@@ -110,7 +110,7 @@ class _SubpeopleState extends State<Subpeople> {
                         Container(
                           padding: EdgeInsets.only(left: a.width / 25),
                           child: Text(
-                            searching ? "ติดตามผู้คน" : "ค้นหาผู้คน",
+                            searching ? "ค้นหาผู้คน" : "ค้นหาผู้คน",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: s54,

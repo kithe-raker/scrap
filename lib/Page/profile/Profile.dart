@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/function/aboutUser/SettingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
@@ -510,17 +511,21 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget recentlyThrown(List docs) {
+    Size a = MediaQuery.of(context).size;
     return Container(
       height: screenHeightDp / 10,
       width: screenWidthDp,
       child: docs.length > 0
-          ? ListView(
-              physics: BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              children: docs
-                  .map((data) =>
-                      scrapPaper(readScrap.contains(data.documentID), data))
-                  .toList())
+          ? Container(
+              padding: EdgeInsets.only(left: a.width / 25),
+              child: ListView(
+                  physics: BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  children: docs
+                      .map((data) =>
+                          scrapPaper(readScrap.contains(data.documentID), data))
+                      .toList()),
+            )
           : Center(
               child: Text('คุณไม่มีกระดาษที่ปามา',
                   style: TextStyle(color: Colors.white60, fontSize: s46)),
@@ -715,9 +720,12 @@ class _ProfileState extends State<Profile> {
           child: Opacity(
             opacity: read ? 0.6 : 1,
             child: Container(
-                width: screenWidthDp / 5.5,
-                child:
-                    Image.asset('assets/paper-small.png', fit: BoxFit.cover)),
+              width: screenWidthDp / 5.5,
+              child: SvgPicture.asset('assets/paper.svg',
+                  // color: Colors.white60,
+                  height: screenWidthDp / 3.2,
+                  fit: BoxFit.contain),
+            ),
           ),
         ),
         onTap: () {

@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: screenHeightDp / 4.8),
                     Text('เข้าสู่ระบบด้วยเบอร์โทรศัพท์',
                         style: TextStyle(
-                            fontSize: s52,
+                            fontSize: s60,
                             fontWeight: FontWeight.bold,
                             color: Colors.white)),
                     SizedBox(height: screenHeightDp / 27),
@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                                       border: InputBorder.none,
                                       hintStyle: TextStyle(
                                           fontSize: s60,
-                                          height: 1.12,
+                                          //  height: 1.12,
                                           color:
                                               Colors.white.withOpacity(0.24)),
                                       hintText: 'เบอร์โทร 10 หลัก'),
@@ -155,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: BoxDecoration(
                               color: Color(0xff26A4FF),
                               borderRadius:
-                                  BorderRadius.circular(screenWidthDp / 2)),
+                                  BorderRadius.circular(screenWidthDp / 40)),
                           child: Text('ต่อไป',
                               style: TextStyle(
                                 color: Colors.white,
@@ -168,16 +168,12 @@ class _LoginPageState extends State<LoginPage> {
                           curState.save();
                           authService.phoneAuthentication(context);
                         }
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => SignUpMail()));
                       },
                     ),
                     SizedBox(height: screenHeightDp / 54),
                     GestureDetector(
                         child: Text(
-                          'ใช้ไอดีของ SCRAP.',
+                          'เข้าสู่ระบบด้วยไอดี',
                           style: TextStyle(
                               decoration: TextDecoration.underline,
                               color: Colors.white,

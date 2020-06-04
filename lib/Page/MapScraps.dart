@@ -667,7 +667,7 @@ class _MapScrapsState extends State<MapScraps> {
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
           return Container(
-            height: appBarHeight * 3.4,
+            height: appBarHeight * 2.2,
             decoration: BoxDecoration(
               color: Color(0xff202020),
               borderRadius: BorderRadius.only(
@@ -690,9 +690,9 @@ class _MapScrapsState extends State<MapScraps> {
                       ),
                     )),
                 Container(
-                  margin: EdgeInsets.only(
-                    bottom: appBarHeight - 20,
-                  ),
+                  /* margin: EdgeInsets.only(
+                bottom: appBarHeight - 20,
+              ),*/
                   child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -700,6 +700,9 @@ class _MapScrapsState extends State<MapScraps> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
                             GestureDetector(
                               child: Container(
                                   height: 50,
@@ -743,6 +746,9 @@ class _MapScrapsState extends State<MapScraps> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
                             GestureDetector(
                               child: Container(
                                   height: 50,
@@ -777,13 +783,13 @@ class _MapScrapsState extends State<MapScraps> {
                     ),
                   ),
                 ),
-                Positioned(
-                    bottom: 0,
-                    child: Container(
-                      child: AdmobBanner(
-                          adUnitId: AdmobService().getBannerAdId(),
-                          adSize: AdmobBannerSize.FULL_BANNER),
-                    )),
+                /* Positioned(
+                bottom: 0,
+                child: Container(
+                  child: AdmobBanner(
+                      adUnitId: AdmobService().getBannerAdId(),
+                      adSize: AdmobBannerSize.FULL_BANNER),
+                )),*/
               ],
             ),
           );
