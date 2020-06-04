@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -7,6 +8,7 @@ import 'package:scrap/function/aboutUser/SettingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -348,7 +350,12 @@ class _ProfileState extends State<Profile> {
           ),
           Positioned(top: 0, child: appbarProfile(context)),
           initInfoFinish ? SizedBox() : Loading(),
-          adsContainer(),
+          Container(
+            child: AdmobBanner(
+                adUnitId: AdmobService().getBannerAdId(),
+                adSize: AdmobBannerSize.FULL_BANNER),
+          ),
+          // adsContainer(),
         ],
       )),
     );
