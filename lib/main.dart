@@ -1,24 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/Gridfavorite.dart';
-import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/MainPage.dart';
-import 'package:scrap/Page/profile/OptionSetting_My_Profile.dart';
-import 'package:scrap/Page/profile/Other_Profile.dart';
-import 'package:scrap/Page/profile/Profile.dart';
-import 'package:scrap/Page/profile/createProfile1.dart';
-import 'package:scrap/Page/suppeople.dart';
-import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
-import 'package:scrap/testt.dart';
-import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
-import 'package:scrap/widget/peoplethrowpaper.dart';
-
-const String testDevice = "34C215009965F34F";
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,8 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AdsCounterProvider>.value(
-            value: AdsCounterProvider()),
+        // ChangeNotifierProvider<AdsCounterProvider>.value(
+        //     value: AdsCounterProvider()),
         ChangeNotifierProvider<RealtimeDB>.value(value: RealtimeDB()),
         ChangeNotifierProvider<Report>.value(value: Report()),
         ChangeNotifierProvider<UserData>.value(value: UserData()),

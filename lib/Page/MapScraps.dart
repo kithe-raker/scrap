@@ -1263,7 +1263,7 @@ class _MapScrapsState extends State<MapScraps> {
   void _addMarker(
       double lat, double lng, DocumentSnapshot doc, String writerUid) {
     final MarkerId markerId = MarkerId(doc.documentID);
-    final counter = Provider.of<AdsCounterProvider>(context, listen: false);
+    // final counter = Provider.of<AdsCounterProvider>(context, listen: false);
     final Marker marker = Marker(
       markerId: markerId,
       position: LatLng(lat, lng),

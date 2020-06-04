@@ -88,7 +88,7 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final counter = Provider.of<AdsCounterProvider>(context, listen: false);
+    // final counter = Provider.of<AdsCounterProvider>(context, listen: false);
     screenutilInit(context);
     var data = allScrap[index];
     return Scaffold(
