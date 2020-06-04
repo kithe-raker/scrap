@@ -535,7 +535,7 @@ Widget appbar_ListOptionSetting(BuildContext context, icon, name) {
               Navigator.pop(context);
             }),
         Text(
-          name,
+          '\t' + name,
           style: TextStyle(
             fontSize: s52,
             color: Colors.white,
@@ -623,7 +623,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                         child: Column(
                           children: [
                             appbar_ListOptionSetting(
-                                context, Icons.face, ' จัดการบัญชีของฉัน'),
+                                context, Icons.face, 'จัดการบัญชีของฉัน'),
                             Container(
                               margin: EdgeInsets.only(bottom: 10),
                               height: screenHeightDp / 5.5,
@@ -1327,7 +1327,7 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
             Column(
               children: [
                 appbar_ListOptionSetting(
-                    context, Icons.bug_report, ' แจ้งปัญหาระบบ'),
+                    context, Icons.bug_report, 'แจ้งปัญหาระบบ'),
                 SizedBox(
                   height: appBarHeight / 3,
                 ),
@@ -1509,7 +1509,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
             children: [
               Positioned(
                 child: appbar_ListOptionSetting(
-                    context, Icons.block, ' ประวัติการบล็อค'),
+                    context, Icons.block, 'ประวัติการบล็อค'),
               ),
               Positioned(
                 //top: appBarHeight / 1.35,
