@@ -7,12 +7,12 @@ import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/personcard.dart';
 
-class Allfollower extends StatefulWidget {
+class Allfollowing extends StatefulWidget {
   @override
-  _AllfollowerState createState() => _AllfollowerState();
+  _AllfollowingState createState() => _AllfollowingState();
 }
 
-class _AllfollowerState extends State<Allfollower> {
+class _AllfollowingState extends State<Allfollowing> {
   var controller = RefreshController();
   List friendsUid = [];
   List<DocumentSnapshot> friends = [];
