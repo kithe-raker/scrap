@@ -560,7 +560,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                         group: textGroup,
                         style: TextStyle(fontSize: s46)),
                   )),
-                  snapshot.data?.value == null
+                  snapshot.hasData && snapshot.data?.value == null
                       ? Container(
                           margin: EdgeInsets.all(4),
                           height: screenWidthDp / 2.16 * 1.21,
