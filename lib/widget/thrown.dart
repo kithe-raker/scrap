@@ -275,13 +275,13 @@ void writerScrap(BuildContext context,
                   ),
                 ),
                 // แปะโฆษณา
-                Positioned(
-                    bottom: 0,
-                    child: Container(
-                      child: AdmobBanner(
-                          adUnitId: AdmobService().getBannerAdId(),
-                          adSize: AdmobBannerSize.FULL_BANNER),
-                    )),
+                // Positioned(
+                //     bottom: 0,
+                //     child: Container(
+                //       child: AdmobBanner(
+                //           adUnitId: AdmobService().getBannerAdId(),
+                //           adSize: AdmobBannerSize.FULL_BANNER),
+                //     )),
                 loading ? Loading() : SizedBox()
               ],
             ),

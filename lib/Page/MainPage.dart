@@ -129,7 +129,8 @@ class _MainPageState extends State<MainPage> {
         }
       }
     }
-    return (fileExist && img != null) || (doc.exists && doc['img'] != null);
+    return (fileExist && img != null) ||
+        (doc?.exists != null && doc.exists && doc['img'] != null);
   }
 
   @override

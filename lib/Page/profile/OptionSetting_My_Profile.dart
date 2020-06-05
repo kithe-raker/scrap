@@ -772,6 +772,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold),
                                         decoration: InputDecoration(
+                                            counterText: '',
                                             border: InputBorder.none,
                                             hintText: 'สเตตัสของคุณ',
                                             hintStyle: TextStyle(
