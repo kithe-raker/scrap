@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -180,10 +179,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    Admob.initialize(AdmobService().getAdmobAppId());
     initUser();
     super.initState();
-    FirebaseAdMob.instance.initialize(appId: AdmobService().getAdmobAppId());
   }
 
   initUser() async {

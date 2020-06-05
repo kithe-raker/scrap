@@ -690,8 +690,8 @@ class _MapScrapsState extends State<MapScraps> {
                                       scrap.reference.parent().path;
                                   report.targetId = scrap['uid'];
                                   report.region = scrap['region'];
-                                  history['burn'].add(scrap.documentID);
-                                  showdialogBurn(context);
+                                  showdialogBurn(context,
+                                      burntScraps: history['burn']);
                                 }
                               },
                             ),

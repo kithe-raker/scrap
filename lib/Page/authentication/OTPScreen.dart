@@ -8,6 +8,7 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/Toast.dart';
 
 class OTPScreen extends StatefulWidget {
   final bool register;
@@ -19,11 +20,29 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   String otp = '';
-  bool loading = false;
+  bool loading = false, requestOTP = true;
   StreamSubscription loadStatus;
+  Timer _timer;
+  int _start = 60;
+
+  void getOTP() {
+    requestOTP = false;
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(oneSec, (Timer timer) {
+      if (_start < 1) {
+        timer.cancel();
+        _start = 60;
+        requestOTP = true;
+      } else
+        _start = _start - 1;
+
+      setState(() {});
+    });
+  }
 
   @override
   void initState() {
+    getOTP();
     loadStatus =
         authService.loading.listen((value) => setState(() => loading = value));
     super.initState();
@@ -31,13 +50,13 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void dispose() {
+    _timer.cancel();
     loadStatus.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     return Scaffold(
       backgroundColor: Colors.black,
@@ -74,32 +93,68 @@ class _OTPScreenState extends State<OTPScreen> {
                         setState(() => otp = val.trim());
                       }),
                 ),
+                SizedBox(height: (screenHeightDp / 14.6) / 3),
+                GestureDetector(
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(screenWidthDp),
+                      border: Border.all(
+                        color:
+                            requestOTP ? Color(0xff26A4FF) : Color(0xff525252),
+                        width: 0.2,
+                      ),
+                    ),
+                    child: Text(
+                      requestOTP ? 'ส่งรหัส' : 'ส่งใหม่ ($_start)',
+                      style: TextStyle(
+                        color:
+                            requestOTP ? Color(0xff26A4FF) : Color(0xff525252),
+                        fontSize: s38,
+                      ),
+                    ),
+                  ),
+                  onTap: () async {
+                    if (requestOTP) {
+                      getOTP();
+                      await authService.phoneVerified(context,
+                          register: widget.register,
+                          edit: widget.edit,
+                          resend: true);
+                      toast.toast('ส่งOTPไปใหม่แล้ว');
+                    }
+                  },
+                ),
                 GestureDetector(
                   child: Container(
                       width: screenWidthDp / 1.42,
                       height: screenWidthDp / 6.8,
                       alignment: Alignment.center,
-                      margin: EdgeInsets.only(top: screenHeightDp / 14.6),
+                      margin:
+                          EdgeInsets.only(top: 2 * (screenHeightDp / 14.6) / 3),
                       decoration: BoxDecoration(
                           color: otp.length < 6
                               ? Color(0xff525252)
                               : Color(0xff26A4FF),
                           borderRadius:
                               BorderRadius.circular(screenWidthDp / 36)),
-                      child: Text('เข้าสู่ระบบ',
+                      child: Text(widget.edit ? 'ยืนยัน' : 'เข้าสู่ระบบ',
                           style: TextStyle(
                             color:
                                 otp.length < 6 ? Colors.white38 : Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: s52,
                           ))),
-                  onTap: () {
-                    submitOTP();
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => SignUpMail()));
-                  },
+                  onTap: otp.length < 6
+                      ? null
+                      : () {
+                          submitOTP();
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => SignUpMail()));
+                        },
                 ),
                 SizedBox(height: screenHeightDp / 4.6),
                 widget.edit

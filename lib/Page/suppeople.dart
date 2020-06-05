@@ -43,7 +43,7 @@ class _SubpeopleState extends State<Subpeople> {
       recently = await cacheFriends.getRecently();
       following = await cacheFriends.getRandomFollowing();
     }
-    setState(() => loading = false);
+    if (this.mounted) setState(() => loading = false);
   }
 
   Stream<Event> streamTransaction(String field) {

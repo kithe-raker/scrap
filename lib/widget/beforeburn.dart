@@ -9,7 +9,7 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 
-void showdialogBurn(context, {bool thrown = false}) {
+void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
   bool loading = false;
   showDialog(
       context: context,
@@ -141,7 +141,8 @@ void showdialogBurn(context, {bool thrown = false}) {
                                           setDialog(() => loading = true);
                                           thrown
                                               ? await burnThrownScrap(context)
-                                              : await burnScrap(context);
+                                              : await burnScrap(
+                                                  context, burntScraps);
                                           setDialog(() => loading = false);
                                         }),
                                     Text(
@@ -188,11 +189,12 @@ burnThrownScrap(BuildContext context) async {
   burntDialog(context, thrownScrap: true);
 }
 
-burnScrap(BuildContext context) async {
+burnScrap(BuildContext context, List burntScraps) async {
   final report = Provider.of<Report>(context, listen: false);
   var ref =
       FirebaseDatabase.instance.reference().child('scraps/${report.scrapId}');
   var data = await ref.once();
+  burntScraps.add(report.scrapId);
   var batch = fireStore.batch();
   dynamic point = data.value['point'] ?? 0;
   int burn = data.value['burn'] + 1;

@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
@@ -18,6 +20,7 @@ import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/realtimeDB/ConfigDatabase.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/ImgCacheManger.dart';
+import 'package:scrap/services/admob_service.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -124,9 +127,22 @@ class _MainPageState extends State<MainPage> {
             .get();
         if (doc.exists && doc['img'] != null) {
           var map = doc.data;
-          doc.data['region'] = user.region;
+          map['region'] = user.region;
           await userinfo.initUserInfo(doc: map);
         }
+      }
+    } else {
+      var accdoc = await fireStore.document('Account/${user.uid}').get();
+      user.region = accdoc['region'];
+      user.phone = accdoc['phone'];
+      doc = await fireStore
+          .collection('Users/${accdoc['region']}/users')
+          .document(user.uid)
+          .get();
+      if (doc.exists && doc['img'] != null) {
+        var map = doc.data;
+        map['region'] = user.region;
+        await userinfo.initUserInfo(doc: map);
       }
     }
     return (fileExist && img != null) ||
@@ -135,6 +151,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
+    Admob.initialize(AdmobService().getAdmobAppId());
+    FirebaseAdMob.instance.initialize(appId: AdmobService().getAdmobAppId());
     initFirebaseMessaging();
     initLocalMessage();
     super.initState();

@@ -428,41 +428,42 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                               ]);
                         } else if (event.connectionState ==
                             ConnectionState.waiting) {
-                          return Stack(
-                            children: <Widget>[
-                              Container(
-                                margin:
-                                    EdgeInsets.only(top: screenHeightDp / 42),
-                                width: screenWidthDp / 1.04,
-                                height: screenWidthDp / 1.04 * 1.115,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image:
-                                            AssetImage('assets/paperscrap.jpg'),
-                                        fit: BoxFit.cover)),
-                              ),
-                              Positioned(
-                                top: 12,
-                                right: 12,
-                                child: GestureDetector(
-                                  child: Container(
-                                    width: screenWidthDp / 16,
-                                    height: screenWidthDp / 16,
-                                    decoration: BoxDecoration(
-                                        color:
-                                            Color(0xff000000).withOpacity(0.47),
-                                        borderRadius: BorderRadius.circular(
-                                            screenWidthDp / 18)),
-                                    child: Icon(Icons.close,
-                                        color: Colors.white, size: s42),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
+                          return Container(
+                            margin: EdgeInsets.only(top: screenHeightDp / 42),
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  width: screenWidthDp / 1.04,
+                                  height: screenWidthDp / 1.04 * 1.115,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/paperscrap.jpg'),
+                                          fit: BoxFit.cover)),
                                 ),
-                              ),
-                              Center(child: LoadNoBlur())
-                            ],
+                                Positioned(
+                                  top: 12,
+                                  right: 12,
+                                  child: GestureDetector(
+                                    child: Container(
+                                      width: screenWidthDp / 16,
+                                      height: screenWidthDp / 16,
+                                      decoration: BoxDecoration(
+                                          color: Color(0xff000000)
+                                              .withOpacity(0.47),
+                                          borderRadius: BorderRadius.circular(
+                                              screenWidthDp / 18)),
+                                      child: Icon(Icons.close,
+                                          color: Colors.white, size: s42),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                Center(child: LoadNoBlur())
+                              ],
+                            ),
                           );
                         } else {
                           return burntScrap(onNext: () {
@@ -661,8 +662,9 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                   report.scrapRef =
                                       scrap.reference.parent().path;
                                   report.targetId = scrap['uid'];
-                                  history['burn'].add(scrap.documentID);
-                                  showdialogBurn(context);
+                                  report.region = scrap['region'];
+                                  showdialogBurn(context,
+                                      burntScraps: history['burn']);
                                 }
                               },
                             ),

@@ -6,24 +6,31 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
-import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/ads.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 
 class ScrapDialog extends StatefulWidget {
   final DocumentSnapshot data;
-  ScrapDialog({@required this.data});
+  final bool showTransaction;
+  final bool self;
+  final List currentList;
+  ScrapDialog(
+      {@required this.data,
+      this.self = false,
+      this.showTransaction = true,
+      this.currentList});
   @override
   _ScrapDialogState createState() => _ScrapDialogState();
 }
@@ -76,6 +83,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        SizedBox(height: screenHeightDp / 42),
                         // counter.count == adsRate
                         //     ? SizedBox(
                         //         width: a.width / 1.04,
@@ -214,11 +222,13 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                               .toDate())
                                     ],
                                   ),
-                                  GestureDetector(
-                                      child: Icon(Icons.more_horiz,
-                                          color: Colors.white, size: s70),
-                                      onTap: () => showMore(context,
-                                          writerUid: widget.data['uid']))
+                                  widget.self
+                                      ? GestureDetector(
+                                          child: Icon(Icons.more_horiz,
+                                              color: Colors.white, size: s70),
+                                          onTap: () => showMore(context,
+                                              writerUid: widget.data['uid']))
+                                      : SizedBox()
                                 ],
                               ),
                             ),
@@ -244,107 +254,138 @@ class _ScrapDialogState extends State<ScrapDialog> {
                               //             }))
                               //     :
 
-                              StatefulBuilder(
-                                  builder: (context, StateSetter setTrans) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                  width: screenWidthDp / 2,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      GestureDetector(
-                                        child: iconWithLabel(
-                                            like.abs().toString(),
-                                            icon: inHistory('like',
-                                                    widget.data.documentID)
-                                                ? Icons.favorite
-                                                : Icons.favorite_border,
-                                            background: inHistory('like',
-                                                    widget.data.documentID)
-                                                ? Color(0xffFF4343)
-                                                : Colors.white,
-                                            iconColor: inHistory('like',
-                                                    widget.data.documentID)
-                                                ? Colors.white
-                                                : Color(0xffFF4343)),
-                                        onTap: () {
-                                          if (isExpired(widget.data)) {
-                                            toast
-                                                .toast('สเเครปนี้ย่อยสลายแล้ว');
-                                          } else {
-                                            scrap.updateScrapTrans(
-                                                'like', widget.data, context,
-                                                comments:
-                                                    trans.value['comment']);
-                                            if (inHistory('like',
-                                                widget.data.documentID)) {
-                                              ++like;
-                                              history['like'].remove(
-                                                  widget.data.documentID);
-                                            } else {
-                                              --like;
-                                              history['like']
-                                                  .add(widget.data.documentID);
-                                            }
-                                            setTrans(() {});
-                                          }
-                                        },
-                                      ),
-                                      GestureDetector(
-                                        child: iconWithLabel(
-                                            pick.abs().toString(),
-                                            background: inHistory('picked',
-                                                    widget.data.documentID)
-                                                ? Color(0xff0099FF)
-                                                : Colors.white,
-                                            iconColor: inHistory('picked',
-                                                    widget.data.documentID)
-                                                ? Colors.white
-                                                : Color(0xff0099FF),
-                                            icon: Icons.move_to_inbox),
-                                        onTap: () {
-                                          if (isExpired(widget.data)) {
-                                            toast
-                                                .toast('สเเครปนี้ย่อยสลายแล้ว');
-                                          } else {
-                                            scrap.updateScrapTrans(
-                                                'picked', widget.data, context);
-                                            if (inHistory('picked',
-                                                widget.data.documentID)) {
-                                              ++pick;
-                                            } else {
-                                              --pick;
-                                            }
-                                            setTrans(() {});
-                                          }
-                                        },
-                                      ),
-                                      GestureDetector(
-                                        child: iconWithLabel(
-                                            trans?.value['comment']
-                                                .abs()
-                                                .toString(),
-                                            iconColor: Color(0xff000000)
-                                                .withOpacity(0.83),
-                                            icon: Icons.sms),
-                                        onTap: () {
-                                          Scaffold.of(context).showBottomSheet(
-                                            (BuildContext context) =>
-                                                CommentSheet(
-                                                    scrapSnapshot: widget.data),
-                                            backgroundColor: Colors.transparent,
-                                          );
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            );
-                          }),
+                              !widget.showTransaction
+                                  ? SizedBox()
+                                  : StatefulBuilder(
+                                      builder: (context, StateSetter setTrans) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Container(
+                                            width: screenWidthDp / 2,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: <Widget>[
+                                                GestureDetector(
+                                                  child: iconWithLabel(
+                                                      like.abs().toString(),
+                                                      icon: inHistory(
+                                                              'like',
+                                                              widget.data
+                                                                  .documentID)
+                                                          ? Icons.favorite
+                                                          : Icons
+                                                              .favorite_border,
+                                                      background: inHistory(
+                                                              'like',
+                                                              widget.data
+                                                                  .documentID)
+                                                          ? Color(0xffFF4343)
+                                                          : Colors.white,
+                                                      iconColor: inHistory(
+                                                              'like',
+                                                              widget.data
+                                                                  .documentID)
+                                                          ? Colors.white
+                                                          : Color(0xffFF4343)),
+                                                  onTap: () {
+                                                    if (isExpired(
+                                                        widget.data)) {
+                                                      toast.toast(
+                                                          'สเเครปนี้ย่อยสลายแล้ว');
+                                                    } else {
+                                                      scrap.updateScrapTrans(
+                                                          'like',
+                                                          widget.data,
+                                                          context,
+                                                          comments: trans.value[
+                                                              'comment']);
+                                                      if (inHistory(
+                                                          'like',
+                                                          widget.data
+                                                              .documentID)) {
+                                                        ++like;
+                                                        history['like'].remove(
+                                                            widget.data
+                                                                .documentID);
+                                                      } else {
+                                                        --like;
+                                                        history['like'].add(
+                                                            widget.data
+                                                                .documentID);
+                                                      }
+                                                      setTrans(() {});
+                                                    }
+                                                  },
+                                                ),
+                                                GestureDetector(
+                                                  child: iconWithLabel(
+                                                      pick.abs().toString(),
+                                                      background: inHistory(
+                                                              'picked',
+                                                              widget.data
+                                                                  .documentID)
+                                                          ? Color(0xff0099FF)
+                                                          : Colors.white,
+                                                      iconColor: inHistory(
+                                                              'picked',
+                                                              widget.data
+                                                                  .documentID)
+                                                          ? Colors.white
+                                                          : Color(0xff0099FF),
+                                                      icon:
+                                                          Icons.move_to_inbox),
+                                                  onTap: () {
+                                                    if (isExpired(
+                                                        widget.data)) {
+                                                      toast.toast(
+                                                          'สเเครปนี้ย่อยสลายแล้ว');
+                                                    } else {
+                                                      scrap.updateScrapTrans(
+                                                          'picked',
+                                                          widget.data,
+                                                          context);
+                                                      if (inHistory(
+                                                          'picked',
+                                                          widget.data
+                                                              .documentID)) {
+                                                        ++pick;
+                                                      } else {
+                                                        --pick;
+                                                      }
+                                                      setTrans(() {});
+                                                    }
+                                                  },
+                                                ),
+                                                GestureDetector(
+                                                  child: iconWithLabel(
+                                                      trans?.value['comment']
+                                                          .abs()
+                                                          .toString(),
+                                                      iconColor: Color(
+                                                              0xff000000)
+                                                          .withOpacity(0.83),
+                                                      icon: Icons.sms),
+                                                  onTap: () {
+                                                    Scaffold.of(context)
+                                                        .showBottomSheet(
+                                                      (BuildContext context) =>
+                                                          CommentSheet(
+                                                              scrapSnapshot:
+                                                                  widget.data),
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                    );
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
                         ),
                         SizedBox(height: screenWidthDp / 36),
                         Expanded(
@@ -474,6 +515,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
   }
 
   void showMore(context, {@required String writerUid}) {
+    final user = Provider.of<UserData>(context, listen: false);
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -526,12 +568,22 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(
                                           screenHeightDp)),
-                                  child: Icon(Icons.block,
+                                  child: Icon(Icons.delete_outline,
                                       size: appBarHeight / 3)),
-                              onTap: () {},
+                              onTap: () async {
+                                widget.currentList.remove(widget.data);
+                                await fireStore
+                                    .collection(
+                                        'Users/${user.region}/users/${user.uid}/scrapCollection')
+                                    .document(widget.data.documentID)
+                                    .delete();
+                                nav.pop(context);
+                                nav.pop(context);
+                                toast.toast('นำสแครปนี้ออกไปแล้ว');
+                              },
                             ),
                             Text(
-                              'บล็อคผู้ใช้',
+                              'นำออก',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: s42,

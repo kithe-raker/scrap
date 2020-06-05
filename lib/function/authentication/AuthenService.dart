@@ -100,12 +100,12 @@ class AuthenService {
   }
 
   Future<void> phoneVerified(BuildContext context,
-      {bool register = false, bool edit = false}) async {
+      {bool register = false, bool edit = false, bool resend = false}) async {
     final user = Provider.of<UserData>(context, listen: false);
     final PhoneCodeAutoRetrievalTimeout autoRetrieval = (String id) {};
     final PhoneCodeSent smsCode = (String id, [int resendCode]) {
       user.verifiedId = id;
-      nav.push(context, OTPScreen(register: register, edit: edit));
+      if (!resend) nav.push(context, OTPScreen(register: register, edit: edit));
       loading.add(false);
     };
     final PhoneVerificationCompleted success = (AuthCredential credent) async {
