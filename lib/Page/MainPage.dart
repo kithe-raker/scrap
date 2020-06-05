@@ -111,7 +111,7 @@ class _MainPageState extends State<MainPage> {
     return auth != null && auth?.phoneNumber != null;
   }
 
-  Future<bool> finishProfile() async {
+  Future<void> multiCaseNavigator() async {
     final user = Provider.of<UserData>(context, listen: false);
     bool fileExist = await userinfo.fileExist();
     var img, doc;
@@ -126,27 +126,23 @@ class _MainPageState extends State<MainPage> {
             .document(user.uid)
             .get();
         if (doc.exists && doc['img'] != null) {
-          var map = doc.data;
-          map['region'] = user.region;
-          await userinfo.initUserInfo(doc: map);
+          await fireAuth.signOut();
+          nav.pushReplacement(context, LoginPage());
+        } else {
+          nav.pushReplacement(context, CreateProfile1());
         }
+      } else {
+        nav.pushReplacement(context, MainStream());
       }
     } else {
-      var accdoc = await fireStore.document('Account/${user.uid}').get();
-      user.region = accdoc['region'];
-      user.phone = accdoc['phone'];
-      doc = await fireStore
-          .collection('Users/${accdoc['region']}/users')
-          .document(user.uid)
-          .get();
-      if (doc.exists && doc['img'] != null) {
-        var map = doc.data;
-        map['region'] = user.region;
-        await userinfo.initUserInfo(doc: map);
-      }
+      await fireAuth.signOut();
+      nav.pushReplacement(context, LoginPage());
     }
-    return (fileExist && img != null) ||
-        (doc?.exists != null && doc.exists && doc['img'] != null);
+    // return (fileExist && img != null) ||
+    //     (doc?.exists != null && doc.exists && doc['img'] != null);
+    // await finishProfile()
+    //                             ? navigator(MainStream())
+    //                             : navigator(CreateProfile1())
   }
 
   @override
@@ -176,9 +172,7 @@ class _MainPageState extends State<MainPage> {
                     : olderVersion()
                         ? navigator(Update())
                         : await isLogin()
-                            ? await finishProfile()
-                                ? navigator(MainStream())
-                                : navigator(CreateProfile1())
+                            ? await multiCaseNavigator()
                             : navigator(LoginPage());
               },
               loopAnimation: '1',
