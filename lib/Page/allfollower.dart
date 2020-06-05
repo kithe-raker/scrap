@@ -5,6 +5,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/personcard.dart';
 
 class Allfollowing extends StatefulWidget {
@@ -112,6 +113,7 @@ class _AllfollowingState extends State<Allfollowing> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: screenWidthDp / 36),
                                 child: SmartRefresher(
+                                  footer: Footer(),
                                   enablePullDown: false,
                                   controller: controller,
                                   onLoading: () async {

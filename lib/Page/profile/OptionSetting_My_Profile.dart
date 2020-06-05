@@ -25,6 +25,7 @@ import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/dialog/ScrapDialog.dart';
+import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/guide.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/wrap.dart';
@@ -338,7 +339,7 @@ class _OptionSettingState extends State<OptionSetting> {
                       list_OptionSetting(context, Icons.face,
                           'จัดการบัญชีของฉัน', Manage_MyProfile()),
                       list_OptionSetting(context, Icons.history,
-                          'ประวัติการเขียนสแครป', HistoryScrap()),
+                          'ประวัติการโยนสแครป', HistoryScrap()),
                       //ไปยัง เว็บ ข้อกำหนดการให้บริการ
                       list_OptionSettingweb(
                           context,
@@ -751,8 +752,12 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                   Container(
                                     alignment: Alignment.center,
                                     height: screenHeightDp / 3.85,
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 12),
+                                    margin: EdgeInsets.only(
+                                      left: screenWidthDp / 30,
+                                      right: screenWidthDp / 30,
+                                    ),
+                                    /*   margin:
+                                        EdgeInsets.symmetric(horizontal: 12),*/
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(3),
                                       color: Color(0xff222222),
@@ -1010,7 +1015,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
   List<DocumentSnapshot> scraps = [];
   List<DocumentSnapshot> throwScrap = [];
   bool initFinish = false;
-  String dropdownValue = 'ประวัติการเขียนสแครป';
+  String dropdownValue = 'ประวัติการโยนสแครป';
 
   @override
   void initState() {
@@ -1057,7 +1062,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
                 padding: EdgeInsets.only(top: appBarHeight / 1.35),
                 margin: EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
                 child: initFinish
-                    ? body(dropdownValue == 'ประวัติการเขียนสแครป'
+                    ? body(dropdownValue == 'ประวัติการโยนสแครป'
                         ? scraps
                         : throwScrap)
                     : Center(child: LoadNoBlur())),
@@ -1113,7 +1118,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
                     } else
                       setState(() => dropdownValue = newValue);
                   },
-                  items: <String>['ประวัติการเขียนสแครป', 'ประวัติการปาสแครป']
+                  items: <String>['ประวัติการโยนสแครป', 'ประวัติการปาสแครป']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                         value: value,
@@ -1132,12 +1137,13 @@ class _HistoryScrapState extends State<HistoryScrap> {
     return StatefulBuilder(builder: (context, StateSetter setList) {
       return listScraps.length > 0
           ? SmartRefresher(
+              footer: Footer(),
               enablePullDown: false,
               enablePullUp: true,
               controller: controller,
               onLoading: () async {
                 if (listScraps.length > 0) {
-                  var ref = dropdownValue == 'ประวัติการเขียนสแครป'
+                  var ref = dropdownValue == 'ประวัติการปาสแครป'
                       ? fireStore.collection(
                           'Users/${user.region}/users/${user.uid}/history')
                       : fireStore.collection(
@@ -1157,7 +1163,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
               physics: BouncingScrollPhysics(),
               child: scrapGrid(listScraps))
           : Center(
-              child: guide(dropdownValue == 'ประวัติการเขียนสแครป'
+              child: guide(dropdownValue == 'ประวัติการโยนสแครป'
                   ? 'ไม่มีประวัติการทิ้ง'
                   : 'ไม่มีประวัติการปา'),
             );
@@ -1237,7 +1243,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
         showDialog(
             context: context,
             builder: (BuildContext context) =>
-                dropdownValue == 'ประวัติการเขียนสแครป'
+                dropdownValue == 'ประวัติการโยนสแครป'
                     ? ScrapDialog(data: data)
                     : Paperstranger(scrap: data, self: true));
       },
@@ -1252,11 +1258,10 @@ class _HistoryScrapState extends State<HistoryScrap> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Image.asset(
-            'assets/paper.png',
-            color: Colors.white60,
-            height: screenHeightDp / 10,
-          ),
+          SvgPicture.asset('assets/paper.svg',
+              color: Colors.white60,
+              height: screenWidthDp / 3.5,
+              fit: BoxFit.contain),
           Text(
             text,
             style: TextStyle(
@@ -1511,6 +1516,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: screenWidthDp / 36),
                               child: SmartRefresher(
+                                  footer: Footer(),
                                   enablePullDown: false,
                                   controller: controller,
                                   onLoading: () async {

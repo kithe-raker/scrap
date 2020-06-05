@@ -10,6 +10,8 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
+import '../footer.dart';
+
 class CommentSheet extends StatefulWidget {
   final DocumentSnapshot scrapSnapshot;
   CommentSheet({@required this.scrapSnapshot});
@@ -147,6 +149,7 @@ class _CommentSheetState extends State<CommentSheet> {
                             : StatefulBuilder(
                                 builder: (context, StateSetter setComment) {
                                 return SmartRefresher(
+                                    footer: Footer(),
                                     enablePullUp: true,
                                     enablePullDown: true,
                                     controller: controller,

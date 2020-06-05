@@ -20,6 +20,7 @@ import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/widget/dialog/ScrapDialog.dart';
+import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 
 class Profile extends StatefulWidget {
@@ -149,10 +150,11 @@ class _ProfileState extends State<Profile> {
             width: screenWidthDp,
             padding: EdgeInsets.only(top: appBarHeight / 1.35),
             child: SmartRefresher(
+              footer: Footer(),
               controller: refreshController,
               enablePullDown: false,
               enablePullUp: true,
-              footer: footerList(),
+              // footer: footerList(),
               onLoading: () async {
                 if (pickedScrap
                     ? pickScrap.length > 0

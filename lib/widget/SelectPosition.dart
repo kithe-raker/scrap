@@ -138,7 +138,7 @@ class _SelectPositionState extends State<SelectPosition> {
                         children: <Widget>[
                           Icon(Icons.check, color: Colors.white, size: s48),
                           Text(
-                            'ตรงนี้แหละ',
+                            'โยนตรงนี้',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 wordSpacing: 0.1,

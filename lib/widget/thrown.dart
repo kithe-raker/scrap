@@ -125,6 +125,7 @@ void writerScrap(BuildContext context,
                                     margin: EdgeInsets.all(s10 / 5),
                                     child: Image.asset(
                                       'assets/paperscrap.jpg',
+                                      //
                                       width: a.width / 1.04,
                                       height: a.width / 1.04 * 1.115,
                                       fit: BoxFit.cover,

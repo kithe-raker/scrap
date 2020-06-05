@@ -9,6 +9,7 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/footer.dart';
 
 class Gridsubscripe extends StatefulWidget {
   @override
@@ -217,6 +218,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                   controller: controller,
                   children: <Widget>[
                     SmartRefresher(
+                        footer: Footer(),
                         enablePullDown: false,
                         enablePullUp: true,
                         onLoading: () {
@@ -227,6 +229,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                         controller: followingController,
                         child: GridFollowing(scraps: followingScraps)),
                     SmartRefresher(
+                        footer: Footer(),
                         controller: topController,
                         enablePullDown: false,
                         enablePullUp: true,

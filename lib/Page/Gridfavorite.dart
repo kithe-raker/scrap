@@ -105,6 +105,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                           Container(
                                             child: Image.asset(
                                               'assets/paperscrap.jpg',
+                                              //--เปลี่ยนขนาดกระดาษ
                                               width: a.width / 1.04,
                                               height: a.width / 1.04 * 1.115,
                                               fit: BoxFit.cover,
@@ -427,6 +428,55 @@ class _GridfavoriteState extends State<Gridfavorite> {
         child: Stack(
           children: <Widget>[
             Container(
+              height: appBarHeight / 1.42,
+              width: screenWidthDp,
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidthDp / 21,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                      child: Container(
+                          width: a.width / 18,
+                          child: Image.asset("assets/Group 74.png",
+                              fit: BoxFit.contain)),
+                      onTap: () {
+                        Navigator.pop(context);
+                      }),
+                  Row(
+                    children: [
+                      // GestureDetector(
+                      //   child: Text(
+                      //     "จากผู้คนที่ติดตาม",
+                      //     style: TextStyle(
+                      //         color: Colors.white, fontSize: a.width / 20),
+                      //   ),
+                      //   onTap: () {},
+                      // ),
+                      Text(
+                        'สแครปที่คุณติดตามในวันนี้',
+                        style: TextStyle(
+                            color: Colors.white, fontSize: a.width / 17),
+                      ),
+                      // GestureDetector(
+                      //   child: Text(
+                      //     "สแครปน่าติดตาม",
+                      //     style: TextStyle(
+                      //         color: Colors.black, fontSize: a.width / 20),
+                      //   ),
+                      //   onTap: () {},
+                      // ),
+                    ],
+                  ),
+                  GestureDetector(
+                      child: Icon(Icons.history,
+                          color: Colors.black, size: a.width / 13),
+                      onTap: () {})
+                ],
+              ),
+            ),
+            /* Container(
               width: a.width,
               height: a.width / 5,
               color: Colors.black,
@@ -438,11 +488,12 @@ class _GridfavoriteState extends State<Gridfavorite> {
                     child: Container(
                       child: InkWell(
                         child: Container(
-                            width: a.width / 15,
+                            width: a.width / 18,
+                            // width: a.width / 15,
                             child: Image.asset(
                               "assets/Group 74.png",
-                              //   fit: BoxFit.contain,
-                              width: a.width / 12,
+                              fit: BoxFit.contain,
+                              //width: a.width / 12,
                             )),
                         onTap: () {
                           Navigator.pop(context);
@@ -463,7 +514,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                   ),
                 ],
               ),
-            ),
+            ),*/
             scraps.length > 0
                 ? Container(
                     width: a.width,

@@ -88,33 +88,33 @@ void showdialogBurn(context, {bool thrown = false}) {
                                 Column(
                                   children: <Widget>[
                                     Text(
-                                      "คุณต้องการเผาสแครปนี้ไหม",
+                                      "หากมีคนกดเผาสแครปมากพอ",
                                       style: TextStyle(
                                           fontSize: a.width / 20,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      "หากกดเผาสแครปนี้จะหายไป",
+                                      "สแครปนี้จะหายไป",
                                       style: TextStyle(
                                           fontSize: a.width / 20,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Text(
-                                      "รวมถึงสแครปบางส่วนในมือ",
-                                      style: TextStyle(
-                                          fontSize: a.width / 20,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "ของผู้เขียนด้วย",
-                                      style: TextStyle(
-                                          fontSize: a.width / 20,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                    // Text(
+                                    //   "รวมถึงสแครปบางส่วนในมือ",
+                                    //   style: TextStyle(
+                                    //       fontSize: a.width / 20,
+                                    //       color: Colors.white,
+                                    //       fontWeight: FontWeight.bold),
+                                    // ),
+                                    // Text(
+                                    //   "ของผู้เขียนด้วย",
+                                    //   style: TextStyle(
+                                    //       fontSize: a.width / 20,
+                                    //       color: Colors.white,
+                                    //       fontWeight: FontWeight.bold),
+                                    // ),
                                   ],
                                 ),
                                 Column(

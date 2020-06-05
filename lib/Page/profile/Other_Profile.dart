@@ -20,6 +20,7 @@ import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/dialog/ScrapDialog.dart';
+import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/thrown.dart';
@@ -117,6 +118,7 @@ class _OtherProfileState extends State<OtherProfile> {
                 margin: EdgeInsets.only(bottom: screenHeightDp / 21),
                 padding: EdgeInsets.only(top: appBarHeight / 1.35),
                 child: SmartRefresher(
+                  footer: Footer(),
                   enablePullDown: false,
                   enablePullUp: true,
                   controller: refreshController,
@@ -145,7 +147,7 @@ class _OtherProfileState extends State<OtherProfile> {
                     } else
                       refreshController.loadNoData();
                   },
-                  footer: footerList(),
+                  // footer: footerList(),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -564,7 +566,7 @@ class _OtherProfileState extends State<OtherProfile> {
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
           return Container(
-            height: appBarHeight * 3.4,
+            height: appBarHeight * 2.2,
             decoration: BoxDecoration(
               color: Color(0xff202020),
               borderRadius: BorderRadius.only(
@@ -587,7 +589,7 @@ class _OtherProfileState extends State<OtherProfile> {
                       ),
                     )),
                 Container(
-                  margin: EdgeInsets.only(bottom: appBarHeight - 20),
+                  //  margin: EdgeInsets.only(bottom: appBarHeight - 20),
                   child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -595,6 +597,9 @@ class _OtherProfileState extends State<OtherProfile> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
                             GestureDetector(
                               child: Container(
                                   height: 50,
@@ -631,6 +636,9 @@ class _OtherProfileState extends State<OtherProfile> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
                             GestureDetector(
                               child: Container(
                                   height: 50,
@@ -666,13 +674,13 @@ class _OtherProfileState extends State<OtherProfile> {
                     ),
                   ),
                 ),
-                Positioned(
-                    bottom: 0,
-                    child: Container(
-                      child: AdmobBanner(
-                          adUnitId: AdmobService().getBannerAdId(),
-                          adSize: AdmobBannerSize.FULL_BANNER),
-                    )),
+                // Positioned(
+                //     bottom: 0,
+                //     child: Container(
+                //       child: AdmobBanner(
+                //           adUnitId: AdmobService().getBannerAdId(),
+                //           adSize: AdmobBannerSize.FULL_BANNER),
+                //     )),
               ],
             ),
           );
