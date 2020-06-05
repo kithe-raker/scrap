@@ -599,12 +599,18 @@ class _ProfileState extends State<Profile> {
                   style: TextStyle(fontSize: s46)),
             )),
           ])),
-      onTap: () {
-        showDialog(
+      onTap: () async {
+        await showDialog(
             context: context,
             builder: (BuildContext context) => pickedScrap
-                ? ScrapDialog(data: data)
-                : Paperstranger(scrap: data, self: true));
+                ? ScrapDialog(
+                    data: data,
+                    self: true,
+                    showTransaction: false,
+                    currentList: pickScrap)
+                : Paperstranger(
+                    scrap: data, self: true, currentList: scrapCrate));
+        setState(() {});
       },
     );
   }

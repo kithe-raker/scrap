@@ -18,8 +18,14 @@ import 'package:scrap/widget/thrown.dart';
 
 class Paperstranger extends StatefulWidget {
   final DocumentSnapshot scrap;
+  final List currentList;
   final bool self;
-  Paperstranger({@required this.scrap, this.self = false});
+  final bool picked;
+  Paperstranger(
+      {@required this.scrap,
+      this.self = false,
+      this.picked = false,
+      this.currentList});
   @override
   _PaperstrangerState createState() => _PaperstrangerState();
 }
@@ -91,9 +97,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: appBarHeight / 10,
-                ),
+                SizedBox(height: appBarHeight / 10),
                 Container(
                   height: appBarHeight * 1,
                   width: screenWidthDp,
@@ -125,9 +129,8 @@ class _PaperstrangerState extends State<Paperstranger> {
                               ],
                             ),
                           )),
-                      widget.self
-                          ? SizedBox()
-                          : Positioned(
+                      widget.self || widget.picked
+                          ? Positioned(
                               top: appBarHeight / 8,
                               right: appBarHeight / 7,
                               child: Container(
@@ -141,7 +144,8 @@ class _PaperstrangerState extends State<Paperstranger> {
                                     showMore(context, scrap: widget.scrap);
                                   },
                                 ),
-                              )),
+                              ))
+                          : SizedBox()
                     ],
                   ),
                   decoration: BoxDecoration(
@@ -155,7 +159,35 @@ class _PaperstrangerState extends State<Paperstranger> {
                 ),*/
                 SizedBox(height: appBarHeight / 10),
                 widget.self
-                    ? SizedBox()
+                    ? Center(
+                        child: Column(
+                          children: <Widget>[
+                            GestureDetector(
+                              child: Container(
+                                  padding: EdgeInsets.all(appBarHeight / 8),
+                                  child: Icon(Icons.delete_outline),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(22)),
+                                  )),
+                              onTap: () {
+                                unPick();
+                                widget.currentList.remove(widget.scrap);
+                                toast.toast('นำสแครปออกแล้ว');
+                                nav.pop(context);
+                              },
+                            ),
+                            Text(
+                              'นำออก',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: s42,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      )
                     : Container(
                         width: screenWidthDp,
                         height: appBarHeight,
@@ -295,12 +327,10 @@ class _PaperstrangerState extends State<Paperstranger> {
                                       color: Color(0xffFF8F3A),
                                       size: appBarHeight / 3)),
                               onTap: () {
-                                final report = Provider.of<Report>(
-                                    context,
-                                    listen: false);
+                                final report =
+                                    Provider.of<Report>(context, listen: false);
                                 report.scrapId = scrap.documentID;
-                                report.scrapRef =
-                                    scrap.reference.parent().path;
+                                report.scrapRef = scrap.reference.parent().path;
                                 report.targetId = scrap['uid'];
                                 report.region = scrap['region'];
                                 showdialogBurn(context, thrown: true);
@@ -338,8 +368,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                                         Loading());
                                 await blocking.blockUser(context,
                                     otherUid: widget.scrap['uid'],
-                                    public: widget.scrap['scrap']
-                                            ['writer'] !=
+                                    public: widget.scrap['scrap']['writer'] !=
                                         'ไม่ระบุตัวตน',
                                     scrap: widget.scrap);
                                 nav.pop(context);
@@ -372,9 +401,8 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   child: Icon(Icons.report_problem,
                                       size: appBarHeight / 3)),
                               onTap: () {
-                                final report = Provider.of<Report>(
-                                    context,
-                                    listen: false);
+                                final report =
+                                    Provider.of<Report>(context, listen: false);
                                 report.targetId = scrap['uid'];
                                 showDialogReport(context);
                               },
