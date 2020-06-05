@@ -94,7 +94,7 @@ void dialogvideo(BuildContext context, String uid) {
                                         "เติมกระดาษในคลัง",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: a.width / 15,
+                                            fontSize: a.width / 17,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(
@@ -108,14 +108,14 @@ void dialogvideo(BuildContext context, String uid) {
                                         "ดูวิดีโอเพื่อเติมกระดาษของคุณให้",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: a.width / 18,
+                                            fontSize: a.width / 17,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       Text(
                                         "เต็มคลัง สำหรับเขียนสแครป",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: a.width / 18,
+                                            fontSize: a.width / 17,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -137,7 +137,7 @@ void dialogvideo(BuildContext context, String uid) {
                                           "ดูเลย",
                                           style: TextStyle(
                                               color: Color(0xff26A4FF),
-                                              fontSize: a.width / 20,
+                                              fontSize: a.width / 17,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ),

@@ -90,14 +90,14 @@ void showdialogBurn(context, {bool thrown = false}) {
                                     Text(
                                       "หากมีคนกดเผาสแครปมากพอ",
                                       style: TextStyle(
-                                          fontSize: a.width / 20,
+                                          fontSize: a.width / 17,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
                                       "สแครปนี้จะหายไป",
                                       style: TextStyle(
-                                          fontSize: a.width / 20,
+                                          fontSize: a.width / 17,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
                                     ),
