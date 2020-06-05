@@ -230,6 +230,7 @@ class _ProfileState extends State<Profile> {
                         EdgeInsets.symmetric(horizontal: screenWidthDp / 8.1),
                     child: Text(
                       '${profile['status'] ?? 'สเตตัสของคุณ'}',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: s48,

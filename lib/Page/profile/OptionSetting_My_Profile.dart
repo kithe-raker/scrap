@@ -1707,6 +1707,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
                       height: screenHeightDp / 24,
                       width: screenWidthDp / 2.1,
                       child: Text(data['status'] ?? '',
+                          textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.grey, fontSize: s38)),
                     )
                   ],
