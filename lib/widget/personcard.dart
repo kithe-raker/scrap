@@ -66,9 +66,7 @@ class _PersonCardState extends State<PersonCard> {
                                   image: NetworkImage(widget.data['img']),
                                   fit: BoxFit.cover)),
                     ),
-                    SizedBox(
-                      width: a.width / 30
-                    ),
+                    SizedBox(width: a.width / 30),
                     Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +78,7 @@ class _PersonCardState extends State<PersonCard> {
                                   fontSize: a.width / 18,
                                   fontWeight: FontWeight.bold)),
                           SizedBox(
-                            height: screenHeightDp/24,
+                            height: screenHeightDp / 24,
                             width: screenWidthDp / 2.1,
                             child: Text(widget.data['status'] ?? '',
                                 style: TextStyle(

@@ -1703,8 +1703,12 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
                             color: Colors.white,
                             fontSize: screenWidthDp / 18,
                             fontWeight: FontWeight.bold)),
-                    Text(data['status'] ?? '',
-                        style: TextStyle(color: Colors.grey, fontSize: s38))
+                    SizedBox(
+                      height: screenHeightDp / 24,
+                      width: screenWidthDp / 2.1,
+                      child: Text(data['status'] ?? '',
+                          style: TextStyle(color: Colors.grey, fontSize: s38)),
+                    )
                   ],
                 ),
               )
