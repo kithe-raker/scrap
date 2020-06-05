@@ -67,7 +67,7 @@ class _PersonCardState extends State<PersonCard> {
                                   fit: BoxFit.cover)),
                     ),
                     SizedBox(
-                      width: a.width / 30,
+                      width: a.width / 30
                     ),
                     Container(
                       child: Column(
@@ -79,9 +79,13 @@ class _PersonCardState extends State<PersonCard> {
                                   color: Colors.white,
                                   fontSize: a.width / 18,
                                   fontWeight: FontWeight.bold)),
-                          Text(widget.data['status'] ?? '',
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: s38))
+                          SizedBox(
+                            height: screenHeightDp/24,
+                            width: screenWidthDp / 2.1,
+                            child: Text(widget.data['status'] ?? '',
+                                style: TextStyle(
+                                    color: Colors.grey, fontSize: s38)),
+                          )
                         ],
                       ),
                     )

@@ -225,12 +225,16 @@ class _ProfileState extends State<Profile> {
                               ],
                             )),
                   SizedBox(height: screenHeightDp / 24),
-                  Text(
-                    '${profile['status'] ?? 'สเตตัสของคุณ'}',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: s48,
-                        fontStyle: FontStyle.italic),
+                  Container(
+                    margin:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 8.1),
+                    child: Text(
+                      '${profile['status'] ?? 'สเตตัสของคุณ'}',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: s48,
+                          fontStyle: FontStyle.italic),
+                    ),
                   ),
                   SizedBox(height: screenHeightDp / 24),
                   Container(

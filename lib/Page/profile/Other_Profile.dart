@@ -175,7 +175,7 @@ class _OtherProfileState extends State<OtherProfile> {
                             dataProfile('โดนปาใส่', uid, field: 'thrown'),
                           ])),
                       Container(height: screenHeightDp / 100),
-                      SizedBox(height: appBarHeight / 10),
+                      SizedBox(height: screenHeightDp / 42),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -183,16 +183,18 @@ class _OtherProfileState extends State<OtherProfile> {
                             SizedBox(width: appBarHeight / 10),
                             throwButton()
                           ]),
-                      Container(height: screenHeightDp / 40),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: screenWidthDp / 30),
-                        child: Text('${widget.data['status'] ?? ''}',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: s40),
-                            textAlign: TextAlign.center),
-                      ),
-                      Container(height: screenHeightDp / 40),
+                      SizedBox(height: screenHeightDp / 42),
+                      widget.data['status'] == null
+                          ? SizedBox()
+                          : Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: screenWidthDp / 8.1),
+                              child: Text('${widget.data['status'] ?? ''}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: s40),
+                                  textAlign: TextAlign.center),
+                            ),
+                      Container(height: screenHeightDp / 72),
                       Divider(color: Colors.grey),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
