@@ -101,39 +101,45 @@ class _LoginPageState extends State<LoginPage> {
                                         width: 1.8, color: Colors.white),
                                     borderRadius: BorderRadius.circular(
                                         screenWidthDp / 42)),
-                                child: TextFormField(
-                                  cursorColor: Colors.transparent,
-                                  maxLength: 10,
-                                  textAlign: TextAlign.start,
-                                  textAlignVertical: TextAlignVertical.center,
-                                  keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.done,
-                                  validator: (val) {
-                                    var trim = val.trim();
-                                    return trim == ''
-                                        ? toast
-                                            .validateToast('ใส่เบอร์โทรของคุณ')
-                                        : trim.length != 10
+                                child: Container(
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: TextFormField(
+                                      cursorColor: Colors.transparent,
+                                      maxLength: 10,
+                                      textAlign: TextAlign.start,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      keyboardType: TextInputType.number,
+                                      textInputAction: TextInputAction.done,
+                                      validator: (val) {
+                                        var trim = val.trim();
+                                        return trim == ''
                                             ? toast.validateToast(
-                                                'ใส่เบอร์โทร10หลัก')
-                                            : null;
-                                  },
-                                  style: TextStyle(
-                                      height: 0.0,
-                                      fontSize: s65,
-                                      color: Colors.white),
-                                  decoration: InputDecoration(
-                                      counterText: '',
-                                      errorStyle: TextStyle(height: 0.0),
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(
+                                                'ใส่เบอร์โทรของคุณ')
+                                            : trim.length != 10
+                                                ? toast.validateToast(
+                                                    'ใส่เบอร์โทร10หลัก')
+                                                : null;
+                                      },
+                                      style: TextStyle(
                                           fontSize: s65,
-                                          color:
-                                              Colors.white.withOpacity(0.24)),
-                                      hintText: 'เบอร์โทร 10 หลัก'),
-                                  onSaved: (val) {
-                                    user.phone = val.trim();
-                                  },
+                                          height: 0.1,
+                                          color: Colors.white),
+                                      decoration: InputDecoration(
+                                          counterText: '',
+                                          errorStyle: TextStyle(height: 0.0),
+                                          border: InputBorder.none,
+                                          hintStyle: TextStyle(
+                                              fontSize: s65,
+                                              color: Colors.white
+                                                  .withOpacity(0.24)),
+                                          hintText: 'เบอร์โทร 10 หลัก'),
+                                      onSaved: (val) {
+                                        user.phone = val.trim();
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
