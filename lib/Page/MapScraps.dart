@@ -248,16 +248,21 @@ class _MapScrapsState extends State<MapScraps> {
                                         ],
                                       ),
                                       onDoubleTap: () {
-                                        _scaffoldKey.currentState
-                                            .showBottomSheet(
-                                          (context) => MapSheet(
+                                        // _scaffoldKey.currentState
+                                        //.
+
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              MapSheet(
                                             position: LatLng(
                                                 data['position']['geopoint']
                                                     .latitude,
                                                 data['position']['geopoint']
                                                     .longitude),
                                           ),
-                                          backgroundColor: Colors.transparent,
+                                          // backgroundColor:
+                                          //     Colors.transparent,
                                         );
                                       },
                                     ),

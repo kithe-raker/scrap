@@ -153,7 +153,9 @@ class _SubpeopleState extends State<Subpeople> {
 
                                     hintText: '@someone',
                                     hintStyle: TextStyle(
-                                      height: appBarHeight / 65,
+                                      height: a.width / 315,
+                                      //height: screenWidthDp / 320,
+                                      // height: appBarHeight / 65,
                                       fontSize: a.width / 18,
                                       color: Colors.grey[600],
                                     ),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -18,30 +20,60 @@ class _MapSheetState extends State<MapSheet> {
   Widget build(BuildContext context) {
     screenutilInit(context);
     _createScrapImageFromAsset(context);
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-            decoration: BoxDecoration(
+    Size a = MediaQuery.of(context).size;
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Center(
+          //  alignment: Alignenter,
+
+          child: Container(
+              decoration: BoxDecoration(
                 color: Color(0xff282828),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-            width: screenWidthDp,
-            height: screenHeightDp / 1.8,
-            child: Stack(
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                  child: GoogleMap(
-                    myLocationButtonEnabled: false,
-                    myLocationEnabled: false,
-                    onMapCreated: onMapCreated,
-                    initialCameraPosition:
-                        CameraPosition(target: widget.position, zoom: 18.5),
-                    markers: Set<Marker>.of(markers.values),
+                //borderRadius: BorderRadius.vertical(top: Radius.circular(24))
+              ),
+              width: screenWidthDp,
+              height: screenHeightDp / 1.8,
+              child: Stack(
+                children: <Widget>[
+                  ClipRRect(
+                    /* borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(24)),*/
+                    child: GoogleMap(
+                      myLocationButtonEnabled: false,
+                      myLocationEnabled: false,
+                      onMapCreated: onMapCreated,
+                      initialCameraPosition:
+                          CameraPosition(target: widget.position, zoom: 18.5),
+                      markers: Set<Marker>.of(markers.values),
+                    ),
                   ),
-                ),
-                Align(
+                  Container(
+                    width: a.width,
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: a.width / 30, right: a.width / 30),
+                        width: a.width / 12,
+                        height: a.width / 12,
+                        child: Center(
+                          child: Icon(
+                            Icons.clear,
+                            color: Colors.white,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                            color: Colors.white24,
+                            borderRadius: BorderRadius.circular(screenWidthDp)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  /*  Align(
                   alignment: Alignment.topCenter,
                   child: Container(
                     margin: EdgeInsets.only(top: 12, bottom: 4),
@@ -52,9 +84,10 @@ class _MapSheetState extends State<MapSheet> {
                       color: Color(0xff929292),
                     ),
                   ),
-                )
-              ],
-            )),
+                )*/
+                ],
+              )),
+        ),
       ),
     );
   }
