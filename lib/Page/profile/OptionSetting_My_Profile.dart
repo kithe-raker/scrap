@@ -672,51 +672,54 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                         ),
                                         onTap: () => selectImg(context)),
                                     Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            width: screenWidthDp / 1.4,
-                                            child: TextFormField(
-                                                maxLength: 16,
-                                                initialValue: user.id ?? 'name',
-                                                style: TextStyle(
-                                                    height: 0.64,
-                                                    fontSize: s60,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                                decoration: InputDecoration(
-                                                    counterText: '',
-                                                    border: InputBorder.none,
-                                                    prefixText: '@',
-                                                    prefixStyle: TextStyle(
-                                                        fontSize: s60,
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold)),
-                                                validator: (val) {
-                                                  var trim = val.trim();
-                                                  return trim.length < 1
-                                                      ? toast.validateToast(
-                                                          'ใส่ไอดีของคุณ')
-                                                      : null;
-                                                },
-                                                onSaved: (val) =>
-                                                    id = val.trim()),
-                                          ),
-                                          Text(
-                                            'Thailand',
-                                            style: TextStyle(
-                                              fontSize: s60,
-                                              color: Color(0xfff26A4FF),
-                                              fontWeight: FontWeight.bold,
+                                      child: Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              width: screenWidthDp / 1.4,
+                                              child: TextFormField(
+                                                  maxLength: 16,
+                                                  initialValue:
+                                                      user.id ?? 'name',
+                                                  style: TextStyle(
+                                                      height: 0.64,
+                                                      fontSize: s60,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  decoration: InputDecoration(
+                                                      counterText: '',
+                                                      border: InputBorder.none,
+                                                      prefixText: '@',
+                                                      prefixStyle: TextStyle(
+                                                          fontSize: s60,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                  validator: (val) {
+                                                    var trim = val.trim();
+                                                    return trim.length < 1
+                                                        ? toast.validateToast(
+                                                            'ใส่สเตตัสของคุณ')
+                                                        : null;
+                                                  },
+                                                  onSaved: (val) =>
+                                                      id = val.trim()),
                                             ),
-                                          ),
-                                        ],
+                                            Text(
+                                              'Thailand',
+                                              style: TextStyle(
+                                                fontSize: s60,
+                                                color: Color(0xfff26A4FF),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                     SizedBox(width: appBarHeight / 15),
