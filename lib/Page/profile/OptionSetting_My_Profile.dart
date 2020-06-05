@@ -783,13 +783,6 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                                 fontSize: s42,
                                                 color: Colors.white54,
                                                 fontWeight: FontWeight.bold)),
-                                        validator: (val) {
-                                          var trim = val.trim();
-                                          return trim.length < 1
-                                              ? toast.validateToast(
-                                                  'ใส่สเตตัสของคุณ')
-                                              : null;
-                                        },
                                         onSaved: (val) => status = val.trim()),
                                   ),
                                 ],
@@ -1249,7 +1242,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
             builder: (BuildContext context) =>
                 dropdownValue == 'ประวัติการโยนสแครป'
                     ? ScrapDialog(data: data)
-                    : Paperstranger(scrap: data, self: true));
+                    : Paperstranger(scrap: data, isHistory: true));
       },
     );
   }
