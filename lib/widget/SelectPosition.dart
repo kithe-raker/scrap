@@ -59,6 +59,15 @@ class _SelectPositionState extends State<SelectPosition> {
             onMapCreated: onMapCreated,
             initialCameraPosition: CameraPosition(target: location, zoom: 18.5),
             markers: Set<Marker>.of(markers.values),
+            onLongPress: (position) {
+              scrapLocation = position;
+              MarkerId markerId = MarkerId('scrap');
+              Marker marker = markers[markerId];
+              Marker updatedMarker = marker.copyWith(
+                positionParam: position,
+              );
+              setState(() => markers[markerId] = updatedMarker);
+            },
           ),
           Align(
             alignment: Alignment.topCenter,
@@ -80,7 +89,7 @@ class _SelectPositionState extends State<SelectPosition> {
                         offset: Offset(0.0, 3.2))
                   ]),
               child: Text(
-                'แตะค้างที่สแครปของคุณเพื่อเลือกตำแน่ง',
+                'แตะค้างที่สแครปหรือบนแผนที่เพื่อเลือกตำแน่ง',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     wordSpacing: 0.1, fontSize: s46, color: Colors.white),
