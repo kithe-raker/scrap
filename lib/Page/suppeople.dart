@@ -73,181 +73,186 @@ class _SubpeopleState extends State<Subpeople> {
           height: a.height,
           child: Stack(
             children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Container(
-                    height: appBarHeight / 1.42,
-                    width: screenWidthDp,
-                    color: Colors.black,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidthDp / 21,
+              StatefulBuilder(builder: (context, StateSetter setSearch) {
+                return Column(
+                  children: <Widget>[
+                    Container(
+                      height: appBarHeight / 1.42,
+                      width: screenWidthDp,
+                      color: Colors.black,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidthDp / 21,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          GestureDetector(
+                              child: Icon(Icons.arrow_back,
+                                  color: Colors.white, size: s60),
+                              onTap: () {
+                                Navigator.pop(context);
+                              }),
+                          SizedBox(),
+                          SizedBox()
+                        ],
+                      ),
                     ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        GestureDetector(
-                            child: Icon(Icons.arrow_back,
-                                color: Colors.white, size: s60),
-                            onTap: () {
-                              Navigator.pop(context);
-                            }),
-                        SizedBox(),
-                        SizedBox()
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: screenWidthDp / 2.7,
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(color: Color(0xff262626)))),
-                    padding: EdgeInsets.only(
-                        left: a.width / 50, right: a.width / 50),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(left: a.width / 25),
-                          child: Text(
-                            searching ? "ค้นหาผู้คน" : "ค้นหาผู้คน",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s54,
-                                fontWeight: FontWeight.bold),
+                    Container(
+                      height: screenWidthDp / 2.7,
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(color: Color(0xff262626)))),
+                      padding: EdgeInsets.only(
+                          left: a.width / 50, right: a.width / 50),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(left: a.width / 25),
+                            child: Text(
+                              searching ? "ค้นหาผู้คน" : "ค้นหาผู้คน",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: s54,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: a.width / 25),
-                          child: Text(
-                            "ค้นหาผู้คนเพื่ออ่านสแครปหรือปาสแครปหาพวกเขา",
-                            style: TextStyle(
-                                height: 1.2,
-                                color: Colors.white,
-                                fontSize: s42),
+                          Container(
+                            padding: EdgeInsets.only(left: a.width / 25),
+                            child: Text(
+                              "ค้นหาผู้คนเพื่ออ่านสแครปหรือปาสแครปหาพวกเขา",
+                              style: TextStyle(
+                                  height: 1.2,
+                                  color: Colors.white,
+                                  fontSize: s42),
+                            ),
                           ),
-                        ),
-                        SizedBox(height: a.width / 30),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                height: a.width / 8,
-                                margin: EdgeInsets.only(
-                                    left: a.width / 25, right: a.width / 25),
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(50.0)),
-                                  color: Color(0xff262626),
-                                ),
-                                child: TextField(
-                                  controller: _controller,
-                                  focusNode: focus,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: a.width / 18),
-                                  textAlign: TextAlign.center,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    // fillColor: Colors.red,
-
-                                    hintText: '@someone',
-                                    hintStyle: TextStyle(
-                                      height: a.width / 315,
-                                      //height: screenWidthDp / 320,
-                                      // height: appBarHeight / 65,
-                                      fontSize: a.width / 18,
-                                      color: Colors.grey[600],
-                                    ),
+                          SizedBox(height: a.width / 30),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                  height: a.width / 8,
+                                  margin: EdgeInsets.only(
+                                      left: a.width / 25, right: a.width / 25),
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(50.0)),
+                                    color: Color(0xff262626),
                                   ),
-                                  onTap: () {
-                                    focus.requestFocus();
-                                    setState(() => searching = true);
-                                  },
-                                  onChanged: (val) {
-                                    var trim = val.trim();
-                                    trim[0] == '@'
-                                        ? streamController
-                                            .add(trim.substring(1))
-                                        : streamController.add(trim);
-                                  },
+                                  child: TextField(
+                                    controller: _controller,
+                                    focusNode: focus,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: a.width / 18),
+                                    textAlign: TextAlign.center,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      // fillColor: Colors.red,
+
+                                      hintText: '@someone',
+                                      hintStyle: TextStyle(
+                                        height: a.width / 315,
+                                        //height: screenWidthDp / 320,
+                                        // height: appBarHeight / 65,
+                                        fontSize: a.width / 18,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      focus.requestFocus();
+                                      setSearch(() => searching = true);
+                                    },
+                                    onChanged: (val) {
+                                      var trim = val.trim();
+                                      trim[0] == '@'
+                                          ? streamController
+                                              .add(trim.substring(1))
+                                          : streamController.add(trim);
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: a.width / 100),
-                            searching
-                                ? Row(
-                                    children: <Widget>[
-                                      GestureDetector(
-                                        child: Text(
-                                          'ยกเลิก',
-                                          style: TextStyle(
-                                              fontSize: a.width / 18,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.white),
+                              SizedBox(width: a.width / 100),
+                              searching
+                                  ? Row(
+                                      children: <Widget>[
+                                        GestureDetector(
+                                          child: Text(
+                                            'ยกเลิก',
+                                            style: TextStyle(
+                                                fontSize: a.width / 18,
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.white),
+                                          ),
+                                          onTap: () {
+                                            focus.unfocus();
+                                            _controller.clear();
+                                            setSearch(() => searching = false);
+                                          },
                                         ),
-                                        onTap: () {
-                                          focus.unfocus();
-                                          _controller.clear();
-                                          setState(() => searching = false);
-                                        },
-                                      ),
-                                      SizedBox(width: a.width / 100),
-                                    ],
-                                  )
-                                : SizedBox()
-                          ],
-                        )
-                      ],
+                                        SizedBox(width: a.width / 100),
+                                      ],
+                                    )
+                                  : SizedBox()
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  StatefulBuilder(builder: (context, StateSetter setSearch) {
-                    if (!streamController.hasListener)
-                      streamController.stream
-                          .debounce(Duration(milliseconds: 540))
-                          .listen((value) => setSearch(() => search = value));
-                    return Expanded(
-                        child: loading
-                            ? Center(
-                                child: Container(
-                                  width: a.width / 3.6,
-                                  height: a.width / 3.6,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.42),
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: FlareActor(
-                                    'assets/loadingpaper.flr',
-                                    animation: 'Untitled',
-                                    fit: BoxFit.cover,
+                    StatefulBuilder(builder: (context, StateSetter setSearch) {
+                      if (!streamController.hasListener)
+                        streamController.stream
+                            .debounce(Duration(milliseconds: 540))
+                            .listen((value) => setSearch(() => search = value));
+                      return Expanded(
+                          child: loading
+                              ? Center(
+                                  child: Container(
+                                    width: a.width / 3.6,
+                                    height: a.width / 3.6,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.42),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    child: FlareActor(
+                                      'assets/loadingpaper.flr',
+                                      animation: 'Untitled',
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                ),
-                              )
-                            : !searching
-                                ? recently.length < 1 && following.length < 1
-                                    ? Center(
-                                        child: guide('ไม่มีคนที่คุณติดตาม'))
-                                    : ListView(
-                                        physics:
-                                            AlwaysScrollableScrollPhysics(),
-                                        children: <Widget>[
-                                          recently.length > 0
-                                              ? recentlyThrow()
-                                              : SizedBox(),
-                                          following.length > 0
-                                              ? followingList()
-                                              : SizedBox()
-                                        ],
-                                      )
-                                : serachResult());
-                  })
-                ],
-              ),
-              Positioned(
-                bottom: 0,
-                child: AdmobBanner(
-                    adUnitId: AdmobService().getBannerAdId(),
-                    adSize: AdmobBannerSize.FULL_BANNER),
-              ),
+                                )
+                              : !searching
+                                  ? recently.length < 1 && following.length < 1
+                                      ? Center(
+                                          child: guide('ไม่มีคนที่คุณติดตาม'))
+                                      : ListView(
+                                          physics:
+                                              AlwaysScrollableScrollPhysics(),
+                                          children: <Widget>[
+                                            recently.length > 0
+                                                ? recentlyThrow()
+                                                : SizedBox(),
+                                            following.length > 0
+                                                ? followingList()
+                                                : SizedBox()
+                                          ],
+                                        )
+                                  : serachResult());
+                    })
+                  ],
+                );
+              }),
+              searching
+                  ? SizedBox()
+                  : Positioned(
+                      bottom: 0,
+                      child: AdmobBanner(
+                          adUnitId: AdmobService().getBannerAdId(),
+                          adSize: AdmobBannerSize.FULL_BANNER),
+                    ),
             ],
           ),
         ),

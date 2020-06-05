@@ -147,6 +147,7 @@ void dialogvideo(BuildContext context, String uid) {
                                             adUnitId:
                                                 AdmobService().getVideoAdId(),
                                             listener: (event) async {
+                                              print(event);
                                               if (event ==
                                                       MobileAdEvent
                                                           .impression ||
@@ -157,11 +158,7 @@ void dialogvideo(BuildContext context, String uid) {
                                                 setState(() => loading = false);
                                                 dialogfinishpaper(context);
                                               } else if (event ==
-                                                      MobileAdEvent
-                                                          .failedToLoad ||
-                                                  event ==
-                                                      MobileAdEvent
-                                                          .leftApplication) {
+                                                  MobileAdEvent.failedToLoad) {
                                                 scrap.toast(
                                                     'เกิดข้อผิดพลาดกรุณาลองอีกครั้ง');
                                                 setState(() => loading = false);

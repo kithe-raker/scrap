@@ -114,152 +114,158 @@ class _OtherProfileState extends State<OtherProfile> {
         body: SafeArea(
           child: Stack(
             children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(bottom: screenHeightDp / 21),
-                padding: EdgeInsets.only(top: appBarHeight / 1.35),
-                child: SmartRefresher(
-                  footer: Footer(),
-                  enablePullDown: false,
-                  enablePullUp: true,
-                  controller: refreshController,
-                  onLoading: () async {
-                    if (pickedScrap
-                        ? pickScrap.length > 0
-                        : scrapCrate.length > 0) {
-                      var refColl = pickedScrap
-                          ? fireStore
-                              .collection('$ref/$uid/scrapCollection')
-                              .orderBy('timeStamp', descending: true)
-                              .startAfterDocument(pickScrap.last)
-                          : fireStore
-                              .collection('$ref/$uid/thrownScraps')
-                              .where('pick', isEqualTo: true)
-                              .orderBy('timeStamp', descending: true)
-                              .startAfterDocument(scrapCrate.last);
-                      var docs = await refColl.limit(4).getDocuments();
-                      pickedScrap
-                          ? pickScrap.addAll(docs.documents)
-                          : scrapCrate.addAll(docs.documents);
-                      docs.documents.length < 1
-                          ? refreshController.loadNoData()
-                          : refreshController.loadComplete();
-                      setState(() {});
-                    } else
-                      refreshController.loadNoData();
-                  },
-                  // footer: footerList(),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Container(
-                        height: screenWidthDp / 3.32,
-                        width: screenWidthDp / 3.32,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white, width: 1.2),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(screenHeightDp),
-                            image: DecorationImage(
-                                image: NetworkImage(widget.data['img']),
-                                fit: BoxFit.cover)),
-                      ),
-                      SizedBox(height: appBarHeight / 5),
-                      Text('@${widget.data['id']}',
-                          style: TextStyle(color: Colors.white, fontSize: s60)),
-                      SizedBox(height: appBarHeight / 10),
-                      Container(
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                            dataProfile('เก็บไว้', uid, field: 'pick'),
-                            dataProfile('แอทเทนชัน', uid, field: 'att'),
-                            dataProfile('โดนปาใส่', uid, field: 'thrown'),
-                          ])),
-                      Container(height: screenHeightDp / 100),
-                      SizedBox(height: screenHeightDp / 42),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+              StatefulBuilder(builder: (context, StateSetter setProfile) {
+                return Container(
+                  margin: EdgeInsets.only(bottom: screenHeightDp / 21),
+                  padding: EdgeInsets.only(top: appBarHeight / 1.35),
+                  child: SmartRefresher(
+                    footer: Footer(),
+                    enablePullDown: false,
+                    enablePullUp: true,
+                    controller: refreshController,
+                    onLoading: () async {
+                      if (pickedScrap
+                          ? pickScrap.length > 0
+                          : scrapCrate.length > 0) {
+                        var refColl = pickedScrap
+                            ? fireStore
+                                .collection('$ref/$uid/scrapCollection')
+                                .orderBy('timeStamp', descending: true)
+                                .startAfterDocument(pickScrap.last)
+                            : fireStore
+                                .collection('$ref/$uid/thrownScraps')
+                                .where('pick', isEqualTo: true)
+                                .orderBy('timeStamp', descending: true)
+                                .startAfterDocument(scrapCrate.last);
+                        var docs = await refColl.limit(4).getDocuments();
+                        pickedScrap
+                            ? pickScrap.addAll(docs.documents)
+                            : scrapCrate.addAll(docs.documents);
+                        docs.documents.length < 1
+                            ? refreshController.loadNoData()
+                            : refreshController.loadComplete();
+                        setProfile(() {});
+                      } else
+                        refreshController.loadNoData();
+                    },
+                    // footer: footerList(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Container(
+                          height: screenWidthDp / 3.32,
+                          width: screenWidthDp / 3.32,
+                          decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.white, width: 1.2),
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.circular(screenHeightDp),
+                              image: DecorationImage(
+                                  image: NetworkImage(widget.data['img']),
+                                  fit: BoxFit.cover)),
+                        ),
+                        SizedBox(height: appBarHeight / 5),
+                        Text('@${widget.data['id']}',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: s60)),
+                        SizedBox(height: appBarHeight / 10),
+                        Container(
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                              dataProfile('เก็บไว้', uid, field: 'pick'),
+                              dataProfile('แอทเทนชัน', uid, field: 'att'),
+                              dataProfile('โดนปาใส่', uid, field: 'thrown'),
+                            ])),
+                        Container(height: screenHeightDp / 100),
+                        SizedBox(height: screenHeightDp / 42),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              followButton(),
+                              SizedBox(width: appBarHeight / 10),
+                              throwButton()
+                            ]),
+                        SizedBox(height: screenHeightDp / 42),
+                        widget.data['status'] == null
+                            ? SizedBox()
+                            : Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: screenWidthDp / 8.1),
+                                child: Text('${widget.data['status'] ?? ''}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: s40),
+                                    textAlign: TextAlign.center),
+                              ),
+                        Container(height: screenHeightDp / 72),
+                        Divider(color: Colors.grey),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
-                            followButton(),
-                            SizedBox(width: appBarHeight / 10),
-                            throwButton()
-                          ]),
-                      SizedBox(height: screenHeightDp / 42),
-                      widget.data['status'] == null
-                          ? SizedBox()
-                          : Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: screenWidthDp / 8.1),
-                              child: Text('${widget.data['status'] ?? ''}',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: s40),
-                                  textAlign: TextAlign.center),
-                            ),
-                      Container(height: screenHeightDp / 72),
-                      Divider(color: Colors.grey),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          GestureDetector(
-                            onTap: () => setState(() => pickedScrap = true),
-                            child: Container(
-                              height: appBarHeight / 2,
-                              decoration: BoxDecoration(
-                                border: pickedScrap
-                                    ? Border(
-                                        bottom: BorderSide(
-                                            width: 2.0, color: Colors.white),
-                                      )
-                                    : null,
-                              ),
-                              child: Text(
-                                'เก็บจากที่ทิ้งไว้',
-                                style: TextStyle(
-                                    fontSize: s48,
-                                    color: Colors.white,
-                                    fontWeight:
-                                        pickedScrap ? FontWeight.bold : null),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              pickedScrap = false;
-                              setState(() {});
-                            },
-                            child: Container(
-                              height: appBarHeight / 2,
-                              decoration: BoxDecoration(
+                            GestureDetector(
+                              onTap: () => setProfile(() => pickedScrap = true),
+                              child: Container(
+                                height: appBarHeight / 2,
+                                decoration: BoxDecoration(
                                   border: pickedScrap
-                                      ? null
-                                      : Border(
+                                      ? Border(
                                           bottom: BorderSide(
-                                              width: 2.0,
-                                              color: Colors.white))),
-                              child: Text(
-                                'เก็บจากโดนปาใส่',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: s48,
-                                    fontWeight:
-                                        pickedScrap ? null : FontWeight.bold),
+                                              width: 2.0, color: Colors.white),
+                                        )
+                                      : null,
+                                ),
+                                child: Text(
+                                  'เก็บจากที่ทิ้งไว้',
+                                  style: TextStyle(
+                                      fontSize: s48,
+                                      color: Colors.white,
+                                      fontWeight:
+                                          pickedScrap ? FontWeight.bold : null),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Divider(color: Colors.grey, height: 0),
-                      SizedBox(height: screenWidthDp / 36),
-                      initScrapFinish
-                          ? scrapGrid(pickedScrap ? pickScrap : scrapCrate)
-                          : Container(
-                              height: screenHeightDp / 8,
-                              child:
-                                  Center(child: CircularProgressIndicator())),
-                      SizedBox(height: screenWidthDp / 36),
-                    ],
+                            GestureDetector(
+                              onTap: () {
+                                pickedScrap = false;
+                                setProfile(() {});
+                              },
+                              child: Container(
+                                height: appBarHeight / 2,
+                                decoration: BoxDecoration(
+                                    border: pickedScrap
+                                        ? null
+                                        : Border(
+                                            bottom: BorderSide(
+                                                width: 2.0,
+                                                color: Colors.white))),
+                                child: Text(
+                                  'เก็บจากโดนปาใส่',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: s48,
+                                      fontWeight:
+                                          pickedScrap ? null : FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Divider(color: Colors.grey, height: 0),
+                        SizedBox(height: screenWidthDp / 36),
+                        initScrapFinish
+                            ? scrapGrid(pickedScrap ? pickScrap : scrapCrate)
+                            : Container(
+                                height: screenHeightDp / 8,
+                                child:
+                                    Center(child: CircularProgressIndicator())),
+                        SizedBox(height: screenWidthDp / 36),
+                      ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              }),
               Positioned(
                   top: 0,
                   child: Container(

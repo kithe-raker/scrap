@@ -145,228 +145,233 @@ class _ProfileState extends State<Profile> {
       body: SafeArea(
           child: Stack(
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(bottom: screenHeightDp / 21),
-            width: screenWidthDp,
-            padding: EdgeInsets.only(top: appBarHeight / 1.35),
-            child: SmartRefresher(
-              footer: Footer(),
-              controller: refreshController,
-              enablePullDown: false,
-              enablePullUp: true,
-              // footer: footerList(),
-              onLoading: () async {
-                if (pickedScrap
-                    ? pickScrap.length > 0
-                    : scrapCrate.length > 0) {
-                  var ref = pickedScrap
-                      ? fireStore
-                          .collection(
-                              'Users/${user.region}/users/${user.uid}/scrapCollection')
-                          .orderBy('timeStamp', descending: true)
-                          .startAfterDocument(pickScrap.last)
-                      : fireStore
-                          .collection(
-                              'Users/${user.region}/users/${user.uid}/thrownScraps')
-                          .where('pick', isEqualTo: true)
-                          .orderBy('timeStamp', descending: true)
-                          .startAfterDocument(scrapCrate.last);
-                  var docs = await ref.limit(4).getDocuments();
-                  pickedScrap
-                      ? pickScrap.addAll(docs.documents)
-                      : scrapCrate.addAll(docs.documents);
-                  docs.documents.length < 1
-                      ? refreshController.loadNoData()
-                      : refreshController.loadComplete();
-                  setState(() {});
-                } else
-                  refreshController.loadNoData();
-              },
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: screenHeightDp / 36),
-                  Container(
-                    height: screenWidthDp / 3.32,
-                    width: screenWidthDp / 3.32,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 1.2),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(screenHeightDp),
+          StatefulBuilder(builder: (context, StateSetter setProfile) {
+            return Container(
+              margin: EdgeInsets.only(bottom: screenHeightDp / 21),
+              width: screenWidthDp,
+              padding: EdgeInsets.only(top: appBarHeight / 1.35),
+              child: SmartRefresher(
+                footer: Footer(),
+                controller: refreshController,
+                enablePullDown: false,
+                enablePullUp: true,
+                // footer: footerList(),
+                onLoading: () async {
+                  if (pickedScrap
+                      ? pickScrap.length > 0
+                      : scrapCrate.length > 0) {
+                    var ref = pickedScrap
+                        ? fireStore
+                            .collection(
+                                'Users/${user.region}/users/${user.uid}/scrapCollection')
+                            .orderBy('timeStamp', descending: true)
+                            .startAfterDocument(pickScrap.last)
+                        : fireStore
+                            .collection(
+                                'Users/${user.region}/users/${user.uid}/thrownScraps')
+                            .where('pick', isEqualTo: true)
+                            .orderBy('timeStamp', descending: true)
+                            .startAfterDocument(scrapCrate.last);
+                    var docs = await ref.limit(4).getDocuments();
+                    pickedScrap
+                        ? pickScrap.addAll(docs.documents)
+                        : scrapCrate.addAll(docs.documents);
+                    docs.documents.length < 1
+                        ? refreshController.loadNoData()
+                        : refreshController.loadComplete();
+                    setProfile(() {});
+                  } else
+                    refreshController.loadNoData();
+                },
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: screenHeightDp / 36),
+                    Container(
+                      height: screenWidthDp / 3.32,
+                      width: screenWidthDp / 3.32,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 1.2),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(screenHeightDp),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(screenHeightDp),
+                        child: profile['img'] == null
+                            ? Image.asset('assets/userprofile.png')
+                            : Image.file(File(profile['img']),
+                                fit: BoxFit.cover),
+                      ),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(screenHeightDp),
-                      child: profile['img'] == null
-                          ? Image.asset('assets/userprofile.png')
-                          : Image.file(File(profile['img']), fit: BoxFit.cover),
+                    SizedBox(height: appBarHeight / 5),
+                    Text(
+                      '@${profile['id'] ?? 'ชื่อ'}',
+                      style: TextStyle(color: Colors.white, fontSize: s60),
                     ),
-                  ),
-                  SizedBox(height: appBarHeight / 5),
-                  Text(
-                    '@${profile['id'] ?? 'ชื่อ'}',
-                    style: TextStyle(color: Colors.white, fontSize: s60),
-                  ),
-                  SizedBox(
-                    height: appBarHeight / 10,
-                  ),
-                  Container(
-                      child: user.uid == null
-                          ? null
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    SizedBox(
+                      height: appBarHeight / 10,
+                    ),
+                    Container(
+                        child: user.uid == null
+                            ? null
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  dataProfile('เก็บไว้', user.uid,
+                                      field: 'pick'),
+                                  dataProfile('แอทเทนชัน', user.uid,
+                                      field: 'att'),
+                                  dataProfile('โดนปาใส่', user.uid,
+                                      field: 'thrown'),
+                                ],
+                              )),
+                    SizedBox(height: screenHeightDp / 24),
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: screenWidthDp / 8.1),
+                      child: Text(
+                        '${profile['status'] ?? 'สเตตัสของคุณ'}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: s48,
+                            fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    SizedBox(height: screenHeightDp / 24),
+                    Container(
+                      child: Column(
+                        children: <Widget>[
+                          StreamBuilder(
+                              stream: fireStore
+                                  .collection(
+                                      'Users/${user.region}/users/${user.uid}/thrownScraps')
+                                  .orderBy('scrap.timeStamp', descending: true)
+                                  .where('scrap.timeStamp',
+                                      isGreaterThan: yesterDay())
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  List recentScraps = snapshot.data.documents;
+                                  return Column(children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: screenWidthDp / 30),
+                                      padding: EdgeInsets.only(
+                                          left: a.width / 50,
+                                          right: a.width / 50),
+                                      /*  margin: EdgeInsets.only(
+                                            left: a.width / 25,
+                                            right: a.width / 25),*/
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Text(
+                                                recentScraps.length > 0
+                                                    ? 'โดนปาใส่ล่าสุด ${recentScraps.length} ก้อน'
+                                                    : 'ไม่มีกระดาษที่ปามา',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: s60)),
+                                            switchThrow(user.uid)
+                                          ]),
+                                    ),
+                                    recentlyThrown(recentScraps)
+                                  ]);
+                                } else {
+                                  return SizedBox(
+                                      height: screenWidthDp / 8.1,
+                                      child: Center(
+                                          child: CircularProgressIndicator()));
+                                }
+                              }),
+                          SizedBox(height: 7.2),
+                          Divider(color: Colors.grey),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
-                                dataProfile('เก็บไว้', user.uid, field: 'pick'),
-                                dataProfile('แอทเทนชัน', user.uid,
-                                    field: 'att'),
-                                dataProfile('โดนปาใส่', user.uid,
-                                    field: 'thrown'),
-                              ],
-                            )),
-                  SizedBox(height: screenHeightDp / 24),
-                  Container(
-                    margin:
-                        EdgeInsets.symmetric(horizontal: screenWidthDp / 8.1),
-                    child: Text(
-                      '${profile['status'] ?? 'สเตตัสของคุณ'}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: s48,
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  SizedBox(height: screenHeightDp / 24),
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        StreamBuilder(
-                            stream: fireStore
-                                .collection(
-                                    'Users/${user.region}/users/${user.uid}/thrownScraps')
-                                .orderBy('scrap.timeStamp', descending: true)
-                                .where('scrap.timeStamp',
-                                    isGreaterThan: yesterDay())
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                List recentScraps = snapshot.data.documents;
-                                return Column(children: <Widget>[
-                                  Container(
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: screenWidthDp / 30),
-                                    padding: EdgeInsets.only(
-                                        left: a.width / 50,
-                                        right: a.width / 50),
-                                    /*  margin: EdgeInsets.only(
-                                        left: a.width / 25,
-                                        right: a.width / 25),*/
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                              recentScraps.length > 0
-                                                  ? 'โดนปาใส่ล่าสุด ${recentScraps.length} ก้อน'
-                                                  : 'ไม่มีกระดาษที่ปามา',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: s60)),
-                                          switchThrow(user.uid)
-                                        ]),
-                                  ),
-                                  recentlyThrown(recentScraps)
-                                ]);
-                              } else {
-                                return SizedBox(
-                                    height: screenWidthDp / 8.1,
-                                    child: Center(
-                                        child: CircularProgressIndicator()));
-                              }
-                            }),
-                        SizedBox(height: 7.2),
-                        Divider(color: Colors.grey),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              GestureDetector(
-                                child: Container(
-                                  height: appBarHeight / 2,
-                                  decoration: BoxDecoration(
-                                    border: pickedScrap
-                                        ? Border(
-                                            bottom: BorderSide(
-                                                width: 2.0,
-                                                color: Colors.white),
-                                          )
-                                        : null,
-                                  ),
-                                  child: Text(
-                                    'เก็บจากที่ทิ้งไว้',
-                                    style: TextStyle(
-                                        fontSize: s48,
-                                        color: Colors.white,
-                                        fontWeight: pickedScrap
-                                            ? FontWeight.bold
-                                            : null),
-                                  ),
-                                ),
-                                onTap: () {
-                                  pickedScrap = true;
-                                  setState(() {});
-                                },
-                              ),
-                              GestureDetector(
-                                  onTap: () {
-                                    pickedScrap = false;
-                                    setState(() {});
-                                  },
+                                GestureDetector(
                                   child: Container(
                                     height: appBarHeight / 2,
                                     decoration: BoxDecoration(
-                                        border: pickedScrap
-                                            ? null
-                                            : Border(
-                                                bottom: BorderSide(
-                                                    width: 2.0,
-                                                    color: Colors.white))),
-                                    child: Text('เก็บจากโดนปาใส่',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: s48,
-                                            fontWeight: pickedScrap
-                                                ? null
-                                                : FontWeight.bold)),
-                                  ))
-                            ]),
-                        Divider(color: Colors.grey, height: 0),
-                        SizedBox(height: screenWidthDp / 36),
-                        initScrapFinish
-                            ? scrapGrid(pickedScrap ? pickScrap : scrapCrate)
-                            : Container(
-                                height: screenHeightDp / 8,
-                                child:
-                                    Center(child: CircularProgressIndicator())),
-                        SizedBox(height: screenWidthDp / 42),
-                      ],
+                                      border: pickedScrap
+                                          ? Border(
+                                              bottom: BorderSide(
+                                                  width: 2.0,
+                                                  color: Colors.white),
+                                            )
+                                          : null,
+                                    ),
+                                    child: Text(
+                                      'เก็บจากที่ทิ้งไว้',
+                                      style: TextStyle(
+                                          fontSize: s48,
+                                          color: Colors.white,
+                                          fontWeight: pickedScrap
+                                              ? FontWeight.bold
+                                              : null),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    pickedScrap = true;
+                                    setProfile(() {});
+                                  },
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      pickedScrap = false;
+                                      setProfile(() {});
+                                    },
+                                    child: Container(
+                                      height: appBarHeight / 2,
+                                      decoration: BoxDecoration(
+                                          border: pickedScrap
+                                              ? null
+                                              : Border(
+                                                  bottom: BorderSide(
+                                                      width: 2.0,
+                                                      color: Colors.white))),
+                                      child: Text('เก็บจากโดนปาใส่',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: s48,
+                                              fontWeight: pickedScrap
+                                                  ? null
+                                                  : FontWeight.bold)),
+                                    ))
+                              ]),
+                          Divider(color: Colors.grey, height: 0),
+                          SizedBox(height: screenWidthDp / 36),
+                          initScrapFinish
+                              ? scrapGrid(pickedScrap ? pickScrap : scrapCrate)
+                              : Container(
+                                  height: screenHeightDp / 8,
+                                  child: Center(
+                                      child: CircularProgressIndicator())),
+                          SizedBox(height: screenWidthDp / 42),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          }),
           Positioned(top: 0, child: appbarProfile(context)),
           initInfoFinish ? SizedBox() : Loading(),
           Positioned(
             bottom: 0,
             child: Container(
+              width: screenWidthDp,
               child: AdmobBanner(
                   adUnitId: AdmobService().getBannerAdId(),
                   adSize: AdmobBannerSize.FULL_BANNER),
             ),
           )
-          // adsContainer(),
         ],
       )),
     );
@@ -546,23 +551,25 @@ class _ProfileState extends State<Profile> {
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
           if (snapshot.hasData) {
             bool isSwitched = snapshot.data.value;
-            return Transform.scale(
-                scale: 1.3,
-                child: Switch(
-                    value: isSwitched,
-                    onChanged: (value) {
-                      if (value == false)
-                        Fluttertoast.showToast(msg: 'ปิดการโดนปาใส่แล้ว');
-                      else
-                        Fluttertoast.showToast(msg: 'เปิดการโดนปาใส่แล้ว');
-                      setting.setAllowThrow(context, value);
-                      setState(() {
-                        isSwitched = value;
-                      });
-                    },
-                    inactiveTrackColor: Colors.grey,
-                    activeTrackColor: Colors.blue,
-                    activeColor: Colors.white));
+            return StatefulBuilder(builder: (context, StateSetter setSwitch) {
+              return Transform.scale(
+                  scale: 1.3,
+                  child: Switch(
+                      value: isSwitched,
+                      onChanged: (value) {
+                        if (value == false)
+                          Fluttertoast.showToast(msg: 'ปิดการโดนปาใส่แล้ว');
+                        else
+                          Fluttertoast.showToast(msg: 'เปิดการโดนปาใส่แล้ว');
+                        setting.setAllowThrow(context, value);
+                        setSwitch(() {
+                          isSwitched = value;
+                        });
+                      },
+                      inactiveTrackColor: Colors.grey,
+                      activeTrackColor: Colors.blue,
+                      activeColor: Colors.white));
+            });
           } else {
             return SizedBox();
           }

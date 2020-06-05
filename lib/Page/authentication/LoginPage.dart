@@ -18,6 +18,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool loading = false;
+  var focus = FocusNode();
   var _key = GlobalKey<FormState>();
   StreamSubscription loadStatus;
 
@@ -30,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
+    focus.dispose();
     loadStatus.cancel();
     super.dispose();
   }
@@ -105,6 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: TextFormField(
+                                      focusNode: focus,
                                       cursorColor: Colors.transparent,
                                       maxLength: 10,
                                       textAlign: TextAlign.start,
@@ -172,6 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                                 fontSize: s58,
                               ))),
                       onTap: () {
+                        focus.unfocus();
                         var curState = _key.currentState;
                         if (curState.validate()) {
                           curState.save();
