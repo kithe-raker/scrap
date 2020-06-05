@@ -50,6 +50,7 @@ class _PaperstrangerState extends State<Paperstranger> {
     screenutilInit(context);
     final user = Provider.of<UserData>(context, listen: false);
     var scrap = widget.scrap['scrap'];
+    Size a = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
@@ -62,13 +63,26 @@ class _PaperstrangerState extends State<Paperstranger> {
                     child: Stack(
                       children: <Widget>[
                         Positioned(
-                            child: Container(
-                          height: screenWidthDp / 1.05 * 1.21,
-                          width: screenWidthDp / 1.05,
+                          child: Container(
+                            margin: EdgeInsets.all(s10 / 5),
+                            child: Image.asset(
+                              'assets/paperscrap.jpg',
+                              //
+                              width: a.width / 1.04,
+                              height: a.width / 1.04 * 1.115,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        /*Container(
+                       /*   height: screenWidthDp / 1.05 * 1.21,
+                          width: screenWidthDp / 1.05,*/
+                          
                           decoration: BoxDecoration(
                               color: Colors.white,
                               image: DecorationImage(
                                   image: AssetImage('assets/paperscrap.jpg'),
+                                  
                                   fit: BoxFit.cover)),
                           child: Center(
                               child: Text(
@@ -78,7 +92,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                           )),
                           /*  height: 407 * appBarHeight / 75,
                           width: 365 * appBarHeight / 75,*/
-                        )),
+                        ))*/
                         Positioned(
                             right: 0,
                             child: Container(
@@ -279,7 +293,8 @@ class _PaperstrangerState extends State<Paperstranger> {
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
           return Container(
-            height: appBarHeight * 3.4,
+            height: appBarHeight * 2.2,
+            //  height: appBarHeight * 3.4,
             decoration: BoxDecoration(
               color: Color(0xff202020),
               borderRadius: BorderRadius.only(
@@ -302,9 +317,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                       ),
                     )),
                 Container(
-                  margin: EdgeInsets.only(
+                  /*  margin: EdgeInsets.only(
                     bottom: appBarHeight - 20,
-                  ),
+                  ),*/
                   child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -312,6 +327,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
                             GestureDetector(
                               child: Container(
                                   height: 50,
@@ -348,6 +366,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
                             GestureDetector(
                               child: Container(
                                   height: 50,
@@ -387,6 +408,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
                             GestureDetector(
                               child: Container(
                                   height: 50,
@@ -418,13 +442,13 @@ class _PaperstrangerState extends State<Paperstranger> {
                     ),
                   ),
                 ),
-                Positioned(
-                    bottom: 0,
-                    child: Container(
-                      child: AdmobBanner(
-                          adUnitId: AdmobService().getBannerAdId(),
-                          adSize: AdmobBannerSize.FULL_BANNER),
-                    )),
+                // Positioned(
+                //     bottom: 0,
+                //     child: Container(
+                //       child: AdmobBanner(
+                //           adUnitId: AdmobService().getBannerAdId(),
+                //           adSize: AdmobBannerSize.FULL_BANNER),
+                //     )),
               ],
             ),
           );

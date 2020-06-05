@@ -199,7 +199,7 @@ class _HomePageState extends State<HomePage> {
     final user = Provider.of<UserData>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
-        Dg().warnDialog(context, 'คุณต้องการออกจากScrapใช่หรือไม่', () {
+        Dg().warnDialog(context, 'คุณต้องการออกจาก Scrap ใช่หรือไม่', () {
           SystemChannels.platform.invokeMethod('SystemNavigator.pop');
         });
         return null;

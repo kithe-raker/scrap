@@ -521,7 +521,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
           return Container(
-            height: appBarHeight * 3.4,
+            height: appBarHeight * 2.2,
             decoration: BoxDecoration(
               color: Color(0xff202020),
               borderRadius: BorderRadius.only(
@@ -544,9 +544,9 @@ class _ScrapDialogState extends State<ScrapDialog> {
                       ),
                     )),
                 Container(
-                  margin: EdgeInsets.only(
-                    bottom: appBarHeight - 20,
-                  ),
+                  // margin: EdgeInsets.only(
+                  //   bottom: appBarHeight - 20,
+                  // ),
                   child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -554,6 +554,9 @@ class _ScrapDialogState extends State<ScrapDialog> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
                             GestureDetector(
                               child: Container(
                                   height: 50,
@@ -592,6 +595,9 @@ class _ScrapDialogState extends State<ScrapDialog> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
                             GestureDetector(
                               child: Container(
                                   height: 50,
@@ -627,13 +633,13 @@ class _ScrapDialogState extends State<ScrapDialog> {
                     ),
                   ),
                 ),
-                Positioned(
-                    bottom: 0,
-                    child: Container(
-                      child: AdmobBanner(
-                          adUnitId: AdmobService().getBannerAdId(),
-                          adSize: AdmobBannerSize.FULL_BANNER),
-                    )),
+                // Positioned(
+                //     bottom: 0,
+                //     child: Container(
+                //       child: AdmobBanner(
+                //           adUnitId: AdmobService().getBannerAdId(),
+                //           adSize: AdmobBannerSize.FULL_BANNER),
+                //     )),
               ],
             ),
           );
