@@ -611,7 +611,11 @@ class _ProfileState extends State<Profile> {
                     showTransaction: false,
                     currentList: pickScrap)
                 : Paperstranger(
-                    scrap: data, self: true, currentList: scrapCrate));
+                    scrap: data,
+                    self: true,
+                    picked: true,
+                    isHistory: true,
+                    currentList: scrapCrate));
         setState(() {});
       },
     );
@@ -739,7 +743,8 @@ class _ProfileState extends State<Profile> {
         onTap: () {
           showDialog(
               context: context,
-              builder: (BuildContext contwxt) => Paperstranger(scrap: data));
+              builder: (BuildContext contwxt) =>
+                  Paperstranger(scrap: data, self: true));
           if (!read) {
             cacheHistory.addReadScrap(data);
             readScrap.add(data.documentID);

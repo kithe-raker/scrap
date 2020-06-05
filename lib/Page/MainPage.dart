@@ -114,23 +114,15 @@ class _MainPageState extends State<MainPage> {
   Future<void> multiCaseNavigator() async {
     final user = Provider.of<UserData>(context, listen: false);
     bool fileExist = await userinfo.fileExist();
-    var img, doc;
+    var img;
     if (fileExist) {
       var map = await userinfo.readContents();
       user.region = map['region'];
       user.phone = map['phone'];
       img = map['img'];
       if (img == null) {
-        doc = await fireStore
-            .collection('Users/${map['region']}/users')
-            .document(user.uid)
-            .get();
-        if (doc.exists && doc['img'] != null) {
-          await fireAuth.signOut();
-          nav.pushReplacement(context, LoginPage());
-        } else {
-          nav.pushReplacement(context, CreateProfile1());
-        }
+        await fireAuth.signOut();
+        nav.pushReplacement(context, LoginPage());
       } else {
         nav.pushReplacement(context, MainStream());
       }

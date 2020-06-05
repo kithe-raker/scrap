@@ -21,11 +21,13 @@ class Paperstranger extends StatefulWidget {
   final List currentList;
   final bool self;
   final bool isHistory;
+  final bool picked;
   Paperstranger(
       {@required this.scrap,
       this.self = false,
       this.currentList,
-      this.isHistory = false});
+      this.isHistory = false,
+      this.picked = false});
   @override
   _PaperstrangerState createState() => _PaperstrangerState();
 }
@@ -62,21 +64,9 @@ class _PaperstrangerState extends State<Paperstranger> {
                   child: Center(
                     child: Stack(
                       children: <Widget>[
-                        Positioned(
-                          child: Container(
-                            margin: EdgeInsets.all(s10 / 5),
-                            child: Image.asset(
-                              'assets/paperscrap.jpg',
-                              //
-                              width: a.width / 1.04,
-                              height: a.width / 1.04 * 1.115,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
                         Container(
-                          height: screenWidthDp / 1.05 * 1.21,
-                          width: screenWidthDp / 1.05,
+                          height: screenWidthDp / 1.04 * 1.21,
+                          width: screenWidthDp / 1.04,
                           decoration: BoxDecoration(
                               image: DecorationImage(
                                   image: AssetImage('assets/paperscrap.jpg'),
@@ -167,7 +157,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                   color: Colors.grey,
                 ),*/
                 SizedBox(height: appBarHeight / 10),
-                widget.self
+                widget.picked
                     ? Center(
                         child: Column(
                           children: <Widget>[
@@ -197,81 +187,81 @@ class _PaperstrangerState extends State<Paperstranger> {
                           ],
                         ),
                       )
-                    : widget.isHistory
-                        ? SizedBox()
-                        : Container(
-                            width: screenWidthDp,
-                            height: appBarHeight,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                SizedBox(
-                                  width: appBarHeight / 5,
-                                ),
-                                GestureDetector(
-                                  child: Container(
-                                      padding: EdgeInsets.all(appBarHeight / 8),
-                                      child: Icon(
-                                        Icons.move_to_inbox,
-                                        color: pick
-                                            ? Colors.white
-                                            : Color(0xfff0099FF),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: pick
-                                            ? Color(0xfff0099FF)
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(22)),
-                                      )),
-                                  onTap: () {
-                                    pick ? unPick() : pickScrap();
-                                  },
-                                ),
-                                SizedBox(
-                                  width: appBarHeight / 5,
-                                ),
-                                GestureDetector(
-                                  child: Container(
-                                      padding: EdgeInsets.only(
-                                          left: appBarHeight / 5,
-                                          right: appBarHeight / 5,
-                                          top: appBarHeight / 8,
-                                          bottom: appBarHeight / 8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.reply,
-                                            //  size: s60 * 1.2,
-                                            color: Colors.white,
-                                          ),
-                                          Text('ปากลับ',
-                                              style: TextStyle(
-                                                fontSize: s42,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ))
-                                        ],
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Color(0xfff26A4FF),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(50)),
-                                      )),
-                                  onTap: () {
-                                    user.papers > 0
-                                        ? writerScrap(context,
-                                            isThrowBack: true,
-                                            region: widget.scrap['region'],
-                                            thrownUID: widget.scrap['uid'])
-                                        : toast.toast('กระดาษของคุณหมดแล้ว');
-                                  },
-                                ),
-                              ],
+                    : SizedBox(),
+                widget.isHistory
+                    ? SizedBox()
+                    : Container(
+                        width: screenWidthDp,
+                        height: appBarHeight,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              width: appBarHeight / 5,
                             ),
-                          ),
+                            GestureDetector(
+                              child: Container(
+                                  padding: EdgeInsets.all(appBarHeight / 8),
+                                  child: Icon(
+                                    Icons.move_to_inbox,
+                                    color: pick
+                                        ? Colors.white
+                                        : Color(0xfff0099FF),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: pick
+                                        ? Color(0xfff0099FF)
+                                        : Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(22)),
+                                  )),
+                              onTap: () {
+                                pick ? unPick() : pickScrap();
+                              },
+                            ),
+                            SizedBox(
+                              width: appBarHeight / 5,
+                            ),
+                            GestureDetector(
+                              child: Container(
+                                  padding: EdgeInsets.only(
+                                      left: appBarHeight / 5,
+                                      right: appBarHeight / 5,
+                                      top: appBarHeight / 8,
+                                      bottom: appBarHeight / 8),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.reply,
+                                        //  size: s60 * 1.2,
+                                        color: Colors.white,
+                                      ),
+                                      Text('ปากลับ',
+                                          style: TextStyle(
+                                            fontSize: s42,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ))
+                                    ],
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xfff26A4FF),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(50)),
+                                  )),
+                              onTap: () {
+                                user.papers > 0
+                                    ? writerScrap(context,
+                                        isThrowBack: true,
+                                        region: widget.scrap['region'],
+                                        thrownUID: widget.scrap['uid'])
+                                    : toast.toast('กระดาษของคุณหมดแล้ว');
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
               ]),
               Positioned(
                   bottom: 0,

@@ -93,7 +93,6 @@ class _LoginPageState extends State<LoginPage> {
                             child: Form(
                               key: _key,
                               child: Container(
-                                alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: screenWidthDp / 32),
                                 height: screenHeightDp / 12,
@@ -103,6 +102,10 @@ class _LoginPageState extends State<LoginPage> {
                                     borderRadius: BorderRadius.circular(
                                         screenWidthDp / 42)),
                                 child: TextFormField(
+                                  cursorColor: Colors.transparent,
+                                  maxLength: 10,
+                                  textAlign: TextAlign.start,
+                                  textAlignVertical: TextAlignVertical.center,
                                   keyboardType: TextInputType.number,
                                   textInputAction: TextInputAction.done,
                                   validator: (val) {
@@ -116,15 +119,15 @@ class _LoginPageState extends State<LoginPage> {
                                             : null;
                                   },
                                   style: TextStyle(
-                                      height: 1.12,
+                                      height: 0.0,
                                       fontSize: s65,
                                       color: Colors.white),
                                   decoration: InputDecoration(
+                                      counterText: '',
                                       errorStyle: TextStyle(height: 0.0),
                                       border: InputBorder.none,
                                       hintStyle: TextStyle(
-                                          fontSize: s60,
-                                          //  height: 1.12,
+                                          fontSize: s65,
                                           color:
                                               Colors.white.withOpacity(0.24)),
                                       hintText: 'เบอร์โทร 10 หลัก'),

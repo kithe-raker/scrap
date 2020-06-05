@@ -175,6 +175,8 @@ void showDialogReport(BuildContext context) {
                                                 top: a.width / 100,
                                                 left: a.width / 50),
                                             child: TextField(
+                                              keyboardType: TextInputType.text,
+                                              textInputAction: TextInputAction.done,
                                               maxLines: null,
                                               onChanged: (str) =>
                                                   describe = str.trim(),

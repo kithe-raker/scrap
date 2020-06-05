@@ -672,54 +672,49 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                         ),
                                         onTap: () => selectImg(context)),
                                     Expanded(
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              width: screenWidthDp / 1.4,
-                                              child: TextFormField(
-                                                  maxLength: 16,
-                                                  initialValue:
-                                                      user.id ?? 'name',
-                                                  style: TextStyle(
-                                                      height: 0.64,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          TextFormField(
+                                              maxLength: 16,
+                                              initialValue: user.id ?? 'name',
+                                              style: TextStyle(
+                                                  fontSize: s60,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                              decoration: InputDecoration(
+                                                  counterText: '',
+                                                  border: InputBorder.none,
+                                                  prefixText: '@',
+                                                  prefixStyle: TextStyle(
                                                       fontSize: s60,
+                                                      height: 0.1,
                                                       color: Colors.white,
                                                       fontWeight:
-                                                          FontWeight.bold),
-                                                  decoration: InputDecoration(
-                                                      counterText: '',
-                                                      border: InputBorder.none,
-                                                      prefixText: '@',
-                                                      prefixStyle: TextStyle(
-                                                          fontSize: s60,
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  validator: (val) {
-                                                    var trim = val.trim();
-                                                    return trim.length < 1
-                                                        ? toast.validateToast(
-                                                            'ใส่สเตตัสของคุณ')
-                                                        : null;
-                                                  },
-                                                  onSaved: (val) =>
-                                                      id = val.trim()),
+                                                          FontWeight.bold)),
+                                              validator: (val) {
+                                                var trim = val.trim();
+                                                return trim.length < 1
+                                                    ? toast.validateToast(
+                                                        'ใส่ไอดีของคุณ')
+                                                    : null;
+                                              },
+                                              onSaved: (val) =>
+                                                  id = val.trim()),
+                                          Text(
+                                            'Thailand',
+                                            style: TextStyle(
+                                              fontSize: s60,
+                                              height: 0.1,
+                                              color: Color(0xfff26A4FF),
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            Text(
-                                              'Thailand',
-                                              style: TextStyle(
-                                                fontSize: s60,
-                                                color: Color(0xfff26A4FF),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                          SizedBox(height: screenHeightDp / 42)
+                                        ],
                                       ),
                                     ),
                                     SizedBox(width: appBarHeight / 15),
@@ -755,9 +750,10 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                                   Container(
                                     alignment: Alignment.center,
                                     height: screenHeightDp / 3.85,
-                                    margin: EdgeInsets.only(
+                                    padding: EdgeInsets.only(
                                       left: screenWidthDp / 30,
                                       right: screenWidthDp / 30,
+                                      bottom: screenWidthDp / 30,
                                     ),
                                     /*   margin:
                                         EdgeInsets.symmetric(horizontal: 12),*/

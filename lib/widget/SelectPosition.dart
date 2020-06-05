@@ -89,7 +89,7 @@ class _SelectPositionState extends State<SelectPosition> {
                         offset: Offset(0.0, 3.2))
                   ]),
               child: Text(
-                'แตะค้างที่สแครปหรือบนแผนที่เพื่อเลือกตำแน่ง',
+                'แตะค้างที่สแครปหรือบนแผนที่เพื่อเลือกตำแหน่ง',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     wordSpacing: 0.1, fontSize: s46, color: Colors.white),

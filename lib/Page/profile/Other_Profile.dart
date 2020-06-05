@@ -624,7 +624,7 @@ class _OtherProfileState extends State<OtherProfile> {
                               },
                             ),
                             Text(
-                              'บล็อคผู้ใช้',
+                              'ปิดการปา',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: s42,

@@ -419,6 +419,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
               'เสร็จสิ้น',
               textAlign: TextAlign.center,
               style: TextStyle(
+                height: 1.1,
                   color: Colors.white,
                   fontSize: s48,
                   fontWeight: FontWeight.bold),
@@ -446,6 +447,7 @@ class _CreateProfile2State extends State<CreateProfile2> {
             'เสร็จสิ้น',
             textAlign: TextAlign.center,
             style: TextStyle(
+              height: 1.1,
                 color: Colors.white,
                 fontSize: s48,
                 fontWeight: FontWeight.bold),

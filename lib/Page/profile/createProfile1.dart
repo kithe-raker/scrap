@@ -72,11 +72,12 @@ class _CreateProfile1State extends State<CreateProfile1> {
                     color: Colors.black,
                     height: scr.height,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(
-                            top: scr.width / 3,
+                            // top: scr.width / 3,
                           ),
                           child: Text(
                             'สร้างไอดี',
@@ -180,7 +181,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                   hintText: '@somename',
                                                   hintStyle: TextStyle(
                                                       fontSize: s52,
-                                                      height: 1.2,
+                                                      height: 1.1,
                                                       color: Color(0xffFFFFFF)
                                                           .withOpacity(0.15)),
                                                 ),
@@ -220,7 +221,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
                                                   hintText: 'password',
                                                   hintStyle: TextStyle(
                                                       fontSize: s52,
-                                                      height: 1.2,
+                                                      height: 1.1,
                                                       color: Color(0xffFFFFFF)
                                                           .withOpacity(0.15)),
                                                 ),
@@ -280,8 +281,10 @@ class _CreateProfile1State extends State<CreateProfile1> {
                 borderRadius: BorderRadius.all(Radius.circular(7))),
             child: Text(
               'ต่อไป',
+
               textAlign: TextAlign.center,
               style: TextStyle(
+                height: 1.1,
                   fontSize: s52,
                   fontWeight: FontWeight.w900,
                   color: Color(0xfffFFFFFF)),
@@ -323,6 +326,7 @@ class _CreateProfile1State extends State<CreateProfile1> {
           'ต่อไป',
           textAlign: TextAlign.center,
           style: TextStyle(
+            height: 1.1,
               fontSize: s52,
               fontWeight: FontWeight.w900,
               color: Color(0xfffFFFFFF).withOpacity(0.38)),
