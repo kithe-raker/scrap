@@ -575,8 +575,6 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                     listen: false);
                                 var userDb =
                                     FirebaseDatabase(app: db.userTransact);
-                                final user = Provider.of<UserData>(context,
-                                    listen: false);
                                 var ref = userDb
                                     .reference()
                                     .child('users/${user.uid}');
