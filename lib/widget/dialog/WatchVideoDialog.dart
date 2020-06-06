@@ -58,14 +58,13 @@ void dialogvideo(BuildContext context, String uid) {
                             borderRadius: BorderRadius.circular(a.width / 50)),
                         width: a.width,
                         padding: EdgeInsets.all(a.width / 50),
-                        height: a.height / 1.4,
+                        height: a.width * 1.2,
                         child: Scaffold(
                           backgroundColor: Color(0xff282828),
                           body: Center(
                             child: Container(
                               width: a.width,
                               height: a.width,
-
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
