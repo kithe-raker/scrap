@@ -281,7 +281,7 @@ class _BlockingListState extends State<BlockingList> {
                                             Icon(Icons.lock_open,
                                                 color: Colors.white,
                                                 size: a.width / 21),
-                                            Text(' ปลดบล็อค',
+                                            Text(' ปลดการปิดกั้น',
                                                 style: TextStyle(
                                                     fontSize: a.width / 21,
                                                     color: Colors.white))
@@ -429,7 +429,7 @@ class _BlockingListState extends State<BlockingList> {
                                           BorderRadius.circular(a.width)),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "ราบงาน",
+                                    "รายงาน",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: a.width / 15),
@@ -491,7 +491,7 @@ class _BlockingListState extends State<BlockingList> {
           return AlertDialog(
             backgroundColor: Colors.white,
             content: Container(
-              child: Text('คุณต้องการปลดบล็อคใช่หรือไม่'),
+              child: Text('คุณต้องการปลดการปิดกั้นใช่หรือไม่'),
             ),
             actions: <Widget>[
               FlatButton(
@@ -500,12 +500,12 @@ class _BlockingListState extends State<BlockingList> {
                   },
                   child: Text('ยกเลิก')),
               FlatButton(
-                child: Text('ปลดบล็อค'),
+                child: Text('ปลดการปิดกั้น'),
                 onPressed: () async {
                   Navigator.pop(context);
                   Navigator.pop(context);
                   unBlock(map);
-                  Taoast().toast('ปลดบล็อคแล้ว');
+                  Taoast().toast('ปลดการปิดกั้นแล้ว');
                 },
               )
             ],

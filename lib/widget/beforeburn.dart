@@ -8,6 +8,7 @@ import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 
 void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
   bool loading = false;
@@ -15,17 +16,18 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
       context: context,
       builder: (BuildContext context) {
         Size a = MediaQuery.of(context).size;
+        screenutilInit(context);
         return StatefulBuilder(builder: (context, StateSetter setDialog) {
           return Scaffold(
             backgroundColor: Colors.transparent,
-            body: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-              child: Container(
-                width: a.width,
-                height: a.height,
-                child: Stack(
-                  children: <Widget>[
-                    Center(
+            body: Container(
+              width: a.width,
+              height: a.height,
+              child: Stack(
+                children: <Widget>[
+                  BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                    child: Center(
                       child: Container(
                         decoration: BoxDecoration(
                             color: Color(0xff282828),
@@ -45,7 +47,7 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                   "เผาสแครป",
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: a.width / 17,
+                                      fontSize: s58,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -55,14 +57,14 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                 Text(
                                   "หากมีคนกดเผาสแครปมากพอ",
                                   style: TextStyle(
-                                      fontSize: a.width / 17,
+                                      fontSize: s58,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "สแครปนี้จะหายไป",
                                   style: TextStyle(
-                                      fontSize: a.width / 17,
+                                      fontSize: s58,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -84,7 +86,7 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                         "เผาเลย",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: a.width / 18,
+                                            fontSize: s58,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
@@ -98,7 +100,8 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                     }),
                                 Text(
                                   '"แน่ใจนะ"',
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: s52),
                                 ),
                               ],
                             ),
@@ -106,26 +109,26 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: GestureDetector(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                                top: a.width / 12, right: 3.2),
-                            width: a.width / 12,
-                            height: a.width / 12,
-                            decoration: BoxDecoration(
-                                color: Colors.white24,
-                                borderRadius: BorderRadius.circular(a.width)),
-                            child: Center(
-                              child: Icon(Icons.clear, color: Colors.white),
-                            ),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                        child: Container(
+                          // margin: EdgeInsets.only(
+                          //     top: a.width / 20, bottom: a.width / 15),
+                          width: a.width / 12,
+                          height: a.width / 12,
+                          decoration: BoxDecoration(
+                              color: Colors.white24,
+                              borderRadius: BorderRadius.circular(a.width)),
+                          child: Center(
+                            child: Icon(Icons.clear, color: Colors.white),
                           ),
-                          onTap: () => nav.pop(context)),
-                    ),
-                    loading ? Center(child: LoadNoBlur()) : SizedBox()
-                  ],
-                ),
+                        ),
+                        onTap: () => nav.pop(context)),
+                  ),
+                  loading ? Center(child: LoadNoBlur()) : SizedBox()
+                ],
               ),
             ),
           );

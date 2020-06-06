@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/showdialogfinishpaper.dart';
 
 void dialogvideo(BuildContext context, String uid) {
@@ -14,6 +15,7 @@ void dialogvideo(BuildContext context, String uid) {
       builder: (builder) {
         return StatefulBuilder(builder: (context, StateSetter setState) {
           Size a = MediaQuery.of(context).size;
+          screenutilInit(context);
           return Stack(
             children: <Widget>[
               BackdropFilter(
@@ -94,7 +96,7 @@ void dialogvideo(BuildContext context, String uid) {
                                         "เติมกระดาษในคลัง",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: a.width / 17,
+                                            fontSize: s58,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(
@@ -108,14 +110,14 @@ void dialogvideo(BuildContext context, String uid) {
                                         "ดูวิดีโอเพื่อเติมกระดาษของคุณให้",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: a.width / 17,
+                                            fontSize: s58,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       Text(
                                         "เต็มคลัง สำหรับเขียนสแครป",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: a.width / 17,
+                                            fontSize: s58,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -137,7 +139,7 @@ void dialogvideo(BuildContext context, String uid) {
                                           "ดูเลย",
                                           style: TextStyle(
                                               color: Color(0xff26A4FF),
-                                              fontSize: a.width / 17,
+                                              fontSize: s58,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ),

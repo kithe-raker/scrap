@@ -302,7 +302,12 @@ class _OtherProfileState extends State<OtherProfile> {
           child: Container(
             /* padding: EdgeInsets.fromLTRB(appBarHeight / 3, appBarHeight / 50,
                 appBarHeight / 3, appBarHeight / 50),*/
-            height: appBarHeight / 2.2,
+            // padding: EdgeInsets.only(
+            //     top: appBarHeight / 4.4, bottom: appBarHeight / 4.4),
+            padding: EdgeInsets.symmetric(
+              vertical: screenWidthDp / 128,
+            ),
+            //height: appBarHeight / 2.2,
             width: appBarHeight * 1.5,
             decoration: BoxDecoration(
                 border: Border.all(color: Color(0xfff26A4FF)),
@@ -352,16 +357,19 @@ class _OtherProfileState extends State<OtherProfile> {
                     child: GestureDetector(
                         child: Container(
                           margin: EdgeInsets.only(left: appBarHeight / 6),
-                          height: appBarHeight / 2.2,
+                          /*padding: EdgeInsets.symmetric(
+                            vertical: screenWidthDp / 128,
+                          ),*/
+
+                          // height: appBarHeight / 2.2,
                           width: appBarHeight * 1.5,
-                          //  width: appBarHeight * 1.55,
-                          /*  padding: EdgeInsets.fromLTRB(
-                              appBarHeight / 5,
-                              appBarHeight / 50,
-                              appBarHeight / 5,
-                              appBarHeight / 50),*/
+                          padding: EdgeInsets.only(
+                            top: screenWidthDp / 128,
+                            bottom: screenWidthDp / 128,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
+                            border: Border.all(color: Colors.white),
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
@@ -629,7 +637,7 @@ class _OtherProfileState extends State<OtherProfile> {
                               },
                             ),
                             Text(
-                              'ปิดการปา',
+                              'ปิดกั้นการปา',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: s42,
