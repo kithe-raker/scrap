@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -12,7 +11,6 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
-import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/PersonCard.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
@@ -245,14 +243,14 @@ class _SubpeopleState extends State<Subpeople> {
                   ],
                 );
               }),
-              searching
-                  ? SizedBox()
-                  : Positioned(
-                      bottom: 0,
-                      child: AdmobBanner(
-                          adUnitId: AdmobService().getBannerAdId(),
-                          adSize: AdmobBannerSize.FULL_BANNER),
-                    ),
+              // searching
+              //     ? SizedBox()
+              //     : Positioned(
+              //         bottom: 0,
+              //         child: AdmobBanner(
+              //             adUnitId: AdmobService().getBannerAdId(),
+              //             adSize: AdmobBannerSize.FULL_BANNER),
+              //       ),
             ],
           ),
         ),

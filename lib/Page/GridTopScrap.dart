@@ -44,7 +44,9 @@ class _GridTopScrapState extends State<GridTopScrap> {
   }
 
   Widget block({dynamic data}) {
-    return data.runtimeType == int ? admob() : scrapWidget(data);
+    return data.runtimeType == double || data.runtimeType == int
+        ? admob()
+        : scrapWidget(data);
   }
 
   Widget scrapWidget(data) {
@@ -110,7 +112,7 @@ class _GridTopScrapState extends State<GridTopScrap> {
   Widget admob() {
     Size a = MediaQuery.of(context).size;
     return Container(
-      margin: EdgeInsets.only(top: a.width / 80),
+      // margin: EdgeInsets.only(top: a.width / 80),
       width: a.width,
       color: Colors.grey,
       child: AdmobBanner(

@@ -14,17 +14,17 @@ class Report_DropDownButton extends StatefulWidget {
 }
 
 class _Report_DropDownButtonState extends State<Report_DropDownButton> {
-  dynamic dropdownValue = 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ';
+  String dropdownValue = 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ';
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
-      child: DropdownButton<dynamic>(
+      child: DropdownButton<String>(
           value: dropdownValue,
           dropdownColor: Color(0xfff282828),
           icon: Icon(Icons.arrow_drop_down),
           iconSize: s60,
-          onChanged: (dynamic newValue) {
+          onChanged: (String newValue) {
             setState(
               () {
                 final report = Provider.of<Report>(context, listen: false);
@@ -38,17 +38,19 @@ class _Report_DropDownButtonState extends State<Report_DropDownButton> {
             'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ',
             'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ',
             'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ',
-          ].map<DropdownMenuItem<dynamic>>(
-              (String value) => DropdownMenuItem<dynamic>(
-                    value: value,
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: s54,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ))),
+          ]
+              .map<DropdownMenuItem<String>>(
+                  (String value) => DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            fontSize: s54,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ))
+              .toList()),
     );
   }
 }
@@ -63,157 +65,164 @@ void showDialogReport(BuildContext context) {
       context: context,
       builder: (BuildContext context) {
         screenutilInit(context);
-        return SingleChildScrollView(
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            resizeToAvoidBottomPadding: false,
-            body: StatefulBuilder(builder: (context, StateSetter setDialog) {
-              return BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: Stack(
-                  children: <Widget>[
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(height: appBarHeight),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.only(
-                                  right: appBarHeight / 4,
-                                  bottom: appBarHeight / 5),
-                              child: GestureDetector(
-                                  child: Container(
-                                    height: appBarHeight / 2.8,
-                                    width: appBarHeight / 2.8,
-                                    decoration: BoxDecoration(
-                                        color: Color(0xfffFFFFFF)
-                                            .withOpacity(0.24),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(appBarHeight))),
-                                    child: Icon(
-                                      Icons.clear,
-                                      color: Colors.white,
-                                      size: s42,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  }),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          width: screenWidthDp / 1.1,
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50))),
-                          child: Stack(
-                            children: [
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          // resizeToAvoidBottomPadding: false,
+          body: StatefulBuilder(builder: (context, StateSetter setDialog) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    width: screenWidthDp,
+                    height: screenHeightDp,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(height: appBarHeight),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
                               Container(
-                                  padding: EdgeInsets.only(top: a.width / 100),
-                                  child: Container(
+                                padding: EdgeInsets.only(
+                                    right: appBarHeight / 4,
+                                    bottom: appBarHeight / 5),
+                                child: GestureDetector(
+                                    child: Container(
+                                      height: appBarHeight / 2.8,
+                                      width: appBarHeight / 2.8,
                                       decoration: BoxDecoration(
-                                          color: Color(0xfff282828),
+                                          color: Color(0xfffFFFFFF)
+                                              .withOpacity(0.24),
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(7.0))),
-                                      child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                  border: Border(
-                                                      bottom: BorderSide(
-                                                          color:
-                                                              Color(0xff383838),
-                                                          width: 2))),
-                                              child: Report_DropDownButton(),
-                                            ),
-                                            Container(
-                                              height: screenHeightDp / 2.1,
-                                              padding: EdgeInsets.only(
-                                                  top: a.width / 100,
-                                                  left: a.width / 50),
-                                              child: TextField(
-                                                keyboardType:
-                                                    TextInputType.text,
-                                                textInputAction:
-                                                    TextInputAction.done,
-                                                maxLines: null,
-                                                onChanged: (str) =>
-                                                    describe = str.trim(),
-                                                style: TextStyle(
-                                                    fontSize: s52,
-                                                    color: Colors.white),
-                                                decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  hintText:
-                                                      'รายงานเจ้าของสแครปรายนี้',
-                                                  hintStyle: TextStyle(
-                                                    fontSize: s54,
-                                                    height: 0.08,
-                                                    color: Colors.white30,
+                                              Radius.circular(appBarHeight))),
+                                      child: Icon(
+                                        Icons.clear,
+                                        color: Colors.white,
+                                        size: s42,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    }),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: screenWidthDp / 1.1,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50))),
+                            child: Stack(
+                              children: [
+                                Container(
+                                    padding:
+                                        EdgeInsets.only(top: a.width / 100),
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Color(0xfff282828),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(7.0))),
+                                        child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                    border: Border(
+                                                        bottom: BorderSide(
+                                                            color: Color(
+                                                                0xff383838),
+                                                            width: 2))),
+                                                child: Report_DropDownButton(),
+                                              ),
+                                              Container(
+                                                height: screenHeightDp / 2.1,
+                                                padding: EdgeInsets.only(
+                                                    top: a.width / 100,
+                                                    left: a.width / 50),
+                                                child: TextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  textInputAction:
+                                                      TextInputAction.done,
+                                                  maxLines: null,
+                                                  onChanged: (str) =>
+                                                      describe = str.trim(),
+                                                  style: TextStyle(
+                                                      fontSize: s52,
+                                                      color: Colors.white),
+                                                  decoration: InputDecoration(
+                                                    border: InputBorder.none,
+                                                    hintText:
+                                                        'รายงานเจ้าของสแครปรายนี้',
+                                                    hintStyle: TextStyle(
+                                                      fontSize: s54,
+                                                      height: 0.08,
+                                                      color: Colors.white30,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                GestureDetector(
-                                                    child: Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: appBarHeight /
-                                                              15),
-                                                      margin:
-                                                          EdgeInsets.symmetric(
-                                                        horizontal:
-                                                            a.width / 40,
-                                                        vertical: a.width / 40,
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  GestureDetector(
+                                                      child: Container(
+                                                        padding: EdgeInsets.only(
+                                                            left: appBarHeight /
+                                                                15),
+                                                        margin: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal:
+                                                              a.width / 40,
+                                                          vertical:
+                                                              a.width / 40,
+                                                        ),
+                                                        width: a.width / 8,
+                                                        height: a.width / 8,
+                                                        child: Icon(Icons.send,
+                                                            color: Color(
+                                                                0xff26A4FF),
+                                                            size: s60 * 0.8),
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(a
+                                                                        .width)),
                                                       ),
-                                                      width: a.width / 8,
-                                                      height: a.width / 8,
-                                                      child: Icon(Icons.send,
-                                                          color:
-                                                              Color(0xff26A4FF),
-                                                          size: s60 * 0.8),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      a.width)),
-                                                    ),
-                                                    onTap: () async {
-                                                      setDialog(
-                                                          () => loading = true);
-                                                      report.reportText =
-                                                          describe;
-                                                      await reportUser
-                                                          .updateData(context);
-                                                      setDialog(() =>
-                                                          loading = false);
-                                                      nav.pop(context);
-                                                      toast.toast(
-                                                          'รายงานผู้ใช้รายนี้แล้ว');
-                                                    }),
-                                              ],
-                                            )
-                                          ]))),
-                            ],
+                                                      onTap: () async {
+                                                        setDialog(() =>
+                                                            loading = true);
+                                                        report.reportText =
+                                                            describe;
+                                                        await reportUser
+                                                            .updateData(
+                                                                context);
+                                                        setDialog(() =>
+                                                            loading = false);
+                                                        nav.pop(context);
+                                                        toast.toast(
+                                                            'รายงานผู้ใช้รายนี้แล้ว');
+                                                      }),
+                                                ],
+                                              )
+                                            ]))),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    loading ? Loading() : SizedBox()
-                  ],
-                ),
-              );
-            }),
-          ),
+                  ),
+                  loading ? Loading() : SizedBox()
+                ],
+              ),
+            );
+          }),
         );
       });
 }

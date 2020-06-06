@@ -377,11 +377,11 @@ class _GridfavoriteState extends State<Gridfavorite> {
                               }),
                         ),
                         SizedBox(height: screenWidthDp / 36),
-                        Expanded(
-                          child: AdmobBanner(
-                              adUnitId: AdmobService().getBannerAdId(),
-                              adSize: AdmobBannerSize.FULL_BANNER),
-                        )
+                        // Expanded(
+                        //   child: AdmobBanner(
+                        //       adUnitId: AdmobService().getBannerAdId(),
+                        //       adSize: AdmobBannerSize.FULL_BANNER),
+                        // )
                       ])),
             ));
       });
@@ -520,7 +520,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                 ? Container(
                     width: a.width,
                     height: a.height,
-                    margin: EdgeInsets.only(top: a.width / 5.4),
+                    margin: EdgeInsets.only(top: appBarHeight / 1.42),
                     child: ListView(
                       physics: BouncingScrollPhysics(),
                       children: <Widget>[

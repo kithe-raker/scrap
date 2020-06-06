@@ -156,37 +156,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                   color: Colors.grey,
                 ),*/
                 SizedBox(height: appBarHeight / 10),
-                widget.picked
-                    ? Center(
-                        child: Column(
-                          children: <Widget>[
-                            GestureDetector(
-                              child: Container(
-                                  padding: EdgeInsets.all(appBarHeight / 8),
-                                  child: Icon(Icons.delete_outline),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(22)),
-                                  )),
-                              onTap: () {
-                                unPick();
-                                widget.currentList.remove(widget.scrap);
-                                toast.toast('นำสแครปออกแล้ว');
-                                nav.pop(context);
-                              },
-                            ),
-                            Text(
-                              'นำออก',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: s42,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      )
-                    : SizedBox(),
                 widget.isHistory
                     ? SizedBox()
                     : Container(
@@ -350,6 +319,38 @@ class _PaperstrangerState extends State<Paperstranger> {
                             ),
                           ],
                         ),
+                        widget.picked
+                            ? Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                      child: Container(
+                                          padding:
+                                              EdgeInsets.all(appBarHeight / 8),
+                                          child: Icon(Icons.delete_outline),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(22)),
+                                          )),
+                                      onTap: () {
+                                        unPick();
+                                        widget.currentList.remove(widget.scrap);
+                                        toast.toast('นำสแครปออกแล้ว');
+                                        nav.pop(context);
+                                      },
+                                    ),
+                                    Text(
+                                      'นำออก',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: s42,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : SizedBox(),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
