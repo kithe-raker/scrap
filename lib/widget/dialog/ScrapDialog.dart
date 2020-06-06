@@ -177,15 +177,15 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                 ],
                               ),
                               onDoubleTap: () {
-                                _scaffoldKey.currentState.showBottomSheet(
-                                  (context) => MapSheet(
+                                showDialog(
+                                  context: _scaffoldKey.currentState.context,
+                                  builder: (BuildContext context) => MapSheet(
                                     position: LatLng(
                                         widget.data['position']['geopoint']
                                             .latitude,
                                         widget.data['position']['geopoint']
                                             .longitude),
                                   ),
-                                  backgroundColor: Colors.transparent,
                                 );
                               },
                             ),

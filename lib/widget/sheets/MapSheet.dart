@@ -20,44 +20,39 @@ class _MapSheetState extends State<MapSheet> {
   Widget build(BuildContext context) {
     screenutilInit(context);
     _createScrapImageFromAsset(context);
-    Size a = MediaQuery.of(context).size;
     return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+      filter: ImageFilter.blur(sigmaX: 8.1, sigmaY: 8.1),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
-          //  alignment: Alignenter,
-
           child: Container(
               decoration: BoxDecoration(
-                color: Color(0xff282828),
-                //borderRadius: BorderRadius.vertical(top: Radius.circular(24))
-              ),
-              width: screenWidthDp,
-              height: screenHeightDp / 1.8,
+                  color: Color(0xff282828),
+                  borderRadius: BorderRadius.circular(24)),
+              width: screenWidthDp / 1.12,
+              height: screenHeightDp / 1.42,
               child: Stack(
                 children: <Widget>[
                   ClipRRect(
-                    /* borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(24)),*/
+                    borderRadius: BorderRadius.circular(24),
                     child: GoogleMap(
                       myLocationButtonEnabled: false,
                       myLocationEnabled: false,
                       onMapCreated: onMapCreated,
                       initialCameraPosition:
-                          CameraPosition(target: widget.position, zoom: 18.5),
+                          CameraPosition(target: widget.position, zoom: 16.9),
                       markers: Set<Marker>.of(markers.values),
                     ),
                   ),
                   Container(
-                    width: a.width,
+                    width: screenWidthDp / 1.12,
                     alignment: Alignment.topRight,
                     child: GestureDetector(
                       child: Container(
                         margin: EdgeInsets.only(
-                            top: a.width / 30, right: a.width / 30),
-                        width: a.width / 12,
-                        height: a.width / 12,
+                            top: screenWidthDp / 30, right: screenWidthDp / 30),
+                        width: screenWidthDp / 12,
+                        height: screenWidthDp / 12,
                         child: Center(
                           child: Icon(
                             Icons.clear,
@@ -132,8 +127,6 @@ class _MapSheetState extends State<MapSheet> {
       setState(() {
         markers[markerId] = marker;
       });
-      this.mapController.animateCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(target: widget.position, zoom: 10)));
     }
   }
 
@@ -141,5 +134,9 @@ class _MapSheetState extends State<MapSheet> {
     this.mapController = googleMapController;
     changeMapMode();
     writerMarker();
+    Future.delayed(Duration(milliseconds: 320), () {
+      googleMapController.moveCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: widget.position, zoom: 16.9)));
+    });
   }
 }

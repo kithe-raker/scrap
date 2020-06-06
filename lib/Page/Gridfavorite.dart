@@ -150,15 +150,16 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                         ],
                                       ),
                                       onDoubleTap: () {
-                                        Scaffold.of(context).showBottomSheet(
-                                          (context) => MapSheet(
+                                        showDialog(
+                                          context: Scaffold.of(context).context,
+                                          builder: (BuildContext context) =>
+                                              MapSheet(
                                             position: LatLng(
                                                 data['position']['geopoint']
                                                     .latitude,
                                                 data['position']['geopoint']
                                                     .longitude),
                                           ),
-                                          backgroundColor: Colors.transparent,
                                         );
                                       },
                                     ),

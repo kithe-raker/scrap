@@ -197,16 +197,17 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                           ],
                                         ),
                                         onDoubleTap: () {
-                                          _scaffoldKey.currentState
-                                              .showBottomSheet(
-                                            (context) => MapSheet(
+                                          showDialog(
+                                            context: _scaffoldKey
+                                                .currentState.context,
+                                            builder: (BuildContext context) =>
+                                                MapSheet(
                                               position: LatLng(
                                                   data['position']['geopoint']
                                                       .latitude,
                                                   data['position']['geopoint']
                                                       .longitude),
                                             ),
-                                            backgroundColor: Colors.transparent,
                                           );
                                         },
                                       ),
@@ -483,7 +484,7 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                               // counter.count += 1;
                               if (allScrap.isNotEmpty && allScrap.length > 0) {
                                 index + 1 == allScrap.length
-                                    ? setDialog(() => index = 0)
+                                    ? toast.toast('คุณตามทันสแครปทั้งหมดแล้ว')
                                     : setDialog(() => index++);
                               } else
                                 toast.toast('คุณตามทันสแครปทั้งหมดแล้ว');

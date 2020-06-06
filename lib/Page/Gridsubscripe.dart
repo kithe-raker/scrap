@@ -55,18 +55,21 @@ class _GridsubscripeState extends State<Gridsubscripe> {
         .orderByChild('point')
         .limitToFirst(8);
     DataSnapshot data = await ref.once();
-    data.value.forEach((key, value) {
-      docId.add(value['id']);
-      comments[value['id']] = value['comment']?.abs() ?? 0;
-      if (lessPoint == null)
-        lessPoint = value['point'].abs();
-      else if (lessPoint > value['point'].abs())
-        lessPoint = value['point'].abs();
-    });
-    var docs = await fireStore
-        .collectionGroup('ScrapDailys-th')
-        .where('id', whereIn: docId)
-        .getDocuments();
+    if (data.value?.length != null && data.value.length > 0) {
+      data.value.forEach((key, value) {
+        docId.add(value['id']);
+        comments[value['id']] = value['comment']?.abs() ?? 0;
+        if (lessPoint == null)
+          lessPoint = value['point'].abs();
+        else if (lessPoint > value['point'].abs())
+          lessPoint = value['point'].abs();
+      });
+      var docs = await fireStore
+          .collectionGroup('ScrapDailys-th')
+          .where('id', whereIn: docId)
+          .getDocuments();
+      scraps.addAll(docs.documents);
+    }
     friends = await cacheFriends.getFollowing();
     if (friends.length > 0) {
       var followDocs = await Firestore.instance
@@ -77,7 +80,6 @@ class _GridsubscripeState extends State<Gridsubscripe> {
           .getDocuments();
       followingScraps.addAll(followDocs.documents);
     }
-    scraps.addAll(docs.documents);
     scraps.add(lessPoint);
     setState(() => loading = false);
   }
