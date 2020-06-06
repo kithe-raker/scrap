@@ -21,8 +21,8 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
             body: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Container(
-                 width: a.width,
-                        height: a.height ,
+                width: a.width,
+                height: a.height,
                 child: Stack(
                   children: <Widget>[
                     Center(
@@ -66,20 +66,6 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                // Text(
-                                //   "รวมถึงสแครปบางส่วนในมือ",
-                                //   style: TextStyle(
-                                //       fontSize: a.width / 20,
-                                //       color: Colors.white,
-                                //       fontWeight: FontWeight.bold),
-                                // ),
-                                // Text(
-                                //   "ของผู้เขียนด้วย",
-                                //   style: TextStyle(
-                                //       fontSize: a.width / 20,
-                                //       color: Colors.white,
-                                //       fontWeight: FontWeight.bold),
-                                // ),
                               ],
                             ),
                             Column(

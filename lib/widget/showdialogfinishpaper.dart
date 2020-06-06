@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 
 class Showfinishpaper extends StatefulWidget {
   @override
@@ -101,8 +102,11 @@ void dialogfinishpaper(BuildContext context) {
                                             fit: BoxFit.contain,
                                             //  width: a.width / 3 / 2,
                                           )),
+                                      SizedBox(
+                                        width: screenWidthDp / 25,
+                                      ),
                                       Text(
-                                        "\tหน้าหลัก",
+                                        "หน้าหลัก",
                                         style: TextStyle(
                                             color: Color(0xff26A4FF),
                                             fontSize: a.width / 15 / 1.2,
