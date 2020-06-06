@@ -150,31 +150,43 @@ class _MainPageState extends State<MainPage> {
     Size a = MediaQuery.of(context).size;
     return Material(
         color: Colors.black,
-        child: InkWell(
-          child: Container(
-            width: a.width / 2,
-            height: a.width / 5,
-            child: SplashScreen.callback(
-              name: 'assets/scraplogo.flr',
-              startAnimation: 'Untitled',
-              onSuccess: (data) async {
-                await serverChecker()
-                    ? navigator(Sorry())
-                    : olderVersion()
-                        ? navigator(Update())
-                        : await isLogin()
-                            ? await multiCaseNavigator()
-                            : navigator(LoginPage());
-              },
-              loopAnimation: '1',
-              until: () => Future.delayed(Duration(seconds: 1)),
-              endAnimation: '0',
-              onError: (e, er) {
-                print(e);
-                print(er);
-              },
+        child: Stack(
+          children: <Widget>[
+            Center(
+              child: Container(
+                child: SplashScreen.callback(
+                  name: 'assets/scraplogo.flr',
+                  startAnimation: 'Untitled',
+                  onSuccess: (data) async {
+                    await serverChecker()
+                        ? navigator(Sorry())
+                        : olderVersion()
+                            ? navigator(Update())
+                            : await isLogin()
+                                ? await multiCaseNavigator()
+                                : navigator(LoginPage());
+                  },
+                  loopAnimation: '1',
+                  until: () => Future.delayed(Duration(seconds: 1)),
+                  endAnimation: '0',
+                  onError: (e, er) {
+                    print(e);
+                    print(er);
+                  },
+                ),
+              ),
             ),
-          ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: EdgeInsets.only(bottom: a.width / 21),
+                child: Image.asset('assets/whiteBualoi.png',
+                    color: Colors.white.withOpacity(0.78),
+                    width: a.width / 8.1,
+                    fit: BoxFit.contain),
+              ),
+            )
+          ],
         ));
   }
 
