@@ -64,7 +64,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                     child: Stack(
                       children: <Widget>[
                         Container(
-                          height: screenWidthDp / 1.04 * 1.21,
+                          height: screenWidthDp / 1.04 * 1.115,
                           width: screenWidthDp / 1.04,
                           decoration: BoxDecoration(
                               image: DecorationImage(

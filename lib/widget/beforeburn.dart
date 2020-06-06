@@ -30,9 +30,9 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                         decoration: BoxDecoration(
                             color: Color(0xff282828),
                             borderRadius: BorderRadius.circular(a.width / 50)),
-                        width: a.width,
+                        width: a.width / 1.06,
                         height: a.height / 1.4,
-                        padding: EdgeInsets.all(a.width / 50),
+                        // padding: EdgeInsets.all(a.width / 50),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[

@@ -92,7 +92,7 @@ class _MapSheetState extends State<MapSheet> {
     final ImageConfiguration imageConfiguration =
         createLocalImageConfiguration(context);
     BitmapDescriptor.fromAssetImage(
-            imageConfiguration, 'assets/locationmarker.png')
+            imageConfiguration, 'assets/paper-small.png')
         .then(_updateBitScrap);
   }
 
