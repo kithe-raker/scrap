@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:scrap/Page/GridFollowing.dart';
 import 'package:scrap/Page/GridTopScrap.dart';
 import 'package:scrap/Page/profile/OptionSetting_My_Profile.dart';
@@ -16,11 +19,15 @@ class Gridsubscripe extends StatefulWidget {
   _GridsubscripeState createState() => _GridsubscripeState();
 }
 
+PublishSubject<bool> loadMoreTopScrap = PublishSubject();
+PublishSubject<bool> loadMoreFollowingScrap = PublishSubject();
+
 class _GridsubscripeState extends State<Gridsubscripe> {
   int page = 0;
   var controller = PageController();
   var followingController = RefreshController();
   var topController = RefreshController();
+  StreamSubscription loadStatus, loadFollowStatus;
   bool loading = true;
 
   //top scrap
@@ -36,6 +43,10 @@ class _GridsubscripeState extends State<Gridsubscripe> {
   @override
   void initState() {
     initScraps();
+    loadStatus =
+        loadMoreTopScrap.listen((value) => value ? loadMoreScrap() : null);
+    loadFollowStatus = loadMoreFollowingScrap
+        .listen((value) => value ? loadMoreFollowScrap() : null);
     super.initState();
   }
 
@@ -44,6 +55,8 @@ class _GridsubscripeState extends State<Gridsubscripe> {
     controller.dispose();
     followingController.dispose();
     topController.dispose();
+    loadStatus.cancel();
+    loadFollowStatus.cancel();
     super.dispose();
   }
 
@@ -111,6 +124,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
     } else {
       topController.loadNoData();
     }
+    loadMoreTopScrap.add(false);
   }
 
 //following scrap query function
@@ -126,6 +140,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
     docs.documents.length < 0
         ? setState(() => followingController.loadComplete())
         : followingController.loadNoData();
+    loadMoreFollowingScrap.add(false);
   }
 
   @override

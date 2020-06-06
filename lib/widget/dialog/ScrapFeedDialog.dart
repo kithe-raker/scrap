@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
@@ -7,9 +8,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
-import 'package:scrap/provider/AdsCounter.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/services/admob_service.dart';
@@ -18,7 +19,6 @@ import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/ads.dart';
 import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
@@ -26,8 +26,12 @@ import 'package:scrap/widget/showdialogreport.dart';
 
 class ScrapFeedDialog extends StatefulWidget {
   final List scraps;
+  final bool topScrap;
   final int currentIndex;
-  ScrapFeedDialog({@required this.scraps, @required this.currentIndex});
+  ScrapFeedDialog(
+      {@required this.scraps,
+      @required this.currentIndex,
+      this.topScrap = false});
   @override
   _ScrapFeedDialogState createState() => _ScrapFeedDialogState();
 }
@@ -35,6 +39,7 @@ class ScrapFeedDialog extends StatefulWidget {
 class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool initHistoryFinish = false;
+  StreamSubscription loadStatus, loadFollowStatus;
   int index = 0;
   final random = Random();
   Map<String, List> history = {'like': [], 'picked': [], 'burn': []};
@@ -67,7 +72,13 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
   @override
   void initState() {
     initUserHistory();
-    // randomAdsRate();
+    if (widget.topScrap) {
+      loadStatus = loadMoreTopScrap
+          .listen((value) => setState(() => initHistoryFinish = !value));
+    } else {
+      loadFollowStatus = loadMoreFollowingScrap
+          .listen((value) => setState(() => initHistoryFinish = !value));
+    }
     super.initState();
   }
 
@@ -84,6 +95,12 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
   void didUpdateWidget(ScrapFeedDialog oldWidget) {
     if (oldWidget.scraps != widget.scraps) allScrap = widget.scraps;
     super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    widget.topScrap ? loadStatus.cancel() : loadFollowStatus.cancel();
+    super.dispose();
   }
 
   @override
@@ -416,6 +433,15 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                             'คุณตามทันสแครปทั้งหมดแล้ว')
                                                         : setDialog(
                                                             () => index++);
+
+                                                    if (widget.topScrap &&
+                                                        index ==
+                                                            allScrap.length - 2)
+                                                      loadMoreTopScrap
+                                                          .add(true);
+                                                    else
+                                                      loadMoreFollowingScrap
+                                                          .add(true);
                                                   } else {
                                                     toast.toast(
                                                         'คุณตามทันสแครปทั้งหมดแล้ว');
@@ -486,6 +512,11 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                 index + 1 == allScrap.length
                                     ? toast.toast('คุณตามทันสแครปทั้งหมดแล้ว')
                                     : setDialog(() => index++);
+                                if (widget.topScrap &&
+                                    index == allScrap.length - 2)
+                                  loadMoreTopScrap.add(true);
+                                else
+                                  loadMoreFollowingScrap.add(true);
                               } else
                                 toast.toast('คุณตามทันสแครปทั้งหมดแล้ว');
                             });

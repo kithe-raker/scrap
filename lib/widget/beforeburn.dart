@@ -16,151 +16,131 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
       builder: (BuildContext context) {
         Size a = MediaQuery.of(context).size;
         return StatefulBuilder(builder: (context, StateSetter setDialog) {
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                      top: a.width / 20,
-                      right: a.width / 20,
-                      left: a.width / 20,
-                      bottom: a.width / 5),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        width: a.width,
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                                top: a.width / 20, bottom: a.width / 15),
-                            width: a.width / 12,
-                            height: a.width / 12,
-                            child: Center(
-                              child: Icon(
-                                Icons.clear,
-                                color: Colors.white,
-                              ),
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.white24,
-                                borderRadius: BorderRadius.circular(a.width)),
-                          ),
-                          onTap: () {
-                            nav.pop(context);
-                          },
-                        ),
-                      ),
-                      Container(
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            body: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                 width: a.width,
+                        height: a.height ,
+                child: Stack(
+                  children: <Widget>[
+                    Center(
+                      child: Container(
                         decoration: BoxDecoration(
                             color: Color(0xff282828),
                             borderRadius: BorderRadius.circular(a.width / 50)),
                         width: a.width,
-                        padding: EdgeInsets.all(a.width / 50),
                         height: a.height / 1.4,
-                        child: Scaffold(
-                          backgroundColor: Color(0xff282828),
-                          body: Container(
-                            width: a.width,
-                            height: a.height,
-                            padding: EdgeInsets.only(
-                                top: a.width / 10, bottom: a.width / 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        padding: EdgeInsets.all(a.width / 50),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Column(
                               children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.whatshot,
-                                      color: Color(0xffFF8F3A),
-                                      size: a.width / 3,
-                                    ),
-                                    Text(
-                                      "เผาสแครป",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: a.width / 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Text(
-                                      "หากมีคนกดเผาสแครปมากพอ",
-                                      style: TextStyle(
-                                          fontSize: a.width / 17,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "สแครปนี้จะหายไป",
-                                      style: TextStyle(
-                                          fontSize: a.width / 17,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    // Text(
-                                    //   "รวมถึงสแครปบางส่วนในมือ",
-                                    //   style: TextStyle(
-                                    //       fontSize: a.width / 20,
-                                    //       color: Colors.white,
-                                    //       fontWeight: FontWeight.bold),
-                                    // ),
-                                    // Text(
-                                    //   "ของผู้เขียนด้วย",
-                                    //   style: TextStyle(
-                                    //       fontSize: a.width / 20,
-                                    //       color: Colors.white,
-                                    //       fontWeight: FontWeight.bold),
-                                    // ),
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    RaisedButton(
-                                        color: Color(0xff797979),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(a.width),
-                                        ),
-                                        child: Container(
-                                          width: a.width / 4,
-                                          height: a.width / 8,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "เผาเลย",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: a.width / 18,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        onPressed: () async {
-                                          setDialog(() => loading = true);
-                                          thrown
-                                              ? await burnThrownScrap(context)
-                                              : await burnScrap(
-                                                  context, burntScraps);
-                                          setDialog(() => loading = false);
-                                        }),
-                                    Text(
-                                      '"แน่ใจนะ"',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
+                                Icon(Icons.whatshot,
+                                    color: Color(0xffFF8F3A),
+                                    size: a.width / 3),
+                                Text(
+                                  "เผาสแครป",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: a.width / 17,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
-                          ),
+                            Column(
+                              children: <Widget>[
+                                Text(
+                                  "หากมีคนกดเผาสแครปมากพอ",
+                                  style: TextStyle(
+                                      fontSize: a.width / 17,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "สแครปนี้จะหายไป",
+                                  style: TextStyle(
+                                      fontSize: a.width / 17,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                // Text(
+                                //   "รวมถึงสแครปบางส่วนในมือ",
+                                //   style: TextStyle(
+                                //       fontSize: a.width / 20,
+                                //       color: Colors.white,
+                                //       fontWeight: FontWeight.bold),
+                                // ),
+                                // Text(
+                                //   "ของผู้เขียนด้วย",
+                                //   style: TextStyle(
+                                //       fontSize: a.width / 20,
+                                //       color: Colors.white,
+                                //       fontWeight: FontWeight.bold),
+                                // ),
+                              ],
+                            ),
+                            Column(
+                              children: <Widget>[
+                                RaisedButton(
+                                    color: Color(0xff797979),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(a.width),
+                                    ),
+                                    child: Container(
+                                      width: a.width / 4,
+                                      height: a.width / 8,
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "เผาเลย",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: a.width / 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      setDialog(() => loading = true);
+                                      thrown
+                                          ? await burnThrownScrap(context)
+                                          : await burnScrap(
+                                              context, burntScraps);
+                                      setDialog(() => loading = false);
+                                    }),
+                                Text(
+                                  '"แน่ใจนะ"',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: GestureDetector(
+                          child: Container(
+                            // margin: EdgeInsets.only(
+                            //     top: a.width / 20, bottom: a.width / 15),
+                            width: a.width / 12,
+                            height: a.width / 12,
+                            decoration: BoxDecoration(
+                                color: Colors.white24,
+                                borderRadius: BorderRadius.circular(a.width)),
+                            child: Center(
+                              child: Icon(Icons.clear, color: Colors.white),
+                            ),
+                          ),
+                          onTap: () => nav.pop(context)),
+                    ),
+                    loading ? Center(child: LoadNoBlur()) : SizedBox()
+                  ],
                 ),
-                loading ? Center(child: LoadNoBlur()) : SizedBox()
-              ],
+              ),
             ),
           );
         });

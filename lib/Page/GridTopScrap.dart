@@ -1,6 +1,5 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -101,7 +100,9 @@ class _GridTopScrapState extends State<GridTopScrap> {
         showDialog(
             context: context,
             builder: (BuildContext context) => ScrapFeedDialog(
-                scraps: scraps, currentIndex: scraps.indexOf(data)));
+                scraps: scraps,
+                currentIndex: scraps.indexOf(data),
+                topScrap: true));
       },
     );
   }
