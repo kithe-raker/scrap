@@ -21,8 +21,8 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
             body: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Container(
-                 width: a.width,
-                        height: a.height ,
+                width: a.width,
+                height: a.height,
                 child: Stack(
                   children: <Widget>[
                     Center(
@@ -30,9 +30,9 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                         decoration: BoxDecoration(
                             color: Color(0xff282828),
                             borderRadius: BorderRadius.circular(a.width / 50)),
-                        width: a.width,
+                        width: a.width / 1.06,
                         height: a.height / 1.4,
-                        padding: EdgeInsets.all(a.width / 50),
+                        // padding: EdgeInsets.all(a.width / 50),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
@@ -66,20 +66,6 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                // Text(
-                                //   "รวมถึงสแครปบางส่วนในมือ",
-                                //   style: TextStyle(
-                                //       fontSize: a.width / 20,
-                                //       color: Colors.white,
-                                //       fontWeight: FontWeight.bold),
-                                // ),
-                                // Text(
-                                //   "ของผู้เขียนด้วย",
-                                //   style: TextStyle(
-                                //       fontSize: a.width / 20,
-                                //       color: Colors.white,
-                                //       fontWeight: FontWeight.bold),
-                                // ),
                               ],
                             ),
                             Column(
@@ -124,8 +110,8 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                       alignment: Alignment.topRight,
                       child: GestureDetector(
                           child: Container(
-                            // margin: EdgeInsets.only(
-                            //     top: a.width / 20, bottom: a.width / 15),
+                            margin: EdgeInsets.only(
+                                top: a.width / 12, right: 3.2),
                             width: a.width / 12,
                             height: a.width / 12,
                             decoration: BoxDecoration(
