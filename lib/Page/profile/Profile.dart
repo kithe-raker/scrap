@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,7 +8,6 @@ import 'package:scrap/function/aboutUser/SettingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
-import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -139,7 +137,6 @@ class _ProfileState extends State<Profile> {
     final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     Size a = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -147,7 +144,6 @@ class _ProfileState extends State<Profile> {
         children: <Widget>[
           StatefulBuilder(builder: (context, StateSetter setProfile) {
             return Container(
-              margin: EdgeInsets.only(bottom: screenHeightDp / 21),
               width: screenWidthDp,
               padding: EdgeInsets.only(top: appBarHeight / 1.35),
               child: SmartRefresher(
@@ -352,7 +348,7 @@ class _ProfileState extends State<Profile> {
                                   height: screenHeightDp / 8,
                                   child: Center(
                                       child: CircularProgressIndicator())),
-                          SizedBox(height: screenWidthDp / 42),
+                          // SizedBox(height: screenWidthDp / 42),
                         ],
                       ),
                     ),
@@ -363,15 +359,15 @@ class _ProfileState extends State<Profile> {
           }),
           Positioned(top: 0, child: appbarProfile(context)),
           initInfoFinish ? SizedBox() : Loading(),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              width: screenWidthDp,
-              child: AdmobBanner(
-                  adUnitId: AdmobService().getBannerAdId(),
-                  adSize: AdmobBannerSize.FULL_BANNER),
-            ),
-          )
+          // Positioned(
+          //   bottom: 0,
+          //   child: Container(
+          //     width: screenWidthDp,
+          //     child: AdmobBanner(
+          //         adUnitId: AdmobService().getBannerAdId(),
+          //         adSize: AdmobBannerSize.FULL_BANNER),
+          //   ),
+          // )
         ],
       )),
     );
@@ -797,87 +793,50 @@ class _Report_DropDownButtonState extends State<Report_DropDownButton> {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
-      child: DropdownButton<dynamic>(
-        value: dropdownValue,
-        // style: TextStyle(
-        //   color: Colors.white,
-        //   fontSize: s36
-        // ),
-        // dropdownColor: Color(0xff1a1a1a),
-        icon: Icon(Icons.arrow_drop_down),
-        iconSize: s60,
-        //elevation: 16,
-        //style: TextStyle(color: Colors.deepPurple),
-        // underline: Container(
-        //   height: 2,
-        //   color: Colors.deepPurpleAccent,
-        // ),
-        onChanged: (dynamic newValue) {
-          setState(
-            () {
-              dropdownValue = newValue;
+        child: DropdownButton<dynamic>(
+      value: dropdownValue,
+      // style: TextStyle(
+      //   color: Colors.white,
+      //   fontSize: s36
+      // ),
+      // dropdownColor: Color(0xff1a1a1a),
+      icon: Icon(Icons.arrow_drop_down),
+      iconSize: s60,
+      //elevation: 16,
+      //style: TextStyle(color: Colors.deepPurple),
+      // underline: Container(
+      //   height: 2,
+      //   color: Colors.deepPurpleAccent,
+      // ),
+      onChanged: (dynamic newValue) {
+        setState(
+          () {
+            dropdownValue = newValue;
 
-              // if (dropdownValue == ' สาธารณะ') {
-              //   private = false;
-              // } else if (dropdownValue == ' ส่วนตัว') {
-              //   private = true;
-              // }
-            },
-          );
-        },
-        items: <dynamic>[
-          'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ',
-          'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ',
-          'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ',
-          'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ',
-        ].map<DropdownMenuItem<dynamic>>((dynamic value) {
-          if (value == 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
+            // if (dropdownValue == ' สาธารณะ') {
+            //   private = false;
+            // } else if (dropdownValue == ' ส่วนตัว') {
+            //   private = true;
+            // }
+          },
+        );
+      },
+      items: <String>[
+        'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ',
+        'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ',
+        'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ',
+        'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ',
+      ].map<DropdownMenuItem<dynamic>>(
+          (String value) => DropdownMenuItem<dynamic>(
+                value: value,
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: s54,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            );
-          } else if (value == 'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else if (value == 'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else if (value == 'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else {}
-        }).toList(),
-      ),
-    );
+              )),
+    ));
   }
 }

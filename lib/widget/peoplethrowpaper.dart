@@ -52,7 +52,6 @@ class _PaperstrangerState extends State<Paperstranger> {
     screenutilInit(context);
     final user = Provider.of<UserData>(context, listen: false);
     var scrap = widget.scrap['scrap'];
-    Size a = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(

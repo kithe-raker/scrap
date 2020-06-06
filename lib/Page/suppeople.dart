@@ -374,7 +374,6 @@ class _SubpeopleState extends State<Subpeople> {
   }
 
   Widget serachResult() {
-    final user = Provider.of<UserData>(context, listen: false);
     return ListView(
       physics: BouncingScrollPhysics(),
       children: <Widget>[

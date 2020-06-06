@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:scrap/Page/setting/blockingList.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
@@ -15,7 +13,6 @@ import 'package:scrap/function/follows/FollowsFunction.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
-import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -116,7 +113,7 @@ class _OtherProfileState extends State<OtherProfile> {
             children: <Widget>[
               StatefulBuilder(builder: (context, StateSetter setProfile) {
                 return Container(
-                  margin: EdgeInsets.only(bottom: screenHeightDp / 21),
+                  // margin: EdgeInsets.only(bottom: screenHeightDp / 21),
                   padding: EdgeInsets.only(top: appBarHeight / 1.35),
                   child: SmartRefresher(
                     footer: Footer(),
@@ -260,7 +257,7 @@ class _OtherProfileState extends State<OtherProfile> {
                                 height: screenHeightDp / 8,
                                 child:
                                     Center(child: CircularProgressIndicator())),
-                        SizedBox(height: screenWidthDp / 36),
+                        // SizedBox(height: screenWidthDp / 36),
                       ],
                     ),
                   ),
@@ -271,13 +268,13 @@ class _OtherProfileState extends State<OtherProfile> {
                   child: Container(
                     child: appbar_OtherProfile(context),
                   )),
-              Positioned(
-                  bottom: 0,
-                  child: Container(
-                    child: AdmobBanner(
-                        adUnitId: AdmobService().getBannerAdId(),
-                        adSize: AdmobBannerSize.FULL_BANNER),
-                  )),
+              // Positioned(
+              //     bottom: 0,
+              //     child: Container(
+              //       child: AdmobBanner(
+              //           adUnitId: AdmobService().getBannerAdId(),
+              //           adSize: AdmobBannerSize.FULL_BANNER),
+              //     )),
               loading ? Loading() : SizedBox()
             ],
           ),

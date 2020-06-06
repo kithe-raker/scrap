@@ -26,7 +26,6 @@ class _ShowcontractState extends State<Showcontract> {
 }
 
 void dialogcontract(context) {
-  int ass = 0;
   showDialog(
       context: context,
       builder: (builder) {

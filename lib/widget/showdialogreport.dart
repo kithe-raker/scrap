@@ -1,7 +1,5 @@
 import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/function/aboutUser/ReportUser.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
@@ -22,72 +20,35 @@ class _Report_DropDownButtonState extends State<Report_DropDownButton> {
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton<dynamic>(
-        value: dropdownValue,
-        dropdownColor: Color(0xfff282828),
-        icon: Icon(Icons.arrow_drop_down),
-        iconSize: s60,
-        onChanged: (dynamic newValue) {
-          setState(
-            () {
-              final report = Provider.of<Report>(context, listen: false);
-              report.topic = newValue;
-              dropdownValue = newValue;
-            },
-          );
-        },
-        items: <dynamic>[
-          'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ',
-          'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ',
-          'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ',
-          'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ',
-        ].map<DropdownMenuItem<dynamic>>((dynamic value) {
-          if (value == 'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
+          value: dropdownValue,
+          dropdownColor: Color(0xfff282828),
+          icon: Icon(Icons.arrow_drop_down),
+          iconSize: s60,
+          onChanged: (dynamic newValue) {
+            setState(
+              () {
+                final report = Provider.of<Report>(context, listen: false);
+                report.topic = newValue;
+                dropdownValue = newValue;
+              },
             );
-          } else if (value == 'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else if (value == 'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else if (value == 'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ') {
-            return DropdownMenuItem<dynamic>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: s54,
-                  color: Colors.white,
-                ),
-              ),
-            );
-          } else {}
-        }).toList(),
-      ),
+          },
+          items: <String>[
+            'กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย  ',
+            'ส่งข้อความสแปมไปยังผู้ใช้รายอื่น  ',
+            'เขียนเนื้อหาที่ส่งเสริมความรุนแรง  ',
+            'เขียนเนื้อหาที่มีการคุกคามทางเพศ  ',
+          ].map<DropdownMenuItem<dynamic>>(
+              (String value) => DropdownMenuItem<dynamic>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: s54,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ))),
     );
   }
 }
@@ -176,7 +137,8 @@ void showDialogReport(BuildContext context) {
                                                 left: a.width / 50),
                                             child: TextField(
                                               keyboardType: TextInputType.text,
-                                              textInputAction: TextInputAction.done,
+                                              textInputAction:
+                                                  TextInputAction.done,
                                               maxLines: null,
                                               onChanged: (str) =>
                                                   describe = str.trim(),

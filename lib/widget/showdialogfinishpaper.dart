@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:scrap/services/admob_service.dart';
-import 'package:scrap/widget/Ads.dart';
 import 'package:flutter/material.dart';
 
 class Showfinishpaper extends StatefulWidget {

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:wasm';
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,7 +27,6 @@ import 'package:scrap/widget/dialog/ScrapDialog.dart';
 import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/guide.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
-import 'package:scrap/widget/wrap.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

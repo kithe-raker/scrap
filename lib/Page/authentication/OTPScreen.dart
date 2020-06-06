@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/authentication/LoginID.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/Loading.dart';

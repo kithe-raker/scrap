@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/authentication/OTPScreen.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/Loading.dart';

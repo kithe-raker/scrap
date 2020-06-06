@@ -1,4 +1,3 @@
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -6,11 +5,9 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
-import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/SelectPosition.dart';
-import 'package:scrap/widget/Ads.dart';
 import 'package:scrap/widget/Toast.dart';
 
 //ฟังก์ชั่นปากระดาษ
