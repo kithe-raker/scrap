@@ -9,6 +9,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/follows/FollowsFunction.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
@@ -19,6 +20,7 @@ import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/dialog/ScrapDialog.dart';
 import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
+import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/thrown.dart';
 
@@ -384,11 +386,23 @@ class _OtherProfileState extends State<OtherProfile> {
                         ),
                         onTap: () {
                           user.papers > 0
-                              ? writerScrap(context,
-                                  isThrow: true,
-                                  data: widget.data,
-                                  thrownUID: uid,
-                                  ref: widget.ref)
+                              ? user.promise
+                                  ? writerScrap(context,
+                                      isThrow: true,
+                                      data: widget.data,
+                                      thrownUID: uid,
+                                      ref: widget.ref)
+                                  : dialogcontract(context,
+                                      onPromise: () async {
+                                      await userinfo.promiseUser();
+                                      user.promise = true;
+                                      nav.pop(context);
+                                      writerScrap(context,
+                                          isThrow: true,
+                                          data: widget.data,
+                                          thrownUID: uid,
+                                          ref: widget.ref);
+                                    })
                               : toast.toast('กระดาษคุณหมดแล้ว');
                         }))
                 : SizedBox();

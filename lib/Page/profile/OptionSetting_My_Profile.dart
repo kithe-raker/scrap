@@ -1328,114 +1328,125 @@ class _ReportToScrap_MyProfileState extends State<ReportToScrap_MyProfile> {
     Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      resizeToAvoidBottomPadding: false,
       body: SafeArea(
         child: Stack(
           children: [
-            Column(
-              children: [
-                appbar_ListOptionSetting(
-                    context, Icons.bug_report, 'แจ้งปัญหาระบบ'),
-                SizedBox(
-                  height: appBarHeight / 3,
-                ),
-                Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    height: screenHeightDp / 1.5,
-                    width: screenWidthDp / 1.1,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color(0xff202020),
-                    ),
-                    child: Container(
-                      margin: EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: screenWidthDp / 1.1,
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        color: Color(0xff383838), width: 1))),
-                            child: Text(
-                              'ถึงผู้พัฒนา',
-                              style:
-                                  TextStyle(fontSize: s60, color: Colors.white),
-                            ),
-                          ),
-                          Expanded(
-                            child: Form(
-                              key: key,
-                              child: TextFormField(
-                                style: TextStyle(
-                                    fontSize: s52, color: Colors.white),
-                                maxLines: null,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'แจ้งรายละเอียดเกี่ยวกับปัญหา',
-                                  hintStyle: TextStyle(
-                                    fontSize: s54,
-                                    height: 0.08,
-                                    color: Colors.white30,
+            SingleChildScrollView(
+              child: Container(
+                width: screenWidthDp,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: appBarHeight / 3 + appBarHeight / 1.42),
+                    Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        height: screenHeightDp / 1.5,
+                        width: screenWidthDp / 1.1,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color(0xff202020),
+                        ),
+                        child: Container(
+                          margin: EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: screenWidthDp / 1.1,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Color(0xff383838),
+                                            width: 1))),
+                                child: Text(
+                                  'ถึงผู้พัฒนา',
+                                  style: TextStyle(
+                                      fontSize: s60, color: Colors.white),
+                                ),
+                              ),
+                              Expanded(
+                                child: Form(
+                                  key: key,
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.text,
+                                    textInputAction: TextInputAction.done,
+                                    style: TextStyle(
+                                        fontSize: s52, color: Colors.white),
+                                    maxLines: null,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'แจ้งรายละเอียดเกี่ยวกับปัญหา',
+                                      hintStyle: TextStyle(
+                                        fontSize: s54,
+                                        height: 0.08,
+                                        color: Colors.white30,
+                                      ),
+                                    ),
+                                    validator: (val) {
+                                      return val.trim() == ''
+                                          ? toast.validateToast(
+                                              'ไม่อธิบายแล้วเราจะรู้ได้ยังไง')
+                                          : null;
+                                    },
+                                    onSaved: (val) {
+                                      final report = Provider.of<Report>(
+                                          context,
+                                          listen: false);
+                                      report.reportText = val.trim();
+                                    },
                                   ),
                                 ),
-                                validator: (val) {
-                                  return val.trim() == ''
-                                      ? toast.validateToast(
-                                          'ไม่อธิบายแล้วเราจะรู้ได้ยังไง')
-                                      : null;
-                                },
-                                onSaved: (val) {
-                                  final report = Provider.of<Report>(context,
-                                      listen: false);
-                                  report.reportText = val.trim();
-                                },
                               ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: GestureDetector(
-                              child: Container(
-                                padding:
-                                    EdgeInsets.only(left: appBarHeight / 15),
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: a.width / 40,
-                                  vertical: a.width / 40,
-                                ),
-                                width: a.width / 8,
-                                height: a.width / 8,
-                                //alignment: Alignment.center,
-                                child: Icon(
-                                  Icons.send,
-                                  color: Color(0xff26A4FF),
-                                  size: s60 * 0.8,
-                                ),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: GestureDetector(
+                                  child: Container(
+                                    padding: EdgeInsets.only(
+                                        left: appBarHeight / 15),
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: a.width / 40,
+                                      vertical: a.width / 40,
+                                    ),
+                                    width: a.width / 8,
+                                    height: a.width / 8,
+                                    //alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.send,
+                                      color: Color(0xff26A4FF),
+                                      size: s60 * 0.8,
+                                    ),
 
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.circular(a.width)),
-                              ),
-                              onTap: () async {
-                                if (key.currentState.validate()) {
-                                  key.currentState.save();
-                                  setState(() => loading = true);
-                                  await reportApp.reportApp(context);
-                                  setState(() => loading = false);
-                                  toast.toast(
-                                      'ขอบคุณสำหรับการรายงานปัญหาของคุณ');
-                                  nav.pop(context);
-                                }
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ))
-              ],
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(a.width)),
+                                  ),
+                                  onTap: () async {
+                                    if (key.currentState.validate()) {
+                                      key.currentState.save();
+                                      setState(() => loading = true);
+                                      await reportApp.reportApp(context);
+                                      setState(() => loading = false);
+                                      toast.toast(
+                                          'ขอบคุณสำหรับการรายงานปัญหาของคุณ');
+                                      nav.pop(context);
+                                    }
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
+                        ))
+                  ],
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: appbar_ListOptionSetting(
+                  context, Icons.bug_report, 'แจ้งปัญหาระบบ'),
             ),
             loading ? Loading() : SizedBox()
           ],

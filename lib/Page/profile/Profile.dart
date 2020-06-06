@@ -20,6 +20,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/widget/dialog/ScrapDialog.dart';
 import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
+import 'package:scrap/widget/showcontract.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -89,6 +90,7 @@ class _ProfileState extends State<Profile> {
     var read = await cacheHistory.getReadScrap();
     readScrap.addAll(read);
     profile = data;
+    if (data['first']) dialogAboutSwitch(context);
     setState(() => initInfoFinish = true);
   }
 

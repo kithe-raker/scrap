@@ -4,11 +4,13 @@ class UserData extends ChangeNotifier {
   String _id, _uid, _token, _region, _imgUrl;
   String _phone, _verifiedId, _password;
   dynamic _img;
+  bool _promise;
   int _papers;
 
   String get id => _id;
   String get uid => _uid;
   dynamic get img => _img;
+  bool get promise => _promise;
   String get imgUrl => _imgUrl;
   String get phone => _phone;
   String get verifiedId => _verifiedId;
@@ -24,6 +26,11 @@ class UserData extends ChangeNotifier {
 
   set imgUrl(String val) {
     _imgUrl = val;
+    notifyListeners();
+  }
+
+  set promise(bool val) {
+    _promise = val;
     notifyListeners();
   }
 

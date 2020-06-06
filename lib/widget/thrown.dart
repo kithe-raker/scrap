@@ -286,25 +286,3 @@ void writerScrap(BuildContext context,
         });
       });
 }
-
-class Throwpaper extends StatefulWidget {
-  @override
-  _ThrowpaperState createState() => _ThrowpaperState();
-}
-
-class _ThrowpaperState extends State<Throwpaper> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: Center(
-        child: GestureDetector(
-          child: Text('Throw'),
-          onTap: () {
-            writerScrap(context, isThrow: true);
-          },
-        ),
-      )),
-    );
-  }
-}

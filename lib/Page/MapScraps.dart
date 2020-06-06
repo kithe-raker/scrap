@@ -16,6 +16,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/scrapFilter.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
@@ -30,6 +31,7 @@ import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
+import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/thrown.dart';
 
@@ -1029,9 +1031,18 @@ class _MapScrapsState extends State<MapScraps> {
                       ),
                       onTap: () {
                         if (papers > 0)
-                          writerScrap(context,
-                              latLng: LatLng(currentLocation.latitude,
-                                  currentLocation.longitude));
+                          user.promise
+                              ? writerScrap(context,
+                                  latLng: LatLng(currentLocation.latitude,
+                                      currentLocation.longitude))
+                              : dialogcontract(context, onPromise: () async {
+                                  await userinfo.promiseUser();
+                                  nav.pop(context);
+                                  user.promise = true;
+                                  writerScrap(context,
+                                      latLng: LatLng(currentLocation.latitude,
+                                          currentLocation.longitude));
+                                });
                         else
                           scrap.toast('กระดาษคุณหมดแล้ว');
                       },

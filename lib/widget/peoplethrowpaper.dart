@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
@@ -13,6 +14,7 @@ import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/beforeburn.dart';
+import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/thrown.dart';
 
@@ -78,7 +80,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                           )),
                         ),
                         Positioned(
-                            right: 0,
+                            right: screenWidthDp / 42,
                             child: Container(
                               child: IconButton(
                                 icon: Icon(
@@ -220,10 +222,21 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   )),
                               onTap: () {
                                 user.papers > 0
-                                    ? writerScrap(context,
-                                        isThrowBack: true,
-                                        region: widget.scrap['region'],
-                                        thrownUID: widget.scrap['uid'])
+                                    ? user.promise
+                                        ? writerScrap(context,
+                                            isThrowBack: true,
+                                            region: widget.scrap['region'],
+                                            thrownUID: widget.scrap['uid'])
+                                        : dialogcontract(context,
+                                            onPromise: () async {
+                                            await userinfo.promiseUser();
+                                            nav.pop(context);
+                                            user.promise = true;
+                                            writerScrap(context,
+                                                isThrowBack: true,
+                                                region: widget.scrap['region'],
+                                                thrownUID: widget.scrap['uid']);
+                                          })
                                     : toast.toast('กระดาษของคุณหมดแล้ว');
                               },
                             ),
@@ -273,6 +286,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                       ),
                     )),
                 Container(
+                  alignment: Alignment.center,
                   /*  margin: EdgeInsets.only(
                     bottom: appBarHeight - 20,
                   ),*/
@@ -320,35 +334,39 @@ class _PaperstrangerState extends State<Paperstranger> {
                           ],
                         ),
                         widget.picked
-                            ? Center(
-                                child: Column(
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      child: Container(
-                                          padding:
-                                              EdgeInsets.all(appBarHeight / 8),
-                                          child: Icon(Icons.delete_outline),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(22)),
-                                          )),
-                                      onTap: () {
-                                        unPick();
-                                        widget.currentList.remove(widget.scrap);
-                                        toast.toast('นำสแครปออกแล้ว');
-                                        nav.pop(context);
-                                      },
-                                    ),
-                                    Text(
-                                      'นำออก',
-                                      style: TextStyle(
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(height: screenWidthDp / 12),
+                                  GestureDetector(
+                                    child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        margin: EdgeInsets.symmetric(
+                                          horizontal: 15,
+                                        ),
+                                        child: Icon(Icons.delete_outline,
+                                            size: appBarHeight / 3),
+                                        decoration: BoxDecoration(
                                           color: Colors.white,
-                                          fontSize: s42,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(screenWidthDp)),
+                                        )),
+                                    onTap: () {
+                                      unPick();
+                                      widget.currentList.remove(widget.scrap);
+                                      toast.toast('นำสแครปออกแล้ว');
+                                      nav.pop(context);
+                                    },
+                                  ),
+                                  Text(
+                                    'นำออก',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               )
                             : SizedBox(),
                         Column(

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/thrown.dart';
 
 class PersonCard extends StatefulWidget {
@@ -127,11 +129,22 @@ class _PersonCardState extends State<PersonCard> {
                     ),
                     onTap: () {
                       user.papers > 0
-                          ? writerScrap(context,
-                              isThrow: true,
-                              data: widget.data,
-                              thrownUID: uid,
-                              ref: ref)
+                          ? user.promise
+                              ? writerScrap(context,
+                                  isThrow: true,
+                                  data: widget.data,
+                                  thrownUID: uid,
+                                  ref: ref)
+                              : dialogcontract(context, onPromise: () async {
+                                  await userinfo.promiseUser();
+                                  user.promise = true;
+                                  nav.pop(context);
+                                  writerScrap(context,
+                                      isThrow: true,
+                                      data: widget.data,
+                                      thrownUID: uid,
+                                      ref: ref);
+                                })
                           : toast.toast('กระดาษของคุณหมดแล้ว');
                     })
                 : SizedBox();

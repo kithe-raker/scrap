@@ -189,6 +189,7 @@ class _HomePageState extends State<HomePage> {
     user.img = data['img'];
     user.id = data['id'];
     user.imgUrl = data['imgUrl'];
+    user.promise = data['promise'];
     setState(() => initInfoFinish = true);
   }
 

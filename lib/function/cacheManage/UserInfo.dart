@@ -37,9 +37,25 @@ class UserInfo {
       'id': doc['id'],
       'phone': doc['phone'],
       'status': doc['status'],
-      'region': doc['region']
+      'region': doc['region'],
+      'promise': false,
+      'first': true
     };
     await file.writeAsString(json.encode(userData));
+  }
+
+  Future<void> promiseUser() async {
+    final file = await _localFile;
+    var data = await readContents();
+    data['promise'] = true;
+    await file.writeAsString(json.encode(data));
+  }
+
+  updateFirstStatus() async {
+    final file = await _localFile;
+    var data = await readContents();
+    data['first'] = false;
+    await file.writeAsString(json.encode(data));
   }
 
   Future<void> updateInfo(Map data) async {
