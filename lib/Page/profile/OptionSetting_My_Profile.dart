@@ -353,7 +353,7 @@ class _OptionSettingState extends State<OptionSetting> {
                       list_OptionSetting(context, Icons.bug_report,
                           'แจ้งปัญหาระบบ', ReportToScrap_MyProfile()),
                       list_OptionSetting(context, Icons.block,
-                          'ประวัติการบล็อค', BlockUser_MyProfile()),
+                          'ประวัติการปิดกั้นการปา', BlockUser_MyProfile()),
                       //ออกจากระบบ
                       logout(),
                       //ระยะห่างจาก ออกจากระบบ ถึง scrap version บลาๆๆๆ
@@ -1541,7 +1541,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
                                               child: guide(
                                                   Size(screenWidthDp,
                                                       screenHeightDp),
-                                                  'ไม่พบผู้ใช้ที่คุณบล็อคอยู่'),
+                                                  'ไม่พบผู้ใช้ที่คุณปิดกั้นอยู่'),
                                             )
                                       : blockedScrap.length > 0
                                           ? scrapGrid(blockedScrap)
@@ -1549,7 +1549,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
                                               child: guide(
                                                   Size(screenWidthDp,
                                                       screenHeightDp),
-                                                  'ไม่พบผู้ใช้ที่คุณบล็อคอยู่'),
+                                                  'ไม่พบผู้ใช้ที่คุณปิดกั้นอยู่'),
                                             )));
                         }),
                   loading ? Loading() : SizedBox()
@@ -1644,13 +1644,13 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
           )),
           Positioned(
             top: 0,
-            right: screenWidthDp / 108,
+            right: screenWidthDp / 70,
             child: RaisedButton(
               color: Colors.black,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(screenWidthDp / 54)),
               child: Text(
-                'ปลดบล็อค',
+                'ปลดการปิดกั้น',
                 style: TextStyle(
                     fontSize: s36,
                     fontWeight: FontWeight.bold,
@@ -1692,6 +1692,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
               ),
               SizedBox(width: screenWidthDp / 30),
               Container(
+                width: screenWidthDp / 3.2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1705,7 +1706,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
                       height: screenHeightDp / 24,
                       width: screenWidthDp / 2.1,
                       child: Text(data['status'] ?? '',
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.left,
                           style: TextStyle(color: Colors.grey, fontSize: s38)),
                     )
                   ],
@@ -1718,7 +1719,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(screenWidthDp / 42)),
             child: Text(
-              'ปลดบล็อค',
+              'ปลด',
               style: TextStyle(fontSize: s46, fontWeight: FontWeight.bold),
             ),
             onPressed: () async {
@@ -1729,7 +1730,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
                   otherUid: data['uid'], public: true);
               setState(() => loading = false);
             },
-          )
+          ),
         ],
       ),
     );

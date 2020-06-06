@@ -8,6 +8,7 @@ import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
 
 void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
   bool loading = false;
@@ -15,6 +16,7 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
       context: context,
       builder: (BuildContext context) {
         Size a = MediaQuery.of(context).size;
+        screenutilInit(context);
         return StatefulBuilder(builder: (context, StateSetter setDialog) {
           return Scaffold(
             backgroundColor: Colors.transparent,
@@ -45,7 +47,7 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                   "เผาสแครป",
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: a.width / 17,
+                                      fontSize: s58,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -55,14 +57,14 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                 Text(
                                   "หากมีคนกดเผาสแครปมากพอ",
                                   style: TextStyle(
-                                      fontSize: a.width / 17,
+                                      fontSize: s58,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "สแครปนี้จะหายไป",
                                   style: TextStyle(
-                                      fontSize: a.width / 17,
+                                      fontSize: s58,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -84,7 +86,7 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                         "เผาเลย",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: a.width / 18,
+                                            fontSize: s58,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
@@ -98,7 +100,8 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
                                     }),
                                 Text(
                                   '"แน่ใจนะ"',
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: s52),
                                 ),
                               ],
                             ),
