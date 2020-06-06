@@ -571,6 +571,19 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                   child: Icon(Icons.delete_outline,
                                       size: appBarHeight / 3)),
                               onTap: () async {
+                                final db = Provider.of<RealtimeDB>(context,
+                                    listen: false);
+                                var userDb =
+                                    FirebaseDatabase(app: db.userTransact);
+                                final user = Provider.of<UserData>(context,
+                                    listen: false);
+                                var ref = userDb
+                                    .reference()
+                                    .child('users/${user.uid}');
+                                var trans = await ref.child('pick').once();
+                                ref.update({'pick': trans.value - 1});
+                                cacheHistory.removeHistory(
+                                    'picked', widget.data.documentID);
                                 widget.currentList.remove(widget.data);
                                 await fireStore
                                     .collection(
@@ -579,7 +592,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                     .delete();
                                 nav.pop(context);
                                 nav.pop(context);
-                                toast.toast('นำสแครปนี้ออกไปแล้ว');
+                                toast.toast('นำสแครปนี้ออกแล้ว');
                               },
                             ),
                             Text(
