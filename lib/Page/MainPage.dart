@@ -82,24 +82,19 @@ class _MainPageState extends State<MainPage> {
 
   Future<bool> serverChecker() async {
     bool close;
-    await Firestore.instance
-        .collection('App')
-        .document('info')
-        .get()
-        .then((doc) {
-      close = doc.data['close'];
-      appInfo = doc;
-    });
-    return false; //close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
+    var doc = await Firestore.instance.collection('App').document('info').get();
+    close = doc.data['close'];
+    appInfo = doc;
+    return close;
   }
 
   bool olderVersion() {
-    String recent = '1.1.0', incoming;
+    String recent = '2.0.1', incoming;
     bool isIOS = Platform.isIOS;
     isIOS
-        ? incoming = appInfo['versions']['IOS']
+        ? incoming = appInfo['versions']['ios']
         : incoming = appInfo['versions']['android'];
-    return false; // recent != incoming;
+    return recent != incoming;
   }
 
   Future<bool> isLogin() async {
