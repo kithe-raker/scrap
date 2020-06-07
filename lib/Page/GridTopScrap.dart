@@ -11,8 +11,12 @@ import 'package:scrap/widget/dialog/ScrapFeedDialog.dart';
 
 class GridTopScrap extends StatefulWidget {
   final List scraps;
+  final List feedScrap;
   final Map<String, int> comments;
-  GridTopScrap({@required this.scraps, @required this.comments});
+  GridTopScrap(
+      {@required this.scraps,
+      @required this.comments,
+      @required this.feedScrap});
   @override
   _GridTopScrapState createState() => _GridTopScrapState();
 }
@@ -102,7 +106,7 @@ class _GridTopScrapState extends State<GridTopScrap> {
         showDialog(
             context: context,
             builder: (BuildContext context) => ScrapFeedDialog(
-                scraps: scraps,
+                scraps: widget.feedScrap,
                 currentIndex: scraps.indexOf(data),
                 topScrap: true));
       },

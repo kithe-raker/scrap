@@ -31,7 +31,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
   bool loading = true;
 
   //top scrap
-  List scraps = [];
+  List scraps = [], feedScrap = [];
   Map<String, int> comments = {};
   dynamic lessPoint;
   bool lastQuery = false;
@@ -81,6 +81,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
           .collectionGroup('ScrapDailys-th')
           .where('id', whereIn: docId)
           .getDocuments();
+      feedScrap.addAll(docs.documents);
       scraps.addAll(docs.documents);
     }
     friends = await cacheFriends.getFollowing();
@@ -118,6 +119,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
           .collectionGroup('ScrapDailys-th')
           .where('id', whereIn: docId)
           .getDocuments();
+          feedScrap.addAll(docs.documents);
       scraps.addAll(docs.documents);
       docs.documents.length < 8 ? lastQuery = true : scraps.add(lessPoint);
       setState(() => topController.loadComplete());
@@ -253,7 +255,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                         onLoading: () {
                           loadMoreScrap();
                         },
-                        child: GridTopScrap(scraps: scraps, comments: comments))
+                        child: GridTopScrap(scraps: scraps, feedScrap:feedScrap,comments: comments))
                   ],
                 )),
             loading ? Loading() : SizedBox()
