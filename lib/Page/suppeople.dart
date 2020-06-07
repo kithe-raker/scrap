@@ -176,7 +176,7 @@ class _SubpeopleState extends State<Subpeople> {
                               searching
                                   ? Row(
                                       children: <Widget>[
-                                        SizedBox(width: a.width / 25),
+                                        SizedBox(width: a.width / 42),
                                         GestureDetector(
                                           child: Text(
                                             'ยกเลิก',
