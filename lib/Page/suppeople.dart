@@ -133,7 +133,9 @@ class _SubpeopleState extends State<Subpeople> {
                                 child: Container(
                                   height: a.width / 8,
                                   margin: EdgeInsets.only(
-                                      left: a.width / 25, right: a.width / 25),
+                                      left: a.width / 25,
+                                      right: a.width / 25 / 2),
+                                  alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(50.0)),
@@ -143,19 +145,17 @@ class _SubpeopleState extends State<Subpeople> {
                                     controller: _controller,
                                     focusNode: focus,
                                     style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: a.width / 18),
+                                        color: Colors.white, fontSize: s42),
                                     textAlign: TextAlign.center,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       // fillColor: Colors.red,
-
                                       hintText: '@someone',
                                       hintStyle: TextStyle(
-                                        height: a.width / 315,
+                                        // height: a.width / 315,
                                         //height: screenWidthDp / 320,
                                         // height: appBarHeight / 65,
-                                        fontSize: a.width / 18,
+                                        fontSize: s42,
                                         color: Colors.grey[600],
                                       ),
                                     ),
@@ -173,10 +173,10 @@ class _SubpeopleState extends State<Subpeople> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: a.width / 100),
                               searching
                                   ? Row(
                                       children: <Widget>[
+                                        SizedBox(width: a.width / 25),
                                         GestureDetector(
                                           child: Text(
                                             'ยกเลิก',
@@ -191,10 +191,10 @@ class _SubpeopleState extends State<Subpeople> {
                                             setSearch(() => searching = false);
                                           },
                                         ),
-                                        SizedBox(width: a.width / 100),
+                                        SizedBox(width: a.width / 25),
                                       ],
                                     )
-                                  : SizedBox()
+                                  : SizedBox(width: a.width / 25 / 2)
                             ],
                           )
                         ],
