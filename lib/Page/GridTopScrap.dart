@@ -42,7 +42,7 @@ class _GridTopScrapState extends State<GridTopScrap> {
       child: Wrap(
           spacing: a.width / 42,
           runSpacing: a.width / 42,
-          alignment: WrapAlignment.center,
+          alignment: WrapAlignment.start,
           children: widget.scraps.map((scrap) => block(data: scrap)).toList()),
     ));
   }

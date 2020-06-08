@@ -1204,15 +1204,20 @@ class _HistoryScrapState extends State<HistoryScrap> {
                     height: screenWidthDp / 2.16 * 1.21,
                     width: screenWidthDp / 2.16,
                     color: Colors.black38,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.whatshot,
-                              size: 50, color: Color(0xffFF8F3A)),
-                          Text('ถูกเผา',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: s48)),
-                        ]))
+                    child: ClipRRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 8.1, sigmaY: 8.1),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.whatshot,
+                                  size: 50, color: Color(0xffFF8F3A)),
+                              Text('ถูกเผา',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: s48)),
+                            ]),
+                      ),
+                    ))
                 : isExpired(data)
                     ? Container(
                         margin: EdgeInsets.all(4),

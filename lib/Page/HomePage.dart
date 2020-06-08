@@ -237,11 +237,8 @@ class _HomePageState extends State<HomePage> {
                             //Logo
                             Row(
                               children: <Widget>[
-                                SizedBox(
-                                  width: appBarHeight / 8,
-                                ),
+                                SizedBox(width: appBarHeight / 8),
                                 Container(
-                                    margin: EdgeInsets.only(top: a.width / 90),
                                     height: a.width / 7,
                                     alignment: Alignment.center,
                                     child: SvgPicture.asset(

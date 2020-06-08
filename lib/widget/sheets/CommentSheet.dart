@@ -9,6 +9,7 @@ import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/guide.dart';
 
 import '../footer.dart';
 
@@ -172,10 +173,17 @@ class _CommentSheetState extends State<CommentSheet> {
                                         controller.loadNoData();
                                       }
                                     },
-                                    child: ListView(
-                                        children: commentList
-                                            .map((doc) => commentBox(doc))
-                                            .toList()));
+                                    child: commentList.length > 0
+                                        ? ListView(
+                                            children: commentList
+                                                .map((doc) => commentBox(doc))
+                                                .toList())
+                                        : Center(
+                                            child: guide(
+                                                Size(screenWidthDp,
+                                                    screenHeightDp),
+                                                'ไม่มีการแสดงความเห็น'),
+                                          ));
                               })),
                   ),
                   StatefulBuilder(builder: (context, StateSetter setSheet) {

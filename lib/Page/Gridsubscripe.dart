@@ -33,6 +33,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
   //top scrap
   List scraps = [], feedScrap = [];
   Map<String, int> comments = {};
+  Map<String, int> commentsFollower = {};
   dynamic lessPoint;
   bool lastQuery = false;
 
@@ -93,6 +94,15 @@ class _GridsubscripeState extends State<Gridsubscripe> {
           .limit(8)
           .getDocuments();
       followingScraps.addAll(followDocs.documents);
+      if (followDocs.documents.length > 0) {
+        followingScraps.forEach((doc) async {
+          var ref = await FirebaseDatabase.instance
+              .reference()
+              .child('scraps/${doc.documentID}/comment')
+              .once();
+          commentsFollower[doc.documentID] = ref.value;
+        });
+      }
     }
     scraps.add(lessPoint);
     setState(() => loading = false);
@@ -119,7 +129,7 @@ class _GridsubscripeState extends State<Gridsubscripe> {
           .collectionGroup('ScrapDailys-th')
           .where('id', whereIn: docId)
           .getDocuments();
-          feedScrap.addAll(docs.documents);
+      feedScrap.addAll(docs.documents);
       scraps.addAll(docs.documents);
       docs.documents.length < 8 ? lastQuery = true : scraps.add(lessPoint);
       setState(() => topController.loadComplete());
@@ -139,6 +149,15 @@ class _GridsubscripeState extends State<Gridsubscripe> {
         .limit(8)
         .getDocuments();
     followingScraps.addAll(docs.documents);
+    if (docs.documents.length > 0) {
+      followingScraps.forEach((doc) async {
+        var ref = await FirebaseDatabase.instance
+            .reference()
+            .child('scraps/${doc.documentID}/comment')
+            .once();
+        commentsFollower[doc.documentID] = ref.value;
+      });
+    }
     docs.documents.length < 0
         ? setState(() => followingController.loadComplete())
         : followingController.loadNoData();
@@ -175,15 +194,14 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                     children: [
                       GestureDetector(
                         child: Text(
-                          "จากผู้คนที่ติดตาม",
+                          "สแครปน่าติดตาม",
                           style: page != 0
                               ? TextStyle(
                                   color: Colors.white, fontSize: a.width / 20)
                               : TextStyle(
                                   color: Colors.white,
                                   fontSize: a.width / 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                  fontWeight: FontWeight.bold),
                         ),
                         onTap: () {
                           if (controller.page != 0)
@@ -198,23 +216,23 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                             color: Colors.white, fontSize: a.width / 20),
                       ),
                       GestureDetector(
-                        child: Text(
-                          "สแครปน่าติดตาม",
-                          style: page != 1
-                              ? TextStyle(
-                                  color: Colors.white, fontSize: a.width / 20)
-                              : TextStyle(
-                                  color: Colors.white,
-                                  fontSize: a.width / 20,
-                                  fontWeight: FontWeight.bold),
-                        ),
-                        onTap: () {
-                          if (controller.page != 1)
-                            controller.nextPage(
-                                duration: Duration(milliseconds: 120),
-                                curve: Curves.ease);
-                        },
-                      ),
+                          child: Text(
+                            "จากผู้คนที่ติดตาม",
+                            style: page != 1
+                                ? TextStyle(
+                                    color: Colors.white, fontSize: a.width / 20)
+                                : TextStyle(
+                                    color: Colors.white,
+                                    fontSize: a.width / 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                          ),
+                          onTap: () {
+                            if (controller.page != 1)
+                              controller.nextPage(
+                                  duration: Duration(milliseconds: 120),
+                                  curve: Curves.ease);
+                          })
                     ],
                   ),
                   GestureDetector(
@@ -238,6 +256,18 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                   children: <Widget>[
                     SmartRefresher(
                         footer: Footer(),
+                        controller: topController,
+                        enablePullDown: false,
+                        enablePullUp: true,
+                        onLoading: () {
+                          loadMoreScrap();
+                        },
+                        child: GridTopScrap(
+                            scraps: scraps,
+                            feedScrap: feedScrap,
+                            comments: comments)),
+                    SmartRefresher(
+                        footer: Footer(),
                         enablePullDown: false,
                         enablePullUp: true,
                         onLoading: () {
@@ -246,16 +276,9 @@ class _GridsubscripeState extends State<Gridsubscripe> {
                               : followingController.loadNoData();
                         },
                         controller: followingController,
-                        child: GridFollowing(scraps: followingScraps)),
-                    SmartRefresher(
-                        footer: Footer(),
-                        controller: topController,
-                        enablePullDown: false,
-                        enablePullUp: true,
-                        onLoading: () {
-                          loadMoreScrap();
-                        },
-                        child: GridTopScrap(scraps: scraps, feedScrap:feedScrap,comments: comments))
+                        child: GridFollowing(
+                            scraps: followingScraps,
+                            comment: commentsFollower)),
                   ],
                 )),
             loading ? Loading() : SizedBox()

@@ -233,7 +233,6 @@ class _LoginIDState extends State<LoginID> {
                             Text(
                               ' เข้าสู่ระบบด้วยเบอร์โทรศัพท์',
                               style: TextStyle(
-                                  decoration: TextDecoration.underline,
                                   color: Colors.white,
                                   fontSize: s52,
                                   fontWeight: FontWeight.bold),
