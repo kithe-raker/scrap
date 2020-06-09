@@ -102,7 +102,8 @@ class _GridTopScrapState extends State<GridTopScrap> {
       ),
       onTap: () {
         var scraps = widget.scraps;
-        scraps.removeWhere((element) => element.runtimeType == int);
+        scraps.removeWhere((element) =>
+            element.runtimeType == int || element.runtimeType == double);
         showDialog(
             context: context,
             builder: (BuildContext context) => ScrapFeedDialog(
