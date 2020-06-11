@@ -1,14 +1,19 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/guide.dart';
 
 import '../footer.dart';
@@ -22,6 +27,8 @@ class CommentSheet extends StatefulWidget {
 
 class _CommentSheetState extends State<CommentSheet> {
   List commentList = [];
+  Map commentedId = {};
+  bool private = false;
   DocumentSnapshot scrapSnapshot;
   var controller = RefreshController();
   TextEditingController comment = TextEditingController();
@@ -38,6 +45,7 @@ class _CommentSheetState extends State<CommentSheet> {
     ref = Firestore.instance.collection(
         'Users/${widget.scrapSnapshot['region']}/users/${widget.scrapSnapshot['uid']}/history/${widget.scrapSnapshot.documentID}/comments');
     scrapSnapshot = widget.scrapSnapshot;
+    commentedId = await cacheHistory.getCommented();
     var docs = await ref
         .orderBy('timeStamp', descending: true)
         .limit(8)
@@ -76,14 +84,32 @@ class _CommentSheetState extends State<CommentSheet> {
     final defaultDb = FirebaseDatabase.instance;
     var refChild = 'scraps/$scrapId';
 
+    String userId;
+    print(commentedId);
+
+    if (private) {
+      var tmpId = commentedId[scrapId];
+      if (tmpId != null)
+        userId = tmpId;
+      else {
+        userId = DateTime.now().millisecondsSinceEpoch.toString();
+        commentedId[scrapId] = userId;
+        cacheHistory.addCommentedScrap(scrapId, id: userId);
+      }
+    } else {
+      userId = user.id;
+    }
+
     commentList.insert(0, {
-      'name': user.id,
+      'name': userId,
+      'private': private,
       'image': user.imgUrl,
       'comment': comment,
       'timeStamp': DateTime.now()
     });
     ref.add({
-      'name': user.id,
+      'name': userId,
+      'private': private,
       'image': user.imgUrl,
       'comment': comment,
       'timeStamp': FieldValue.serverTimestamp()
@@ -111,6 +137,7 @@ class _CommentSheetState extends State<CommentSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -243,7 +270,35 @@ class _CommentSheetState extends State<CommentSheet> {
                                         }
                                       : null),
                             )),
-                            SizedBox(width: screenWidthDp / 32),
+                            SizedBox(width: screenWidthDp / 32 / 2),
+                            GestureDetector(
+                              child: Container(
+                                width: screenWidthDp / 12.4,
+                                height: screenWidthDp / 12.4,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(screenWidthDp),
+                                    color: Colors.white60),
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.circular(screenWidthDp),
+                                  child: private
+                                      ? Padding(
+                                          padding: EdgeInsets.all(5.6),
+                                          child: SvgPicture.asset(
+                                              'assets/anonymouse.svg',
+                                              color: Colors.black),
+                                        )
+                                      : Image.asset('assets/M10.png',
+                                          fit: BoxFit.cover),
+                                ),
+                              ),
+                              onTap: () {
+                                toast.toast(private ? 'เปิดตัวตน' : 'ปิดตัวตน');
+                                setSheet(() => private = !private);
+                              },
+                            ),
+                            SizedBox(width: screenWidthDp / 32 / 2),
                             GestureDetector(
                                 child: Icon(
                                   Icons.send,
@@ -279,22 +334,34 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   Widget commentBox(dynamic comment) {
+    bool private = comment['private'] ?? false;
     return Container(
         child: ListTile(
-      leading: ClipRRect(
-          borderRadius: BorderRadius.circular(screenWidthDp),
-          child: CachedNetworkImage(
-            imageUrl: comment['image'],
-            fit: BoxFit.cover,
-            width: screenWidthDp / 8.1,
-            height: screenWidthDp / 8.1,
-          )),
+      leading: Container(
+        width: screenWidthDp / 8.1,
+        height: screenWidthDp / 8.1,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(screenWidthDp),
+            color: Colors.white60),
+        child: ClipRRect(
+            borderRadius: BorderRadius.circular(screenWidthDp),
+            child: private
+                ? Padding(
+                    padding: EdgeInsets.all(9.8),
+                    child: SvgPicture.asset('assets/anonymouse.svg',
+                        color: Colors.black),
+                  )
+                : CachedNetworkImage(
+                    imageUrl: comment['image'],
+                    fit: BoxFit.cover,
+                  )),
+      ),
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
         children: <Widget>[
           Text(
-            '${comment['name']}',
+            private ? 'ใครบางคน(${comment['name']})' : comment['name'],
             style: TextStyle(
                 color: Colors.white,
                 fontSize: s42,

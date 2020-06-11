@@ -25,7 +25,8 @@ class HistoryUser {
       'picked': [],
       'comment': [],
       'read': [],
-      'burn': []
+      'burn': [],
+      'commentId': {}
     };
     await file.writeAsString(json.encode(userData));
   }
@@ -51,6 +52,12 @@ class HistoryUser {
     List data = await readHistory(field: field);
     data.forEach((element) => listId.add(element['id']));
     return listId;
+  }
+
+  Future<Map> getCommented() async {
+    var data = await read();
+    Map cache = data['commentId'] ?? {};
+    return cache;
   }
 
   Future<void> addBurn({@required String id}) async {
@@ -107,6 +114,15 @@ class HistoryUser {
     });
     cache['read'] = readScrap;
     await file.writeAsString(json.encode(cache));
+  }
+
+  Future<void> addCommentedScrap(String scrapId, {@required String id}) async {
+    final file = await _localFile;
+    var data = await read();
+    Map cache = data['commentId'] ?? {};
+    cache[scrapId] = id;
+    data['commentId'] = cache;
+    await file.writeAsString(json.encode(data));
   }
 
   Future<List> getReadScrap() async {

@@ -352,8 +352,14 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                           widget.data
                                                               .documentID)) {
                                                         ++pick;
+                                                        history['picked']
+                                                            .remove(widget.data
+                                                                .documentID);
                                                       } else {
                                                         --pick;
+                                                        history['picked'].add(
+                                                            widget.data
+                                                                .documentID);
                                                       }
                                                       setTrans(() {});
                                                     }
