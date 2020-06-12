@@ -32,10 +32,10 @@ class _PersonCardState extends State<PersonCard> {
     super.initState();
   }
 
-  Future<DataSnapshot> streamTransaction(String field) {
+  Stream<Event> streamTransaction(String field) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
-    return userDb.reference().child('users/$uid/$field').once();
+    return userDb.reference().child('users/$uid/$field').onValue;
   }
 
   @override
@@ -104,11 +104,11 @@ class _PersonCardState extends State<PersonCard> {
 
   Widget throwButton() {
     final user = Provider.of<UserData>(context, listen: false);
-    return FutureBuilder(
-        future: streamTransaction('allowThrow'),
+    return StreamBuilder(
+        stream: streamTransaction('allowThrow'),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return snapshot.data.value ?? false
+            return snapshot.data.snapshot.value ?? false
                 ? GestureDetector(
                     child: Container(
                       width: screenWidthDp / 6,

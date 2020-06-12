@@ -8,13 +8,17 @@ import 'package:provider/provider.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/provider/Report.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'dart:math' as math;
 
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
+import 'package:scrap/widget/showdialogreport.dart';
 
 class Gridfavorite extends StatefulWidget {
   @override
@@ -37,6 +41,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
     scraps = await cacheHistory.readHistory(field: 'like') ?? [];
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
+    history['burn'] = await cacheHistory.readOnlyId(field: 'burn') ?? [];
     if (scraps.length > 1) {
       scraps.sort((a, b) =>
           DateTime.parse(a['when']).compareTo(DateTime.parse(b['when'])));
@@ -195,8 +200,12 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                       .toDate())
                                             ],
                                           ),
-                                          Icon(Icons.more_horiz,
-                                              color: Colors.white, size: s70)
+                                          GestureDetector(
+                                            child: Icon(Icons.more_horiz,
+                                                color: Colors.white, size: s70),
+                                            onTap: () => showMore(context,
+                                                scrap: docData),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -386,6 +395,141 @@ class _GridfavoriteState extends State<Gridfavorite> {
             ));
       });
     }));
+  }
+
+  void showMore(context, {@required DocumentSnapshot scrap}) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return Container(
+            height: appBarHeight * 2.2,
+            decoration: BoxDecoration(
+              color: Color(0xff202020),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
+            child: Stack(
+              children: <Widget>[
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 12, bottom: 4),
+                      width: screenWidthDp / 3.2,
+                      height: screenHeightDp / 81,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(screenHeightDp / 42),
+                        color: Color(0xff929292),
+                      ),
+                    )),
+                Container(
+                  // margin: EdgeInsets.only(
+                  //   bottom: appBarHeight - 20,
+                  // ),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
+                            GestureDetector(
+                              child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                          screenHeightDp)),
+                                  child: Icon(Icons.whatshot,
+                                      color: Color(0xffFF8F3A),
+                                      size: appBarHeight / 3)),
+                              onTap: () {
+                                if (inHistory('burn', scrap.documentID)) {
+                                  toast.toast('คุณเคยเผาสแครปก้อนนี้แล้ว');
+                                } else {
+                                  final report = Provider.of<Report>(context,
+                                      listen: false);
+                                  report.scrapId = scrap.documentID;
+                                  report.scrapRef =
+                                      scrap.reference.parent().path;
+                                  report.targetId = scrap['uid'];
+                                  report.region = scrap['region'];
+                                  showdialogBurn(context,
+                                      burntScraps: history['burn']);
+                                }
+                              },
+                            ),
+                            Text(
+                              'เผา',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: s42,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: screenWidthDp / 12,
+                            ),
+                            GestureDetector(
+                              child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                          screenHeightDp)),
+                                  child: Icon(Icons.report_problem,
+                                      size: appBarHeight / 3)),
+                              onTap: () {
+                                final report =
+                                    Provider.of<Report>(context, listen: false);
+                                report.targetId = scrap['uid'];
+                                showDialogReport(context);
+                              },
+                            ),
+                            Text(
+                              'รายงาน',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: s42,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Positioned(
+                //     bottom: 0,
+                //     child: Container(
+                //       child: AdmobBanner(
+                //           adUnitId: AdmobService().getBannerAdId(),
+                //           adSize: AdmobBannerSize.FULL_BANNER),
+                //     )),
+              ],
+            ),
+          );
+        });
   }
 
   Widget iconWithLabel(String label,

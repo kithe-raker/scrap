@@ -182,11 +182,7 @@ class _OtherProfileState extends State<OtherProfile> {
                         SizedBox(height: screenHeightDp / 42),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              followButton(),
-                              SizedBox(width: appBarHeight / 10),
-                              throwButton()
-                            ]),
+                            children: <Widget>[followButton(), throwButton()]),
                         SizedBox(height: screenHeightDp / 42),
                         widget.data['status'] == null
                             ? SizedBox()
@@ -350,15 +346,16 @@ class _OtherProfileState extends State<OtherProfile> {
 
   Widget throwButton() {
     final user = Provider.of<UserData>(context, listen: false);
-    return FutureBuilder(
-        future: futureTransaction(uid, 'allowThrow'),
+    return StreamBuilder(
+        stream: streamTransaction(uid, 'allowThrow'),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return snapshot.data.value ?? false
+            return snapshot.data.snapshot.value ?? false
                 ? Container(
+                    margin: EdgeInsets.only(left: appBarHeight / 10),
                     child: GestureDetector(
                         child: Container(
-                          margin: EdgeInsets.only(left: appBarHeight / 6),
+                          margin: EdgeInsets.only(left: appBarHeight / 8.1),
                           /*padding: EdgeInsets.symmetric(
                             vertical: screenWidthDp / 128,
                           ),*/

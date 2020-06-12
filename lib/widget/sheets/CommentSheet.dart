@@ -83,9 +83,7 @@ class _CommentSheetState extends State<CommentSheet> {
     final userDb = FirebaseDatabase(app: db.userTransact);
     final defaultDb = FirebaseDatabase.instance;
     var refChild = 'scraps/$scrapId';
-
     String userId;
-    print(commentedId);
 
     if (private) {
       var tmpId = commentedId[scrapId];
