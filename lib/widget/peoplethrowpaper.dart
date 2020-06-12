@@ -357,6 +357,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                                       widget.currentList.remove(widget.scrap);
                                       toast.toast('นำสแครปออกแล้ว');
                                       nav.pop(context);
+                                      nav.pop(context);
                                     },
                                   ),
                                   Text(
