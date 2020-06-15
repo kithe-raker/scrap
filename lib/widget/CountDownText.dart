@@ -19,13 +19,7 @@ class _CountDownTextState extends State<CountDownText> {
 
   @override
   void initState() {
-    var duration = DateTime(
-            widget.startTime.year,
-            widget.startTime.month,
-            widget.startTime.day + 1,
-            widget.startTime.hour,
-            widget.startTime.second)
-        .difference(now);
+    var duration = widget.startTime.add(Duration(hours: 24)).difference(now);
     countDown = CountDown(Duration(seconds: duration.inSeconds));
     secondLeft = duration.inSeconds;
     countDownSub = countDown.stream.listen((event) {
@@ -38,13 +32,7 @@ class _CountDownTextState extends State<CountDownText> {
   void didUpdateWidget(CountDownText oldWidget) {
     if (oldWidget.startTime != widget.startTime) {
       countDownSub.cancel();
-      var duration = DateTime(
-              widget.startTime.year,
-              widget.startTime.month,
-              widget.startTime.day + 1,
-              widget.startTime.hour,
-              widget.startTime.second)
-          .difference(now);
+      var duration = widget.startTime.add(Duration(hours: 24)).difference(now);
       countDown = CountDown(Duration(seconds: duration.inSeconds));
       secondLeft = duration.inSeconds;
       countDownSub = countDown.stream.listen((event) {

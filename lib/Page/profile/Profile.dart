@@ -459,6 +459,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   }
 
   Widget scrap(DocumentSnapshot data) {
+    var fontRatio = s48 / screenWidthDp / 1.04;
     return GestureDetector(
       child: Container(
           height: screenWidthDp / 2.16 * 1.21,
@@ -474,7 +475,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
               child: AutoSizeText(data['scrap']['text'],
                   textAlign: TextAlign.center,
                   group: textGroup,
-                  style: TextStyle(fontSize: s46)),
+                  style: TextStyle(fontSize: screenWidthDp / 2.16 * fontRatio)),
             )),
           ])),
       onTap: () async {

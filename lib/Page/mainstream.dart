@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/BottomBarItem/FeedScrap.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/HomePage.dart';
@@ -16,28 +17,20 @@ class MainStream extends StatefulWidget {
 }
 
 class _MainStreamState extends State<MainStream> {
-  var index = 0;
+  int currentIndex = 0;
+  final pageController = PageController();
 
   final bodyList = [
+    FeedScrap(),
+    Subpeople(),
     SecondPage(),
-    SearchEveryThing(),
-    Gridsubscripe(),
     Gridfavorite(),
     Profile(),
   ];
 
-  final pageController = PageController();
-
-  int currentIndex = 0;
-
   void onTap(int index) {
+    setState(() => currentIndex = index);
     pageController.jumpToPage(index);
-  }
-
-  void onPageChanged(int index) {
-    setState(() {
-      currentIndex = index;
-    });
   }
 
   @override
@@ -48,7 +41,6 @@ class _MainStreamState extends State<MainStream> {
         bottomNavigationBar: bottom(),
         body: PageView(
           controller: pageController,
-          onPageChanged: onPageChanged,
           children: bodyList,
           physics: NeverScrollableScrollPhysics(), // No sliding
         ));
@@ -56,17 +48,12 @@ class _MainStreamState extends State<MainStream> {
 
   Widget activebutton(var _index, String icon) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          index = _index;
-          onTap(index);
-        });
-      },
+      onTap: () => onTap(_index),
       child: Container(
         height: screenWidthDp / 10,
         width: screenWidthDp / 10,
         child: SvgPicture.asset(icon,
-            color: index != _index ? Color(0xfff434343) : Colors.white),
+            color: currentIndex != _index ? Color(0xfff434343) : Colors.white),
       ),
     );
   }
@@ -80,16 +67,15 @@ class _MainStreamState extends State<MainStream> {
       height: screenWidthDp / 5,
       width: screenWidthDp,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          activebutton(0, 'assets/paper.svg'),
-          activebutton(1, 'assets/paper.svg'),
-          activebutton(2, 'assets/paper.svg'),
-          activebutton(3, 'assets/paper.svg'),
-          activebutton(4, 'assets/paper.svg'),
-        ],
-      ),
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            activebutton(0, 'assets/paper.svg'),
+            activebutton(1, 'assets/paper.svg'),
+            activebutton(2, 'assets/paper.svg'),
+            activebutton(3, 'assets/paper.svg'),
+            activebutton(4, 'assets/paper.svg')
+          ]),
     );
   }
 }
