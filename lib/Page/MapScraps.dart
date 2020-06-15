@@ -40,7 +40,9 @@ class MapScraps extends StatefulWidget {
   _MapScrapsState createState() => _MapScrapsState();
 }
 
-class _MapScrapsState extends State<MapScraps> {
+class _MapScrapsState extends State<MapScraps>
+    with AutomaticKeepAliveClientMixin {
+  final geoLocator = Geolocator();
   final random = Random();
   StreamSubscription subLimit;
   // int adsRate = 0;
@@ -60,7 +62,8 @@ class _MapScrapsState extends State<MapScraps> {
   final infoKey = GlobalKey();
   ScrapFilter filter = ScrapFilter();
   StreamSubscription streamLocation;
-
+  @override
+  bool get wantKeepAlive => true;
   @override
   void initState() {
     initUserHistory();
@@ -851,6 +854,7 @@ class _MapScrapsState extends State<MapScraps> {
                   height: a.height,
                   child: loadFin
                       ? GoogleMap(
+                          compassEnabled: false,
                           myLocationButtonEnabled: false,
                           myLocationEnabled: false,
                           onMapCreated: onMapCreated,
@@ -890,155 +894,157 @@ class _MapScrapsState extends State<MapScraps> {
                 papers = snapshot.data.snapshot?.value ?? 10;
                 WidgetsBinding.instance.addPostFrameCallback(
                     (_) => user.papers = snapshot.data.snapshot?.value ?? 10);
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    GestureDetector(
-                      child: Container(
-                        margin: EdgeInsets.only(
-                            left: screenWidthDp / 24,
-                            top: screenWidthDp / 36,
-                            right: screenWidthDp / 24,
-                            bottom: screenWidthDp / 36),
-                        padding: EdgeInsets.fromLTRB(
-                            screenWidthDp / 24,
-                            screenWidthDp / 36,
-                            screenWidthDp / 24,
-                            screenWidthDp / 36),
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6.0,
-                                spreadRadius: 3.0,
-                                offset: Offset(0.0, 3.2),
-                              )
-                            ],
-                            color: Colors.black,
-                            borderRadius:
-                                BorderRadius.circular(screenWidthDp / 14.2)),
-                        child: papers < 1
-                            ? Text(
-                                'กระดาษของคุณหมดแล้ว',
-                                style: TextStyle(
-                                    fontSize: screenWidthDp / 18,
-                                    color: Colors.white),
-                              )
-                            : Row(
-                                children: <Widget>[
-                                  RichText(
-                                    text: TextSpan(
-                                      style: TextStyle(
-                                          fontSize: screenWidthDp / 18,
-                                          color: Colors.white,
-                                          fontFamily: 'ThaiSans'),
-                                      children: <TextSpan>[
-                                        TextSpan(text: 'เหลือกระดาษ '),
-                                        TextSpan(
-                                            text: '$papers',
-                                            style: TextStyle(
-                                                fontSize: screenWidthDp / 16,
-                                                fontWeight: FontWeight.bold)),
-                                        TextSpan(
-                                          text: ' แผ่น',
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                      ),
-                      onTap: () {
-                        papers == 10
-                            ? scrap.toast('กระดาษของคุณยังเต็มอยู่')
-                            : dialogvideo(context, user.uid);
-                      },
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Gridsubscripe(),
-                            ));
-                      },
-                      child: Container(
-                          width: screenWidthDp / 7,
-                          height: screenWidthDp / 7,
-                          padding: EdgeInsets.all(screenWidthDp / 25),
-                          decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 3.0,
-                                    spreadRadius: 2.0,
-                                    offset: Offset(0.0, 3.2))
-                              ],
-                              borderRadius:
-                                  BorderRadius.circular(screenWidthDp),
-                              color: Color(0xff26A4FF)),
-                          child: Container(
-                            width: screenWidthDp / 50,
-                            child: Image.asset(
-                              "assets/Group 71.png",
-                              width: screenWidthDp / 12,
-                            ),
-                          )),
-                    ),
-                    GestureDetector(
-                      child: Container(
-                        width: screenWidthDp / 3.8,
-                        height: screenWidthDp / 3.8,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(screenWidthDp),
-                            border: Border.all(
-                                color: Colors.white38,
-                                width: screenWidthDp / 500)),
-                        child: Container(
-                          margin: EdgeInsets.all(screenWidthDp / 40),
-                          width: screenWidthDp / 6,
-                          height: screenWidthDp / 6,
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(screenWidthDp),
-                              border: Border.all(color: Colors.white)),
-                          child: Container(
-                            margin: EdgeInsets.all(screenWidthDp / 40),
-                            width: screenWidthDp / 6,
-                            height: screenWidthDp / 6,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(screenWidthDp),
-                                color: Colors.white,
-                                border: Border.all(color: Colors.white)),
-                            child: Icon(
-                              Icons.create,
-                              size: screenWidthDp / 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                      onTap: () {
-                        if (papers > 0)
-                          user.promise
-                              ? writerScrap(context,
-                                  latLng: LatLng(
-                                      location.latitude, location.longitude))
-                              : dialogcontract(context, onPromise: () async {
-                                  await userinfo.promiseUser();
-                                  nav.pop(context);
-                                  user.promise = true;
-                                  writerScrap(context,
-                                      latLng: LatLng(location.latitude,
-                                          location.longitude));
-                                });
-                        else
-                          scrap.toast('กระดาษคุณหมดแล้ว');
-                      },
-                    )
-                  ],
-                );
+                return
+                    // return Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //   children: [
+                    //     GestureDetector(
+                    //       child: Container(
+                    //         margin: EdgeInsets.only(
+                    //             left: screenWidthDp / 24,
+                    //             top: screenWidthDp / 36,
+                    //             right: screenWidthDp / 24,
+                    //             bottom: screenWidthDp / 36),
+                    //         padding: EdgeInsets.fromLTRB(
+                    //             screenWidthDp / 24,
+                    //             screenWidthDp / 36,
+                    //             screenWidthDp / 24,
+                    //             screenWidthDp / 36),
+                    //         decoration: BoxDecoration(
+                    //             boxShadow: [
+                    //               BoxShadow(
+                    //                 color: Colors.black26,
+                    //                 blurRadius: 6.0,
+                    //                 spreadRadius: 3.0,
+                    //                 offset: Offset(0.0, 3.2),
+                    //               )
+                    //             ],
+                    //             color: Colors.black,
+                    //             borderRadius:
+                    //                 BorderRadius.circular(screenWidthDp / 14.2)),
+                    //         child: papers < 1
+                    //             ? Text(
+                    //                 'กระดาษของคุณหมดแล้ว',
+                    //                 style: TextStyle(
+                    //                     fontSize: screenWidthDp / 18,
+                    //                     color: Colors.white),
+                    //               )
+                    //             : Row(
+                    //                 children: <Widget>[
+                    //                   RichText(
+                    //                     text: TextSpan(
+                    //                       style: TextStyle(
+                    //                           fontSize: screenWidthDp / 18,
+                    //                           color: Colors.white,
+                    //                           fontFamily: 'ThaiSans'),
+                    //                       children: <TextSpan>[
+                    //                         TextSpan(text: 'เหลือกระดาษ '),
+                    //                         TextSpan(
+                    //                             text: '$papers',
+                    //                             style: TextStyle(
+                    //                                 fontSize: screenWidthDp / 16,
+                    //                                 fontWeight: FontWeight.bold)),
+                    //                         TextSpan(
+                    //                           text: ' แผ่น',
+                    //                         )
+                    //                       ],
+                    //                     ),
+                    //                   )
+                    //                 ],
+                    //               ),
+                    //       ),
+                    //       onTap: () {
+                    //         papers == 10
+                    //             ? scrap.toast('กระดาษของคุณยังเต็มอยู่')
+                    //             : dialogvideo(context, widget.uid);
+                    //       },
+                    //     ),
+                    //     InkWell(
+                    //       onTap: () {
+                    //         Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //               builder: (context) => Gridsubscripe(),
+                    //             ));
+                    //       },
+                    //       child: Container(
+                    //           width: screenWidthDp / 7,
+                    //           height: screenWidthDp / 7,
+                    //           padding: EdgeInsets.all(screenWidthDp / 25),
+                    //           decoration: BoxDecoration(
+                    //               boxShadow: [
+                    //                 BoxShadow(
+                    //                     color: Colors.black26,
+                    //                     blurRadius: 3.0,
+                    //                     spreadRadius: 2.0,
+                    //                     offset: Offset(0.0, 3.2))
+                    //               ],
+                    //               borderRadius:
+                    //                   BorderRadius.circular(screenWidthDp),
+                    //               color: Color(0xff26A4FF)),
+                    //           child: Container(
+                    //             width: screenWidthDp / 50,
+                    //             child: Image.asset(
+                    //               "assets/Group 71.png",
+                    //               width: screenWidthDp / 12,
+                    //             ),
+                    //           )),
+                    //     ),
+                    //     GestureDetector(
+                    //       child: Container(
+                    //         width: screenWidthDp / 3.8,
+                    //         height: screenWidthDp / 3.8,
+                    //         decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(screenWidthDp),
+                    //             border: Border.all(
+                    //                 color: Colors.white38,
+                    //                 width: screenWidthDp / 500)),
+                    //         child: Container(
+                    //           margin: EdgeInsets.all(screenWidthDp / 40),
+                    //           width: screenWidthDp / 6,
+                    //           height: screenWidthDp / 6,
+                    //           decoration: BoxDecoration(
+                    //               borderRadius:
+                    //                   BorderRadius.circular(screenWidthDp),
+                    //               border: Border.all(color: Colors.white)),
+                    //           child: Container(
+                    //             margin: EdgeInsets.all(screenWidthDp / 40),
+                    //             width: screenWidthDp / 6,
+                    //             height: screenWidthDp / 6,
+                    //             decoration: BoxDecoration(
+                    //                 borderRadius:
+                    //                     BorderRadius.circular(screenWidthDp),
+                    //                 color: Colors.white,
+                    //                 border: Border.all(color: Colors.white)),
+                    //             child: Icon(
+                    //               Icons.create,
+                    //               size: screenWidthDp / 12,
+                    //               color: Colors.black,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //       onTap: () {
+                    //         if (papers > 0)
+                    //           user.promise
+                    //               ? writerScrap(context,
+                    //                   latLng: LatLng(currentLocation.latitude,
+                    //                       currentLocation.longitude))
+                    //               : dialogcontract(context, onPromise: () async {
+                    //                   await userinfo.promiseUser();
+                    //                   nav.pop(context);
+                    //                   user.promise = true;
+                    //                   writerScrap(context,
+                    //                       latLng: LatLng(currentLocation.latitude,
+                    //                           currentLocation.longitude));
+                    //                 });
+                    //         else
+                    //           scrap.toast('กระดาษคุณหมดแล้ว');
+                    //       },
+                    //     )
+                    //   ],
+                    // );
+                    SizedBox();
               } else {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

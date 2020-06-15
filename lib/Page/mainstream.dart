@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/BottomBarItem/FeedScrap.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
-import 'package:scrap/Page/suppeople.dart';
+import 'package:scrap/Page/searcheverything.dart';
 import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,7 +23,7 @@ class _MainStreamState extends State<MainStream> {
 
   final bodyList = [
     FeedScrap(),
-    Subpeople(),
+    SearchEveryThing(),
     SecondPage(),
     Gridfavorite(),
     Profile(),
@@ -51,7 +51,7 @@ class _MainStreamState extends State<MainStream> {
     var location = Provider.of<Position>(context);
     screenutilInit(context);
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         bottomNavigationBar: bottom(),
         body: location != null
             ? PageView(
@@ -80,6 +80,7 @@ class _MainStreamState extends State<MainStream> {
   Widget bottom() {
     screenutilInit(context);
     return Container(
+      decoration: BoxDecoration(color: Color(0xfff161414)),
       height: screenWidthDp / 5,
       width: screenWidthDp,
       child: Row(
