@@ -148,8 +148,6 @@ class _FeedScrapState extends State<FeedScrap>
       return Container(
           padding: EdgeInsets.symmetric(
               horizontal: (screenWidthDp - screenWidthDp / 1.04) / 2),
-          width: screenWidthDp,
-          height: screenHeightDp,
           child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,7 +197,7 @@ class _FeedScrapState extends State<FeedScrap>
                           style: TextStyle(height: 1.35, fontSize: s60),
                           textAlign: TextAlign.center),
                     ),
-                    SizedBox(height: screenWidthDp / 21),
+                    SizedBox(height: screenWidthDp / 36),
                     Container(
                       width: screenWidthDp,
                       padding:
