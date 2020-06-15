@@ -60,6 +60,9 @@ dependencies:
   auto_size_text: ^2.1.0
   flutter_svg: ^0.17.4
   webview_flutter: ^0.3.22+1
+  flutter_bloc: ^4.0.1
+  bloc: ^4.0.0
+  equatable: ^1.2.0
 
 dev_dependencies:
   flutter_test:

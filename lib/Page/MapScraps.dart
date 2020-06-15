@@ -382,9 +382,8 @@ class _MapScrapsState extends State<MapScraps> {
                                                               'สเเครปนี้ย่อยสลายแล้ว');
                                                         } else {
                                                           scrap.updateScrapTrans(
-                                                              'like',
-                                                              data,
-                                                              context,
+                                                              'like', context,
+                                                              doc: data,
                                                               comments: trans
                                                                       .value[
                                                                   'comment']);
@@ -430,8 +429,8 @@ class _MapScrapsState extends State<MapScraps> {
                                                           scrap
                                                               .updateScrapTrans(
                                                                   'picked',
-                                                                  data,
-                                                                  context);
+                                                                  context,
+                                                                  doc: data);
                                                           if (inHistory(
                                                               'picked',
                                                               data.documentID)) {
@@ -466,8 +465,7 @@ class _MapScrapsState extends State<MapScraps> {
                                                           (BuildContext
                                                                   context) =>
                                                               CommentSheet(
-                                                                  scrapSnapshot:
-                                                                      data),
+                                                                  doc: data),
                                                           backgroundColor:
                                                               Colors
                                                                   .transparent,

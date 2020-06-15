@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -10,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
+import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
@@ -19,8 +18,9 @@ import 'package:scrap/widget/guide.dart';
 import '../footer.dart';
 
 class CommentSheet extends StatefulWidget {
-  final DocumentSnapshot scrapSnapshot;
-  CommentSheet({@required this.scrapSnapshot});
+  final ScrapModel scrapSnapshot;
+  final DocumentSnapshot doc;
+  CommentSheet({this.scrapSnapshot, this.doc});
   @override
   _CommentSheetState createState() => _CommentSheetState();
 }
@@ -29,7 +29,7 @@ class _CommentSheetState extends State<CommentSheet> {
   List commentList = [];
   Map commentedId = {};
   bool private = false;
-  DocumentSnapshot scrapSnapshot;
+  String scrapId;
   var controller = RefreshController();
   TextEditingController comment = TextEditingController();
   CollectionReference ref;
@@ -42,9 +42,10 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   initComments() async {
-    ref = Firestore.instance.collection(
-        'Users/${widget.scrapSnapshot['region']}/users/${widget.scrapSnapshot['uid']}/history/${widget.scrapSnapshot.documentID}/comments');
-    scrapSnapshot = widget.scrapSnapshot;
+    ref = Firestore.instance.collection(widget.scrapSnapshot != null
+        ? 'Users/${widget.scrapSnapshot.scrapRegion}/users/${widget.scrapSnapshot.writerUid}/history/${widget.scrapSnapshot.scrapId}/comments'
+        : 'Users/${widget.doc['region']}/users/${widget.doc['uid']}/history/${widget.doc.documentID}/comments');
+    scrapId = widget.scrapSnapshot?.scrapId ?? widget.doc.documentID;
     commentedId = await cacheHistory.getCommented();
     var docs = await ref
         .orderBy('timeStamp', descending: true)
@@ -61,9 +62,10 @@ class _CommentSheetState extends State<CommentSheet> {
     super.dispose();
   }
 
-  bool isExpired(List commentList, CollectionReference ref, String scrapId,
+  bool isExpired(List commentList, CollectionReference ref,
       {@required String comment}) {
-    DateTime startTime = scrapSnapshot['scrap']['timeStamp'].toDate();
+    DateTime startTime = widget.scrapSnapshot?.litteredTime ??
+        widget.doc['scrap']['timeStamp'].toDate();
     if (DateTime(startTime.year, startTime.month, startTime.day + 1,
             startTime.hour, startTime.second)
         .difference(DateTime.now())
@@ -118,7 +120,8 @@ class _CommentSheetState extends State<CommentSheet> {
     defaultDb.reference().child(refChild).update(
         {'comment': mutableData.value['comment'] - 1, 'point': newPoint});
 
-    scrap.pushNotification(widget.scrapSnapshot,
+    scrap.pushNotification(
+        scrapId, widget.scrapSnapshot?.writerUid ?? widget.doc['uid'],
         notiRate: mutableData.value['CPN'],
         currentPoint: mutableData.value['comment'] - 1,
         isComment: true);
@@ -126,10 +129,15 @@ class _CommentSheetState extends State<CommentSheet> {
     scrapAll.reference().child(refChild).update(
         {'comment': mutableData.value['comment'] - 1, 'point': newPoint});
 
-    userDb.reference().child('users/${scrapSnapshot['uid']}/att').once().then(
-        (data) => userDb
+    userDb
+        .reference()
+        .child(
+            'users/${widget.scrapSnapshot?.writerUid ?? widget.doc['uid']}/att')
+        .once()
+        .then((data) => userDb
             .reference()
-            .child('users/${scrapSnapshot['uid']}')
+            .child(
+                'users/${widget.scrapSnapshot?.writerUid ?? widget.doc['uid']}')
             .update({'att': data.value + 0.3}));
   }
 
@@ -257,7 +265,6 @@ class _CommentSheetState extends State<CommentSheet> {
                                           comment.text.length > 0
                                       ? (val) {
                                           if (isExpired(commentList, ref,
-                                              scrapSnapshot.documentID,
                                               comment: comment.text.trim())) {
                                             scrap.toast('แสครปนี้ย่อยสลายแล้ว');
                                           } else {
@@ -310,7 +317,6 @@ class _CommentSheetState extends State<CommentSheet> {
                                         comment.text.length > 0
                                     ? () {
                                         if (isExpired(commentList, ref,
-                                            scrapSnapshot.documentID,
                                             comment: comment.text.trim())) {
                                           scrap.toast('แสครปนี้ย่อยสลายแล้ว');
                                         } else {
