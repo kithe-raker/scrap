@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
@@ -60,6 +62,7 @@ class _SubpeopleState extends State<Subpeople>
     super.dispose();
   }
 
+  bool subindex = true;
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
@@ -77,128 +80,171 @@ class _SubpeopleState extends State<Subpeople>
                 return Column(
                   children: <Widget>[
                     Container(
-                      height: appBarHeight / 1.42,
-                      width: screenWidthDp,
-                      color: Colors.black,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenWidthDp / 21,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          GestureDetector(
-                              child: Icon(Icons.arrow_back,
-                                  color: Colors.white, size: s60),
-                              onTap: () {
-                                Navigator.pop(context);
-                              }),
-                          SizedBox(),
-                          SizedBox()
-                        ],
-                      ),
-                    ),
-                    Container(
                       height: screenWidthDp / 2.7,
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(color: Color(0xff262626)))),
+                      width: screenWidthDp,
                       padding: EdgeInsets.only(
                           left: a.width / 50, right: a.width / 50),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        //  crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.only(left: a.width / 25),
-                            child: Text(
-                              searching ? "ค้นหาผู้คน" : "ค้นหาผู้คน",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: s54,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                          SizedBox(
+                            height: screenWidthDp / 50,
                           ),
-                          Container(
-                            padding: EdgeInsets.only(left: a.width / 25),
-                            child: Text(
-                              "ค้นหาผู้คนเพื่ออ่านสแครปหรือปาสแครปหาพวกเขา",
-                              style: TextStyle(
-                                  height: 1.2,
-                                  color: Colors.white,
-                                  fontSize: s42),
-                            ),
+                          // Row(
+                          //   children: <Widget>[
+                          //     Expanded(
+                          //       child: Container(
+                          //         height: a.width / 8 / 1.2,
+                          //         margin: EdgeInsets.only(
+                          //             left: a.width / 25,
+                          //             right: a.width / 25 / 2),
+                          //         alignment: Alignment.center,
+                          //         decoration: BoxDecoration(
+                          //           borderRadius:
+                          //               BorderRadius.all(Radius.circular(50.0)),
+                          //           color: Color(0xff262626),
+                          //         ),
+                          //         child: TextField(
+                          //           controller: _controller,
+                          //           focusNode: focus,
+                          //           style: TextStyle(
+                          //               color: Colors.white, fontSize: s42),
+                          //           textAlign: TextAlign.center,
+                          //           decoration: InputDecoration(
+                          //             border: InputBorder.none,
+                          //             // fillColor: Colors.red,
+                          //           ),
+                          //           onTap: () {
+                          //             focus.requestFocus();
+                          //             setSearch(() => searching = true);
+                          //           },
+                          //           onChanged: (val) {
+                          //             var trim = val.trim();
+                          //             trim[0] == '@'
+                          //                 ? streamController
+                          //                     .add(trim.substring(1))
+                          //                 : streamController.add(trim);
+                          //           },
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     searching
+                          //         ? Row(
+                          //             children: <Widget>[
+                          //               SizedBox(width: a.width / 42),
+                          //               GestureDetector(
+                          //                 child: Text(
+                          //                   'ยกเลิก',
+                          //                   style: TextStyle(
+                          //                       fontSize: a.width / 18,
+                          //                       fontWeight: FontWeight.normal,
+                          //                       color: Colors.white),
+                          //                 ),
+                          //                 onTap: () {
+                          //                   focus.unfocus();
+                          //                   _controller.clear();
+                          //                   setSearch(() => searching = false);
+                          //                 },
+                          //               ),
+                          //               SizedBox(width: a.width / 25),
+                          //             ],
+                          //           )
+                          //         : SizedBox(width: a.width / 25 / 2)
+                          //   ],
+                          // ),
+                          SizedBox(
+                            height: screenWidthDp / 50,
                           ),
-                          SizedBox(height: a.width / 30),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  height: a.width / 8,
-                                  margin: EdgeInsets.only(
-                                      left: a.width / 25,
-                                      right: a.width / 25 / 2),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50.0)),
-                                    color: Color(0xff262626),
-                                  ),
-                                  child: TextField(
-                                    controller: _controller,
-                                    focusNode: focus,
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: s42),
-                                    textAlign: TextAlign.center,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      // fillColor: Colors.red,
-                                      hintText: '@someone',
-                                      hintStyle: TextStyle(
-                                        // height: a.width / 315,
-                                        //height: screenWidthDp / 320,
-                                        // height: appBarHeight / 65,
-                                        fontSize: s42,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      focus.requestFocus();
-                                      setSearch(() => searching = true);
-                                    },
-                                    onChanged: (val) {
-                                      var trim = val.trim();
-                                      trim[0] == '@'
-                                          ? streamController
-                                              .add(trim.substring(1))
-                                          : streamController.add(trim);
-                                    },
-                                  ),
-                                ),
-                              ),
-                              searching
-                                  ? Row(
-                                      children: <Widget>[
-                                        SizedBox(width: a.width / 42),
-                                        GestureDetector(
-                                          child: Text(
-                                            'ยกเลิก',
-                                            style: TextStyle(
-                                                fontSize: a.width / 18,
-                                                fontWeight: FontWeight.normal,
-                                                color: Colors.white),
-                                          ),
-                                          onTap: () {
-                                            focus.unfocus();
-                                            _controller.clear();
-                                            setSearch(() => searching = false);
-                                          },
-                                        ),
-                                        SizedBox(width: a.width / 25),
-                                      ],
-                                    )
-                                  : SizedBox(width: a.width / 25 / 2)
-                            ],
-                          )
+                          // Container(
+                          //   height: screenWidthDp / 10,
+                          //   width: screenWidthDp,
+                          //   padding: EdgeInsets.only(
+                          //     left: a.width / 23,
+                          //   ),
+                          //   child: ListView(
+                          //     physics: BouncingScrollPhysics(),
+                          //     scrollDirection: Axis.horizontal,
+                          //     children: <Widget>[
+                          //       // selectbutton('สถานที่'),
+                          //       // selectbutton('ผู้คน')
+                          //       Container(
+                          //         width: screenWidthDp / 5,
+                          //         child: GestureDetector(
+                          //           onTap: () {
+                          //             setState(() {
+                          //               subindex = true;
+                          //             });
+                          //           },
+                          //           child: Container(
+                          //             decoration: BoxDecoration(
+                          //                 border: Border.all(
+                          //                     color: Color(0xfff26A4FF)),
+                          //                 borderRadius: BorderRadius.circular(
+                          //                     screenWidthDp),
+                          //                 color: subindex == true
+                          //                     ? Color(0xfff26A4FF)
+                          //                     : Colors.black),
+                          //             child: Text(
+                          //               'สถานที่',
+                          //               style: TextStyle(
+                          //                 color: subindex == true
+                          //                     ? Colors.white
+                          //                     : Color(0xfff26A4FF),
+                          //                 fontSize: s52,
+                          //               ),
+                          //               textAlign: TextAlign.center,
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       Container(
+                          //         width: screenWidthDp / 50,
+                          //       ),
+                          //       Container(
+                          //         width: screenWidthDp / 5,
+                          //         child: GestureDetector(
+                          //           onTap: () {
+                          //             setState(() {
+                          //               subindex = false;
+                          //             });
+                          //           },
+                          //           child: Container(
+                          //             decoration: BoxDecoration(
+                          //                 border: Border.all(
+                          //                     color: Color(0xfff26A4FF)),
+                          //                 borderRadius: BorderRadius.circular(
+                          //                     screenWidthDp),
+                          //                 color: subindex == false
+                          //                     ? Color(0xfff26A4FF)
+                          //                     : Colors.black),
+                          //             child: Text(
+                          //               'ผู้คน',
+                          //               style: TextStyle(
+                          //                 color: subindex == false
+                          //                     ? Colors.white
+                          //                     : Color(0xfff26A4FF),
+                          //                 fontSize: s52,
+                          //               ),
+                          //               textAlign: TextAlign.center,
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       Container(
+                          //         //color: Colors.red,
+                          //         width: screenWidthDp / 5,
+                          //       ),
+                          //       Container(
+                          //         // color: Colors.green,
+                          //         width: screenWidthDp / 5,
+                          //       ),
+                          //       Container(
+                          //         // color: Colors.blue,
+                          //         width: screenWidthDp / 5,
+                          //       ),
+                          //     ],
+                          //   ),
+                          // )
                         ],
                       ),
                     ),
@@ -245,17 +291,26 @@ class _SubpeopleState extends State<Subpeople>
                   ],
                 );
               }),
-              // searching
-              //     ? SizedBox()
-              //     : Positioned(
-              //         bottom: 0,
-              //         child: AdmobBanner(
-              //             adUnitId: AdmobService().getBannerAdId(),
-              //             adSize: AdmobBannerSize.FULL_BANNER),
-              //       ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget selectbutton(String text) {
+    Size a = MediaQuery.of(context).size;
+    return Container(
+      height: a.width / 8 / 1.2,
+      width: screenWidthDp / 2.5,
+      decoration: BoxDecoration(
+          border: Border.all(color: Color(0xfff26A4FF)),
+          borderRadius: BorderRadius.circular(5),
+          color: subindex == true ? Colors.black : Color(0xfff26A4FF)),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: s60, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
       ),
     );
   }

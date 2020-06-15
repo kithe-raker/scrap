@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/Gridsubscripe.dart';
 import 'package:scrap/Page/HomePage.dart';
+import 'package:scrap/Page/searcheverything.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,17 +17,10 @@ class MainStream extends StatefulWidget {
 
 class _MainStreamState extends State<MainStream> {
   var index = 0;
-  final items = [
-    BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('')),
-    BottomNavigationBarItem(icon: Icon(Icons.music_video), title: Text('')),
-    BottomNavigationBarItem(icon: Icon(Icons.message), title: Text('')),
-    BottomNavigationBarItem(icon: Icon(Icons.message), title: Text('')),
-    BottomNavigationBarItem(icon: Icon(Icons.message), title: Text('')),
-  ];
 
   final bodyList = [
     SecondPage(),
-    Subpeople(),
+    SearchEveryThing(),
     Gridsubscripe(),
     Gridfavorite(),
     Profile(),
@@ -50,7 +44,7 @@ class _MainStreamState extends State<MainStream> {
   Widget build(BuildContext context) {
     screenutilInit(context);
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         bottomNavigationBar: bottom(),
         body: PageView(
           controller: pageController,
@@ -80,6 +74,9 @@ class _MainStreamState extends State<MainStream> {
   Widget bottom() {
     screenutilInit(context);
     return Container(
+      decoration: BoxDecoration(
+        color: Color(0xfff161414),
+      ),
       height: screenWidthDp / 5,
       width: screenWidthDp,
       child: Row(
