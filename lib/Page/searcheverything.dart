@@ -58,6 +58,7 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
                 Expanded(
                   child: Container(
                     height: a.width / 8 / 1.2,
+                    padding: EdgeInsets.all(screenWidthDp / 100),
                     margin: EdgeInsets.only(
                         left: a.width / 25, right: a.width / 25 / 2),
                     alignment: Alignment.center,
@@ -99,22 +100,11 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
                                   color: Colors.black,
                                   borderRadius: BorderRadius.all(
                                       Radius.circular(screenWidthDp))),
-                              padding: EdgeInsets.fromLTRB(
-                                  screenWidthDp / 100,
-                                  screenWidthDp / 100,
-                                  screenWidthDp / 100,
-                                  screenWidthDp / 100),
-                              // child: Text(
-                              //   'ยกเลิก',
-                              //   style: TextStyle(
-                              //       fontSize: a.width / 18,
-                              //       fontWeight: FontWeight.normal,
-                              //       color: Colors.white),
-                              // ),
+                              padding: EdgeInsets.all(screenWidthDp / 50),
                               child: Icon(
                                 Icons.clear,
                                 color: Color(0xfff26A4FF),
-                                size: s52,
+                                size: s46,
                               ),
                             ),
                             onTap: () {
