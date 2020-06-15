@@ -22,14 +22,16 @@ class Subpeople extends StatefulWidget {
   _SubpeopleState createState() => _SubpeopleState();
 }
 
-class _SubpeopleState extends State<Subpeople> {
+class _SubpeopleState extends State<Subpeople>
+    with AutomaticKeepAliveClientMixin {
   List following = [], recently = [];
   bool loading = true, searching = false;
   String search;
   final TextEditingController _controller = new TextEditingController();
   var focus = FocusNode();
   StreamController<String> streamController = StreamController();
-
+  @override
+  bool get wantKeepAlive => true;
   @override
   void initState() {
     initFollows();

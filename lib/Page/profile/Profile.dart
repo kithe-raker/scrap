@@ -27,7 +27,7 @@ class Profile extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   bool initInfoFinish = false, initScrapFinish = false;
   bool pickedScrap = true;
   Map profile = {};
@@ -37,7 +37,8 @@ class _ProfileState extends State<Profile> {
   var refreshController = RefreshController();
   var textGroup = AutoSizeGroup();
   var controller = PageController();
-
+  @override
+  bool get wantKeepAlive => true;
   //Appbar สำหรับหน้าโปรไฟล์ของฉัน
   Widget appbarProfile(BuildContext context) {
     return Container(
@@ -52,16 +53,12 @@ class _ProfileState extends State<Profile> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           GestureDetector(
-              child: Icon(Icons.arrow_back, color: Colors.white, size: s60),
+              child: Icon(Icons.arrow_back, color: Colors.black, size: s60),
               onTap: () {
-                Navigator.pop(context);
+                // Navigator.pop(context);
               }),
           GestureDetector(
-              child: Icon(
-                Icons.more_horiz,
-                color: Colors.white,
-                size: s65,
-              ),
+              child: Icon(Icons.settings, color: Colors.white, size: s60),
               onTap: () {
                 //showButtonSheet(context);
                 Navigator.push(context,
@@ -147,7 +144,7 @@ class _ProfileState extends State<Profile> {
           StatefulBuilder(builder: (context, StateSetter setProfile) {
             return Container(
               width: screenWidthDp,
-              padding: EdgeInsets.only(top: appBarHeight / 1.35),
+              // padding: EdgeInsets.only(top: appBarHeight / 1.35),
               child: SmartRefresher(
                 footer: Footer(),
                 controller: refreshController,
@@ -186,6 +183,7 @@ class _ProfileState extends State<Profile> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
+                    appbarProfile(context),
                     SizedBox(height: screenHeightDp / 36),
                     Container(
                       height: screenWidthDp / 3.32,
@@ -359,7 +357,7 @@ class _ProfileState extends State<Profile> {
               ),
             );
           }),
-          Positioned(top: 0, child: appbarProfile(context)),
+          // Positioned(top: 0, child: appbarProfile(context)),
           initInfoFinish ? SizedBox() : Loading(),
           // Positioned(
           //   bottom: 0,

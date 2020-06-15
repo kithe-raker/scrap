@@ -25,7 +25,8 @@ class FeedScrap extends StatefulWidget {
   _FeedScrapState createState() => _FeedScrapState();
 }
 
-class _FeedScrapState extends State<FeedScrap> {
+class _FeedScrapState extends State<FeedScrap>
+    with AutomaticKeepAliveClientMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool initHistory = false, loadingFeed = false;
   int current = 0;
@@ -79,7 +80,11 @@ class _FeedScrapState extends State<FeedScrap> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     //ignore: close_sinks
     // final counterBloc = BlocProvider.of<CounterBloc>(context);
     screenutilInit(context);
@@ -88,51 +93,51 @@ class _FeedScrapState extends State<FeedScrap> {
         backgroundColor: Colors.black,
         body: SafeArea(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                loadingFeed || !initHistory
-                    ? Center(child: LoadNoBlur())
-                    : Expanded(
-                        child: StreamBuilder(
-                            initialData: feed.scraps,
-                            stream: feed.feedStream,
-                            builder: (context,
-                                AsyncSnapshot<List<ScrapModel>> snapshot) {
-                              if (snapshot.hasData) {
-                                return Listener(
-                                  onPointerUp: (event) => listener(),
-                                  child: PageView(
-                                      controller: pageController,
-                                      onPageChanged: (index) {
-                                        if (current + 1 == index) {
-                                          feed.scraps.length < 24
-                                              ? feed.loadMore()
-                                              : feed.clearOldScrap();
-                                        }
-                                        current = index;
-                                      },
-                                      scrollDirection: Axis.vertical,
-                                      children: snapshot.data
-                                          .map((data) => scrapWidget(data))
-                                          .toList()),
-                                );
-                              } else {
-                                return Center(child: LoadNoBlur());
-                              }
-                            }),
-                      ),
-                // RaisedButton(
-                //     child: Text('increment && loadMore'),
-                //     onPressed: () {
-                //       feed.loadMore();
-                //     }),
-                // RaisedButton(
-                //     child: Text('decrement'),
-                //     onPressed: () {
-                //       counterBloc.add(CounterEvents.decrement);
-                //     }),
-              ],
-            )));
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            loadingFeed || !initHistory
+                ? Center(child: LoadNoBlur())
+                : Expanded(
+                    child: StreamBuilder(
+                        initialData: feed.scraps,
+                        stream: feed.feedStream,
+                        builder: (context,
+                            AsyncSnapshot<List<ScrapModel>> snapshot) {
+                          if (snapshot.hasData) {
+                            return Listener(
+                              onPointerUp: (event) => listener(),
+                              child: PageView(
+                                  controller: pageController,
+                                  onPageChanged: (index) {
+                                    if (current + 1 == index) {
+                                      feed.scraps.length < 24
+                                          ? feed.loadMore()
+                                          : feed.clearOldScrap();
+                                    }
+                                    current = index;
+                                  },
+                                  scrollDirection: Axis.vertical,
+                                  children: snapshot.data
+                                      .map((data) => scrapWidget(data))
+                                      .toList()),
+                            );
+                          } else {
+                            return Center(child: LoadNoBlur());
+                          }
+                        }),
+                  ),
+            // RaisedButton(
+            //     child: Text('increment && loadMore'),
+            //     onPressed: () {
+            //       feed.loadMore();
+            //     }),
+            // RaisedButton(
+            //     child: Text('decrement'),
+            //     onPressed: () {
+            //       counterBloc.add(CounterEvents.decrement);
+            //     }),
+          ],
+        )));
   }
 
   Widget scrapWidget(ScrapModel scrapModel) {
