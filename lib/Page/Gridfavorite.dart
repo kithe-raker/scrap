@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -288,9 +290,8 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                             .add(doc['id']);
                                                       }
                                                       scrap.updateScrapTrans(
-                                                          'like',
-                                                          docData,
-                                                          context,
+                                                          'like', context,
+                                                          doc: docData,
                                                           comments: trans.value[
                                                               'comment']);
 
@@ -328,9 +329,8 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                             .add(doc['id']);
                                                       }
                                                       scrap.updateScrapTrans(
-                                                          'picked',
-                                                          docData,
-                                                          context);
+                                                          'picked', context,
+                                                          doc: docData);
                                                       setTrans(() {});
                                                     }
                                                   }
@@ -352,8 +352,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                         (BuildContext
                                                                 context) =>
                                                             CommentSheet(
-                                                                scrapSnapshot:
-                                                                    docData),
+                                                                doc: docData),
                                                         backgroundColor:
                                                             Colors.transparent,
                                                       );
@@ -758,19 +757,26 @@ class _GridfavoriteState extends State<Gridfavorite> {
                   )),
                   snapshot.hasData && snapshot.data?.value == null
                       ? Container(
-                          margin: EdgeInsets.all(4),
                           height: screenWidthDp / 2.16 * 1.21,
                           width: screenWidthDp / 2.16,
                           color: Colors.black38,
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.whatshot,
-                                    size: 50, color: Color(0xffFF8F3A)),
-                                Text('ถูกเผาแล้ว',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: s48)),
-                              ]))
+                          child: ClipRRect(
+                            child: BackdropFilter(
+                              filter:
+                                  ImageFilter.blur(sigmaX: 8.1, sigmaY: 8.1),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.whatshot,
+                                        size: 50, color: Color(0xffFF8F3A)),
+                                    Text('ถูกเผาแล้ว',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: s48,
+                                            fontWeight: FontWeight.bold)),
+                                  ]),
+                            ),
+                          ))
                       : SizedBox(),
                   Positioned(
                       bottom: 0,

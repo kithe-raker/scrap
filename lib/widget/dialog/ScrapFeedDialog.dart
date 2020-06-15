@@ -331,9 +331,8 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                             'สเเครปนี้ย่อยสลายแล้ว');
                                                       } else {
                                                         scrap.updateScrapTrans(
-                                                            'like',
-                                                            data,
-                                                            context,
+                                                            'like', context,
+                                                            doc: data,
                                                             comments:
                                                                 trans.value[
                                                                     'comment']);
@@ -373,9 +372,8 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                             'สเเครปนี้ย่อยสลายแล้ว');
                                                       } else {
                                                         scrap.updateScrapTrans(
-                                                            'picked',
-                                                            data,
-                                                            context);
+                                                            'picked', context,
+                                                            doc: data);
                                                         if (inHistory('picked',
                                                             data.documentID)) {
                                                           ++pick;

@@ -1,12 +1,12 @@
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:scrap/services/admob_service.dart';
 import 'dart:math' as math;
 
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/ads.dart';
 import 'package:scrap/widget/dialog/ScrapFeedDialog.dart';
 
 class GridTopScrap extends StatefulWidget {
@@ -27,7 +27,6 @@ class _GridTopScrapState extends State<GridTopScrap> {
 
   @override
   void initState() {
-    Admob.initialize(AdmobService().getAdmobAppId());
     super.initState();
   }
 
@@ -36,20 +35,20 @@ class _GridTopScrapState extends State<GridTopScrap> {
     Size a = MediaQuery.of(context).size;
     screenutilInit(context);
     return Container(
-        child: Container(
-      margin: EdgeInsets.only(left: a.width / 42, right: a.width / 42),
+      margin: EdgeInsets.only(
+          left: a.width / 42, right: a.width / 42, bottom: screenWidthDp / 27),
       width: a.width,
       child: Wrap(
           spacing: a.width / 42,
           runSpacing: a.width / 42,
           alignment: WrapAlignment.start,
           children: widget.scraps.map((scrap) => block(data: scrap)).toList()),
-    ));
+    );
   }
 
   Widget block({dynamic data}) {
-    return data.runtimeType == double || data.runtimeType == int
-        ? admob()
+    return data.runtimeType != DocumentSnapshot
+        ? AdBanner()
         : scrapWidget(data);
   }
 
@@ -66,7 +65,8 @@ class _GridTopScrapState extends State<GridTopScrap> {
           children: <Widget>[
             Center(
                 child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidthDp / 64, vertical: screenWidthDp / 16),
               child: AutoSizeText(data['scrap']['text'],
                   textAlign: TextAlign.center,
                   group: textGroup,
@@ -101,9 +101,10 @@ class _GridTopScrapState extends State<GridTopScrap> {
         ),
       ),
       onTap: () {
-        var scraps = widget.scraps;
-        scraps.removeWhere((element) =>
-            element.runtimeType == int || element.runtimeType == double);
+        List scraps = [];
+        scraps.addAll(widget.scraps);
+        scraps
+            .removeWhere((element) => element.runtimeType != DocumentSnapshot);
         showDialog(
             context: context,
             builder: (BuildContext context) => ScrapFeedDialog(
@@ -111,18 +112,6 @@ class _GridTopScrapState extends State<GridTopScrap> {
                 currentIndex: scraps.indexOf(data),
                 topScrap: true));
       },
-    );
-  }
-
-  Widget admob() {
-    Size a = MediaQuery.of(context).size;
-    return Container(
-      // margin: EdgeInsets.only(top: a.width / 80),
-      width: a.width,
-      color: Colors.grey,
-      child: AdmobBanner(
-          adUnitId: AdmobService().getBannerAdId(),
-          adSize: AdmobBannerSize.LARGE_BANNER),
     );
   }
 }

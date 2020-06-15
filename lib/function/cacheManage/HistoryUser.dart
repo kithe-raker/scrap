@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:scrap/models/ScrapModel.dart';
 
 class HistoryUser {
   // For your reference print the AppDoc directory
@@ -43,7 +44,7 @@ class HistoryUser {
     List histList = data['$field'] ?? [];
     if (histList.length > 0)
       histList.removeWhere((hist) =>
-          now.difference(DateTime.parse(hist['timeStamp'])).inHours > 24);
+          now.difference(DateTime.parse(hist['timeStamp'])).inHours >= 24);
     return histList;
   }
 
@@ -77,24 +78,26 @@ class HistoryUser {
     await file.writeAsString(json.encode(data));
   }
 
-  Future<void> addHistory(DocumentSnapshot scrap,
+  Future<void> addHistory(ScrapModel scrap, DocumentSnapshot doc,
       {@required String field, int comments}) async {
     final file = await _localFile;
     var map = await read();
+    var scrapId = scrap?.scrapId ?? doc.documentID;
+    var timeStamp = scrap?.litteredTime ?? doc['scrap']['timeStamp'].toDate();
     var cache = comments != null
         ? {
-            'id': scrap.documentID,
-            'path': scrap.reference.parent().path,
+            'id': scrapId,
+            'path': scrap != null
+                ? scrap.path.parent().path
+                : doc.reference.parent().path,
             'when': DateFormat('yyyyMMdd HH:mm:ss').format(DateTime.now()),
-            'text': scrap['scrap']['text'],
-            'timeStamp': DateFormat('yyyyMMdd HH:mm:ss')
-                .format(scrap['scrap']['timeStamp'].toDate()),
+            'text': scrap?.text ?? doc['scrap']['text'],
+            'timeStamp': DateFormat('yyyyMMdd HH:mm:ss').format(timeStamp),
             'comments': comments
           }
         : {
-            'id': scrap.documentID,
-            'timeStamp': DateFormat('yyyyMMdd HH:mm:ss')
-                .format(scrap['scrap']['timeStamp'].toDate())
+            'id': scrapId,
+            'timeStamp': DateFormat('yyyyMMdd HH:mm:ss').format(timeStamp)
           };
     map[field].add(cache);
     await file.writeAsString(json.encode(map));

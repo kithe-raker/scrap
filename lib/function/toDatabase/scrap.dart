@@ -11,6 +11,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
+import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
@@ -210,114 +211,115 @@ class Scraps {
     Navigator.pop(context);
   }
 
-  void updateScrapTrans(
-      String field, DocumentSnapshot scrap, BuildContext context,
-      {int comments}) async {
+  void updateScrapTrans(String field, BuildContext context,
+      {int comments, ScrapModel scrap, DocumentSnapshot doc}) async {
     Map<String, List> history = {};
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
-    final user = Provider.of<UserData>(context, listen: false);
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     var defaultDb = FirebaseDatabase.instance;
     var userDb = FirebaseDatabase(app: db.userTransact);
-    var ref = 'scraps/${scrap.documentID}';
+    var scrapId = scrap != null ? scrap.scrapId : doc.documentID;
+    var writerUid = scrap != null ? scrap.writerUid : doc['uid'];
+    var ref = 'scraps/$scrapId';
 
-    if (history[field].contains(scrap.documentID)) {
-      cacheHistory.removeHistory(field, scrap.documentID);
+    if (history[field].contains(scrapId)) {
+      cacheHistory.removeHistory(field, scrapId);
       var mutableData = await scrapAll.reference().child(ref).once();
       if (mutableData?.value != null) {
         var newPoint = field == 'like'
             ? mutableData.value['point'] + 2
             : mutableData.value['point'] + 3;
-        defaultDb.reference().child(ref).update({'point': newPoint});
+        defaultDb
+            .reference()
+            .child(ref)
+            .update({'point': newPoint, field: mutableData.value[field] + 1});
         scrapAll
             .reference()
             .child(ref)
             .update({field: mutableData.value[field] + 1, 'point': newPoint});
 
-        userDb.reference().child('users/${scrap['uid']}/att').once().then(
-            (data) => userDb.reference().child('users/${scrap['uid']}').update(
+        userDb.reference().child('users/$writerUid/att').once().then((data) =>
+            userDb.reference().child('users/$writerUid').update(
                 {'att': field == 'like' ? data.value - 1 : data.value - 3}));
 
         if (field == 'like')
-          fcm.unsubscribeFromTopic(scrap.documentID);
+          fcm.unsubscribeFromTopic(scrapId);
         else
-          pickScrap(scrap.data, user.uid, context, cancel: true);
+          pickScrap(context, scrap: scrap, doc: doc, cancel: true);
       } else
         toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     } else {
       var transac = await scrapAll.reference().child('$ref/$field').once();
       if (transac?.value != null) {
-        cacheHistory.addHistory(scrap, field: field, comments: comments);
+        cacheHistory.addHistory(scrap, doc, field: field, comments: comments);
         var mutableData = await defaultDb.reference().child(ref).once();
 
         var newPoint = field == 'like'
             ? mutableData.value['point'] - 2
             : mutableData.value['point'] - 3;
-        defaultDb.reference().child(ref).update({'point': newPoint});
+        defaultDb
+            .reference()
+            .child(ref)
+            .update({'point': newPoint, field: transac.value - 1});
         scrapAll
             .reference()
             .child(ref)
             .update({field: transac.value - 1, 'point': newPoint});
 
-        pushNotification(scrap,
+        pushNotification(scrapId, writerUid,
             notiRate: mutableData.value['PPN'], currentPoint: newPoint);
 
-        userDb.reference().child('users/${scrap['uid']}/att').once().then(
-            (data) => userDb.reference().child('users/${scrap['uid']}').update(
+        userDb.reference().child('users/$writerUid/att').once().then((data) =>
+            userDb.reference().child('users/$writerUid').update(
                 {'att': field == 'like' ? data.value + 2 : data.value + 3}));
 
         if (field == 'like')
-          fcm.subscribeToTopic(scrap.documentID);
+          fcm.subscribeToTopic(scrapId);
         else
-          pickScrap(scrap.data, user.uid, context);
+          pickScrap(context, scrap: scrap, doc: doc);
       } else
         toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     }
   }
 
-  pickScrap(Map scrap, String uid, BuildContext context,
-      {bool cancel = false}) async {
+  pickScrap(BuildContext context,
+      {bool cancel = false, ScrapModel scrap, DocumentSnapshot doc}) async {
     final db = Provider.of<RealtimeDB>(context, listen: false);
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    var ref = userDb.reference().child('users/$uid');
     final user = Provider.of<UserData>(context, listen: false);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    var ref = userDb.reference().child('users/${user.uid}');
     var trans = await ref.child('pick').once();
+    var data = scrap != null ? scrap.toJSON : doc.data;
     if (cancel) {
       fireStore
           .collection('Users/${user.region}/users/${user.uid}/scrapCollection')
-          .document(scrap['id'])
+          .document(scrap.scrapId)
           .delete();
       ref.update({'pick': trans.value - 1});
     } else {
-      scrap['picker'] = uid;
-      scrap['timeStamp'] = FieldValue.serverTimestamp();
+      data['picker'] = user.uid;
+      data['timeStamp'] = FieldValue.serverTimestamp();
       fireStore
           .collection('Users/${user.region}/users/${user.uid}/scrapCollection')
-          .document(scrap['id'])
-          .setData(scrap);
+          .document(scrap.scrapId)
+          .setData(data);
       ref.update({'pick': trans.value + 1});
     }
   }
 
-  pushNotification(DocumentSnapshot scrap,
+  pushNotification(String scrapId, String writerUid,
       {@required int notiRate,
       @required dynamic currentPoint,
       bool isComment = false}) {
     var target = isComment ? 'CPN' : 'PPN';
     if (currentPoint <= notiRate) {
-      fireStore
-          .collection('ScrapNotification')
-          .document(scrap.documentID)
-          .setData({
-        'id': scrap.documentID,
-        'isComment': isComment,
-        'writer': scrap['uid']
-      });
+      fireStore.collection('ScrapNotification').document(scrapId).setData(
+          {'id': scrapId, 'isComment': isComment, 'writer': writerUid});
       FirebaseDatabase.instance
           .reference()
-          .child('scraps/${scrap.documentID}')
+          .child('scraps/$scrapId')
           .update({target: notiRate * 2});
     }
   }
