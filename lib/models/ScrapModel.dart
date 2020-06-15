@@ -92,8 +92,8 @@ class ScrapTransaction extends Equatable {
 
   factory ScrapTransaction.fromJSON(Map<dynamic, dynamic> json) =>
       ScrapTransaction(
-          like: json['CPN'].abs(),
-          picked: json['PPN'].abs(),
-          comment: json['comment'].abs(),
+          like: json['like']?.abs() ?? 0,
+          picked: json['picked']?.abs() ?? 0,
+          comment: json['comment']?.abs() ?? 0,
           point: json['point'].toDouble());
 }
