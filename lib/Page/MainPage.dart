@@ -13,7 +13,6 @@ import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/mainstream.dart';
-import 'package:scrap/Page/profile/Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/realtimeDB/ConfigDatabase.dart';

@@ -42,8 +42,8 @@ class _SubpeopleState extends State<Subpeople>
 
   Future<void> initFollows() async {
     if (await cacheFriends.exist()) {
-      recently = await cacheFriends.getRecently();
-      following = await cacheFriends.getRandomFollowing();
+      recently = await cacheFriends.getRecently() ?? [];
+      following = await cacheFriends.getRandomFollowing() ?? [];
     }
     if (this.mounted) setState(() => loading = false);
   }
@@ -65,6 +65,7 @@ class _SubpeopleState extends State<Subpeople>
   bool subindex = true;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Size a = MediaQuery.of(context).size;
     screenutilInit(context);
     return Scaffold(

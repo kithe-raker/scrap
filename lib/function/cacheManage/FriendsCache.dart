@@ -98,7 +98,7 @@ class FriendsCache {
 
   Future<List> getFollowing() async {
     var list = await read();
-    return list['following'];
+    return list['following'] ?? [];
   }
 
   Future<List> getRandomFollowing() async {

@@ -61,7 +61,6 @@ class _MapScrapsState extends State<MapScraps>
   Scraps scrap = Scraps();
   final infoKey = GlobalKey();
   ScrapFilter filter = ScrapFilter();
-  StreamSubscription streamLocation;
   @override
   bool get wantKeepAlive => true;
   @override
@@ -89,7 +88,7 @@ class _MapScrapsState extends State<MapScraps>
   Future<DataSnapshot> scrapTransaction(String docId) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var ref = scrapAll.reference().child('scraps').child(docId);
+    var ref = scrapAll.reference().child('scraps/$docId');
     return ref.once();
   }
 
@@ -831,12 +830,12 @@ class _MapScrapsState extends State<MapScraps>
   @override
   dispose() {
     subLimit?.cancel();
-    streamLocation?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Size a = MediaQuery.of(context).size;
     var location = Provider.of<Position>(context);
     _createMarkerImageFromAsset(context);
@@ -877,7 +876,6 @@ class _MapScrapsState extends State<MapScraps>
     final db = Provider.of<RealtimeDB>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
-    var location = Provider.of<Position>(context);
     return Container(
         padding: EdgeInsets.only(bottom: screenWidthDp / 10),
         alignment: Alignment.bottomCenter,
@@ -1179,7 +1177,7 @@ class _MapScrapsState extends State<MapScraps>
 
   void onMapCreated(GoogleMapController controller) {
     this.mapController = controller;
-    var location = Provider.of<Position>(context);
+    var location = Provider.of<Position>(context, listen: false);
     changeMapMode();
     if (this.mounted) {
       updateMap(location);
@@ -1188,11 +1186,6 @@ class _MapScrapsState extends State<MapScraps>
       });
       addMoreScrap(16);
     }
-    streamLocation.onData((position) {
-      if (this.mounted) {
-        userMarker(position.latitude, position.longitude);
-      }
-    });
   }
 
   updateMap(Position location) {

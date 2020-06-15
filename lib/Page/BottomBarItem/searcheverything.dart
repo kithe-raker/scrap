@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
-import 'MapScraps.dart';
 
 class SearchEveryThing extends StatefulWidget {
   @override
