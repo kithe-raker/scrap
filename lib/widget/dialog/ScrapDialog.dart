@@ -297,9 +297,8 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                           'สเเครปนี้ย่อยสลายแล้ว');
                                                     } else {
                                                       scrap.updateScrapTrans(
-                                                          'like',
-                                                          widget.data,
-                                                          context,
+                                                          'like', context,
+                                                          doc: widget.data,
                                                           comments: trans.value[
                                                               'comment']);
                                                       if (inHistory(
@@ -344,9 +343,8 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                           'สเเครปนี้ย่อยสลายแล้ว');
                                                     } else {
                                                       scrap.updateScrapTrans(
-                                                          'picked',
-                                                          widget.data,
-                                                          context);
+                                                          'picked', context,
+                                                          doc: widget.data);
                                                       if (inHistory(
                                                           'picked',
                                                           widget.data
@@ -379,8 +377,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                         .showBottomSheet(
                                                       (BuildContext context) =>
                                                           CommentSheet(
-                                                              scrapSnapshot:
-                                                                  widget.data),
+                                                              doc: widget.data),
                                                       backgroundColor:
                                                           Colors.transparent,
                                                     );

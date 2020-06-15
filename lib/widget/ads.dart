@@ -1,34 +1,19 @@
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
-class Ads extends StatefulWidget {
-  @override
-  _AdsState createState() => _AdsState();
-}
-
-class _AdsState extends State<Ads> {
-  @override
+class AdBanner extends StatelessWidget {
+  const AdBanner({Key key}) : super(key: key);
   Widget build(BuildContext context) {
-    screenutilInit(context);
+    print('build ad');
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Container(
-            height: appBarHeight / 1.2,
-            width: screenWidthDp,
-            color: Colors.grey,
-            child: //Image.asset('assets/adsgoogle.jpg'),
-                Center(
-              child: Text(
-                'Google Ads',
-                style:
-                    TextStyle(fontSize: 48, color: Colors.white, height: 1.1),
-              ),
-            ),
-          ),
-        ],
-      ),
+      width: screenWidthDp,
+      color: Colors.grey[400],
+      child: AdmobBanner(
+          key: key,
+          adUnitId: AdmobService().getBannerAdId(),
+          adSize: AdmobBannerSize.LARGE_BANNER),
     );
   }
 }

@@ -73,11 +73,11 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future onTapMessage(String payload) async {
-    final auth = await FirebaseAuth.instance.currentUser();
-    var uid = auth.uid;
-    await Firestore.instance.collection('Users').document(uid).get().then(
-        (data) => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Profile())));
+    // final auth = await FirebaseAuth.instance.currentUser();
+    // var uid = auth.uid;
+    // await Firestore.instance.collection('Users').document(uid).get().then(
+    //     (data) => Navigator.push(
+    //         context, MaterialPageRoute(builder: (context) => Profile())));
   }
 
   Future<bool> serverChecker() async {
