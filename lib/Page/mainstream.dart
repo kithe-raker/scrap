@@ -22,7 +22,7 @@ class _MainStreamState extends State<MainStream> {
 
   final bodyList = [
     FeedScrap(),
-    Subpeople(),
+    SearchEveryThing(),
     SecondPage(),
     Gridfavorite(),
     Profile(),

@@ -39,12 +39,12 @@ class FeedStream {
             .child('scraps')
             .orderByChild('point')
             .startAt(_lessPoint)
-            .limitToFirst(24)
+            .limitToFirst(9)
         : FirebaseDatabase.instance
             .reference()
             .child('scraps')
             .orderByChild('point')
-            .limitToFirst(24);
+            .limitToFirst(9);
     DataSnapshot data = await ref.once();
     if (data.value?.length != null && data.value.length > 0) {
       data.value.forEach((key, value) {

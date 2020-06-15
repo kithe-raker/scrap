@@ -107,6 +107,7 @@ class _FeedScrapState extends State<FeedScrap>
                             return Listener(
                               onPointerUp: (event) => listener(),
                               child: PageView(
+                                  physics: AlwaysScrollableScrollPhysics(),
                                   controller: pageController,
                                   onPageChanged: (index) {
                                     if (current + 1 == index) {

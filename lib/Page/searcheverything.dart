@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/Page/suppeople.dart';
@@ -14,10 +16,13 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
   var index = 0;
   var scrapindex = 0;
   final bodyList = [MapScraps(uid: null), Subpeople()];
-
+  bool loading = true, searching = false;
+  String search;
   final pageController = PageController();
-
+  final TextEditingController _controller = new TextEditingController();
+  var focus = FocusNode();
   int currentIndex = 0;
+  StreamController<String> streamController = StreamController();
 
   void onTap(int index) {
     pageController.jumpToPage(index);
@@ -57,25 +62,71 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
                         left: a.width / 25, right: a.width / 25 / 2),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                      color: Color(0xff262626),
-                    ),
+                        borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                        //color: Color(0xff262626),
+                        color: Colors.black,
+                        border: Border.all(color: Color(0xfff26A4FF))),
                     child: TextField(
-                      // controller: _controller,
-                      // focusNode: focus,
+                      controller: _controller,
+                      focusNode: focus,
                       style: TextStyle(color: Colors.white, fontSize: s42),
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         // fillColor: Colors.red,
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        focus.requestFocus();
+                        setState(() => searching = true);
+                      },
                       onChanged: (val) {
-                        //  var trim = val.trim();
+                        var trim = val.trim();
+                        trim[0] == '@'
+                            ? streamController.add(trim.substring(1))
+                            : streamController.add(trim);
                       },
                     ),
                   ),
                 ),
+                searching
+                    ? Row(
+                        children: <Widget>[
+                          SizedBox(width: a.width / 42),
+                          GestureDetector(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Color(0xfff26A4FF)),
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(screenWidthDp))),
+                              padding: EdgeInsets.fromLTRB(
+                                  screenWidthDp / 100,
+                                  screenWidthDp / 100,
+                                  screenWidthDp / 100,
+                                  screenWidthDp / 100),
+                              // child: Text(
+                              //   'ยกเลิก',
+                              //   style: TextStyle(
+                              //       fontSize: a.width / 18,
+                              //       fontWeight: FontWeight.normal,
+                              //       color: Colors.white),
+                              // ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Color(0xfff26A4FF),
+                                size: s52,
+                              ),
+                            ),
+                            onTap: () {
+                              focus.unfocus();
+                              _controller.clear();
+                              setState(() => searching = false);
+                            },
+                          ),
+                          SizedBox(width: a.width / 25),
+                        ],
+                      )
+                    : SizedBox(width: a.width / 25 / 2)
               ],
             ),
           ),
@@ -85,7 +136,7 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
                 height: screenWidthDp / 10,
                 width: screenWidthDp,
                 padding: EdgeInsets.only(
-                  left: a.width / 15,
+                  left: a.width / 25,
                 ),
                 child: ListView(
                   physics: BouncingScrollPhysics(),
