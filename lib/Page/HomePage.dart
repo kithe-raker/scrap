@@ -210,7 +210,7 @@ class _HomePageState extends State<HomePage> {
         body: SafeArea(
           child: Stack(
             children: <Widget>[
-              MapScraps(uid: user.uid),
+              MapScraps(),
               Positioned(
                 top: 0,
                 left: 0,

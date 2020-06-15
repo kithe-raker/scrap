@@ -6,6 +6,7 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/showcontract.dart';
@@ -128,7 +129,7 @@ class _PersonCardState extends State<PersonCard> {
                       ),
                     ),
                     onTap: () {
-                      user.papers > 0
+                      userStream.papers > 0
                           ? user.promise
                               ? writerScrap(context,
                                   isThrow: true,

@@ -14,6 +14,7 @@ import 'package:scrap/function/follows/FollowsFunction.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -382,7 +383,7 @@ class _OtherProfileState extends State<OtherProfile> {
                           ),
                         ),
                         onTap: () {
-                          user.papers > 0
+                          userStream.papers > 0
                               ? user.promise
                                   ? writerScrap(context,
                                       isThrow: true,

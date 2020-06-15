@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/BottomBarItem/FeedScrap.dart';
 import 'package:scrap/Page/MainPage.dart';
@@ -34,7 +35,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<Report>.value(value: Report()),
           ChangeNotifierProvider<UserData>.value(value: UserData()),
           ChangeNotifierProvider<WriteScrapProvider>.value(
-              value: WriteScrapProvider())
+              value: WriteScrapProvider()),
+          StreamProvider<Position>.value(
+              value: Geolocator().getPositionStream()),
         ],
         child: MultiBlocProvider(
           providers: [

@@ -95,5 +95,5 @@ class ScrapTransaction extends Equatable {
           like: json['like']?.abs() ?? 0,
           picked: json['picked']?.abs() ?? 0,
           comment: json['comment']?.abs() ?? 0,
-          point: json['point'].toDouble());
+          point: json['point']?.toDouble() ?? 0.0);
 }

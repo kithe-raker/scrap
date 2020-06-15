@@ -15,6 +15,7 @@ import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
+import 'package:scrap/stream/UserStream.dart';
 
 final db = FirebaseDatabase.instance;
 
@@ -62,7 +63,7 @@ class Scraps {
         userDb
             .reference()
             .child('users/${user.uid}')
-            .update({'papers': user.papers - 1});
+            .update({'papers': userStream.papers - 1});
         refDb.child('thrown').once().then((data) => userDb
             .reference()
             .child('users/$thrownUID')
@@ -119,7 +120,7 @@ class Scraps {
         userDb
             .reference()
             .child('users/${user.uid}')
-            .update({'papers': user.papers - 1});
+            .update({'papers': userStream.papers - 1});
         refDb.child('thrown').once().then((data) => userDb
             .reference()
             .child('users/$thrownUID')
@@ -204,7 +205,7 @@ class Scraps {
     await userDb
         .reference()
         .child('users/${user.uid}')
-        .update({'papers': user.papers - 1});
+        .update({'papers': userStream.papers - 1});
     await batch.commit();
     loading.add(false);
     toast('คุณโยนสแครปไปที่คุณเลือกแล้ว');

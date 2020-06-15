@@ -36,16 +36,12 @@ import 'package:scrap/widget/showdialogreport.dart';
 import 'package:scrap/widget/thrown.dart';
 
 class MapScraps extends StatefulWidget {
-  final String uid;
-  MapScraps({@required this.uid});
   @override
   _MapScrapsState createState() => _MapScrapsState();
 }
 
 class _MapScrapsState extends State<MapScraps> {
-  final geoLocator = Geolocator();
   final random = Random();
-  Position currentLocation;
   StreamSubscription subLimit;
   // int adsRate = 0;
   int i = 0, papers;
@@ -67,12 +63,6 @@ class _MapScrapsState extends State<MapScraps> {
 
   @override
   void initState() {
-    streamLocation == null
-        ? streamLocation = geoLocator
-            .getPositionStream()
-            .listen((event) => setState(() => currentLocation = event))
-        : streamLocation.resume();
-    // randomAdsRate();
     initUserHistory();
     super.initState();
   }
@@ -845,10 +835,11 @@ class _MapScrapsState extends State<MapScraps> {
   @override
   Widget build(BuildContext context) {
     Size a = MediaQuery.of(context).size;
+    var location = Provider.of<Position>(context);
     _createMarkerImageFromAsset(context);
     _createScrapImageFromAsset(context);
     screenutilInit(context);
-    return currentLocation == null
+    return location == null
         ? gpsCheck(a, 'กรุณาตรวจสอบ GPS ของคุณ')
         : Scaffold(
             backgroundColor: Colors.grey[900],
@@ -864,8 +855,8 @@ class _MapScrapsState extends State<MapScraps> {
                           myLocationEnabled: false,
                           onMapCreated: onMapCreated,
                           initialCameraPosition: CameraPosition(
-                              target: LatLng(currentLocation?.latitude ?? 0,
-                                  currentLocation?.longitude ?? 0),
+                              target: LatLng(location?.latitude ?? 0,
+                                  location?.longitude ?? 0),
                               zoom: 18.5,
                               tilt: 90),
                           markers: Set<Marker>.of(markers.values),
@@ -882,6 +873,7 @@ class _MapScrapsState extends State<MapScraps> {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
+    var location = Provider.of<Position>(context);
     return Container(
         padding: EdgeInsets.only(bottom: screenWidthDp / 10),
         alignment: Alignment.bottomCenter,
@@ -892,7 +884,7 @@ class _MapScrapsState extends State<MapScraps> {
               left: screenWidthDp / 80, right: screenWidthDp / 80),
           child: StreamBuilder(
             stream:
-                userDb.reference().child('users/${widget.uid}/papers').onValue,
+                userDb.reference().child('users/${user.uid}/papers').onValue,
             builder: (context, AsyncSnapshot<Event> snapshot) {
               if (snapshot.hasData) {
                 papers = snapshot.data.snapshot?.value ?? 10;
@@ -959,7 +951,7 @@ class _MapScrapsState extends State<MapScraps> {
                       onTap: () {
                         papers == 10
                             ? scrap.toast('กระดาษของคุณยังเต็มอยู่')
-                            : dialogvideo(context, widget.uid);
+                            : dialogvideo(context, user.uid);
                       },
                     ),
                     InkWell(
@@ -1031,15 +1023,15 @@ class _MapScrapsState extends State<MapScraps> {
                         if (papers > 0)
                           user.promise
                               ? writerScrap(context,
-                                  latLng: LatLng(currentLocation.latitude,
-                                      currentLocation.longitude))
+                                  latLng: LatLng(
+                                      location.latitude, location.longitude))
                               : dialogcontract(context, onPromise: () async {
                                   await userinfo.promiseUser();
                                   nav.pop(context);
                                   user.promise = true;
                                   writerScrap(context,
-                                      latLng: LatLng(currentLocation.latitude,
-                                          currentLocation.longitude));
+                                      latLng: LatLng(location.latitude,
+                                          location.longitude));
                                 });
                         else
                           scrap.toast('กระดาษคุณหมดแล้ว');
@@ -1167,15 +1159,6 @@ class _MapScrapsState extends State<MapScraps> {
     );
   }
 
-  cameraAnime2(GoogleMapController controller, double howClose) {
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(
-            currentLocation?.latitude ?? 0, currentLocation?.longitude ?? 0),
-        zoom: howClose,
-        bearing: 0.0,
-        tilt: 90)));
-  }
-
   changeMapMode() {
     getJsonFile("assets/mapStyle.json").then(setMapStyle);
   }
@@ -1190,9 +1173,10 @@ class _MapScrapsState extends State<MapScraps> {
 
   void onMapCreated(GoogleMapController controller) {
     this.mapController = controller;
+    var location = Provider.of<Position>(context);
     changeMapMode();
     if (this.mounted) {
-      updateMap(currentLocation);
+      updateMap(location);
       subLimit = streamLimit.listen((value) {
         if (value > 0) addMoreScrap(value);
       });

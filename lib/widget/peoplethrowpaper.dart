@@ -9,6 +9,7 @@ import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
+import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
@@ -221,7 +222,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                                         BorderRadius.all(Radius.circular(50)),
                                   )),
                               onTap: () {
-                                user.papers > 0
+                                userStream.papers > 0
                                     ? user.promise
                                         ? writerScrap(context,
                                             isThrowBack: true,
