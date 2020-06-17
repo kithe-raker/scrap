@@ -261,7 +261,7 @@ class _FeedScrapState extends State<FeedScrap>
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 GestureDetector(
-                                  child: iconWithLabel(like.toString(),
+                                  child: iconWithLabel(like.abs().toString(),
                                       icon:
                                           inHistory('like', scrapModel.scrapId)
                                               ? Icons.favorite
@@ -327,7 +327,7 @@ class _FeedScrapState extends State<FeedScrap>
                                 ),
                                 GestureDetector(
                                   child: iconWithLabel(
-                                      transac.comment.toString(),
+                                      transac.comment.abs().toString(),
                                       iconColor:
                                           Color(0xff000000).withOpacity(0.83),
                                       icon: Icons.sms),

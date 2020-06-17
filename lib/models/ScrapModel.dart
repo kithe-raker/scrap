@@ -47,7 +47,10 @@ class ScrapModel extends Equatable {
   }
 
   Map<String, dynamic> get toJSON {
-    var location = {'geohash': this.geoHash, 'geopoint': this.position};
+    var location = {
+      'geohash': this.geoHash,
+      'geopoint': GeoPoint(this.position.latitude, this.position.longitude)
+    };
     var scrap = {
       'text': this.text,
       'writer': this.writer,
@@ -92,8 +95,8 @@ class ScrapTransaction extends Equatable {
 
   factory ScrapTransaction.fromJSON(Map<dynamic, dynamic> json) =>
       ScrapTransaction(
-          like: json['like']?.abs() ?? 0,
-          picked: json['picked']?.abs() ?? 0,
-          comment: json['comment']?.abs() ?? 0,
+          like: json['like'] ?? 0,
+          picked: json['picked'] ?? 0,
+          comment: json['comment'] ?? 0,
           point: json['point']?.toDouble() ?? 0.0);
 }
