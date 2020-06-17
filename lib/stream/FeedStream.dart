@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
@@ -25,6 +26,12 @@ class FeedStream {
     var newList = scraps ?? [];
     newList.removeAt(0);
     feedSubject.add(newList);
+  }
+
+  Timestamp yesterDay() {
+    var now = DateTime.now();
+    return Timestamp.fromDate(
+        DateTime(now.year, now.month, now.day - 1, now.hour, now.minute));
   }
 
   Future<void> initFeed() async {
@@ -59,6 +66,7 @@ class FeedStream {
       var docs = await fireStore
           .collectionGroup('ScrapDailys-th')
           .where('id', whereIn: docId)
+          .where('scrap.timeStamp', isGreaterThan: yesterDay())
           .getDocuments();
       docs.documents.forEach((scrap) {
         addScrap(ScrapModel.fromJSON(scrap.data,
@@ -95,6 +103,7 @@ class FeedStream {
         var docs = await fireStore
             .collectionGroup('ScrapDailys-th')
             .where('id', whereIn: docId)
+            .where('scrap.timeStamp', isGreaterThan: yesterDay())
             .getDocuments();
         docs.documents.forEach((scrap) {
           addScrap(ScrapModel.fromJSON(scrap.data,

@@ -85,8 +85,6 @@ class _FeedScrapState extends State<FeedScrap>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    //ignore: close_sinks
-    // final counterBloc = BlocProvider.of<CounterBloc>(context);
     screenutilInit(context);
     return Scaffold(
         key: _scaffoldKey,

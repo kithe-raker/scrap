@@ -8,12 +8,12 @@ import 'package:scrap/provider/UserData.dart';
 class UserStream {
   BehaviorSubject<int> paperSubject = BehaviorSubject<int>();
   BehaviorSubject<int> pickSubject = BehaviorSubject<int>();
-  BehaviorSubject<int> attSubject = BehaviorSubject<int>();
+  BehaviorSubject<double> attSubject = BehaviorSubject<double>();
   BehaviorSubject<int> thrownSubject = BehaviorSubject<int>();
 
   int get papers => paperSubject.value;
   int get pick => pickSubject.value;
-  int get att => attSubject.value;
+  double get att => attSubject.value;
   int get thrown => thrownSubject.value;
 
   void initTransactionStream(BuildContext context) {
@@ -36,7 +36,7 @@ class UserStream {
     ref
         .child('att')
         .onValue
-        .listen((event) => attSubject.add(event.snapshot.value));
+        .listen((event) => attSubject.add(event.snapshot.value.toDouble()));
   }
 }
 
