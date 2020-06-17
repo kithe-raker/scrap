@@ -13,12 +13,12 @@ class Backpack extends StatefulWidget {
 class _BackpackState extends State<Backpack>
     with AutomaticKeepAliveClientMixin {
   StreamSubscription attStream;
-  int att = 0;
+  double att = 0;
 
   @override
   void initState() {
     attStream = userStream.attSubject
-        .listen((value) => setState(() => att = value ?? 0));
+        .listen((value) => setState(() => att = value ?? 0.0));
     super.initState();
   }
 

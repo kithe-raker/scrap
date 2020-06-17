@@ -9,31 +9,32 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:scrap/Page/Gridsubscripe.dart';
+import 'package:scrap/bloc/PlaceBloc.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
-import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/scrapFilter.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
+import 'package:scrap/models/PlaceModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
-import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/services/LoadStatus.dart';
+import 'package:scrap/services/QueryMethods.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/beforeburn.dart';
-import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
-import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
-import 'package:scrap/widget/thrown.dart';
+import 'package:scrap/widget/streamWidget/StreamLoading.dart';
 
 class MapScraps extends StatefulWidget {
   @override
@@ -44,16 +45,18 @@ class _MapScrapsState extends State<MapScraps>
     with AutomaticKeepAliveClientMixin {
   final geoLocator = Geolocator();
   final random = Random();
-  StreamSubscription subLimit;
+  PlaceModel currentPlace;
+  StreamSubscription subLimit, subSearch;
   // int adsRate = 0;
   int i = 0, papers;
   PublishSubject<int> streamLimit = PublishSubject();
   DocumentSnapshot recentScrap;
-  List<DocumentSnapshot> allScrap = [];
-  bool loadFin = false;
+  List<DocumentSnapshot> allScrap = [], searchScrap = [];
+  bool loadFin = false, isSearching = false;
   BitmapDescriptor _curcon, scrapIcon;
   bool checkPlatform = Platform.isIOS;
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{},
+      searchMarkers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   GoogleMapController mapController;
   Map randData = {};
@@ -61,8 +64,10 @@ class _MapScrapsState extends State<MapScraps>
   Scraps scrap = Scraps();
   final infoKey = GlobalKey();
   ScrapFilter filter = ScrapFilter();
+
   @override
   bool get wantKeepAlive => true;
+
   @override
   void initState() {
     initUserHistory();
@@ -129,7 +134,9 @@ class _MapScrapsState extends State<MapScraps>
         .isNegative;
   }
 
-  void dialog(DocumentSnapshot doc) {
+  void dialog(DocumentSnapshot doc, {bool fromSearch = false}) {
+    List<DocumentSnapshot> docs = [];
+    docs.addAll(fromSearch ? searchScrap : allScrap);
     // final counter = Provider.of<AdsCounterProvider>(context, listen: false);
     final _scaffoldKey = GlobalKey<ScaffoldState>();
     var data = doc;
@@ -476,20 +483,11 @@ class _MapScrapsState extends State<MapScraps>
                                                           Color(0xff000000),
                                                       icon: Icons.forward),
                                                   onTap: () {
-                                                    // counter.count += 1;
-                                                    allScrap.remove(data);
-                                                    markers.remove(MarkerId(
-                                                        data.documentID));
-                                                    if (allScrap.isNotEmpty &&
-                                                        allScrap.length > 0) {
-                                                      setDialog(() => data =
-                                                          allScrap.first);
-                                                      streamLimit.add(
-                                                          16 - allScrap.length);
-                                                    } else {
-                                                      toast.toast(
-                                                          'คุณตามทันสแครปทั้งหมดแล้ว');
-                                                    }
+                                                    continueScrap(data, docs,
+                                                        fromSearch: fromSearch);
+                                                    if (docs.length > 0)
+                                                      setDialog(() =>
+                                                          data = docs.first);
                                                   },
                                                 ),
                                               )
@@ -540,15 +538,10 @@ class _MapScrapsState extends State<MapScraps>
                               );
                             } else {
                               return burntScrap(onNext: () {
-                                // counter.count += 1;
-                                allScrap.remove(data);
-                                markers.remove(MarkerId(data.documentID));
-                                if (allScrap.isNotEmpty &&
-                                    allScrap.length > 0) {
-                                  setDialog(() => data = allScrap.first);
-                                  streamLimit.add(16 - allScrap.length);
-                                } else
-                                  toast.toast('คุณตามทันสแครปทั้งหมดแล้ว');
+                                continueScrap(data, docs,
+                                    fromSearch: fromSearch);
+                                if (docs.length > 0)
+                                  setDialog(() => data = docs.first);
                               });
                             }
                           }));
@@ -565,6 +558,24 @@ class _MapScrapsState extends State<MapScraps>
             ),
           ));
     }));
+  }
+
+  continueScrap(DocumentSnapshot data, List<DocumentSnapshot> docs,
+      {bool fromSearch = false}) {
+    // counter.count += 1;
+    docs.remove(data);
+    fromSearch
+        ? searchMarkers.remove(MarkerId(data.documentID))
+        : markers.remove(MarkerId(data.documentID));
+    if (docs.isNotEmpty && docs.length > 0) {
+      if (fromSearch) {
+        addMarkerFromSearch(docs.first);
+        setState(() {});
+      } else
+        streamLimit.add(16 - allScrap.length);
+    } else {
+      toast.toast('คุณตามทันสแครปทั้งหมดแล้ว');
+    }
   }
 
   Widget burntScrap({@required Function onNext}) {
@@ -815,21 +826,10 @@ class _MapScrapsState extends State<MapScraps>
     );
   }
 
-  burn(String scrapID) async {
-    // await Firestore.instance
-    //     .collection('Scraps')
-    //     .document('hatyai')
-    //     .collection('scrapsPosition')
-    //     .document(scrapID)
-    //     .updateData({
-    //   'burned': FieldValue.arrayUnion([widget.uid])
-    // });
-    //change this structure
-  }
-
   @override
   dispose() {
     subLimit?.cancel();
+    subSearch?.cancel();
     super.dispose();
   }
 
@@ -837,331 +837,337 @@ class _MapScrapsState extends State<MapScraps>
   Widget build(BuildContext context) {
     super.build(context);
     Size a = MediaQuery.of(context).size;
-    var location = Provider.of<Position>(context);
+    var location = Provider.of<Position>(context, listen: false);
     _createMarkerImageFromAsset(context);
     _createScrapImageFromAsset(context);
     screenutilInit(context);
-    return location == null
-        ? gpsCheck(a, 'กรุณาตรวจสอบ GPS ของคุณ')
-        : Scaffold(
-            backgroundColor: Colors.grey[900],
-            body: Stack(
-              children: <Widget>[
-                Container(
-                  color: Colors.grey[900],
-                  width: a.width,
-                  height: a.height,
-                  child: loadFin
-                      ? GoogleMap(
-                          compassEnabled: false,
-                          myLocationButtonEnabled: false,
-                          myLocationEnabled: false,
-                          onMapCreated: onMapCreated,
-                          initialCameraPosition: CameraPosition(
-                              target: LatLng(location?.latitude ?? 0,
-                                  location?.longitude ?? 0),
-                              zoom: 18.5,
-                              tilt: 90),
-                          markers: Set<Marker>.of(markers.values),
-                        )
-                      : Center(child: CircularProgressIndicator()),
-                ),
-                Positioned(bottom: 0, child: bottomButton())
-                //  Positioned(left: -56, bottom: a.height / 3.6, child: slider())
-              ],
-            ));
-  }
-
-  Widget bottomButton() {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    final user = Provider.of<UserData>(context, listen: false);
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    return Container(
-        padding: EdgeInsets.only(bottom: screenWidthDp / 10),
-        alignment: Alignment.bottomCenter,
-        width: screenWidthDp,
-        height: screenHeightDp / 1.1,
-        child: Container(
-          margin: EdgeInsets.only(
-              left: screenWidthDp / 80, right: screenWidthDp / 80),
-          child: StreamBuilder(
-            stream:
-                userDb.reference().child('users/${user.uid}/papers').onValue,
-            builder: (context, AsyncSnapshot<Event> snapshot) {
-              if (snapshot.hasData) {
-                papers = snapshot.data.snapshot?.value ?? 10;
-                WidgetsBinding.instance.addPostFrameCallback(
-                    (_) => user.papers = snapshot.data.snapshot?.value ?? 10);
-                return
-                    // return Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    //   children: [
-                    //     GestureDetector(
-                    //       child: Container(
-                    //         margin: EdgeInsets.only(
-                    //             left: screenWidthDp / 24,
-                    //             top: screenWidthDp / 36,
-                    //             right: screenWidthDp / 24,
-                    //             bottom: screenWidthDp / 36),
-                    //         padding: EdgeInsets.fromLTRB(
-                    //             screenWidthDp / 24,
-                    //             screenWidthDp / 36,
-                    //             screenWidthDp / 24,
-                    //             screenWidthDp / 36),
-                    //         decoration: BoxDecoration(
-                    //             boxShadow: [
-                    //               BoxShadow(
-                    //                 color: Colors.black26,
-                    //                 blurRadius: 6.0,
-                    //                 spreadRadius: 3.0,
-                    //                 offset: Offset(0.0, 3.2),
-                    //               )
-                    //             ],
-                    //             color: Colors.black,
-                    //             borderRadius:
-                    //                 BorderRadius.circular(screenWidthDp / 14.2)),
-                    //         child: papers < 1
-                    //             ? Text(
-                    //                 'กระดาษของคุณหมดแล้ว',
-                    //                 style: TextStyle(
-                    //                     fontSize: screenWidthDp / 18,
-                    //                     color: Colors.white),
-                    //               )
-                    //             : Row(
-                    //                 children: <Widget>[
-                    //                   RichText(
-                    //                     text: TextSpan(
-                    //                       style: TextStyle(
-                    //                           fontSize: screenWidthDp / 18,
-                    //                           color: Colors.white,
-                    //                           fontFamily: 'ThaiSans'),
-                    //                       children: <TextSpan>[
-                    //                         TextSpan(text: 'เหลือกระดาษ '),
-                    //                         TextSpan(
-                    //                             text: '$papers',
-                    //                             style: TextStyle(
-                    //                                 fontSize: screenWidthDp / 16,
-                    //                                 fontWeight: FontWeight.bold)),
-                    //                         TextSpan(
-                    //                           text: ' แผ่น',
-                    //                         )
-                    //                       ],
-                    //                     ),
-                    //                   )
-                    //                 ],
-                    //               ),
-                    //       ),
-                    //       onTap: () {
-                    //         papers == 10
-                    //             ? scrap.toast('กระดาษของคุณยังเต็มอยู่')
-                    //             : dialogvideo(context, widget.uid);
-                    //       },
-                    //     ),
-                    //     InkWell(
-                    //       onTap: () {
-                    //         Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //               builder: (context) => Gridsubscripe(),
-                    //             ));
-                    //       },
-                    //       child: Container(
-                    //           width: screenWidthDp / 7,
-                    //           height: screenWidthDp / 7,
-                    //           padding: EdgeInsets.all(screenWidthDp / 25),
-                    //           decoration: BoxDecoration(
-                    //               boxShadow: [
-                    //                 BoxShadow(
-                    //                     color: Colors.black26,
-                    //                     blurRadius: 3.0,
-                    //                     spreadRadius: 2.0,
-                    //                     offset: Offset(0.0, 3.2))
-                    //               ],
-                    //               borderRadius:
-                    //                   BorderRadius.circular(screenWidthDp),
-                    //               color: Color(0xff26A4FF)),
-                    //           child: Container(
-                    //             width: screenWidthDp / 50,
-                    //             child: Image.asset(
-                    //               "assets/Group 71.png",
-                    //               width: screenWidthDp / 12,
-                    //             ),
-                    //           )),
-                    //     ),
-                    //     GestureDetector(
-                    //       child: Container(
-                    //         width: screenWidthDp / 3.8,
-                    //         height: screenWidthDp / 3.8,
-                    //         decoration: BoxDecoration(
-                    //             borderRadius: BorderRadius.circular(screenWidthDp),
-                    //             border: Border.all(
-                    //                 color: Colors.white38,
-                    //                 width: screenWidthDp / 500)),
-                    //         child: Container(
-                    //           margin: EdgeInsets.all(screenWidthDp / 40),
-                    //           width: screenWidthDp / 6,
-                    //           height: screenWidthDp / 6,
-                    //           decoration: BoxDecoration(
-                    //               borderRadius:
-                    //                   BorderRadius.circular(screenWidthDp),
-                    //               border: Border.all(color: Colors.white)),
-                    //           child: Container(
-                    //             margin: EdgeInsets.all(screenWidthDp / 40),
-                    //             width: screenWidthDp / 6,
-                    //             height: screenWidthDp / 6,
-                    //             decoration: BoxDecoration(
-                    //                 borderRadius:
-                    //                     BorderRadius.circular(screenWidthDp),
-                    //                 color: Colors.white,
-                    //                 border: Border.all(color: Colors.white)),
-                    //             child: Icon(
-                    //               Icons.create,
-                    //               size: screenWidthDp / 12,
-                    //               color: Colors.black,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //       onTap: () {
-                    //         if (papers > 0)
-                    //           user.promise
-                    //               ? writerScrap(context,
-                    //                   latLng: LatLng(currentLocation.latitude,
-                    //                       currentLocation.longitude))
-                    //               : dialogcontract(context, onPromise: () async {
-                    //                   await userinfo.promiseUser();
-                    //                   nav.pop(context);
-                    //                   user.promise = true;
-                    //                   writerScrap(context,
-                    //                       latLng: LatLng(currentLocation.latitude,
-                    //                           currentLocation.longitude));
-                    //                 });
-                    //         else
-                    //           scrap.toast('กระดาษคุณหมดแล้ว');
-                    //       },
-                    //     )
-                    //   ],
-                    // );
-                    SizedBox();
-              } else {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                        padding: EdgeInsets.fromLTRB(
-                            screenWidthDp / 24,
-                            screenWidthDp / 36,
-                            screenWidthDp / 24,
-                            screenWidthDp / 36),
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6.0,
-                                spreadRadius: 3.0,
-                                offset: Offset(0.0, 3.2),
-                              )
-                            ],
-                            color: Colors.black,
-                            borderRadius:
-                                BorderRadius.circular(screenWidthDp / 14.2)),
-                        child: Text(
-                          ' กำลังโหลดสแครป... ',
-                          style: TextStyle(
-                              letterSpacing: 1.2,
-                              fontSize: screenWidthDp / 18,
-                              color: Colors.white),
-                        )),
-                    Container(
-                        width: screenWidthDp / 7,
-                        height: screenWidthDp / 7,
-                        padding: EdgeInsets.all(screenWidthDp / 25),
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 3.0,
-                                  spreadRadius: 2.0,
-                                  offset: Offset(0.0, 3.2))
-                            ],
-                            borderRadius: BorderRadius.circular(screenWidthDp),
-                            color: Color(0xff26A4FF)),
-                        child: Container(
-                          width: screenWidthDp / 50,
-                          child: Image.asset(
-                            "assets/Group 71.png",
-                            width: screenWidthDp / 12,
-                          ),
-                        )),
-                    Container(
-                      width: screenWidthDp / 3.8,
-                      height: screenWidthDp / 3.8,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(screenWidthDp),
-                          border: Border.all(
-                              color: Colors.white38,
-                              width: screenWidthDp / 500)),
+    return Scaffold(
+        backgroundColor: Colors.grey[900],
+        body: Stack(
+          children: <Widget>[
+            Container(
+              color: Colors.grey[900],
+              width: a.width,
+              height: a.height,
+              child: loadFin
+                  ? GoogleMap(
+                      compassEnabled: false,
+                      myLocationButtonEnabled: false,
+                      myLocationEnabled: false,
+                      onMapCreated: onMapCreated,
+                      initialCameraPosition: CameraPosition(
+                          target: LatLng(location?.latitude ?? 0,
+                              location?.longitude ?? 0),
+                          zoom: 18.5,
+                          tilt: 90),
+                      markers: Set<Marker>.of(
+                          isSearching ? searchMarkers.values : markers.values),
+                      circles: Set<Circle>.of(circles.values),
+                    )
+                  : Center(child: CircularProgressIndicator()),
+            ),
+            currentPlace?.name != null
+                ? Positioned(
+                    bottom: screenHeightDp / 56,
+                    right: screenWidthDp / 21,
+                    // alignment: Alignment.bottomRight,
+                    child: GestureDetector(
                       child: Container(
-                        margin: EdgeInsets.all(screenWidthDp / 40),
-                        width: screenWidthDp / 6,
-                        height: screenWidthDp / 6,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(screenWidthDp),
-                            border: Border.all(color: Colors.white)),
-                        child: Container(
-                          margin: EdgeInsets.all(screenWidthDp / 40),
-                          width: screenWidthDp / 6,
-                          height: screenWidthDp / 6,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidthDp / 32),
                           decoration: BoxDecoration(
+                              border: Border.all(color: Color(0xfff26A4FF)),
                               borderRadius:
                                   BorderRadius.circular(screenWidthDp),
-                              color: Colors.white,
-                              border: Border.all(color: Colors.white)),
-                          child: Icon(
-                            Icons.create,
-                            size: screenWidthDp / 12,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              }
-            },
-          ),
+                              color: Colors.black),
+                          child: Row(children: <Widget>[
+                            Text(
+                              currentPlace.name,
+                              style: TextStyle(
+                                  color: Color(0xfff26A4FF), fontSize: s42),
+                              textAlign: TextAlign.center,
+                            ),
+                            Icon(Icons.clear,
+                                color: Color(0xfff26A4FF), size: s36)
+                          ])),
+                      onTap: () {
+                        final positionBloc =
+                            BlocProvider.of<PlaceBloc>(context);
+                        positionBloc.add(SearchPlace(PlaceModel()));
+                        currentPlace = null;
+                        isSearching = false;
+                        circles.clear();
+                        setState(() {});
+                        _animateToUser();
+                      },
+                    ))
+                : SizedBox(),
+            //  Positioned(left: -56, bottom: a.height / 3.6, child: slider())
+            Center(child: StreamLoading(stream: loadStatus.searchStatus))
+          ],
         ));
   }
 
-  Widget gpsCheck(Size a, String text) {
-    return Center(
-      child: Container(
-        width: a.width / 1.2,
-        height: a.width / 3.2,
-        child: Stack(
-          children: <Widget>[
-            Center(
-              child: Container(
-                width: a.width / 4.2,
-                height: a.width / 4.2,
-                child: FlareActor(
-                  'assets/loadingpaper.flr',
-                  animation: 'Untitled',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(
-                  text,
-                  style: TextStyle(fontSize: a.width / 16, color: Colors.white),
-                ))
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget bottomButton() {
+  //   final db = Provider.of<RealtimeDB>(context, listen: false);
+  //   final user = Provider.of<UserData>(context, listen: false);
+  //   var userDb = FirebaseDatabase(app: db.userTransact);
+  //   return Container(
+  //       padding: EdgeInsets.only(bottom: screenWidthDp / 10),
+  //       alignment: Alignment.bottomCenter,
+  //       width: screenWidthDp,
+  //       height: screenHeightDp / 1.1,
+  //       child: Container(
+  //         margin: EdgeInsets.only(
+  //             left: screenWidthDp / 80, right: screenWidthDp / 80),
+  // child: StreamBuilder(
+  //   stream:
+  //       userDb.reference().child('users/${user.uid}/papers').onValue,
+  //   builder: (context, AsyncSnapshot<Event> snapshot) {
+  //     if (snapshot.hasData) {
+  //       papers = snapshot.data.snapshot?.value ?? 10;
+  //       WidgetsBinding.instance.addPostFrameCallback(
+  //           (_) => user.papers = snapshot.data.snapshot?.value ?? 10);
+  //       return
+  // return Row(
+  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //   children: [
+  //     GestureDetector(
+  //       child: Container(
+  //         margin: EdgeInsets.only(
+  //             left: screenWidthDp / 24,
+  //             top: screenWidthDp / 36,
+  //             right: screenWidthDp / 24,
+  //             bottom: screenWidthDp / 36),
+  //         padding: EdgeInsets.fromLTRB(
+  //             screenWidthDp / 24,
+  //             screenWidthDp / 36,
+  //             screenWidthDp / 24,
+  //             screenWidthDp / 36),
+  //         decoration: BoxDecoration(
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: Colors.black26,
+  //                 blurRadius: 6.0,
+  //                 spreadRadius: 3.0,
+  //                 offset: Offset(0.0, 3.2),
+  //               )
+  //             ],
+  //             color: Colors.black,
+  //             borderRadius:
+  //                 BorderRadius.circular(screenWidthDp / 14.2)),
+  //         child: papers < 1
+  //             ? Text(
+  //                 'กระดาษของคุณหมดแล้ว',
+  //                 style: TextStyle(
+  //                     fontSize: screenWidthDp / 18,
+  //                     color: Colors.white),
+  //               )
+  //             : Row(
+  //                 children: <Widget>[
+  //                   RichText(
+  //                     text: TextSpan(
+  //                       style: TextStyle(
+  //                           fontSize: screenWidthDp / 18,
+  //                           color: Colors.white,
+  //                           fontFamily: 'ThaiSans'),
+  //                       children: <TextSpan>[
+  //                         TextSpan(text: 'เหลือกระดาษ '),
+  //                         TextSpan(
+  //                             text: '$papers',
+  //                             style: TextStyle(
+  //                                 fontSize: screenWidthDp / 16,
+  //                                 fontWeight: FontWeight.bold)),
+  //                         TextSpan(
+  //                           text: ' แผ่น',
+  //                         )
+  //                       ],
+  //                     ),
+  //                   )
+  //                 ],
+  //               ),
+  //       ),
+  //       onTap: () {
+  //         papers == 10
+  //             ? scrap.toast('กระดาษของคุณยังเต็มอยู่')
+  //             : dialogvideo(context, widget.uid);
+  //       },
+  //     ),
+  //     InkWell(
+  //       onTap: () {
+  //         Navigator.push(
+  //             context,
+  //             MaterialPageRoute(
+  //               builder: (context) => Gridsubscripe(),
+  //             ));
+  //       },
+  //       child: Container(
+  //           width: screenWidthDp / 7,
+  //           height: screenWidthDp / 7,
+  //           padding: EdgeInsets.all(screenWidthDp / 25),
+  //           decoration: BoxDecoration(
+  //               boxShadow: [
+  //                 BoxShadow(
+  //                     color: Colors.black26,
+  //                     blurRadius: 3.0,
+  //                     spreadRadius: 2.0,
+  //                     offset: Offset(0.0, 3.2))
+  //               ],
+  //               borderRadius:
+  //                   BorderRadius.circular(screenWidthDp),
+  //               color: Color(0xff26A4FF)),
+  //           child: Container(
+  //             width: screenWidthDp / 50,
+  //             child: Image.asset(
+  //               "assets/Group 71.png",
+  //               width: screenWidthDp / 12,
+  //             ),
+  //           )),
+  //     ),
+  //     GestureDetector(
+  //       child: Container(
+  //         width: screenWidthDp / 3.8,
+  //         height: screenWidthDp / 3.8,
+  //         decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(screenWidthDp),
+  //             border: Border.all(
+  //                 color: Colors.white38,
+  //                 width: screenWidthDp / 500)),
+  //         child: Container(
+  //           margin: EdgeInsets.all(screenWidthDp / 40),
+  //           width: screenWidthDp / 6,
+  //           height: screenWidthDp / 6,
+  //           decoration: BoxDecoration(
+  //               borderRadius:
+  //                   BorderRadius.circular(screenWidthDp),
+  //               border: Border.all(color: Colors.white)),
+  //           child: Container(
+  //             margin: EdgeInsets.all(screenWidthDp / 40),
+  //             width: screenWidthDp / 6,
+  //             height: screenWidthDp / 6,
+  //             decoration: BoxDecoration(
+  //                 borderRadius:
+  //                     BorderRadius.circular(screenWidthDp),
+  //                 color: Colors.white,
+  //                 border: Border.all(color: Colors.white)),
+  //             child: Icon(
+  //               Icons.create,
+  //               size: screenWidthDp / 12,
+  //               color: Colors.black,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //       onTap: () {
+  //         if (papers > 0)
+  //           user.promise
+  //               ? writerScrap(context,
+  //                   latLng: LatLng(currentLocation.latitude,
+  //                       currentLocation.longitude))
+  //               : dialogcontract(context, onPromise: () async {
+  //                   await userinfo.promiseUser();
+  //                   nav.pop(context);
+  //                   user.promise = true;
+  //                   writerScrap(context,
+  //                       latLng: LatLng(currentLocation.latitude,
+  //                           currentLocation.longitude));
+  //                 });
+  //         else
+  //           scrap.toast('กระดาษคุณหมดแล้ว');
+  //       },
+  //     )
+  //   ],
+  // );
+  //           SizedBox();
+  //     } else {
+  //       return Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //         children: [
+  //           Container(
+  //               padding: EdgeInsets.fromLTRB(
+  //                   screenWidthDp / 24,
+  //                   screenWidthDp / 36,
+  //                   screenWidthDp / 24,
+  //                   screenWidthDp / 36),
+  //               decoration: BoxDecoration(
+  //                   boxShadow: [
+  //                     BoxShadow(
+  //                       color: Colors.black26,
+  //                       blurRadius: 6.0,
+  //                       spreadRadius: 3.0,
+  //                       offset: Offset(0.0, 3.2),
+  //                     )
+  //                   ],
+  //                   color: Colors.black,
+  //                   borderRadius:
+  //                       BorderRadius.circular(screenWidthDp / 14.2)),
+  //               child: Text(
+  //                 ' กำลังโหลดสแครป... ',
+  //                 style: TextStyle(
+  //                     letterSpacing: 1.2,
+  //                     fontSize: screenWidthDp / 18,
+  //                     color: Colors.white),
+  //               )),
+  //           Container(
+  //               width: screenWidthDp / 7,
+  //               height: screenWidthDp / 7,
+  //               padding: EdgeInsets.all(screenWidthDp / 25),
+  //               decoration: BoxDecoration(
+  //                   boxShadow: [
+  //                     BoxShadow(
+  //                         color: Colors.black26,
+  //                         blurRadius: 3.0,
+  //                         spreadRadius: 2.0,
+  //                         offset: Offset(0.0, 3.2))
+  //                   ],
+  //                   borderRadius: BorderRadius.circular(screenWidthDp),
+  //                   color: Color(0xff26A4FF)),
+  //               child: Container(
+  //                 width: screenWidthDp / 50,
+  //                 child: Image.asset(
+  //                   "assets/Group 71.png",
+  //                   width: screenWidthDp / 12,
+  //                 ),
+  //               )),
+  //           Container(
+  //             width: screenWidthDp / 3.8,
+  //             height: screenWidthDp / 3.8,
+  //             decoration: BoxDecoration(
+  //                 borderRadius: BorderRadius.circular(screenWidthDp),
+  //                 border: Border.all(
+  //                     color: Colors.white38,
+  //                     width: screenWidthDp / 500)),
+  //             child: Container(
+  //               margin: EdgeInsets.all(screenWidthDp / 40),
+  //               width: screenWidthDp / 6,
+  //               height: screenWidthDp / 6,
+  //               decoration: BoxDecoration(
+  //                   borderRadius: BorderRadius.circular(screenWidthDp),
+  //                   border: Border.all(color: Colors.white)),
+  //               child: Container(
+  //                 margin: EdgeInsets.all(screenWidthDp / 40),
+  //                 width: screenWidthDp / 6,
+  //                 height: screenWidthDp / 6,
+  //                 decoration: BoxDecoration(
+  //                     borderRadius:
+  //                         BorderRadius.circular(screenWidthDp),
+  //                     color: Colors.white,
+  //                     border: Border.all(color: Colors.white)),
+  //                 child: Icon(
+  //                   Icons.create,
+  //                   size: screenWidthDp / 12,
+  //                   color: Colors.black,
+  //                 ),
+  //               ),
+  //             ),
+  //           )
+  //         ],
+  //       );
+  //     }
+  //   },
+  // ),
+  //       ));
+  // }
 
   changeMapMode() {
     getJsonFile("assets/mapStyle.json").then(setMapStyle);
@@ -1178,6 +1184,7 @@ class _MapScrapsState extends State<MapScraps>
   void onMapCreated(GoogleMapController controller) {
     this.mapController = controller;
     var location = Provider.of<Position>(context, listen: false);
+    final positionBloc = BlocProvider.of<PlaceBloc>(context);
     changeMapMode();
     if (this.mounted) {
       updateMap(location);
@@ -1185,16 +1192,87 @@ class _MapScrapsState extends State<MapScraps>
         if (value > 0) addMoreScrap(value);
       });
       addMoreScrap(16);
+      subSearch = positionBloc.listen((value) => searchEvent(value));
     }
+  }
+
+  searchEvent(PlaceModel place) async {
+    if (place != null && place != PlaceModel()) {
+      loadStatus.searchStatus.add(true);
+      var position = await place.getLocation();
+      searchScrap.clear();
+      searchMarkers.clear();
+      currentPlace = place;
+      addScrapInRadius(position);
+      animateCamera(position);
+    }
+  }
+
+  addScrapInRadius(LatLng position) async {
+    final CircleId circleId = CircleId('circle_id');
+    final Circle circle = Circle(
+        circleId: circleId,
+        consumeTapEvents: true,
+        strokeColor: Color(0xFFffffff)
+            .withOpacity(0.64), //Color.fromRGBO(23, 23, 23, 0.4),
+        fillColor: Color.fromRGBO(67, 78, 80, 0.1),
+        strokeWidth: 3,
+        center: position,
+        radius: 210);
+    isSearching = true;
+    setState(() => circles[circleId] = circle);
+    GeoFirePoint center = Geoflutterfire()
+        .point(latitude: position.latitude, longitude: position.longitude);
+    var docs =
+        await QueryMethods().getDocsInRadius(radius: 0.21, center: center);
+    addDocsFromSearch(docs);
+  }
+
+  addDocsFromSearch(List<DocumentSnapshot> docs) {
+    docs.take(16).forEach((doc) {
+      addMarkerFromSearch(doc);
+    });
+    searchScrap.addAll(docs);
+    setState(() {});
+    loadStatus.searchStatus.add(false);
+  }
+
+  addMarkerFromSearch(DocumentSnapshot doc) {
+    GeoPoint point = doc['position']['geopoint'];
+    var latLng = LatLng(point.latitude, point.longitude);
+    final MarkerId markerId = MarkerId(doc.documentID);
+    final Marker marker = Marker(
+      markerId: markerId,
+      position: latLng,
+      icon: scrapIcon,
+      onTap: () async {
+        try {
+          searchScrap.remove(doc);
+          searchMarkers.remove(markerId);
+          setState(() {});
+          dialog(doc, fromSearch: true);
+          if (searchScrap.length > 0) {
+            addMarkerFromSearch(searchScrap.first);
+            searchScrap.removeAt(0);
+          }
+          // counter.count += 1;
+
+        } catch (e) {
+          print(e.toString());
+          error(context,
+              'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+        }
+      },
+    );
+    searchMarkers[markerId] = marker;
   }
 
   updateMap(Position location) {
     userMarker(location.latitude, location.longitude);
-    _animateToUser(position: location);
+    _animateToUser();
   }
 
-  void _updateMarkers(List<DocumentSnapshot> documentList, Position position) {
-    userMarker(position.latitude, position.longitude);
+  void _updateMarkers(List<DocumentSnapshot> documentList) {
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
       GeoPoint loca = data['position']['geopoint'];
@@ -1205,18 +1283,20 @@ class _MapScrapsState extends State<MapScraps>
     });
   }
 
-  _animateToUser({Position position}) async {
-    var pos = await Geolocator().getCurrentPosition();
+  _animateToUser() async {
+    var location = Provider.of<Position>(context, listen: false);
     this
         .mapController
         .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-          target: LatLng(
-            position == null ? pos.latitude : position.latitude,
-            position == null ? pos.longitude : position.longitude,
-          ),
+          target: LatLng(location.latitude, location.longitude),
           zoom: 16.9,
           tilt: 90.0,
         )));
+  }
+
+  animateCamera(LatLng position) {
+    this.mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: position, zoom: 17.1)));
   }
 
   Timestamp yesterDay() {
@@ -1226,7 +1306,6 @@ class _MapScrapsState extends State<MapScraps>
   }
 
   addMoreScrap(int limit) async {
-    var pos = await Geolocator().getCurrentPosition();
     var ref = recentScrap == null
         ? fireStore
             .collectionGroup('ScrapDailys-th')
@@ -1242,7 +1321,7 @@ class _MapScrapsState extends State<MapScraps>
     var doc = await ref.getDocuments();
     if (doc.documents.length > 0) {
       recentScrap = doc.documents.last;
-      _updateMarkers(doc.documents, pos);
+      _updateMarkers(doc.documents);
     }
   }
 
@@ -1274,9 +1353,7 @@ class _MapScrapsState extends State<MapScraps>
         }
       },
     );
-    setState(() {
-      markers[markerId] = marker;
-    });
+    setState(() => markers[markerId] = marker);
   }
 
   userMarker(double lat, double lng) {
@@ -1288,11 +1365,7 @@ class _MapScrapsState extends State<MapScraps>
       icon: _curcon,
       draggable: false,
     );
-    if (this.mounted) {
-      setState(() {
-        markers[markerId] = marker;
-      });
-    }
+    if (this.mounted) setState(() => markers[markerId] = marker);
   }
 
   Future<void> _createMarkerImageFromAsset(BuildContext context) async {
@@ -1309,23 +1382,16 @@ class _MapScrapsState extends State<MapScraps>
       final ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context);
       BitmapDescriptor.fromAssetImage(
-              imageConfiguration,
-              checkPlatform
-                  ? 'assets/paper-small.png'
-                  : 'assets/paper-small.png')
+              imageConfiguration, 'assets/paper-small.png')
           .then(_updateBitScrap);
     }
   }
 
   void _updateBitmap(BitmapDescriptor bitmap) {
-    setState(() {
-      _curcon = bitmap;
-    });
+    setState(() => _curcon = bitmap);
   }
 
   void _updateBitScrap(BitmapDescriptor bitmap) {
-    setState(() {
-      scrapIcon = bitmap;
-    });
+    setState(() => scrapIcon = bitmap);
   }
 }

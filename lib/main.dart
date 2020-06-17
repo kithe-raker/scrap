@@ -7,6 +7,7 @@ import 'package:scrap/Page/BottomBarItem/FeedScrap.dart';
 import 'package:scrap/Page/MainPage.dart';
 import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/bloc/FeedBloc.dart';
+import 'package:scrap/bloc/PlaceBloc.dart';
 import 'package:scrap/bloc/TestBloc.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         child: MultiBlocProvider(
           providers: [
             BlocProvider<CounterBloc>.value(value: CounterBloc()),
+            BlocProvider<PlaceBloc>.value(value: PlaceBloc()),
             // BlocProvider<FeedBloc>.value(value: FeedBloc()),
           ],
           child: MaterialApp(
@@ -49,7 +51,7 @@ class MyApp extends StatelessWidget {
               title: 'Scrap.',
               theme: ThemeData(
                   fontFamily: 'ThaiSans', unselectedWidgetColor: Colors.white),
-              home: MainStream()),
+              home: MainPage()),
         ));
   }
 }
