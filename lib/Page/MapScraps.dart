@@ -1196,15 +1196,14 @@ class _MapScrapsState extends State<MapScraps>
     }
   }
 
-  searchEvent(PlaceModel place) async {
+  searchEvent(PlaceModel place) {
     if (place != null && place != PlaceModel()) {
       loadStatus.searchStatus.add(true);
-      var position = await place.getLocation();
       searchScrap.clear();
       searchMarkers.clear();
       currentPlace = place;
-      addScrapInRadius(position);
-      animateCamera(position);
+      addScrapInRadius(place.location);
+      animateCamera(place.location);
     }
   }
 

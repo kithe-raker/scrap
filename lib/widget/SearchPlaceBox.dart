@@ -4,6 +4,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/bloc/PlaceBloc.dart';
 import 'package:scrap/models/PlaceModel.dart';
 import 'package:scrap/services/config.dart';
@@ -27,19 +29,21 @@ class _SearchPlaceBoxState extends State<SearchPlaceBox> {
   @override
   void initState() {
     streamController.stream
-        .debounce(Duration(milliseconds: 540))
+        .debounce(Duration(milliseconds: 560))
         .listen((value) => getLocationResults(value));
     super.initState();
   }
 
   Future<void> getLocationResults(String input) async {
     places.clear();
+    var location = Provider.of<Position>(context, listen: false);
     String baseURL =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+        'https://autosuggest.search.hereapi.com/v1/autosuggest?at=${location.latitude},${location.longitude}';
+    String request =
+        '$baseURL&q=$input&resultTypes=place&apiKey=${hereConfig.apiKey}';
 
-    String request = '$baseURL?input=$input&language=th&key=$ApiKey';
     Response response = await dio.get(request);
-    final predictions = response.data['predictions'];
+    final predictions = response.data['items'];
 
     predictions.forEach((dat) => places.add(PlaceModel.fromJSON(dat)));
     setState(() {});
