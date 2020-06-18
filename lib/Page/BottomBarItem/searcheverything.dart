@@ -38,7 +38,14 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
           children: <Widget>[
             PageView(
               controller: pageController,
-              children: [MapScraps(), Subpeople()],
+              children: [
+                MapScraps(),
+                StreamBuilder(
+                    stream: streamController.stream,
+                    builder: (context, string) {
+                      return Subpeople(searchText: string?.data);
+                    })
+              ],
               physics: NeverScrollableScrollPhysics(), // No sliding
             ),
             Positioned(
@@ -181,6 +188,7 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
                                           onTap: () {
                                             focus.unfocus();
                                             _controller.clear();
+                                            streamController.add(null);
                                             setState(() => searching = false);
                                           }),
                                     )
