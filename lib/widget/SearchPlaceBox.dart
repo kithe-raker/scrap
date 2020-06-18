@@ -37,16 +37,18 @@ class _SearchPlaceBoxState extends State<SearchPlaceBox> {
   Future<void> getLocationResults(String input) async {
     places.clear();
     if (input.length > 0) {
-      var location = Provider.of<Position>(context, listen: false);
-      String baseURL =
-          'https://autosuggest.search.hereapi.com/v1/autosuggest?at=${location.latitude},${location.longitude}';
-      String request =
-          '$baseURL&q=$input&resultTypes=place&apiKey=${hereConfig.apiKey}';
+      try {
+        var location = Provider.of<Position>(context, listen: false);
+        String baseURL =
+            'https://autosuggest.search.hereapi.com/v1/autosuggest?at=${location.latitude},${location.longitude}';
+        String request =
+            '$baseURL&q=$input&resultTypes=place&apiKey=${hereConfig.apiKey}';
 
-      Response response = await dio.get(request);
-      final predictions = response.data['items'];
+        Response response = await dio.get(request);
+        final predictions = response.data['items'];
 
-      predictions.forEach((dat) => places.add(PlaceModel.fromJSON(dat)));
+        predictions.forEach((dat) => places.add(PlaceModel.fromJSON(dat)));
+      } catch (e) {}
     }
     setState(() {});
   }
