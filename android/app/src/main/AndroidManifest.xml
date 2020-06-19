@@ -25,7 +25,7 @@
                 android:value="AIzaSyBIurGYOrtdXJdBaWZ9wXPSert9_Hjjs8Y" />
             <provider
                 android:name="androidx.core.content.FileProvider"
-                android:authorities="${applicationId}.com.bualoitech.scrap"
+                android:authorities="${applicationId}.com.shekarmudaliyar.social_share"
                 android:exported="false"
                 android:grantUriPermissions="true"
                 tools:replace="android:authorities">

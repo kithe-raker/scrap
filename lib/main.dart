@@ -14,6 +14,8 @@ import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/testt.dart';
+import 'package:scrap/widget/sheets/CommentSheet.dart';
+import 'package:scrap/widget/sheets/sharesheet.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
