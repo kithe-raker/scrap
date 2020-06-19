@@ -6,6 +6,7 @@ import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/SearchPlaceBox.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 class SearchEveryThing extends StatefulWidget {
   @override
@@ -20,7 +21,7 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
   final TextEditingController _controller = new TextEditingController();
   var focus = FocusNode();
   int currentIndex = 0;
-  StreamController<String> streamController = StreamController();
+  StreamController<String> streamController = StreamController.broadcast();
 
   void onTap(int _index) {
     setState(() => index = _index);
@@ -41,7 +42,8 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
               children: [
                 MapScraps(),
                 StreamBuilder(
-                    stream: streamController.stream,
+                    stream: streamController.stream
+                        .debounce(Duration(milliseconds: 540)),
                     builder: (context, string) {
                       return Subpeople(searchText: string?.data);
                     })
@@ -137,63 +139,70 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
                                 left: screenWidthDp / 25,
                                 right: screenWidthDp / 25 / 2),
                             child: SearchPlaceBox())
-                        : Container(
-                            height: screenWidthDp / 8 / 1.2,
-                            padding: EdgeInsets.all(screenWidthDp / 100),
-                            margin: EdgeInsets.only(
-                                left: screenWidthDp / 25,
-                                right: screenWidthDp / 25 / 2),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(50.0)),
-                                //color: Color(0xff262626),
-                                color: Colors.black,
-                                border: Border.all(color: Color(0xfff26A4FF))),
-                            child: Stack(children: <Widget>[
-                              TextField(
-                                controller: _controller,
-                                focusNode: focus,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: s42),
-                                textAlign: TextAlign.center,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'ค้นหาผู้คน',
-                                  contentPadding: EdgeInsets.all(4.8),
-                                  hintStyle: TextStyle(
-                                      color: Colors.white60, fontSize: s42),
-                                  // fillColor: Colors.red,
-                                ),
-                                onTap: () {
-                                  focus.requestFocus();
-                                  setState(() => searching = true);
-                                },
-                                onChanged: (val) {
-                                  var trim = val.trim();
-                                  trim[0] == '@'
-                                      ? streamController.add(trim.substring(1))
-                                      : streamController.add(trim);
-                                },
-                              ),
-                              searching
-                                  ? Container(
-                                      alignment: Alignment.centerRight,
-                                      margin: EdgeInsets.only(
-                                          right: screenWidthDp / 46),
-                                      child: GestureDetector(
-                                          child: Icon(Icons.clear,
-                                              color: Color(0xfff26A4FF),
-                                              size: s42),
-                                          onTap: () {
-                                            focus.unfocus();
-                                            _controller.clear();
-                                            streamController.add(null);
-                                            setState(() => searching = false);
-                                          }),
-                                    )
-                                  : SizedBox(),
-                            ])),
+                        : StatefulBuilder(
+                            builder: (context, StateSetter setSearch) {
+                            return Container(
+                                height: screenWidthDp / 8 / 1.2,
+                                padding: EdgeInsets.all(screenWidthDp / 100),
+                                margin: EdgeInsets.only(
+                                    left: screenWidthDp / 25,
+                                    right: screenWidthDp / 25 / 2),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(50.0)),
+                                    //color: Color(0xff262626),
+                                    color: Colors.black,
+                                    border:
+                                        Border.all(color: Color(0xfff26A4FF))),
+                                child: Stack(children: <Widget>[
+                                  TextField(
+                                    controller: _controller,
+                                    focusNode: focus,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: s42),
+                                    textAlign: TextAlign.center,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'ค้นหาผู้คน',
+                                      contentPadding: EdgeInsets.all(4.8),
+                                      hintStyle: TextStyle(
+                                          color: Colors.white60, fontSize: s42),
+                                      // fillColor: Colors.red,
+                                    ),
+                                    onTap: () {
+                                      focus.requestFocus();
+                                      setSearch(() => searching = true);
+                                    },
+                                    onChanged: (val) {
+                                      print('change');
+                                      var trim = val.trim();
+                                      trim[0] == '@'
+                                          ? streamController
+                                              .add(trim.substring(1))
+                                          : streamController.add(trim);
+                                    },
+                                  ),
+                                  searching
+                                      ? Container(
+                                          alignment: Alignment.centerRight,
+                                          margin: EdgeInsets.only(
+                                              right: screenWidthDp / 46),
+                                          child: GestureDetector(
+                                              child: Icon(Icons.clear,
+                                                  color: Color(0xfff26A4FF),
+                                                  size: s42),
+                                              onTap: () {
+                                                focus.unfocus();
+                                                _controller.clear();
+                                                streamController.add(null);
+                                                setSearch(
+                                                    () => searching = false);
+                                              }),
+                                        )
+                                      : SizedBox(),
+                                ]));
+                          }),
                   ),
                   // searching
                   //     ? Row(

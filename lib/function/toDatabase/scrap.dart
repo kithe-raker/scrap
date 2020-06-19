@@ -26,7 +26,8 @@ class Scraps {
   throwTo(BuildContext context,
       {@required Map data,
       @required String thrownUID,
-      @required String collRef}) async {
+      @required String collRef,
+      bool fromMain = false}) async {
     loading.add(true);
     final db = Provider.of<RealtimeDB>(context, listen: false);
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
@@ -49,6 +50,7 @@ class Scraps {
           'thrown': thrownUID,
           'scrap': {
             'text': scrapData.text,
+            'texture': scrapData.textureIndex,
             'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
             'timeStamp': FieldValue.serverTimestamp()
           }
@@ -78,9 +80,10 @@ class Scraps {
             scrap);
         await batch.commit();
       }
+      scrapData.clearData();
       loading.add(false);
       toast('ปาสำเร็จแล้ว');
-      nav.pop(context);
+      if (!fromMain) nav.pop(context);
     } else {
       loading.add(false);
       toast('ผู้ใช้คนนี้พึ่งปิดการปาเมื่อไม่นานมานี้');
@@ -111,6 +114,7 @@ class Scraps {
           'scrap': {
             'text': scrapData.text,
             'writer': user.id,
+            'texture': scrapData.textureIndex ?? 0,
             'timeStamp': FieldValue.serverTimestamp()
           }
         };
@@ -142,6 +146,7 @@ class Scraps {
       loading.add(false);
       toast('ผู้ใช้คนนี้พึ่งปิดการปาเมื่อไม่นานมานี้');
     }
+    scrapData.clearData();
   }
 
   binScrap(BuildContext context,
@@ -183,6 +188,7 @@ class Scraps {
       'region': user.region,
       'scrap': {
         'text': scrapData.text,
+        'texture': scrapData.textureIndex ?? 0,
         'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
         'timeStamp': FieldValue.serverTimestamp(),
       },
@@ -207,6 +213,7 @@ class Scraps {
         .child('users/${user.uid}')
         .update({'papers': userStream.papers - 1});
     await batch.commit();
+    scrapData.clearData();
     loading.add(false);
     toast('คุณโยนสแครปไปที่คุณเลือกแล้ว');
     Navigator.pop(context);

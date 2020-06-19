@@ -13,15 +13,16 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/PersonCard.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/Page/allfollower.dart';
-import 'package:stream_transform/stream_transform.dart';
 
 class Subpeople extends StatefulWidget {
   final String searchText;
-  Subpeople({@required this.searchText});
+  final bool hasAppbar;
+  Subpeople({@required this.searchText, this.hasAppbar = true});
   @override
   _SubpeopleState createState() => _SubpeopleState();
 }
@@ -67,7 +68,7 @@ class _SubpeopleState extends State<Subpeople>
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  SizedBox(height: screenWidthDp / 4.2),
+                  SizedBox(height: widget.hasAppbar ? screenWidthDp / 4.2 : 0),
                   Expanded(
                       child: loading
                           ? Center(
@@ -126,7 +127,6 @@ class _SubpeopleState extends State<Subpeople>
   }
 
   Widget recentlyThrow() {
-    Size a = MediaQuery.of(context).size;
     screenutilInit(context);
     return Container(
         width: screenWidthDp,
@@ -137,7 +137,7 @@ class _SubpeopleState extends State<Subpeople>
             Widget>[
           SizedBox(height: screenWidthDp / 24),
           Container(
-            padding: EdgeInsets.only(left: a.width / 25),
+            padding: EdgeInsets.only(left: screenWidthDp / 25),
             child: Text("ล่าสุดที่ปาใส่",
                 style: TextStyle(
                     color: Colors.white,
@@ -294,20 +294,23 @@ class _SubpeopleState extends State<Subpeople>
   }
 
   Widget userCard(DocumentSnapshot doc) {
+    final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
     return GestureDetector(
         child: PersonCard(
             data: doc.data,
             uid: doc.documentID,
             ref: doc.reference.parent().path),
         onTap: () async {
-          bool resault = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => OtherProfile(
-                      data: doc.data,
-                      uid: doc.documentID,
-                      ref: doc.reference.parent().path)));
-          if (resault) initFollows();
+          if (scrapData.text == null) {
+            bool resault = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => OtherProfile(
+                        data: doc.data,
+                        uid: doc.documentID,
+                        ref: doc.reference.parent().path)));
+            if (resault) initFollows();
+          }
         });
   }
 
