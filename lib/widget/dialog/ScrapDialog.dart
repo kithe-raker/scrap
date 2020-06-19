@@ -298,9 +298,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                     } else {
                                                       scrap.updateScrapTrans(
                                                           'like', context,
-                                                          doc: widget.data,
-                                                          comments: trans.value[
-                                                              'comment']);
+                                                          doc: widget.data);
                                                       if (inHistory(
                                                           'like',
                                                           widget.data
@@ -344,7 +342,9 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                     } else {
                                                       scrap.updateScrapTrans(
                                                           'picked', context,
-                                                          doc: widget.data);
+                                                          doc: widget.data,
+                                                          comments: trans.value[
+                                                              'comment']);
                                                       if (inHistory(
                                                           'picked',
                                                           widget.data

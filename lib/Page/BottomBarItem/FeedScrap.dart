@@ -279,8 +279,7 @@ class _FeedScrapState extends State<FeedScrap>
                                       toast.toast('สเเครปนี้ย่อยสลายแล้ว');
                                     } else {
                                       scrap.updateScrapTrans('like', context,
-                                          scrap: scrapModel,
-                                          comments: transac.comment);
+                                          scrap: scrapModel);
                                       if (inHistory(
                                           'like', scrapModel.scrapId)) {
                                         ++like;
@@ -310,7 +309,8 @@ class _FeedScrapState extends State<FeedScrap>
                                       scrap.toast('สเเครปนี้ย่อยสลายแล้ว');
                                     } else {
                                       scrap.updateScrapTrans('picked', context,
-                                          scrap: scrapModel);
+                                          scrap: scrapModel,
+                                          comments: transac.comment);
                                       if (inHistory(
                                           'picked', scrapModel.scrapId)) {
                                         ++pick;

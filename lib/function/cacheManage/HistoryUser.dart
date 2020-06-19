@@ -19,6 +19,11 @@ class HistoryUser {
     return File('$path/userHistory.txt');
   }
 
+  Future<File> get localFile async {
+    final path = await _localPath;
+    return File('$path/userHistory.txt');
+  }
+
   Future<void> initHistory() async {
     final file = await _localFile;
     Map userData = {
@@ -87,12 +92,8 @@ class HistoryUser {
     var cache = comments != null
         ? {
             'id': scrapId,
-            'path': scrap != null
-                ? scrap.path.parent().path
-                : doc.reference.parent().path,
-            'when': DateFormat('yyyyMMdd HH:mm:ss').format(DateTime.now()),
-            'text': scrap?.text ?? doc['scrap']['text'],
             'timeStamp': DateFormat('yyyyMMdd HH:mm:ss').format(timeStamp),
+            'when': DateFormat('yyyyMMdd HH:mm:ss').format(DateTime.now()),
             'comments': comments
           }
         : {
@@ -140,14 +141,14 @@ class HistoryUser {
   updateFollowingScrap(String id, int comments) async {
     final file = await _localFile;
     var map = await read();
-    var following = await readHistory(field: 'like');
+    var following = await readHistory(field: 'picked');
     var scraps = following.where((scp) => scp['id'] == id).toList();
     if (scraps.length > 0) {
       var scrap = scraps[0];
       following.removeWhere((scp) => scp['id'] == id);
       scrap['comments'] = comments;
       following.add(scrap);
-      map['like'] = following;
+      map['picked'] = following;
       await file.writeAsString(json.encode(map));
     }
   }

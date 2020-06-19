@@ -52,42 +52,18 @@ class _BackpackState extends State<Backpack>
             }
           }),
       body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: appBarHeight / 1.42,
-              width: screenWidthDp,
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidthDp / 21,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                'สแครปที่คุณติดตามในวันนี้',
-                style: TextStyle(color: Colors.white, fontSize: s46),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
-                child: GridView(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisSpacing: screenWidthDp / 42,
-                        crossAxisSpacing: screenWidthDp / 42,
-                        childAspectRatio: 0.826,
-                        crossAxisCount: 2),
-                    children: texture.textures
-                        .map((fileName) => paperBlock(fileName))
-                        .toList()),
-              ),
-            )
-
-            // Positioned(
-            //   bottom: 0,
-            //   child: AdmobBanner(
-            //       adUnitId: AdmobService().getBannerAdId(),
-            //       adSize: AdmobBannerSize.FULL_BANNER),
-            // )
-          ],
+        child: Container(
+          margin: EdgeInsets.only(top: screenHeightDp / 42),
+          padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
+          child: GridView(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisSpacing: screenWidthDp / 42,
+                  crossAxisSpacing: screenWidthDp / 42,
+                  childAspectRatio: 0.826,
+                  crossAxisCount: 2),
+              children: texture.textures
+                  .map((fileName) => paperBlock(fileName))
+                  .toList()),
         ),
       ),
     );
