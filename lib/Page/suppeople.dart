@@ -20,6 +20,8 @@ import 'package:scrap/Page/allfollower.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 class Subpeople extends StatefulWidget {
+  final String searchText;
+  Subpeople({@required this.searchText});
   @override
   _SubpeopleState createState() => _SubpeopleState();
 }
@@ -27,11 +29,7 @@ class Subpeople extends StatefulWidget {
 class _SubpeopleState extends State<Subpeople>
     with AutomaticKeepAliveClientMixin {
   List following = [], recently = [];
-  bool loading = true, searching = false;
-  String search;
-  final TextEditingController _controller = new TextEditingController();
-  var focus = FocusNode();
-  StreamController<String> streamController = StreamController();
+  bool loading = true;
   @override
   bool get wantKeepAlive => true;
   @override
@@ -55,243 +53,54 @@ class _SubpeopleState extends State<Subpeople>
     return userDb.reference().child('users/${user.uid}/follows/$field').onValue;
   }
 
-  @override
-  void dispose() {
-    focus.dispose();
-    streamController.close();
-    super.dispose();
-  }
-
   bool subindex = true;
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    Size a = MediaQuery.of(context).size;
     screenutilInit(context);
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
-          width: a.width,
-          height: a.height,
           child: Stack(
             children: <Widget>[
-              StatefulBuilder(builder: (context, StateSetter setSearch) {
-                return Column(
-                  children: <Widget>[
-                    Container(
-                      height: screenWidthDp / 2.7,
-                      width: screenWidthDp,
-                      padding: EdgeInsets.only(
-                          left: a.width / 50, right: a.width / 50),
-                      child: Column(
-                        //  crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: screenWidthDp / 50,
-                          ),
-                          // Row(
-                          //   children: <Widget>[
-                          //     Expanded(
-                          //       child: Container(
-                          //         height: a.width / 8 / 1.2,
-                          //         margin: EdgeInsets.only(
-                          //             left: a.width / 25,
-                          //             right: a.width / 25 / 2),
-                          //         alignment: Alignment.center,
-                          //         decoration: BoxDecoration(
-                          //           borderRadius:
-                          //               BorderRadius.all(Radius.circular(50.0)),
-                          //           color: Color(0xff262626),
-                          //         ),
-                          //         child: TextField(
-                          //           controller: _controller,
-                          //           focusNode: focus,
-                          //           style: TextStyle(
-                          //               color: Colors.white, fontSize: s42),
-                          //           textAlign: TextAlign.center,
-                          //           decoration: InputDecoration(
-                          //             border: InputBorder.none,
-                          //             // fillColor: Colors.red,
-                          //           ),
-                          //           onTap: () {
-                          //             focus.requestFocus();
-                          //             setSearch(() => searching = true);
-                          //           },
-                          //           onChanged: (val) {
-                          //             var trim = val.trim();
-                          //             trim[0] == '@'
-                          //                 ? streamController
-                          //                     .add(trim.substring(1))
-                          //                 : streamController.add(trim);
-                          //           },
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     searching
-                          //         ? Row(
-                          //             children: <Widget>[
-                          //               SizedBox(width: a.width / 42),
-                          //               GestureDetector(
-                          //                 child: Text(
-                          //                   'ยกเลิก',
-                          //                   style: TextStyle(
-                          //                       fontSize: a.width / 18,
-                          //                       fontWeight: FontWeight.normal,
-                          //                       color: Colors.white),
-                          //                 ),
-                          //                 onTap: () {
-                          //                   focus.unfocus();
-                          //                   _controller.clear();
-                          //                   setSearch(() => searching = false);
-                          //                 },
-                          //               ),
-                          //               SizedBox(width: a.width / 25),
-                          //             ],
-                          //           )
-                          //         : SizedBox(width: a.width / 25 / 2)
-                          //   ],
-                          // ),
-                          SizedBox(
-                            height: screenWidthDp / 50,
-                          ),
-                          // Container(
-                          //   height: screenWidthDp / 10,
-                          //   width: screenWidthDp,
-                          //   padding: EdgeInsets.only(
-                          //     left: a.width / 23,
-                          //   ),
-                          //   child: ListView(
-                          //     physics: BouncingScrollPhysics(),
-                          //     scrollDirection: Axis.horizontal,
-                          //     children: <Widget>[
-                          //       // selectbutton('สถานที่'),
-                          //       // selectbutton('ผู้คน')
-                          //       Container(
-                          //         width: screenWidthDp / 5,
-                          //         child: GestureDetector(
-                          //           onTap: () {
-                          //             setState(() {
-                          //               subindex = true;
-                          //             });
-                          //           },
-                          //           child: Container(
-                          //             decoration: BoxDecoration(
-                          //                 border: Border.all(
-                          //                     color: Color(0xfff26A4FF)),
-                          //                 borderRadius: BorderRadius.circular(
-                          //                     screenWidthDp),
-                          //                 color: subindex == true
-                          //                     ? Color(0xfff26A4FF)
-                          //                     : Colors.black),
-                          //             child: Text(
-                          //               'สถานที่',
-                          //               style: TextStyle(
-                          //                 color: subindex == true
-                          //                     ? Colors.white
-                          //                     : Color(0xfff26A4FF),
-                          //                 fontSize: s52,
-                          //               ),
-                          //               textAlign: TextAlign.center,
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //       Container(
-                          //         width: screenWidthDp / 50,
-                          //       ),
-                          //       Container(
-                          //         width: screenWidthDp / 5,
-                          //         child: GestureDetector(
-                          //           onTap: () {
-                          //             setState(() {
-                          //               subindex = false;
-                          //             });
-                          //           },
-                          //           child: Container(
-                          //             decoration: BoxDecoration(
-                          //                 border: Border.all(
-                          //                     color: Color(0xfff26A4FF)),
-                          //                 borderRadius: BorderRadius.circular(
-                          //                     screenWidthDp),
-                          //                 color: subindex == false
-                          //                     ? Color(0xfff26A4FF)
-                          //                     : Colors.black),
-                          //             child: Text(
-                          //               'ผู้คน',
-                          //               style: TextStyle(
-                          //                 color: subindex == false
-                          //                     ? Colors.white
-                          //                     : Color(0xfff26A4FF),
-                          //                 fontSize: s52,
-                          //               ),
-                          //               textAlign: TextAlign.center,
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //       Container(
-                          //         //color: Colors.red,
-                          //         width: screenWidthDp / 5,
-                          //       ),
-                          //       Container(
-                          //         // color: Colors.green,
-                          //         width: screenWidthDp / 5,
-                          //       ),
-                          //       Container(
-                          //         // color: Colors.blue,
-                          //         width: screenWidthDp / 5,
-                          //       ),
-                          //     ],
-                          //   ),
-                          // )
-                        ],
-                      ),
-                    ),
-                    StatefulBuilder(builder: (context, StateSetter setSearch) {
-                      if (!streamController.hasListener)
-                        streamController.stream
-                            .debounce(Duration(milliseconds: 540))
-                            .listen((value) => setSearch(() => search = value));
-                      return Expanded(
-                          child: loading
-                              ? Center(
-                                  child: Container(
-                                    width: a.width / 3.6,
-                                    height: a.width / 3.6,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.42),
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
-                                    child: FlareActor(
-                                      'assets/loadingpaper.flr',
-                                      animation: 'Untitled',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                )
-                              : !searching
-                                  ? recently.length < 1 && following.length < 1
-                                      ? Center(
-                                          child: guide('ไม่มีคนที่คุณติดตาม'))
-                                      : ListView(
-                                          physics:
-                                              AlwaysScrollableScrollPhysics(),
-                                          children: <Widget>[
-                                            recently.length > 0
-                                                ? recentlyThrow()
-                                                : SizedBox(),
-                                            following.length > 0
-                                                ? followingList()
-                                                : SizedBox()
-                                          ],
-                                        )
-                                  : serachResult());
-                    })
-                  ],
-                );
-              }),
+              Column(
+                children: <Widget>[
+                  SizedBox(height: screenWidthDp / 4.2),
+                  Expanded(
+                      child: loading
+                          ? Center(
+                              child: Container(
+                                width: screenWidthDp / 3.6,
+                                height: screenWidthDp / 3.6,
+                                decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.42),
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: FlareActor(
+                                  'assets/loadingpaper.flr',
+                                  animation: 'Untitled',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          : widget.searchText != null
+                              ? serachResult()
+                              : recently.length < 1 && following.length < 1
+                                  ? Center(child: guide('ไม่มีคนที่คุณติดตาม'))
+                                  : ListView(
+                                      physics: AlwaysScrollableScrollPhysics(),
+                                      children: <Widget>[
+                                        recently.length > 0
+                                            ? recentlyThrow()
+                                            : SizedBox(),
+                                        following.length > 0
+                                            ? followingList()
+                                            : SizedBox()
+                                      ],
+                                    ))
+                ],
+              )
             ],
           ),
         ),
@@ -433,57 +242,53 @@ class _SubpeopleState extends State<Subpeople>
     return ListView(
       physics: BouncingScrollPhysics(),
       children: <Widget>[
-        search == null || search == ''
-            ? Padding(
-                padding: EdgeInsets.only(top: screenWidthDp / 8.1),
-                child: guide('ใส่ไอดีของคนที่ผู้คน'))
-            : Container(
+        Container(
+            width: screenWidthDp,
+            padding: EdgeInsets.only(
+                left: screenWidthDp / 50, right: screenWidthDp / 50),
+            child: Column(children: <Widget>[
+              SizedBox(
+                height: screenWidthDp / 25,
+              ),
+              Container(
                 width: screenWidthDp,
-                padding: EdgeInsets.only(
-                    left: screenWidthDp / 50, right: screenWidthDp / 50),
-                child: Column(children: <Widget>[
-                  SizedBox(
-                    height: screenWidthDp / 25,
-                  ),
-                  Container(
-                    width: screenWidthDp,
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "\tผู้คน",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: screenWidthDp / 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "\tผู้คน",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: screenWidthDp / 18,
+                          fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  SizedBox(height: screenWidthDp / 20),
-                  FutureBuilder(
-                      future: fireStore
-                          .collectionGroup('users')
-                          .where('id', isGreaterThanOrEqualTo: search)
-                          .limit(6)
-                          .getDocuments(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          List<DocumentSnapshot> docs = snapshot.data.documents;
-                          return docs.length > 0
-                              ? Column(
-                                  children: docs
-                                      .map((doc) => doc['img'] != null
-                                          // &&doc.documentID != user.uid
-                                          ? userCard(doc)
-                                          : SizedBox())
-                                      .toList())
-                              : guide('ไม่พบไอดีดังกล่าวในระบบ');
-                        } else {
-                          return Center(child: LoadNoBlur());
-                        }
-                      }),
-                  SizedBox(height: screenWidthDp / 7),
-                ]))
+                  ],
+                ),
+              ),
+              SizedBox(height: screenWidthDp / 20),
+              FutureBuilder(
+                  future: fireStore
+                      .collectionGroup('users')
+                      .where('id', isGreaterThanOrEqualTo: widget.searchText)
+                      .limit(6)
+                      .getDocuments(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<DocumentSnapshot> docs = snapshot.data.documents;
+                      return docs.length > 0
+                          ? Column(
+                              children: docs
+                                  .map((doc) => doc['img'] != null
+                                      // &&doc.documentID != user.uid
+                                      ? userCard(doc)
+                                      : SizedBox())
+                                  .toList())
+                          : guide('ไม่พบไอดีดังกล่าวในระบบ');
+                    } else {
+                      return Center(child: LoadNoBlur());
+                    }
+                  }),
+              SizedBox(height: screenWidthDp / 7),
+            ]))
       ],
     );
   }
