@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/BottomBarItem/Backpack.dart';
 import 'package:scrap/Page/BottomBarItem/FeedScrap.dart';
 import 'package:scrap/Page/BottomBarItem/Profile.dart';
+import 'package:scrap/Page/BottomBarItem/WriteScrap.dart';
 import 'package:scrap/Page/BottomBarItem/searcheverything.dart';
 import 'package:scrap/Page/Gridfavorite.dart';
+import 'package:scrap/Page/bottomBarItem/PageView/PageViewActivity.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/method/Navigator.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scrap/widget/guide.dart';
-
-import '../testt.dart';
 
 class MainStream extends StatefulWidget {
   @override
@@ -25,8 +27,7 @@ class _MainStreamState extends State<MainStream> {
   final bodyList = [
     FeedScrap(),
     SearchEveryThing(),
-    SecondPage(),
-    Backpack(),
+    PageViewActivity(),
     Profile(),
   ];
 
@@ -38,7 +39,17 @@ class _MainStreamState extends State<MainStream> {
   @override
   void initState() {
     userStream.initTransactionStream(context);
+    initUser();
     super.initState();
+  }
+
+  initUser() async {
+    final user = Provider.of<UserData>(context, listen: false);
+    var data = await userinfo.readContents();
+    user.img = data['img'];
+    user.id = data['id'];
+    user.imgUrl = data['imgUrl'];
+    user.promise = data['promise'];
   }
 
   @override

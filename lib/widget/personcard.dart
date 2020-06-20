@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -42,9 +44,10 @@ class _PersonCardState extends State<PersonCard> {
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
+    final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
     Size a = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.only(left: a.width / 25, right: a.width / 25),
+      padding: EdgeInsets.symmetric(horizontal: a.width / 25),
       child: GestureDetector(
           child: Container(
             color: Colors.transparent,
@@ -69,7 +72,7 @@ class _PersonCardState extends State<PersonCard> {
                                   image: NetworkImage(widget.data['img']),
                                   fit: BoxFit.cover)),
                     ),
-                    SizedBox(width: a.width / 30),
+                    SizedBox(width: a.width / 56),
                     Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +99,7 @@ class _PersonCardState extends State<PersonCard> {
               ],
             ),
           ),
-          onTap: widget.enableNavigator
+          onTap: widget.enableNavigator && scrapData.text == null
               ? () => nav.push(
                   context, OtherProfile(data: widget.data, uid: uid, ref: ref))
               : null),
@@ -131,20 +134,12 @@ class _PersonCardState extends State<PersonCard> {
                     onTap: () {
                       userStream.papers > 0
                           ? user.promise
-                              ? writerScrap(context,
-                                  isThrow: true,
-                                  data: widget.data,
-                                  thrownUID: uid,
-                                  ref: ref)
+                              ? writeScrapLogic()
                               : dialogcontract(context, onPromise: () async {
                                   await userinfo.promiseUser();
                                   user.promise = true;
                                   nav.pop(context);
-                                  writerScrap(context,
-                                      isThrow: true,
-                                      data: widget.data,
-                                      thrownUID: uid,
-                                      ref: ref);
+                                  writeScrapLogic();
                                 })
                           : toast.toast('กระดาษของคุณหมดแล้ว');
                     })
@@ -153,5 +148,16 @@ class _PersonCardState extends State<PersonCard> {
             return SizedBox();
           }
         });
+  }
+
+  writeScrapLogic() {
+    final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
+    if (scrapData.text != null) {
+      scrap.throwTo(context,
+          data: widget.data, thrownUID: uid, collRef: ref, fromMain: true);
+      nav.pop(context);
+    } else
+      writerScrap(context,
+          isThrow: true, data: widget.data, thrownUID: uid, ref: ref);
   }
 }

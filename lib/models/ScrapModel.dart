@@ -7,6 +7,7 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 
 class ScrapModel extends Equatable {
   final String text;
+  final int textureIndex;
   final String writer;
   final DateTime litteredTime;
   final LatLng position;
@@ -19,6 +20,7 @@ class ScrapModel extends Equatable {
   ScrapModel(
       {this.text,
       this.litteredTime,
+      this.textureIndex,
       this.position,
       this.geoHash,
       this.scrapId,
@@ -31,6 +33,7 @@ class ScrapModel extends Equatable {
   List<Object> get props => [
         text,
         litteredTime,
+        textureIndex,
         position,
         scrapId,
         scrapRegion,
@@ -54,7 +57,8 @@ class ScrapModel extends Equatable {
     var scrap = {
       'text': this.text,
       'writer': this.writer,
-      'timeStamp': this.litteredTime
+      'timeStamp': this.litteredTime,
+      'texture': this.textureIndex
     };
     return {
       'id': this.scrapId,
@@ -74,6 +78,7 @@ class ScrapModel extends Equatable {
         writer: scrap['writer'],
         litteredTime: scrap['timeStamp'].toDate(),
         scrapId: json['id'],
+        textureIndex: scrap['texture'] ?? 0,
         writerUid: json['uid'],
         scrapRegion: json['region'],
         transaction: transaction,

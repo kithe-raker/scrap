@@ -380,12 +380,11 @@ class _MapScrapsState extends State<MapScraps>
                                                           scrap.toast(
                                                               'สเเครปนี้ย่อยสลายแล้ว');
                                                         } else {
-                                                          scrap.updateScrapTrans(
-                                                              'like', context,
-                                                              doc: data,
-                                                              comments: trans
-                                                                      .value[
-                                                                  'comment']);
+                                                          scrap
+                                                              .updateScrapTrans(
+                                                                  'like',
+                                                                  context,
+                                                                  doc: data);
                                                           if (inHistory('like',
                                                               data.documentID)) {
                                                             ++like;
@@ -425,11 +424,12 @@ class _MapScrapsState extends State<MapScraps>
                                                           scrap.toast(
                                                               'สเเครปนี้ย่อยสลายแล้ว');
                                                         } else {
-                                                          scrap
-                                                              .updateScrapTrans(
-                                                                  'picked',
-                                                                  context,
-                                                                  doc: data);
+                                                          scrap.updateScrapTrans(
+                                                              'picked', context,
+                                                              doc: data,
+                                                              comments: trans
+                                                                      .value[
+                                                                  'comment']);
                                                           if (inHistory(
                                                               'picked',
                                                               data.documentID)) {

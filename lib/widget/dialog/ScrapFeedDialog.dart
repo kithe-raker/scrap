@@ -332,10 +332,7 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                       } else {
                                                         scrap.updateScrapTrans(
                                                             'like', context,
-                                                            doc: data,
-                                                            comments:
-                                                                trans.value[
-                                                                    'comment']);
+                                                            doc: data);
                                                         if (inHistory('like',
                                                             data.documentID)) {
                                                           ++like;
@@ -373,7 +370,10 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                       } else {
                                                         scrap.updateScrapTrans(
                                                             'picked', context,
-                                                            doc: data);
+                                                            doc: data,
+                                                            comments:
+                                                                trans.value[
+                                                                    'comment']);
                                                         if (inHistory('picked',
                                                             data.documentID)) {
                                                           ++pick;

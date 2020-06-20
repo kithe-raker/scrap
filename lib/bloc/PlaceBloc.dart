@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:scrap/models/PlaceModel.dart';
 
 @immutable

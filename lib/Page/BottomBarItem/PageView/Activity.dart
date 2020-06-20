@@ -1,34 +1,39 @@
+import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
-import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
-import 'dart:math' as math;
-
+import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/beforeburn.dart';
+import 'package:scrap/widget/dialog/ScrapDialog.dart';
+import 'package:scrap/widget/dialog/ScrapFeedDialog.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 
-class Gridfavorite extends StatefulWidget {
+class Activity extends StatefulWidget {
   @override
-  _GridfavoriteState createState() => _GridfavoriteState();
+  _ActivityState createState() => _ActivityState();
 }
 
-class _GridfavoriteState extends State<Gridfavorite> {
-  List scraps = [];
+class _ActivityState extends State<Activity>
+    with AutomaticKeepAliveClientMixin {
+  List cacheComments = [];
+  var refreshController = RefreshController();
   Map<String, List> history = {};
   bool loading = true;
   var textGroup = AutoSizeGroup();
@@ -40,15 +45,21 @@ class _GridfavoriteState extends State<Gridfavorite> {
   }
 
   initScrap() async {
-    scraps = await cacheHistory.readHistory(field: 'like') ?? [];
+    cacheComments = await cacheHistory.readHistory(field: 'picked') ?? [];
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
     history['burn'] = await cacheHistory.readOnlyId(field: 'burn') ?? [];
-    if (scraps.length > 1) {
-      scraps.sort((a, b) =>
+    if (cacheComments.length > 1) {
+      cacheComments.sort((a, b) =>
           DateTime.parse(a['when']).compareTo(DateTime.parse(b['when'])));
     }
     setState(() => loading = false);
+  }
+
+  Timestamp yesterDay() {
+    var now = DateTime.now();
+    return Timestamp.fromDate(
+        DateTime(now.year, now.month, now.day - 1, now.hour, now.minute));
   }
 
   bool isExpired(DocumentSnapshot data) {
@@ -59,8 +70,6 @@ class _GridfavoriteState extends State<Gridfavorite> {
         .isNegative;
   }
 
-  ///0.000012
-  ///0.000312
   Future<DataSnapshot> scrapTransaction(String docId) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
@@ -72,12 +81,281 @@ class _GridfavoriteState extends State<Gridfavorite> {
     return history[field].contains(id);
   }
 
-  void dialog(int index) {
+  @override
+  void dispose() {
+    refreshController.dispose();
+    super.dispose();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    screenutilInit(context);
+    return Scaffold(
+        backgroundColor: Colors.black,
+        body: loading
+            ? Center(child: LoadNoBlur())
+            : Container(
+                width: screenWidthDp,
+                height: screenHeightDp,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: screenHeightDp / 42),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidthDp / 48),
+                        child: Text(
+                          'สแครปโยนล่าสุดของคุณ',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: s46,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SizedBox(height: screenHeightDp / 72),
+                      Container(
+                        height: screenWidthDp / 2.16 * 1.21,
+                        child: StreamBuilder(
+                            stream: fireStore
+                                .collection(
+                                    'Users/th/users/J4Dx9hXQbibuQCO9T10Urb8JR6K2/history')
+                                .orderBy('scrap.timeStamp', descending: true)
+                                .where('scrap.timeStamp',
+                                    isGreaterThan: yesterDay())
+                                .limit(10)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                List<DocumentSnapshot> writtenScrap =
+                                    snapshot.data.documents;
+                                return writtenScrap.length > 0
+                                    ? ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        children: writtenScrap
+                                            .map((dat) => Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: screenWidthDp / 48),
+                                                  child: scrapWidget(dat,
+                                                      showComment: false),
+                                                ))
+                                            .toList())
+                                    : Center(
+                                        child: Text(
+                                          'ยังไม่มีสแครปที่คุณโยนในวันนี้',
+                                          style: TextStyle(
+                                              color: Colors.white
+                                                  .withOpacity(0.51),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: s52),
+                                        ),
+                                      );
+                              } else
+                                return Center(child: LoadNoBlur());
+                            }),
+                      ),
+                      SizedBox(height: screenHeightDp / 48),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidthDp / 48),
+                        child: Text(
+                          'สแครปเก็บล่าสุดของคุณ',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: s46,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SizedBox(height: screenHeightDp / 72),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidthDp / 48),
+                        child: StreamBuilder(
+                            stream: fireStore
+                                .collection(
+                                    'Users/th/users/J4Dx9hXQbibuQCO9T10Urb8JR6K2/scrapCollection')
+                                .orderBy('scrap.timeStamp', descending: true)
+                                .where('scrap.timeStamp',
+                                    isGreaterThan: yesterDay())
+                                .limit(10)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                List<DocumentSnapshot> scraps =
+                                    snapshot.data.documents;
+                                return scraps.length > 0
+                                    ? Wrap(
+                                        spacing: screenWidthDp / 42,
+                                        runSpacing: screenWidthDp / 42,
+                                        alignment: WrapAlignment.center,
+                                        children: scraps
+                                            .map((scrap) => scrapWidget(scrap,
+                                                docs: scraps))
+                                            .toList())
+                                    : Container(
+                                        margin: EdgeInsets.only(
+                                            top: screenWidthDp / 5.1),
+                                        child: Center(
+                                          child: Text(
+                                            'ยังไม่มีสแครปที่คุณเก็บในวันนี้',
+                                            style: TextStyle(
+                                                color: Colors.white
+                                                    .withOpacity(0.51),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: s52),
+                                          ),
+                                        ),
+                                      );
+                              } else
+                                return Center(child: LoadNoBlur());
+                            }),
+                      ),
+                      SizedBox(height: screenHeightDp / 42)
+                    ],
+                  ),
+                ),
+              ));
+  }
+
+  Widget text(String textt) {
+    Size a = MediaQuery.of(context).size;
+    return Text(textt,
+        style: TextStyle(
+            color: Color(0xfffFFFFFF).withOpacity(0.51),
+            fontWeight: FontWeight.bold,
+            fontSize: a.width / 15));
+  }
+
+  Widget scrapWidget(DocumentSnapshot data,
+      {List docs, bool showComment = true}) {
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+    int ments, comments;
+    if (showComment)
+      comments = cacheComments
+          .firstWhere((cache) => cache['id'] == data['id'])['comments'];
+
+    return GestureDetector(
+      child: FutureBuilder(
+          future:
+              scrapAll.reference().child('scraps/${data['id']}/comment').once(),
+          builder: (context, snapshot) {
+            ments = snapshot.data?.value ?? null;
+            return Container(
+              height: screenWidthDp / 2.16 * 1.21,
+              width: screenWidthDp / 2.16,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/paperscrap.jpg'),
+                      fit: BoxFit.cover)),
+              child: Stack(
+                children: <Widget>[
+                  Center(
+                      child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+                    child: AutoSizeText(data['text'] ?? data['scrap']['text'],
+                        textAlign: TextAlign.center,
+                        group: textGroup,
+                        style: TextStyle(fontSize: s46)),
+                  )),
+                  snapshot.hasData && snapshot.data?.value == null
+                      ? Container(
+                          height: screenWidthDp / 2.16 * 1.21,
+                          width: screenWidthDp / 2.16,
+                          color: Colors.black38,
+                          child: ClipRRect(
+                            child: BackdropFilter(
+                              filter:
+                                  ImageFilter.blur(sigmaX: 8.1, sigmaY: 8.1),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.whatshot,
+                                        size: 50, color: Color(0xffFF8F3A)),
+                                    Text('ถูกเผาแล้ว',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: s48,
+                                            fontWeight: FontWeight.bold)),
+                                  ]),
+                            ),
+                          ))
+                      : SizedBox(),
+                  showComment
+                      ? Align(
+                          alignment: Alignment.bottomRight,
+                          child: snapshot.hasData
+                              ? ments != null
+                                  ? commentTransactionBox(
+                                      ments.abs(), comments?.abs() ?? 0)
+                                  : SizedBox()
+                              : commentTransactionBox(
+                                  comments?.abs() ?? 0, comments?.abs() ?? 0))
+                      : SizedBox()
+                ],
+              ),
+            );
+          }),
+      onTap: () {
+        if (ments != null) {
+          if (showComment) {
+            cacheHistory.updateFollowingScrap(data['id'], ments);
+            cacheComments.firstWhere(
+                (scrap) => scrap['id'] == data['id'])['comments'] = ments;
+            setState(() {});
+
+            // dialog(cacheComments.indexOf(data));
+            showDialog(
+                context: context,
+                builder: (BuildContext context) => ScrapFeedDialog(
+                    scraps: docs, currentIndex: docs.indexOf(data)));
+          } else {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) => ScrapDialog(data: data));
+          }
+        }
+      },
+    );
+  }
+
+  Widget commentTransactionBox(int comments, int cacheComment) {
+    return Container(
+        margin: EdgeInsets.all(screenWidthDp / 45),
+        alignment: Alignment.center,
+        width: screenWidthDp / 6,
+        height: screenWidthDp / 13,
+        decoration: BoxDecoration(
+            color: comments == cacheComment
+                ? Color(0xff707070)
+                : Color(0xff0077CC),
+            borderRadius: BorderRadius.circular(screenWidthDp / 80)),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text('$comments',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: screenWidthDp / 20)),
+              Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.rotationY(pi),
+                  child: Icon(Icons.sms, color: Colors.white))
+            ]));
+  }
+
+  void dialog(int index, List<DocumentSnapshot> docs) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
       Size a = MediaQuery.of(context).size;
       return StatefulBuilder(builder: (context, StateSetter setDialog) {
-        Map doc = scraps[index];
+        Map doc = docs[index].data;
         DocumentSnapshot docData;
         return Scaffold(
             backgroundColor: Colors.black,
@@ -292,7 +570,6 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                       scrap.updateScrapTrans(
                                                           'like', context,
                                                           doc: docData);
-
                                                       setTrans(() {});
                                                     }
                                                   }
@@ -368,7 +645,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                 iconColor: Color(0xff000000),
                                                 icon: Icons.forward),
                                             onTap: () {
-                                              doc == scraps.last
+                                              doc == cacheComments.last
                                                   ? index = 0
                                                   : ++index;
                                               setDialog(() {});
@@ -561,298 +838,4 @@ class _GridfavoriteState extends State<Gridfavorite> {
       ],
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    Size a = MediaQuery.of(context).size;
-    screenutilInit(context);
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              height: appBarHeight / 1.42,
-              width: screenWidthDp,
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidthDp / 21,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                      child: Container(
-                          width: a.width / 18,
-                          child: Image.asset("assets/Group 74.png",
-                              fit: BoxFit.contain)),
-                      onTap: () {
-                        Navigator.pop(context);
-                      }),
-                  Row(
-                    children: [
-                      // GestureDetector(
-                      //   child: Text(
-                      //     "จากผู้คนที่ติดตาม",
-                      //     style: TextStyle(
-                      //         color: Colors.white, fontSize: a.width / 20),
-                      //   ),
-                      //   onTap: () {},
-                      // ),
-                      Text(
-                        'สแครปที่คุณติดตามในวันนี้',
-                        style: TextStyle(
-                            color: Colors.white, fontSize: a.width / 17),
-                      ),
-                      // GestureDetector(
-                      //   child: Text(
-                      //     "สแครปน่าติดตาม",
-                      //     style: TextStyle(
-                      //         color: Colors.black, fontSize: a.width / 20),
-                      //   ),
-                      //   onTap: () {},
-                      // ),
-                    ],
-                  ),
-                  GestureDetector(
-                      child: Icon(Icons.history,
-                          color: Colors.black, size: a.width / 13),
-                      onTap: () {})
-                ],
-              ),
-            ),
-            /* Container(
-              width: a.width,
-              height: a.width / 5,
-              color: Colors.black,
-              child: Stack(
-                children: <Widget>[
-                  Positioned(
-                    top: a.width / 20,
-                    left: a.width / 30,
-                    child: Container(
-                      child: InkWell(
-                        child: Container(
-                            width: a.width / 18,
-                            // width: a.width / 15,
-                            child: Image.asset(
-                              "assets/Group 74.png",
-                              fit: BoxFit.contain,
-                              //width: a.width / 12,
-                            )),
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: a.width / 20,
-                    left: a.width / 3.5,
-                    child: Container(
-                      child: Text(
-                        'สแครปที่คุณติดตามในวันนี้',
-                        style: TextStyle(
-                            color: Colors.white, fontSize: a.width / 17),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),*/
-            scraps.length > 0
-                ? Container(
-                    width: a.width,
-                    height: a.height,
-                    margin: EdgeInsets.only(top: appBarHeight / 1.42),
-                    child: ListView(
-                      physics: BouncingScrollPhysics(),
-                      children: <Widget>[
-                        Wrap(
-                            spacing: a.width / 42,
-                            runSpacing: a.width / 42,
-                            alignment: WrapAlignment.center,
-                            children: scraps
-                                .map((scrap) => scrapWidget(scrap))
-                                .toList()),
-                        SizedBox(height: a.width / 5)
-                      ],
-                    ),
-                  )
-                : Container(
-                    width: a.width,
-                    height: a.height,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.only(top: appBarHeight / 10),
-                            width: a.width / 3.2,
-                            height: a.width / 3.2,
-                            child: Icon(
-                              Icons.favorite,
-                              size: a.width / 6,
-                              color: Color(0xfffFFFFFF).withOpacity(0.11),
-                            ),
-                            decoration: BoxDecoration(
-                                color: Color(0xff3C3C3C),
-                                borderRadius: BorderRadius.circular(a.width)),
-                          ),
-                          SizedBox(height: a.width / 20),
-                          text("คุณยังไม่ได้ติดตามสแครปในวันนี้"),
-                          text("ลองกดหัวใจเพื่อดูการเคลื่อนไหว"),
-                          text("ในสแครปที่คุณสนใจสิ")
-                        ],
-                      ),
-                    )),
-            Positioned(
-              bottom: 0,
-              child: AdmobBanner(
-                  adUnitId: AdmobService().getBannerAdId(),
-                  adSize: AdmobBannerSize.FULL_BANNER),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget text(String textt) {
-    Size a = MediaQuery.of(context).size;
-    return Text(textt,
-        style: TextStyle(
-            color: Color(0xfffFFFFFF).withOpacity(0.51),
-            fontWeight: FontWeight.bold,
-            fontSize: a.width / 15));
-  }
-
-  Widget scrapWidget(Map data) {
-    Size a = MediaQuery.of(context).size;
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    int ments;
-    return GestureDetector(
-      child: FutureBuilder(
-          future:
-              scrapAll.reference().child('scraps/${data['id']}/comment').once(),
-          builder: (context, snapshot) {
-            ments = snapshot.data?.value ?? null;
-            return Container(
-              height: screenWidthDp / 2.16 * 1.21,
-              width: screenWidthDp / 2.16,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/paperscrap.jpg'),
-                      fit: BoxFit.cover)),
-              child: Stack(
-                children: <Widget>[
-                  Center(
-                      child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
-                    child: AutoSizeText(data['text'],
-                        textAlign: TextAlign.center,
-                        group: textGroup,
-                        style: TextStyle(fontSize: s46)),
-                  )),
-                  snapshot.hasData && snapshot.data?.value == null
-                      ? Container(
-                          height: screenWidthDp / 2.16 * 1.21,
-                          width: screenWidthDp / 2.16,
-                          color: Colors.black38,
-                          child: ClipRRect(
-                            child: BackdropFilter(
-                              filter:
-                                  ImageFilter.blur(sigmaX: 8.1, sigmaY: 8.1),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.whatshot,
-                                        size: 50, color: Color(0xffFF8F3A)),
-                                    Text('ถูกเผาแล้ว',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: s48,
-                                            fontWeight: FontWeight.bold)),
-                                  ]),
-                            ),
-                          ))
-                      : SizedBox(),
-                  Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: snapshot.hasData
-                          ? ments != null
-                              ? commentTransactionBox(
-                                  a, ments.abs(), data['comments'].abs())
-                              : SizedBox()
-                          : commentTransactionBox(a, data['comments'].abs(),
-                              data['comments'].abs()))
-                ],
-              ),
-            );
-          }),
-      onTap: () {
-        if (ments != null) {
-          cacheHistory.updateFollowingScrap(data['id'], ments);
-          scraps.firstWhere((scrap) => scrap['id'] == data['id'])['comments'] =
-              ments;
-          setState(() {});
-          dialog(scraps.indexOf(data));
-        }
-      },
-    );
-  }
-
-  Widget commentTransactionBox(Size a, int comments, int cacheComment) {
-    return Container(
-        margin: EdgeInsets.all(a.width / 45),
-        alignment: Alignment.center,
-        width: a.width / 6,
-        height: a.width / 13,
-        decoration: BoxDecoration(
-            color: comments == cacheComment
-                ? Color(0xff707070)
-                : Color(0xff0077CC),
-            borderRadius: BorderRadius.circular(a.width / 80)),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text('$comments',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: a.width / 20)),
-              Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.rotationY(math.pi),
-                  child: Icon(Icons.sms, color: Colors.white))
-            ]));
-  }
 }
-
-/*
-   Container(
-        margin: EdgeInsets.all(a.width / 45),
-        alignment: Alignment.center,
-        width: a.width / 5.5,
-        height: a.width / 11,
-        decoration: BoxDecoration(
-            color: comments == cacheComment
-                ? Color(0xff707070)
-                : Color(0xff0077CC),
-            borderRadius: BorderRadius.circular(a.width / 80)),
-        child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-          Text(
-            '$comments',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: a.width / 20),
-          ),
-          Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.rotationY(math.pi),
-              child: Icon(Icons.sms, color: Colors.white)),
-          SizedBox(width: a.width / 64)
-        ])); */
