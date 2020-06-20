@@ -36,6 +36,7 @@ class FeedScrap extends StatefulWidget {
 class _FeedScrapState extends State<FeedScrap>
     with AutomaticKeepAliveClientMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  //GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool initHistory = false, loadingFeed = false;
   int current = 0;
   var pageController = PageController();
@@ -212,10 +213,14 @@ class _FeedScrapState extends State<FeedScrap>
                                 });
                               },
                               child: Container(
-                                height: screenWidthDp / 5,
-                                width: screenWidthDp / 5,
-                                child: SvgPicture.asset('assets/paper.svg',
-                                    color: Colors.pink),
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
+                                height: screenWidthDp / 7,
+                                width: screenWidthDp / 7,
+                                child: SvgPicture.asset(
+                                  'assets/ig-icon.svg',
+                                ),
                               )),
                           // facebook story
                           GestureDetector(
@@ -244,11 +249,13 @@ class _FeedScrapState extends State<FeedScrap>
                                 });
                               },
                               child: Container(
-                                height: screenWidthDp / 5,
-                                width: screenWidthDp / 5,
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
+                                height: screenWidthDp / 7,
+                                width: screenWidthDp / 7,
                                 child: SvgPicture.asset(
-                                  'assets/paper.svg',
-                                  color: Colors.blue[900],
+                                  'assets/facebook-icon.svg',
                                 ),
                               )),
                           //Twitter
@@ -384,64 +391,61 @@ class _FeedScrapState extends State<FeedScrap>
                 //                 .MEDIUM_RECTANGLE),
                 //       )
                 //     :
-                Screenshot(
-                  controller: screenshotController,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        width: screenWidthDp / 1.04,
-                        height: screenWidthDp / 1.04 * 1.115,
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.only(left: 25, right: 25),
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                          image: AssetImage('assets/paperscrap.jpg'),
-                          fit: BoxFit.cover,
-                        )),
-                        child: Text(scrapModel.text,
-                            style: TextStyle(height: 1.35, fontSize: s60),
-                            textAlign: TextAlign.center),
+                Column(
+                  // screenshot here
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      width: screenWidthDp / 1.04,
+                      height: screenWidthDp / 1.04 * 1.115,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.only(left: 25, right: 25),
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                        image: AssetImage('assets/paperscrap.jpg'),
+                        fit: BoxFit.cover,
+                      )),
+                      child: Text(scrapModel.text,
+                          style: TextStyle(height: 1.35, fontSize: s60),
+                          textAlign: TextAlign.center),
+                    ),
+                    SizedBox(height: screenWidthDp / 36),
+                    Container(
+                      width: screenWidthDp,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidthDp / 36),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                scrapModel.writer == 'ไม่ระบุตัวตน'
+                                    ? 'ใครบางคน'
+                                    : '@${scrapModel.writer}',
+                                style: TextStyle(
+                                    fontSize: s48,
+                                    height: 1.1,
+                                    color: scrapModel.writer == 'ไม่ระบุตัวตน'
+                                        ? Colors.white
+                                        : Color(0xff26A4FF)),
+                              ),
+                              CountDownText(startTime: scrapModel.litteredTime)
+                            ],
+                          ),
+                          GestureDetector(
+                              child: Icon(Icons.more_horiz,
+                                  color: Colors.white, size: s70),
+                              onTap: () async {
+                                // showShareSheet(context, scrap: scrapModel);
+                                showShare(context);
+                              }),
+                        ],
                       ),
-                      SizedBox(height: screenWidthDp / 36),
-                      Container(
-                        width: screenWidthDp,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: screenWidthDp / 36),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  scrapModel.writer == 'ไม่ระบุตัวตน'
-                                      ? 'ใครบางคน'
-                                      : '@${scrapModel.writer}',
-                                  style: TextStyle(
-                                      fontSize: s48,
-                                      height: 1.1,
-                                      color: scrapModel.writer == 'ไม่ระบุตัวตน'
-                                          ? Colors.white
-                                          : Color(0xff26A4FF)),
-                                ),
-                                CountDownText(
-                                    startTime: scrapModel.litteredTime)
-                              ],
-                            ),
-                            GestureDetector(
-                                child: Icon(Icons.more_horiz,
-                                    color: Colors.white, size: s70),
-                                onTap: () async {
-                                  // showShareSheet(context, scrap: scrapModel);
-                                  showShare(context);
-                                }),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: screenWidthDp / 42),
                 Divider(color: Color(0xff5D5D5D), thickness: 1.2),
@@ -474,19 +478,19 @@ class _FeedScrapState extends State<FeedScrap>
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 GestureDetector(
-                                  child: iconWithLabel(like.abs().toString(),
-                                      icon:
-                                          inHistory('like', scrapModel.scrapId)
-                                              ? Icons.favorite
-                                              : Icons.favorite_border,
-                                      background:
-                                          inHistory('like', scrapModel.scrapId)
-                                              ? Color(0xffFF4343)
-                                              : Colors.white,
+                                  child: iconfrommilla(
+                                      inHistory('like', scrapModel.scrapId)
+                                          ? 'assets/heart-fill-icon.svg'
+                                          : 'assets/heart-icon.svg',
+                                      like.abs().toString(),
                                       iconColor:
                                           inHistory('like', scrapModel.scrapId)
                                               ? Colors.white
-                                              : Color(0xffFF4343)),
+                                              : Colors.red,
+                                      backgroundColor:
+                                          inHistory('like', scrapModel.scrapId)
+                                              ? Colors.red
+                                              : Colors.white),
                                   onTap: () {
                                     if (isExpired(scrapModel.litteredTime)) {
                                       toast.toast('สเเครปนี้ย่อยสลายแล้ว');
@@ -508,16 +512,19 @@ class _FeedScrapState extends State<FeedScrap>
                                   },
                                 ),
                                 GestureDetector(
-                                  child: iconWithLabel(pick.abs().toString(),
-                                      background: inHistory(
-                                              'picked', scrapModel.scrapId)
-                                          ? Color(0xff0099FF)
-                                          : Colors.white,
+                                  child: iconfrommilla(
+                                      inHistory('picked', scrapModel.scrapId)
+                                          ? 'assets/keep-icon.svg'
+                                          : 'assets/keep-icon.svg',
+                                      pick.abs().toString(),
                                       iconColor: inHistory(
                                               'picked', scrapModel.scrapId)
                                           ? Colors.white
-                                          : Color(0xff0099FF),
-                                      icon: Icons.move_to_inbox),
+                                          : Colors.blue,
+                                      backgroundColor: inHistory(
+                                              'picked', scrapModel.scrapId)
+                                          ? Colors.blue
+                                          : Colors.white),
                                   onTap: () {
                                     if (isExpired(scrapModel.litteredTime)) {
                                       scrap.toast('สเเครปนี้ย่อยสลายแล้ว');
@@ -539,11 +546,11 @@ class _FeedScrapState extends State<FeedScrap>
                                   },
                                 ),
                                 GestureDetector(
-                                  child: iconWithLabel(
+                                  child: iconfrommilla(
+                                      'assets/comment-icon.svg',
                                       transac.comment.abs().toString(),
-                                      iconColor:
-                                          Color(0xff000000).withOpacity(0.83),
-                                      icon: Icons.sms),
+                                      iconColor: Colors.black,
+                                      backgroundColor: Colors.white),
                                   onTap: () {
                                     Scaffold.of(context).showBottomSheet(
                                       (BuildContext context) => CommentSheet(
@@ -556,20 +563,19 @@ class _FeedScrapState extends State<FeedScrap>
                             ),
                           ),
                           scrapModel.position != null
-                              ? Padding(
+                              ? Container(
                                   padding: EdgeInsets.only(
-                                      right: screenWidthDp / 42),
+                                      right: screenWidthDp / 25),
                                   child: GestureDetector(
-                                    child: iconWithLabel('ตำแหน่ง',
-                                        iconColor: Color(0xff000000),
-                                        icon: Icons.location_on),
+                                    child: iconfrommilla(
+                                        'assets/location-icon.svg', '',
+                                        iconColor: Colors.red,
+                                        backgroundColor: Colors.white),
                                     onTap: () => showDialog(
                                       context: context,
                                       builder: (BuildContext context) =>
                                           MapSheet(
                                               position: scrapModel.position),
-                                      // backgroundColor:
-                                      //     Colors.transparent,
                                     )
                                     // counter.count += 1;
                                     // allScrap.remove(data);
@@ -673,6 +679,41 @@ class _FeedScrapState extends State<FeedScrap>
         ]);
   }
 
+  Widget iconfrommilla(
+    String asset,
+    String label, {
+    //Color background = Colors.white,
+    @required Color iconColor,
+    @required Color backgroundColor,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(screenWidthDp / 40),
+          decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(screenWidthDp)),
+          //  child:
+          child: SvgPicture.asset(
+            asset,
+            color: iconColor,
+            height: screenWidthDp / 15,
+            width: screenWidthDp / 15,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+              color: Color(0xffff5f5f5),
+              fontSize: s42,
+              height: 1.2,
+              fontWeight: FontWeight.bold),
+        )
+      ],
+    );
+  }
+
   Widget iconWithLabel(String label,
       {Color background = Colors.white,
       @required Color iconColor,
@@ -691,6 +732,7 @@ class _FeedScrapState extends State<FeedScrap>
             color: iconColor,
             size: s46,
           ),
+          //child: SvgPicture.asset('assetName'),
         ),
         Text(
           label,
