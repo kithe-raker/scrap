@@ -59,7 +59,7 @@ class _SelectPositionState extends State<SelectPosition> {
             onMapCreated: onMapCreated,
             initialCameraPosition: CameraPosition(target: location, zoom: 18.5),
             markers: Set<Marker>.of(markers.values),
-            onLongPress: (position) {
+            onTap: (position) {
               scrapLocation = position;
               MarkerId markerId = MarkerId('scrap');
               Marker marker = markers[markerId];
@@ -68,6 +68,15 @@ class _SelectPositionState extends State<SelectPosition> {
               );
               setState(() => markers[markerId] = updatedMarker);
             },
+            // onLongPress: (position) {
+            //   scrapLocation = position;
+            //   MarkerId markerId = MarkerId('scrap');
+            //   Marker marker = markers[markerId];
+            //   Marker updatedMarker = marker.copyWith(
+            //     positionParam: position,
+            //   );
+            //   setState(() => markers[markerId] = updatedMarker);
+            // },
           ),
           Align(
             alignment: Alignment.topCenter,
@@ -88,12 +97,29 @@ class _SelectPositionState extends State<SelectPosition> {
                         spreadRadius: 3.0,
                         offset: Offset(0.0, 3.2))
                   ]),
-              child: Text(
-                'แตะค้างที่สแครปหรือบนแผนที่เพื่อเลือกตำแหน่ง',
-                textAlign: TextAlign.center,
+              child: RichText(
+                  text: TextSpan(
                 style: TextStyle(
-                    wordSpacing: 0.1, fontSize: s46, color: Colors.white),
-              ),
+                    fontSize: s46,
+                    color: Colors.white,
+                    wordSpacing: 0.1,
+                    fontFamily: 'ThaiSans'),
+                children: <TextSpan>[
+                  TextSpan(text: 'แตะค้างที่'),
+                  TextSpan(
+                      text: 'สแครป',
+                      style: TextStyle(
+                          color: Colors.lightBlue,
+                          fontWeight: FontWeight.bold)),
+                  TextSpan(text: 'หรือบน'),
+                  TextSpan(
+                      text: 'แผนที่',
+                      style: TextStyle(
+                          color: Colors.lightBlue,
+                          fontWeight: FontWeight.bold)),
+                  TextSpan(text: 'เพื่อเลือกตำแหน่ง'),
+                ],
+              )),
             ),
           ),
           Align(

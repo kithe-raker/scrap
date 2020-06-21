@@ -109,8 +109,7 @@ class _GridTopScrapState extends State<GridTopScrap> {
             context: context,
             builder: (BuildContext context) => ScrapFeedDialog(
                 scraps: widget.feedScrap,
-                currentIndex: scraps.indexOf(data),
-                topScrap: true));
+                currentIndex: scraps.indexOf(data)));
       },
     );
   }
