@@ -223,7 +223,7 @@ class _LitteringScrapState extends State<LitteringScrap> {
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
           if (snapshot.hasData && snapshot?.data?.value != null) {
             var trans = snapshot.data?.value ?? 0;
-            return trans > 0
+            return trans < 0
                 ? Container(
                     padding: EdgeInsets.only(
                         left: screenWidthDp / 64, right: screenWidthDp / 42),

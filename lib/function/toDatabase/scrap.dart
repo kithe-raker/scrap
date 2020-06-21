@@ -246,7 +246,11 @@ class Scraps {
           lat: place.location.latitude, lng: place.location.longitude);
       point = geofire.point(
           latitude: ranLocation.latitude, longitude: ranLocation.longitude);
-      updatePlace(context, place: place, id: docId);
+      updatePlace(context,
+          place: place,
+          id: docId,
+          text: scrapData.text,
+          texture: scrapData.textureIndex);
     }
 
     var trans = {
@@ -303,8 +307,10 @@ class Scraps {
   }
 
   updatePlace(BuildContext context,
-      {@required PlaceModel place, @required String id}) async {
-    final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
+      {@required PlaceModel place,
+      @required String id,
+      @required String text,
+      @required int texture}) async {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var allPlace = FirebaseDatabase(app: db.placeAll);
     var ref = allPlace.reference().child('places/${place.placeId}');
@@ -341,11 +347,7 @@ class Scraps {
         (transaction) async => transaction.get(refDoc).then((doc) {
               List recently = doc.data['recently'] ?? [];
               if (recently.length > 7) recently.removeAt(0);
-              recently.add({
-                'text': scrapData.text,
-                'id': id,
-                'texture': scrapData.textureIndex
-              });
+              recently.add({'text': text, 'id': id, 'texture': texture});
               transaction.update(refDoc, {'recently': recently});
             }));
   }
