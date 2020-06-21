@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/suppeople.dart';
+import 'package:scrap/bloc/PlaceBloc.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/SearchPlaceBox.dart';
 import 'package:stream_transform/stream_transform.dart';
@@ -138,7 +140,13 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
                             margin: EdgeInsets.only(
                                 left: screenWidthDp / 25,
                                 right: screenWidthDp / 25 / 2),
-                            child: SearchPlaceBox())
+                            child: SearchPlaceBox(
+                              onSelect: (place) {
+                                final positionBloc =
+                                    BlocProvider.of<PlaceBloc>(context);
+                                positionBloc.add(SearchPlace(place));
+                              },
+                            ))
                         : StatefulBuilder(
                             builder: (context, StateSetter setSearch) {
                             return Container(
@@ -175,7 +183,6 @@ class _SearchEveryThingState extends State<SearchEveryThing> {
                                       setSearch(() => searching = true);
                                     },
                                     onChanged: (val) {
-                                      print('change');
                                       var trim = val.trim();
                                       trim[0] == '@'
                                           ? streamController

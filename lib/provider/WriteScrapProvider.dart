@@ -6,7 +6,7 @@ class WriteScrapProvider extends ChangeNotifier {
   bool _private;
 
   String get text => _text;
-  int get textureIndex => _textureIndex;
+  int get textureIndex => _textureIndex ?? 0;
   bool get private => _private;
 
   set text(String val) {

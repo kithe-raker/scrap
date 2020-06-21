@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/bloc/PlaceBloc.dart';
 import 'package:scrap/models/PlaceModel.dart';
 import 'package:scrap/services/config.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
@@ -14,6 +12,8 @@ import 'package:scrap/widget/guide.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 class SearchPlaceBox extends StatefulWidget {
+  final Function(PlaceModel) onSelect;
+  SearchPlaceBox({this.onSelect});
   @override
   _SearchPlaceBoxState createState() => _SearchPlaceBoxState();
 }
@@ -178,8 +178,7 @@ class _SearchPlaceBoxState extends State<SearchPlaceBox> {
         node.unfocus();
         tx.text = placeModel.name;
         setState(() => isSearching = false);
-        final positionBloc = BlocProvider.of<PlaceBloc>(context);
-        positionBloc.add(SearchPlace(placeModel));
+        widget.onSelect(placeModel);
       },
     );
   }
