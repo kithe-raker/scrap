@@ -21,6 +21,9 @@ class ConfigDateBase {
         name: 'user-transactions',
         options:
             firebaseOption(dbUrl: 'https://user-transactions.firebaseio.com/'));
+    db.placeAll = await FirebaseApp.configure(
+        name: 'places-all',
+        options: firebaseOption(dbUrl: 'https://places-all.firebaseio.com/'));
   }
 
   FirebaseOptions firebaseOption({@required String dbUrl}) {
