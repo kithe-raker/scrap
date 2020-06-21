@@ -4,7 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/OtherCache.dart';
 import 'package:scrap/models/ScrapModel.dart';
-import 'package:scrap/services/LoadStatus.dart';
+import 'package:scrap/stream/LoadStatus.dart';
 
 class FeedStream {
   BehaviorSubject<List<ScrapModel>> feedSubject =

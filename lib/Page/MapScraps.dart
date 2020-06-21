@@ -23,7 +23,7 @@ import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/models/PlaceModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
-import 'package:scrap/services/LoadStatus.dart';
+import 'package:scrap/stream/LoadStatus.dart';
 import 'package:scrap/services/QueryMethods.dart';
 import 'package:scrap/services/admob_service.dart';
 import 'package:scrap/widget/CountDownText.dart';
