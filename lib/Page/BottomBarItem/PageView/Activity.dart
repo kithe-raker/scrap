@@ -263,29 +263,55 @@ class _ActivityState extends State<Activity>
                         group: textGroup,
                         style: TextStyle(fontSize: s46)),
                   )),
-                  snapshot.hasData && snapshot.data?.value == null
-                      ? Container(
-                          height: screenWidthDp / 2.16 * 1.21,
-                          width: screenWidthDp / 2.16,
-                          color: Colors.black38,
-                          child: ClipRRect(
-                            child: BackdropFilter(
-                              filter:
-                                  ImageFilter.blur(sigmaX: 8.1, sigmaY: 8.1),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.whatshot,
-                                        size: 50, color: Color(0xffFF8F3A)),
-                                    Text('ถูกเผาแล้ว',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: s48,
-                                            fontWeight: FontWeight.bold)),
-                                  ]),
-                            ),
-                          ))
-                      : SizedBox(),
+                  showComment
+                      ? snapshot.hasData && snapshot.data?.value == null
+                          ? Container(
+                              height: screenWidthDp / 2.16 * 1.21,
+                              width: screenWidthDp / 2.16,
+                              color: Colors.black38,
+                              child: ClipRRect(
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(
+                                      sigmaX: 8.1, sigmaY: 8.1),
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.whatshot,
+                                            size: 50, color: Color(0xffFF8F3A)),
+                                        Text('ถูกเผาแล้ว',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: s48,
+                                                fontWeight: FontWeight.bold)),
+                                      ]),
+                                ),
+                              ))
+                          : SizedBox()
+                      : data['burnt'] ?? false
+                          ? Container(
+                              height: screenWidthDp / 2.16 * 1.21,
+                              width: screenWidthDp / 2.16,
+                              color: Colors.black38,
+                              child: ClipRRect(
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(
+                                      sigmaX: 8.1, sigmaY: 8.1),
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.whatshot,
+                                            size: 50, color: Color(0xffFF8F3A)),
+                                        Text('ถูกเผาแล้ว',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: s48,
+                                                fontWeight: FontWeight.bold)),
+                                      ]),
+                                ),
+                              ))
+                          : SizedBox(),
                   showComment
                       ? Align(
                           alignment: Alignment.bottomRight,

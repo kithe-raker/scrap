@@ -1,9 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/assets/PaperTexture.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
 
 class Backpack extends StatefulWidget {
   @override
@@ -70,44 +74,52 @@ class _BackpackState extends State<Backpack>
   }
 
   Widget floatButton(int papers) {
-    return Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidthDp / 24, vertical: screenWidthDp / 36),
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6.0,
-                spreadRadius: 3.0,
-                offset: Offset(0.0, 3.2),
-              )
-            ],
-            color: Colors.grey[850],
-            borderRadius: BorderRadius.circular(screenWidthDp / 14.2)),
-        child: papers > 0
-            ? RichText(
-                text: TextSpan(
-                style: TextStyle(
-                    fontSize: screenWidthDp / 18,
-                    color: Colors.white,
-                    fontFamily: 'ThaiSans'),
-                children: <TextSpan>[
-                  TextSpan(text: 'เหลือกระดาษ '),
-                  TextSpan(
-                      text: '$papers',
-                      style: TextStyle(
-                          fontSize: screenWidthDp / 16,
-                          fontWeight: FontWeight.bold)),
-                  TextSpan(text: ' แผ่น')
-                ],
-              ))
-            : Text(
-                'กระดาษของคุณหมดแล้ว',
-                style: TextStyle(
-                    fontSize: screenWidthDp / 18,
-                    color: Colors.white,
-                    fontFamily: 'ThaiSans'),
-              ));
+    final user = Provider.of<UserData>(context, listen: false);
+    return GestureDetector(
+      child: Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidthDp / 24, vertical: screenWidthDp / 36),
+          decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 6.0,
+                  spreadRadius: 3.0,
+                  offset: Offset(0.0, 3.2),
+                )
+              ],
+              color: Colors.grey[850],
+              borderRadius: BorderRadius.circular(screenWidthDp / 14.2)),
+          child: papers > 0
+              ? RichText(
+                  text: TextSpan(
+                  style: TextStyle(
+                      fontSize: screenWidthDp / 18,
+                      color: Colors.white,
+                      fontFamily: 'ThaiSans'),
+                  children: <TextSpan>[
+                    TextSpan(text: 'เหลือกระดาษ '),
+                    TextSpan(
+                        text: '$papers',
+                        style: TextStyle(
+                            fontSize: screenWidthDp / 16,
+                            fontWeight: FontWeight.bold)),
+                    TextSpan(text: ' แผ่น')
+                  ],
+                ))
+              : Text(
+                  'กระดาษของคุณหมดแล้ว',
+                  style: TextStyle(
+                      fontSize: screenWidthDp / 18,
+                      color: Colors.white,
+                      fontFamily: 'ThaiSans'),
+                )),
+      onTap: () {
+        papers == 10
+            ? toast.toast('กระดาษของคุณยังเต็มอยู่')
+            : dialogvideo(context, user.uid);
+      },
+    );
   }
 
   Widget paperBlock(String fileName) {
