@@ -2,18 +2,15 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/Page/LitteringScrap.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/stream/UserStream.dart';
-import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:scrap/widget/SelectPosition.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/streamWidget/StreamLoading.dart';
 import 'package:stream_transform/stream_transform.dart';
@@ -31,7 +28,6 @@ class _WriteScrapState extends State<WriteScrap> {
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
-    final location = Provider.of<Position>(context, listen: false);
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.black,
@@ -204,6 +200,7 @@ class _WriteScrapState extends State<WriteScrap> {
                               if (_key.currentState.validate()) {
                                 _key.currentState.save();
                                 scrapData.private = private;
+                                scrapData.textureIndex = textureIndex;
                                 searchPeopleDialog();
                               }
                             }),
@@ -226,12 +223,8 @@ class _WriteScrapState extends State<WriteScrap> {
                               if (_key.currentState.validate()) {
                                 _key.currentState.save();
                                 scrapData.private = private;
-                                // askingDialog();
-                                nav.pushReplacement(
-                                    context,
-                                    SelectPosition(
-                                        defaultLatLng: LatLng(location.latitude,
-                                            location.longitude)));
+                                scrapData.textureIndex = textureIndex;
+                                nav.pushReplacement(context, LitteringScrap());
                               }
                             }),
                       ],
@@ -294,24 +287,10 @@ class _WriteScrapState extends State<WriteScrap> {
         : SizedBox();
   }
 
-  askingDialog() {
+  searchPeopleDialog() {
     showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return Container();
-        });
-  }
-
-/*
-         nav.pushReplacement(
-                                    context,
-                                    SelectPosition(
-                                        defaultLatLng: LatLng(location.latitude,
-                                            location.longitude))); */
-  searchPeopleDialog() {
-    // showDialog(
-    //     context: context,
-    //     builder: (BuildContext context) => SearchPeopleDialog());
+        builder: (BuildContext context) => SearchPeopleDialog());
   }
 }
 

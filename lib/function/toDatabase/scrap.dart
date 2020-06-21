@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -11,17 +12,20 @@ import 'package:rxdart/subjects.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
+import 'package:scrap/function/randomLocation.dart';
+import 'package:scrap/models/PlaceModel.dart';
 import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/stream/UserStream.dart';
 
-final db = FirebaseDatabase.instance;
+final rtdb = FirebaseDatabase.instance;
 
 class Scraps {
   PublishSubject<bool> loading = PublishSubject();
   final FirebaseMessaging fcm = FirebaseMessaging();
+  final Geoflutterfire geofire = Geoflutterfire();
 
   throwTo(BuildContext context,
       {@required Map data,
@@ -217,6 +221,133 @@ class Scraps {
     loading.add(false);
     toast('คุณโยนสแครปไปที่คุณเลือกแล้ว');
     Navigator.pop(context);
+  }
+
+  Future<void> litter(BuildContext context,
+      {@required PlaceModel place}) async {
+    loading.add(true);
+    final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
+    final user = Provider.of<UserData>(context, listen: false);
+    var location = Provider.of<Position>(context, listen: false);
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var allScrap = FirebaseDatabase(app: db.scrapAll);
+    var userDb = FirebaseDatabase(app: db.userTransact);
+    var now = DateTime.now();
+    var batch = fireStore.batch();
+    GeoFirePoint point;
+    GeoFirePoint defaultPoint = geofire.point(
+        latitude: location.latitude, longitude: location.longitude);
+    var ref = fireStore.collection(
+        'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
+    var docId = ref.document().documentID;
+
+    if (place != null) {
+      var ranLocation = random.getLocation(
+          lat: place.location.latitude, lng: place.location.longitude);
+      point = geofire.point(
+          latitude: ranLocation.latitude, longitude: ranLocation.longitude);
+      updatePlace(context, place: place, id: docId);
+    }
+
+    var trans = {
+      'comment': 0,
+      'id': docId,
+      'point': 0.0,
+      'like': 0,
+      'picked': 0
+    };
+    var mainTrans = {
+      'comment': 0,
+      'id': docId,
+      'point': 0.0,
+      'like': 0,
+      'picked': 0,
+      'burn': 0,
+      'PPN': -5,
+      'CPN': -5
+    };
+    Map<String, dynamic> scrap = {
+      'id': docId,
+      'uid': user.uid,
+      'region': user.region,
+      'scrap': {
+        'text': scrapData.text,
+        'texture': scrapData.textureIndex ?? 0,
+        'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
+        'timeStamp': FieldValue.serverTimestamp()
+      },
+    };
+    if (place != null) {
+      scrap['position'] = point.data;
+      scrap['places'] = FieldValue.arrayUnion([place.placeId]);
+    }
+    batch.setData(ref.document(docId), scrap);
+    scrap['default'] = defaultPoint.data;
+    scrap['burnt'] = false;
+    batch.setData(
+        fireStore
+            .collection('Users/${user.region}/users/${user.uid}/history')
+            .document(docId),
+        scrap);
+    await allScrap.reference().child('scraps/$docId').set(trans);
+    await rtdb.reference().child('scraps/$docId').set(mainTrans);
+    await userDb
+        .reference()
+        .child('users/${user.uid}')
+        .update({'papers': userStream.papers - 1});
+    await batch.commit();
+    scrapData.clearData();
+    loading.add(false);
+    toast('คุณโยนสแครปไปที่คุณเลือกแล้ว');
+    nav.pop(context);
+  }
+
+  updatePlace(BuildContext context,
+      {@required PlaceModel place, @required String id}) async {
+    final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
+    final db = Provider.of<RealtimeDB>(context, listen: false);
+    var allPlace = FirebaseDatabase(app: db.placeAll);
+    var ref = allPlace.reference().child('places/${place.placeId}');
+    var placeData;
+    await ref.runTransaction((mutableData) async {
+      placeData = mutableData.value;
+      if (mutableData?.value != null) {
+        var recently =
+            DateTime.fromMillisecondsSinceEpoch(mutableData.value['recently']);
+        if (DateTime.now().difference(recently).inMinutes > 60) {
+          mutableData.value['recently'] = ServerValue.timestamp;
+          mutableData.value['count'] = -1;
+        } else {
+          mutableData.value['count'] = mutableData.value['count'] - 1;
+          mutableData.value['allCount'] = mutableData.value['allCount'] - 1;
+        }
+      }
+      return mutableData;
+    });
+    if (placeData == null) {
+      ref.update({
+        'id': place.placeId,
+        'recently': ServerValue.timestamp,
+        'count': -1,
+        'allCount': -1
+      });
+      await fireStore
+          .collection('Places')
+          .document(place.placeId)
+          .setData(place.toJSON, merge: true);
+    }
+    var refDoc = fireStore.collection('Places').document(place.placeId);
+    fireStore.runTransaction(
+        (transaction) async => transaction.get(refDoc).then((doc) {
+              List recently = doc.data['recently'] ?? [];
+              if (recently.length > 7) recently.removeAt(0);
+              recently.add({
+                'text': scrapData.text,
+                'id': id,
+                'texture': scrapData.textureIndex
+              });
+              transaction.update(refDoc, {'recently': recently});
+            }));
   }
 
   void updateScrapTrans(String field, BuildContext context,

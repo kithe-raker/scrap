@@ -133,9 +133,9 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   //Run
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
-    Size a = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -206,9 +206,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                       '@${profile['id'] ?? 'ชื่อ'}',
                       style: TextStyle(color: Colors.white, fontSize: s60),
                     ),
-                    SizedBox(
-                      height: appBarHeight / 10,
-                    ),
+                    SizedBox(height: appBarHeight / 10),
                     Container(
                         child: user.uid == null
                             ? null
@@ -256,9 +254,8 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                                     Container(
                                       margin: EdgeInsets.symmetric(
                                           horizontal: screenWidthDp / 30),
-                                      padding: EdgeInsets.only(
-                                          left: a.width / 50,
-                                          right: a.width / 50),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: screenWidthDp / 50),
                                       /*  margin: EdgeInsets.only(
                                             left: a.width / 25,
                                             right: a.width / 25),*/
@@ -348,6 +345,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                                   height: screenHeightDp / 8,
                                   child: Center(
                                       child: CircularProgressIndicator())),
+                          SizedBox(height: screenHeightDp / 42)
                           // SizedBox(height: screenWidthDp / 42),
                         ],
                       ),

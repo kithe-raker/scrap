@@ -2,14 +2,12 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/bloc/TestBloc.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/Report.dart';
-import 'package:scrap/services/LoadStatus.dart';
+import 'package:scrap/stream/LoadStatus.dart';
 import 'package:scrap/stream/FeedStream.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
