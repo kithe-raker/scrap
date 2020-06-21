@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
-
+import 'package:flutter_svg/svg.dart';
+import 'package:social_share/social_share.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
@@ -17,6 +19,12 @@ import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
 import 'package:scrap/widget/showdialogreport.dart';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:social_share/social_share.dart';
 
 class FeedScrap extends StatefulWidget {
   @override
@@ -26,6 +34,7 @@ class FeedScrap extends StatefulWidget {
 class _FeedScrapState extends State<FeedScrap>
     with AutomaticKeepAliveClientMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  //GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool initHistory = false, loadingFeed = false;
   int current = 0;
   var pageController = PageController();
@@ -42,15 +51,6 @@ class _FeedScrapState extends State<FeedScrap>
             startTime.hour, startTime.second)
         .difference(DateTime.now())
         .isNegative;
-  }
-
-  @override
-  void initState() {
-    initUserHistory();
-    initScrap();
-    loadStream = loadStatus.feedStatus
-        .listen((event) => setState(() => loadingFeed = event));
-    super.initState();
   }
 
   void listener() {
@@ -137,6 +137,219 @@ class _FeedScrapState extends State<FeedScrap>
         )));
   }
 
+  String _platformVersion = 'Unknown';
+
+  Future<void> initPlatformState() async {
+    String platformVersion;
+
+    if (!mounted) return;
+
+    setState(() {
+      _platformVersion = platformVersion;
+    });
+  }
+
+  @override
+  void initState() {
+    initUserHistory();
+    initScrap();
+    loadStream = loadStatus.feedStatus
+        .listen((event) => setState(() => loadingFeed = event));
+    super.initState();
+    initPlatformState();
+  }
+
+  ScreenshotController screenshotController = ScreenshotController();
+  void showShare(context) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          screenutilInit(context);
+          return Container(
+            height: appBarHeight * 3.3,
+            decoration: BoxDecoration(
+              color: Color(0xff202020),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
+            child: Stack(
+              children: <Widget>[
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 12, bottom: 4),
+                      width: screenWidthDp / 3.2,
+                      height: screenHeightDp / 81,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(screenHeightDp / 42),
+                        color: Color(0xff929292),
+                      ),
+                    )),
+                Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: screenWidthDp / 10),
+                      child: Row(
+                        // scrollDirection: Axis.horizontal,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          // story ig
+                          GestureDetector(
+                              onTap: () async {
+                                await screenshotController
+                                    .capture()
+                                    .then((image) async {
+                                  SocialShare.shareInstagramStory(
+                                      image.path,
+                                      "#212121",
+                                      "#000000",
+                                      "https://scrap.bualoitech.com/");
+                                });
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
+                                height: screenWidthDp / 7,
+                                width: screenWidthDp / 7,
+                                child: SvgPicture.asset(
+                                  'assets/ig-icon.svg',
+                                ),
+                              )),
+                          // facebook story
+                          GestureDetector(
+                              onTap: () async {
+                                await screenshotController
+                                    .capture()
+                                    .then((image) async {
+                                  Platform.isAndroid
+                                      ? SocialShare.shareFacebookStory(
+                                              image.path,
+                                              "#212121",
+                                              "#000000",
+                                              "https://scrap.bualoitech.com/",
+                                              appId: "152617042778122")
+                                          .then((data) {
+                                          print(data);
+                                        })
+                                      : SocialShare.shareFacebookStory(
+                                              image.path,
+                                              "#212121",
+                                              "#000000",
+                                              "https://scrap.bualoitech.com/")
+                                          .then((data) {
+                                          print(data);
+                                        });
+                                });
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
+                                height: screenWidthDp / 7,
+                                width: screenWidthDp / 7,
+                                child: SvgPicture.asset(
+                                  'assets/facebook-icon.svg',
+                                ),
+                              )),
+                          //Twitter
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: screenWidthDp / 12,
+                                ),
+                                GestureDetector(
+                                  child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 15,
+                                      ),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              screenHeightDp)),
+                                      child: Icon(Icons.whatshot,
+                                          color: Color(0xffFF8F3A),
+                                          size: appBarHeight / 3)),
+                                  onTap: () {},
+                                ),
+                                Text(
+                                  'เผา',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: s42,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: screenWidthDp / 12,
+                                ),
+                                GestureDetector(
+                                  child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 15,
+                                      ),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              screenHeightDp)),
+                                      child: Icon(Icons.report_problem,
+                                          size: appBarHeight / 3)),
+                                  onTap: () {},
+                                ),
+                                Text(
+                                  'รายงาน',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: s42,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: screenWidthDp / 10,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  // Widget capture(Widget screen) {
+  //   return Screenshot(
+  //     controller: screenshotController,
+  //     child: screen,
+  //   );
+  // }
+
   Widget scrapWidget(ScrapModel scrapModel) {
     var transac = scrapModel.transaction;
     return StatefulBuilder(builder: (context, StateSetter setDialog) {
@@ -177,6 +390,7 @@ class _FeedScrapState extends State<FeedScrap>
                 //       )
                 //     :
                 Column(
+                  // screenshot here
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -222,7 +436,10 @@ class _FeedScrapState extends State<FeedScrap>
                           GestureDetector(
                               child: Icon(Icons.more_horiz,
                                   color: Colors.white, size: s70),
-                              onTap: () => showMore(context, scrap: scrapModel))
+                              onTap: () async {
+                                // showShareSheet(context, scrap: scrapModel);
+                                showShare(context);
+                              }),
                         ],
                       ),
                     ),
@@ -259,19 +476,19 @@ class _FeedScrapState extends State<FeedScrap>
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 GestureDetector(
-                                  child: iconWithLabel(like.abs().toString(),
-                                      icon:
-                                          inHistory('like', scrapModel.scrapId)
-                                              ? Icons.favorite
-                                              : Icons.favorite_border,
-                                      background:
-                                          inHistory('like', scrapModel.scrapId)
-                                              ? Color(0xffFF4343)
-                                              : Colors.white,
+                                  child: iconfrommilla(
+                                      inHistory('like', scrapModel.scrapId)
+                                          ? 'assets/heart-fill-icon.svg'
+                                          : 'assets/heart-icon.svg',
+                                      like.abs().toString(),
                                       iconColor:
                                           inHistory('like', scrapModel.scrapId)
                                               ? Colors.white
-                                              : Color(0xffFF4343)),
+                                              : Colors.red,
+                                      backgroundColor:
+                                          inHistory('like', scrapModel.scrapId)
+                                              ? Colors.red
+                                              : Colors.white),
                                   onTap: () {
                                     if (isExpired(scrapModel.litteredTime)) {
                                       toast.toast('สเเครปนี้ย่อยสลายแล้ว');
@@ -292,16 +509,19 @@ class _FeedScrapState extends State<FeedScrap>
                                   },
                                 ),
                                 GestureDetector(
-                                  child: iconWithLabel(pick.abs().toString(),
-                                      background: inHistory(
-                                              'picked', scrapModel.scrapId)
-                                          ? Color(0xff0099FF)
-                                          : Colors.white,
+                                  child: iconfrommilla(
+                                      inHistory('picked', scrapModel.scrapId)
+                                          ? 'assets/keep-icon.svg'
+                                          : 'assets/keep-icon.svg',
+                                      pick.abs().toString(),
                                       iconColor: inHistory(
                                               'picked', scrapModel.scrapId)
                                           ? Colors.white
-                                          : Color(0xff0099FF),
-                                      icon: Icons.move_to_inbox),
+                                          : Colors.blue,
+                                      backgroundColor: inHistory(
+                                              'picked', scrapModel.scrapId)
+                                          ? Colors.blue
+                                          : Colors.white),
                                   onTap: () {
                                     if (isExpired(scrapModel.litteredTime)) {
                                       scrap.toast('สเเครปนี้ย่อยสลายแล้ว');
@@ -324,11 +544,11 @@ class _FeedScrapState extends State<FeedScrap>
                                   },
                                 ),
                                 GestureDetector(
-                                  child: iconWithLabel(
+                                  child: iconfrommilla(
+                                      'assets/comment-icon.svg',
                                       transac.comment.abs().toString(),
-                                      iconColor:
-                                          Color(0xff000000).withOpacity(0.83),
-                                      icon: Icons.sms),
+                                      iconColor: Colors.black,
+                                      backgroundColor: Colors.white),
                                   onTap: () {
                                     Scaffold.of(context).showBottomSheet(
                                       (BuildContext context) => CommentSheet(
@@ -341,20 +561,19 @@ class _FeedScrapState extends State<FeedScrap>
                             ),
                           ),
                           scrapModel.position != null
-                              ? Padding(
+                              ? Container(
                                   padding: EdgeInsets.only(
-                                      right: screenWidthDp / 42),
+                                      right: screenWidthDp / 25),
                                   child: GestureDetector(
-                                    child: iconWithLabel('ตำแหน่ง',
-                                        iconColor: Color(0xff000000),
-                                        icon: Icons.location_on),
+                                    child: iconfrommilla(
+                                        'assets/location-icon.svg', '',
+                                        iconColor: Colors.red,
+                                        backgroundColor: Colors.white),
                                     onTap: () => showDialog(
                                       context: context,
                                       builder: (BuildContext context) =>
                                           MapSheet(
                                               position: scrapModel.position),
-                                      // backgroundColor:
-                                      //     Colors.transparent,
                                     )
                                     // counter.count += 1;
                                     // allScrap.remove(data);
@@ -458,6 +677,41 @@ class _FeedScrapState extends State<FeedScrap>
         ]);
   }
 
+  Widget iconfrommilla(
+    String asset,
+    String label, {
+    //Color background = Colors.white,
+    @required Color iconColor,
+    @required Color backgroundColor,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(screenWidthDp / 40),
+          decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(screenWidthDp)),
+          //  child:
+          child: SvgPicture.asset(
+            asset,
+            color: iconColor,
+            height: screenWidthDp / 15,
+            width: screenWidthDp / 15,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+              color: Color(0xffff5f5f5),
+              fontSize: s42,
+              height: 1.2,
+              fontWeight: FontWeight.bold),
+        )
+      ],
+    );
+  }
+
   Widget iconWithLabel(String label,
       {Color background = Colors.white,
       @required Color iconColor,
@@ -476,6 +730,7 @@ class _FeedScrapState extends State<FeedScrap>
             color: iconColor,
             size: s46,
           ),
+          //child: SvgPicture.asset('assetName'),
         ),
         Text(
           label,
@@ -495,12 +750,12 @@ class _FeedScrapState extends State<FeedScrap>
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
           return Container(
-            height: appBarHeight * 2.2,
+            height: screenWidthDp / 1.8,
             decoration: BoxDecoration(
               color: Color(0xff202020),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
+                topLeft: Radius.circular(24.0),
+                topRight: Radius.circular(24.0),
               ),
             ),
             child: Stack(
@@ -518,124 +773,100 @@ class _FeedScrapState extends State<FeedScrap>
                       ),
                     )),
                 Container(
-                  /* margin: EdgeInsets.only(
-                bottom: appBarHeight - 20,
-              ),*/
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: screenWidthDp / 12,
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(
-                                          screenHeightDp)),
-                                  child: Icon(Icons.whatshot,
-                                      color: Color(0xffFF8F3A),
-                                      size: appBarHeight / 3)),
-                              onTap: () {
-                                if (inHistory('burn', scrap.scrapId)) {
-                                  toast.toast('คุณเคยเผาสแครปก้อนนี้แล้ว');
-                                } else {
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: screenWidthDp / 12,
+                              ),
+                              GestureDetector(
+                                child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                    ),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                            screenHeightDp)),
+                                    child: Icon(Icons.whatshot,
+                                        color: Color(0xffFF8F3A),
+                                        size: appBarHeight / 3)),
+                                onTap: () {
+                                  if (inHistory('burn', scrap.scrapId)) {
+                                    toast.toast('คุณเคยเผาสแครปก้อนนี้แล้ว');
+                                  } else {
+                                    final report = Provider.of<Report>(context,
+                                        listen: false);
+                                    report.scrapId = scrap.scrapId;
+                                    report.scrapRef = scrap.path.parent().path;
+                                    report.targetId = scrap.writerUid;
+                                    report.region = scrap.scrapRegion;
+                                    showdialogBurn(context,
+                                        burntScraps: history['burn']);
+                                  }
+                                },
+                              ),
+                              Text(
+                                'เผา',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: s42,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: screenWidthDp / 12,
+                              ),
+                              GestureDetector(
+                                child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                    ),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                            screenHeightDp)),
+                                    child: Icon(Icons.report_problem,
+                                        size: appBarHeight / 3)),
+                                onTap: () {
                                   final report = Provider.of<Report>(context,
                                       listen: false);
-                                  report.scrapId = scrap.scrapId;
-                                  report.scrapRef = scrap.path.parent().path;
                                   report.targetId = scrap.writerUid;
-                                  report.region = scrap.scrapRegion;
-                                  showdialogBurn(context,
-                                      burntScraps: history['burn']);
-                                }
-                              },
-                            ),
-                            Text(
-                              'เผา',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s42,
-                                fontWeight: FontWeight.bold,
+                                  showDialogReport(context);
+                                },
                               ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: screenWidthDp / 12,
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(
-                                          screenHeightDp)),
-                                  child: Icon(Icons.report_problem,
-                                      size: appBarHeight / 3)),
-                              onTap: () {
-                                final report =
-                                    Provider.of<Report>(context, listen: false);
-                                report.targetId = scrap.writerUid;
-                                showDialogReport(context);
-                              },
-                            ),
-                            Text(
-                              'รายงาน',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s42,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                'รายงาน',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: s42,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                /* Positioned(
-                bottom: 0,
-                child: Container(
-                  child: AdmobBanner(
-                      adUnitId: AdmobService().getBannerAdId(),
-                      adSize: AdmobBannerSize.FULL_BANNER),
-                )),*/
               ],
             ),
           );
         });
   }
-
-  /*
-    showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) =>
-                                                MapSheet(
-                                              position: LatLng(
-                                                  data['position']['geopoint']
-                                                      .latitude,
-                                                  data['position']['geopoint']
-                                                      .longitude),
-                                            ),
-                                            // backgroundColor:
-                                            //     Colors.transparent,
-                                          );
-   */
 }

@@ -77,14 +77,16 @@ class _MainStreamState extends State<MainStream> {
               ));
   }
 
-  Widget activebutton(var _index, String icon) {
+  Widget activebutton(var _index, String activeicon, String unactiveicon) {
     return GestureDetector(
       onTap: () => onTap(_index),
       child: Container(
-        height: screenWidthDp / 10,
-        width: screenWidthDp / 10,
-        child: SvgPicture.asset(icon,
-            color: currentIndex != _index ? Color(0xfff434343) : Colors.white),
+        height: screenWidthDp / 15,
+        width: screenWidthDp / 15,
+        child: SvgPicture.asset(
+          currentIndex == _index ? activeicon : unactiveicon,
+          color: Color(0xffff5f5f5),
+        ),
       ),
     );
   }
@@ -93,23 +95,21 @@ class _MainStreamState extends State<MainStream> {
     screenutilInit(context);
     return Container(
       decoration: BoxDecoration(color: Color(0xfff161414)),
-      height: screenWidthDp / 5,
+      height: screenWidthDp / 6,
       width: screenWidthDp,
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            activebutton(0, 'assets/paper.svg'),
-            activebutton(1, 'assets/paper.svg'),
-            GestureDetector(
-                child: Container(
-                    height: screenWidthDp / 10,
-                    width: screenWidthDp / 10,
-                    child: SvgPicture.asset('assets/paper.svg',
-                        color: Color(0xfff434343))),
-                onTap: () => nav.push(context, WriteScrap())),
-            activebutton(2, 'assets/paper.svg'),
-            activebutton(3, 'assets/paper.svg')
+            activebutton(
+                0, 'assets/home-fill-icon.svg', 'assets/home-icon.svg'),
+            activebutton(
+                1, 'assets/search-fill-icon.svg', 'assets/search-icon.svg'),
+            activebutton(
+                2, 'assets/write-fill-icon.svg', 'assets/write-icon.svg'),
+            activebutton(3, 'assets/bag-fill-icon.svg', 'assets/bag-icon.svg'),
+            activebutton(
+                4, 'assets/profile-fill-icon.svg', 'assets/profile-icon.svg'),
           ]),
     );
   }
