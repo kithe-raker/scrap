@@ -3,10 +3,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/BottomBarItem/FeedScrap.dart';
 import 'package:scrap/Page/BottomBarItem/Profile.dart';
-import 'package:scrap/Page/BottomBarItem/WriteScrap.dart';
 import 'package:scrap/Page/BottomBarItem/searcheverything.dart';
-import 'package:scrap/Page/Gridfavorite.dart';
 import 'package:scrap/Page/bottomBarItem/PageView/PageViewActivity.dart';
+import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/provider/UserData.dart';
@@ -105,11 +104,22 @@ class _MainStreamState extends State<MainStream> {
                 0, 'assets/home-fill-icon.svg', 'assets/home-icon.svg'),
             activebutton(
                 1, 'assets/search-fill-icon.svg', 'assets/search-icon.svg'),
+            GestureDetector(
+              child: Container(
+                height: screenWidthDp / 15,
+                width: screenWidthDp / 15,
+                child: SvgPicture.asset(
+                  'assets/write-icon.svg',
+                  color: Color(0xffff5f5f5),
+                ),
+              ),
+              onTap: () {
+                nav.push(context, WriteScrap());
+              },
+            ),
+            activebutton(2, 'assets/bag-fill-icon.svg', 'assets/bag-icon.svg'),
             activebutton(
-                2, 'assets/write-fill-icon.svg', 'assets/write-icon.svg'),
-            activebutton(3, 'assets/bag-fill-icon.svg', 'assets/bag-icon.svg'),
-            activebutton(
-                4, 'assets/profile-fill-icon.svg', 'assets/profile-icon.svg'),
+                3, 'assets/profile-fill-icon.svg', 'assets/profile-icon.svg'),
           ]),
     );
   }
