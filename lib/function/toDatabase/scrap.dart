@@ -433,10 +433,11 @@ class Scraps {
     var ref = userDb.reference().child('users/${user.uid}');
     var trans = await ref.child('pick').once();
     var data = scrap != null ? scrap.toJSON : doc.data;
+    var scrapId = scrap?.scrapId ?? doc.documentID;
     if (cancel) {
       fireStore
           .collection('Users/${user.region}/users/${user.uid}/scrapCollection')
-          .document(scrap.scrapId)
+          .document(scrapId)
           .delete();
       ref.update({'pick': trans.value - 1});
     } else {
@@ -444,7 +445,7 @@ class Scraps {
       data['timeStamp'] = FieldValue.serverTimestamp();
       fireStore
           .collection('Users/${user.region}/users/${user.uid}/scrapCollection')
-          .document(scrap.scrapId)
+          .document(scrapId)
           .setData(data);
       ref.update({'pick': trans.value + 1});
     }

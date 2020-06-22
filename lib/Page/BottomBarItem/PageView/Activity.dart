@@ -49,10 +49,6 @@ class _ActivityState extends State<Activity>
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
     history['burn'] = await cacheHistory.readOnlyId(field: 'burn') ?? [];
-    if (cacheComments.length > 1) {
-      cacheComments.sort((a, b) =>
-          DateTime.parse(a['when']).compareTo(DateTime.parse(b['when'])));
-    }
     setState(() => loading = false);
   }
 
@@ -235,9 +231,11 @@ class _ActivityState extends State<Activity>
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     int ments, comments;
-    if (showComment)
-      comments = cacheComments
-          .firstWhere((cache) => cache['id'] == data['id'])['comments'];
+    if (showComment && cacheComments.length > 0) {
+      var result =
+          cacheComments.where((cache) => cache['id'] == data['id']).toList();
+      result.length > 0 ? comments = result.first['comments'] : comments = 0;
+    }
 
     return GestureDetector(
       child: FutureBuilder(
@@ -328,23 +326,33 @@ class _ActivityState extends State<Activity>
             );
           }),
       onTap: () {
-        if (ments != null) {
-          if (showComment) {
-            cacheHistory.updateFollowingScrap(data['id'], ments);
-            cacheComments.firstWhere(
-                (scrap) => scrap['id'] == data['id'])['comments'] = ments;
-            setState(() {});
-
-            // dialog(cacheComments.indexOf(data));
-            showDialog(
-                context: context,
-                builder: (BuildContext context) => ScrapFeedDialog(
-                    scraps: docs, currentIndex: docs.indexOf(data)));
-          } else {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) => ScrapDialog(data: data));
+        if (ments != null && showComment) {
+          if (ments.abs() != comments?.abs() ?? 0) {
+            cacheHistory.updateFollowingScrap(
+                data['id'], ments, data['scrap']['timeStamp'].toDate());
+            if (cacheComments.length > 0) {
+              var result = cacheComments
+                  .where((cache) => cache['id'] == data['id'])
+                  .toList();
+              if (result.length > 0) {
+                cacheComments.firstWhere(
+                    (scrap) => scrap['id'] == data['id'])['comments'] = ments;
+              } else
+                cacheComments.add({'id': data['id'], 'comments': ments});
+            } else
+              cacheComments.add({'id': data['id'], 'comments': ments});
           }
+          setState(() {});
+
+          // dialog(cacheComments.indexOf(data));
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => ScrapFeedDialog(
+                  scraps: docs, currentIndex: docs.indexOf(data)));
+        } else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => ScrapDialog(data: data));
         }
       },
     );
