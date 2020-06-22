@@ -102,21 +102,24 @@ class _FeedScrapState extends State<FeedScrap>
                           if (snapshot.hasData) {
                             return Listener(
                               onPointerUp: (event) => listener(),
-                              child: PageView(
-                                  physics: AlwaysScrollableScrollPhysics(),
-                                  controller: pageController,
-                                  onPageChanged: (index) {
-                                    if (current + 1 == index) {
-                                      feed.scraps.length < 24
-                                          ? feed.loadMore()
-                                          : feed.clearOldScrap();
-                                    }
-                                    current = index;
-                                  },
-                                  scrollDirection: Axis.vertical,
-                                  children: snapshot.data
-                                      .map((data) => scrapWidget(data))
-                                      .toList()),
+                              child: Screenshot(
+                                controller: screenshotController,
+                                child: PageView(
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    controller: pageController,
+                                    onPageChanged: (index) {
+                                      if (current + 1 == index) {
+                                        feed.scraps.length < 24
+                                            ? feed.loadMore()
+                                            : feed.clearOldScrap();
+                                      }
+                                      current = index;
+                                    },
+                                    scrollDirection: Axis.vertical,
+                                    children: snapshot.data
+                                        .map((data) => scrapWidget(data))
+                                        .toList()),
+                              ),
                             );
                           } else {
                             return Center(child: LoadNoBlur());
@@ -160,14 +163,13 @@ class _FeedScrapState extends State<FeedScrap>
   }
 
   ScreenshotController screenshotController = ScreenshotController();
-  void showShare(context) {
+  void replyButtonSheet(context, {@required ScrapModel scrap}) {
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
-          screenutilInit(context);
           return Container(
-            height: appBarHeight * 3.3,
+            height: screenWidthDp / 1.1,
             decoration: BoxDecoration(
               color: Color(0xff202020),
               borderRadius: BorderRadius.only(
@@ -189,151 +191,278 @@ class _FeedScrapState extends State<FeedScrap>
                         color: Color(0xff929292),
                       ),
                     )),
-                Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(top: screenWidthDp / 10),
-                      child: Row(
-                        // scrollDirection: Axis.horizontal,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          // story ig
-                          GestureDetector(
-                              onTap: () async {
-                                await screenshotController
-                                    .capture()
-                                    .then((image) async {
-                                  SocialShare.shareInstagramStory(
-                                      image.path,
-                                      "#212121",
-                                      "#000000",
-                                      "https://scrap.bualoitech.com/");
-                                });
-                              },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                ),
-                                height: screenWidthDp / 7,
-                                width: screenWidthDp / 7,
-                                child: SvgPicture.asset(
-                                  'assets/ig-icon.svg',
-                                ),
-                              )),
-                          // facebook story
-                          GestureDetector(
-                              onTap: () async {
-                                await screenshotController
-                                    .capture()
-                                    .then((image) async {
-                                  Platform.isAndroid
-                                      ? SocialShare.shareFacebookStory(
-                                              image.path,
-                                              "#212121",
-                                              "#000000",
-                                              "https://scrap.bualoitech.com/",
-                                              appId: "152617042778122")
-                                          .then((data) {
-                                          print(data);
-                                        })
-                                      : SocialShare.shareFacebookStory(
-                                              image.path,
-                                              "#212121",
-                                              "#000000",
-                                              "https://scrap.bualoitech.com/")
-                                          .then((data) {
-                                          print(data);
-                                        });
-                                });
-                              },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                ),
-                                height: screenWidthDp / 7,
-                                width: screenWidthDp / 7,
-                                child: SvgPicture.asset(
-                                  'assets/facebook-icon.svg',
-                                ),
-                              )),
-                          //Twitter
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: screenWidthDp / 12,
-                                ),
-                                GestureDetector(
-                                  child: Container(
-                                      height: 50,
-                                      width: 50,
-                                      margin: EdgeInsets.symmetric(
-                                        horizontal: 15,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                              screenHeightDp)),
-                                      child: Icon(Icons.whatshot,
-                                          color: Color(0xffFF8F3A),
-                                          size: appBarHeight / 3)),
-                                  onTap: () {},
-                                ),
-                                Text(
-                                  'เผา',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: s42,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                Container(
+                  margin: EdgeInsets.only(bottom: screenWidthDp / 15),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //  SizedBox(
+                        //   height: screenWidthDp / 20,
+                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: screenWidthDp / 25,
                             ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: screenWidthDp / 12,
-                                ),
-                                GestureDetector(
-                                  child: Container(
-                                      height: 50,
-                                      width: 50,
-                                      margin: EdgeInsets.symmetric(
-                                        horizontal: 15,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                              screenHeightDp)),
-                                      child: Icon(Icons.report_problem,
-                                          size: appBarHeight / 3)),
-                                  onTap: () {},
-                                ),
-                                Text(
-                                  'รายงาน',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: s42,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              'แบ่งปันไปยัง',
+                              style: TextStyle(
+                                fontSize: s48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
-                      ),
+
+                        Container(
+                          padding: EdgeInsets.only(top: screenWidthDp / 25),
+                          width: screenWidthDp,
+                          height: screenWidthDp / 3.9,
+                          child: ListView(
+                            //mainAxisAlignment: MainAxisAlignment.start,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            children: <Widget>[
+                              // story ig
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                        onTap: () async {
+                                          await screenshotController
+                                              .capture(pixelRatio: 1.5)
+                                              .then((image) async {
+                                            SocialShare.shareInstagramStory(
+                                                image.path,
+                                                "#212121",
+                                                "#000000",
+                                                "https://scrap.bualoitech.com/");
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          height: screenWidthDp / 7,
+                                          width: screenWidthDp / 7,
+                                          child: SvgPicture.asset(
+                                            'assets/ig-story-icon.svg',
+                                          ),
+                                        )),
+                                    Text(
+                                      'stories',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // facebook story
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                        onTap: () async {
+                                          await screenshotController
+                                              .capture(pixelRatio: 1.5)
+                                              .then((image) async {
+                                            Platform.isAndroid
+                                                ? SocialShare.shareFacebookStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/",
+                                                        appId:
+                                                            "152617042778122")
+                                                    .then((data) {
+                                                    print(data);
+                                                  })
+                                                : SocialShare.shareFacebookStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/")
+                                                    .then((data) {
+                                                    print(data);
+                                                  });
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          height: screenWidthDp / 7,
+                                          width: screenWidthDp / 7,
+                                          child: SvgPicture.asset(
+                                            'assets/facebook-icon.svg',
+                                          ),
+                                        )),
+                                    Text(
+                                      'facebook',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Divider(
+                          color: Color(0xfffa5a5a5),
+                          indent: screenWidthDp / 25,
+                          endIndent: screenWidthDp / 25,
+                        ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: screenWidthDp / 25,
+                            ),
+                            Text(
+                              'เพิ่มเติม',
+                              style: TextStyle(
+                                fontSize: s48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(top: screenWidthDp / 25),
+                          width: screenWidthDp,
+                          height: screenWidthDp / 4,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            //mainAxisAlignment: MainAxisAlignment.start,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            children: <Widget>[
+                              Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      screenHeightDp)),
+                                          child: Icon(Icons.whatshot,
+                                              color: Color(0xffFF8F3A),
+                                              size: appBarHeight / 2.4)),
+                                      onTap: () {
+                                        if (inHistory('burn', scrap.scrapId)) {
+                                          toast.toast(
+                                              'คุณเคยเผาสแครปก้อนนี้แล้ว');
+                                        } else {
+                                          final report = Provider.of<Report>(
+                                              context,
+                                              listen: false);
+                                          report.scrapId = scrap.scrapId;
+                                          report.scrapRef =
+                                              scrap.path.parent().path;
+                                          report.targetId = scrap.writerUid;
+                                          report.region = scrap.scrapRegion;
+                                          showdialogBurn(context,
+                                              burntScraps: history['burn']);
+                                        }
+                                      },
+                                    ),
+                                    Text(
+                                      'เผา',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      screenHeightDp)),
+                                          child: Icon(Icons.report_problem,
+                                              size: appBarHeight / 2.4)),
+                                      onTap: () {
+                                        final report = Provider.of<Report>(
+                                            context,
+                                            listen: false);
+                                        report.targetId = scrap.writerUid;
+                                        showDialogReport(context);
+                                      },
+                                    ),
+                                    Text(
+                                      'รายงาน',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      height: screenWidthDp / 10,
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: screenWidthDp / 9,
+                        width: screenWidthDp,
+                        color: Colors.grey[800],
+                        // color: Color(0xfffa5a5a5),
+                        child: Center(
+                          child: Text(
+                            'ยกเลิก',
+                            style: TextStyle(
+                                fontSize: s48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -343,18 +472,12 @@ class _FeedScrapState extends State<FeedScrap>
         });
   }
 
-  // Widget capture(Widget screen) {
-  //   return Screenshot(
-  //     controller: screenshotController,
-  //     child: screen,
-  //   );
-  // }
-
   Widget scrapWidget(ScrapModel scrapModel) {
     var transac = scrapModel.transaction;
     return StatefulBuilder(builder: (context, StateSetter setDialog) {
       var like = transac.like;
       var pick = transac.picked;
+
       return Container(
           padding: EdgeInsets.symmetric(
               horizontal: (screenWidthDp - screenWidthDp / 1.04) / 2),
@@ -394,19 +517,29 @@ class _FeedScrapState extends State<FeedScrap>
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Container(
-                      width: screenWidthDp / 1.04,
-                      height: screenWidthDp / 1.04 * 1.115,
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.only(left: 25, right: 25),
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                        image: AssetImage('assets/paperscrap.jpg'),
-                        fit: BoxFit.cover,
-                      )),
-                      child: Text(scrapModel.text,
-                          style: TextStyle(height: 1.35, fontSize: s60),
-                          textAlign: TextAlign.center),
+                    Stack(
+                      //addscrappaper
+                      children: <Widget>[
+                        Center(
+                          child: Container(
+                            width: screenWidthDp / 1.04,
+                            height: screenWidthDp / 1.04 * 1.115,
+                            child: SvgPicture.asset('assets/paperscrap.svg'),
+                            //  child: Image.asset('assets/paperscrap.jpg'),
+                          ),
+                        ),
+                        Center(
+                          child: Container(
+                            width: screenWidthDp / 1.04,
+                            height: screenWidthDp / 1.04 * 1.115,
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.only(left: 25, right: 25),
+                            child: Text(scrapModel.text,
+                                style: TextStyle(height: 1.35, fontSize: s60),
+                                textAlign: TextAlign.center),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: screenWidthDp / 36),
                     Container(
@@ -438,7 +571,8 @@ class _FeedScrapState extends State<FeedScrap>
                                   color: Colors.white, size: s70),
                               onTap: () async {
                                 // showShareSheet(context, scrap: scrapModel);
-                                showShare(context);
+                                replyButtonSheet(context, scrap: scrapModel);
+                                //showShare(context);
                               }),
                         ],
                       ),
@@ -797,7 +931,7 @@ class _FeedScrapState extends State<FeedScrap>
                                             screenHeightDp)),
                                     child: Icon(Icons.whatshot,
                                         color: Color(0xffFF8F3A),
-                                        size: appBarHeight / 3)),
+                                        size: screenWidthDp / 2)),
                                 onTap: () {
                                   if (inHistory('burn', scrap.scrapId)) {
                                     toast.toast('คุณเคยเผาสแครปก้อนนี้แล้ว');

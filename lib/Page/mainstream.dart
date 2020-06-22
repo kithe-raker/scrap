@@ -13,6 +13,7 @@ import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scrap/widget/guide.dart';
+import 'package:screenshot/screenshot.dart';
 
 class MainStream extends StatefulWidget {
   @override

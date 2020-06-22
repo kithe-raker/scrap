@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/LitteringScrap.dart';
 import 'package:scrap/Page/suppeople.dart';
@@ -54,13 +55,19 @@ class _WriteScrapState extends State<WriteScrap> {
                           children: <Widget>[
                             GestureDetector(
                               child: Icon(Icons.arrow_back,
-                                  color: Colors.white, size: s60),
+                                  color: Color(0xfffa5a5a5), size: s60),
                               onTap: () => nav.pop(context),
                             ),
                             Text('เขียนสแครปของคุณ',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: s46)),
-                            SizedBox(width: screenWidthDp / 18)
+                            GestureDetector(
+                              child: Icon(Icons.color_lens,
+                                  color: Color(0xfffa5a5a5), size: s60),
+                              onTap: (){
+                                
+                              }
+                            ),
                           ],
                         )),
                     SizedBox(height: screenHeightDp / 32),
@@ -118,16 +125,26 @@ class _WriteScrapState extends State<WriteScrap> {
                         children: <Widget>[
                           //รูปกระดาษ
                           Container(
+                             
+                            child: SvgPicture.asset(
+                              'assets/${texture.textures[textureIndex]}',
+                               fit: BoxFit.cover,
+                            ),
+                          ),
+                          Container(
                             alignment: Alignment.center,
                             margin: EdgeInsets.all(s10 / 5),
                             width: screenWidthDp / 1.04,
                             height: screenWidthDp / 1.04 * 1.115,
                             padding: EdgeInsets.symmetric(horizontal: 25),
                             decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                        'assets/${texture.textures[textureIndex]}'),
-                                    fit: BoxFit.cover)),
+                                // color: Colors.red,
+                                // image: DecorationImage(
+                                //     image: AssetImage(
+                                //         'assets/${texture.textures[textureIndex]}'),
+                                //     fit: BoxFit.cover)
+
+                                ),
                             child: Form(
                               key: _key,
                               child: TextFormField(
@@ -260,24 +277,35 @@ class _WriteScrapState extends State<WriteScrap> {
               margin: EdgeInsets.only(left: screenWidthDp / 42),
               child: AspectRatio(
                   aspectRatio: 0.826,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage('assets/$fileName'),
-                            fit: BoxFit.cover),
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        child: SvgPicture.asset('assets/$fileName'),
                       ),
-                      child: fileIndex == textureIndex
-                          ? Center(
-                              child: Container(
-                                  padding: EdgeInsets.all(screenWidthDp / 81),
-                                  decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.72),
-                                      borderRadius:
-                                          BorderRadius.circular(screenWidthDp)),
-                                  child: Icon(Icons.check,
-                                      color: Colors.white, size: s38)),
-                            )
-                          : SizedBox())),
+                      Container(
+                          // height: screenWidthDp/6,
+                          // width: screenWidthDp/6,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            // image: DecorationImage(
+                            //     image: AssetImage('assets/$fileName'),
+                            //     fit: BoxFit.cover),
+                          ),
+                          child: fileIndex == textureIndex
+                              ? Center(
+                                  child: Container(
+                                      padding:
+                                          EdgeInsets.all(screenWidthDp / 81),
+                                      decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.72),
+                                          borderRadius: BorderRadius.circular(
+                                              screenWidthDp)),
+                                      child: Icon(Icons.check,
+                                          color: Colors.white, size: s38)),
+                                )
+                              : SizedBox()),
+                    ],
+                  )),
             ),
             onTap: () {
               scrapData.textureIndex = fileIndex;
