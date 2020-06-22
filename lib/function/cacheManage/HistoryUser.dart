@@ -138,7 +138,7 @@ class HistoryUser {
     return scraps;
   }
 
-  updateFollowingScrap(String id, int comments) async {
+  updateFollowingScrap(String id, int comments, DateTime scrapTime) async {
     final file = await _localFile;
     var map = await read();
     var following = await readHistory(field: 'picked');
@@ -148,6 +148,15 @@ class HistoryUser {
       following.removeWhere((scp) => scp['id'] == id);
       scrap['comments'] = comments;
       following.add(scrap);
+      map['picked'] = following;
+      await file.writeAsString(json.encode(map));
+    } else {
+      following.add({
+        'id': id,
+        'timeStamp': DateFormat('yyyyMMdd HH:mm:ss').format(scrapTime),
+        'when': DateFormat('yyyyMMdd HH:mm:ss').format(DateTime.now()),
+        'comments': comments
+      });
       map['picked'] = following;
       await file.writeAsString(json.encode(map));
     }

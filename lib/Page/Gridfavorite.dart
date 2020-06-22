@@ -793,13 +793,13 @@ class _GridfavoriteState extends State<Gridfavorite> {
             );
           }),
       onTap: () {
-        if (ments != null) {
-          cacheHistory.updateFollowingScrap(data['id'], ments);
-          scraps.firstWhere((scrap) => scrap['id'] == data['id'])['comments'] =
-              ments;
-          setState(() {});
-          dialog(scraps.indexOf(data));
-        }
+        // if (ments != null) {
+        //   cacheHistory.updateFollowingScrap(data['id'], ments);
+        //   scraps.firstWhere((scrap) => scrap['id'] == data['id'])['comments'] =
+        //       ments;
+        //   setState(() {});
+        //   dialog(scraps.indexOf(data));
+        // }
       },
     );
   }
