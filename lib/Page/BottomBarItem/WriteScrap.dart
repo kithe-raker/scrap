@@ -62,12 +62,9 @@ class _WriteScrapState extends State<WriteScrap> {
                                 style: TextStyle(
                                     color: Colors.white, fontSize: s46)),
                             GestureDetector(
-                              child: Icon(Icons.color_lens,
-                                  color: Color(0xfffa5a5a5), size: s60),
-                              onTap: (){
-                                
-                              }
-                            ),
+                                child: Icon(Icons.color_lens,
+                                    color: Color(0xfffa5a5a5), size: s60),
+                                onTap: () {}),
                           ],
                         )),
                     SizedBox(height: screenHeightDp / 32),
@@ -125,10 +122,9 @@ class _WriteScrapState extends State<WriteScrap> {
                         children: <Widget>[
                           //รูปกระดาษ
                           Container(
-                             
                             child: SvgPicture.asset(
                               'assets/${texture.textures[textureIndex]}',
-                               fit: BoxFit.cover,
+                              fit: BoxFit.cover,
                             ),
                           ),
                           Container(
@@ -183,17 +179,23 @@ class _WriteScrapState extends State<WriteScrap> {
                       ),
                     ),
                     Container(
-                        width: screenWidthDp,
-                        height: screenHeightDp / 8.1,
-                        margin: EdgeInsets.only(top: screenWidthDp / 42),
-                        child: ListView(
-                          physics: AlwaysScrollableScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          children: texture.textures
-                              .map((fileName) => paperBlock(fileName))
-                              .toList(),
-                        )),
-                    SizedBox(height: screenHeightDp / 64),
+                      margin: EdgeInsets.only(top: screenWidthDp / 42),
+                      height: screenWidthDp / 7.5,
+                    ),
+                    // เลือกกระดาษ
+                    // Container(
+                    //     width: screenWidthDp,
+                    //คตนจ      height: screenHeightDp / 8.1,
+                    //     margin: EdgeInsets.only(top: screenWidthDp / 42),
+                    //     child: ListView(
+                    //       physics: AlwaysScrollableScrollPhysics(),
+                    //       scrollDirection: Axis.horizontal,
+                    //       children: texture.textures
+                    //           .map((fileName) => paperBlock(fileName))
+                    //           .toList(),
+                    //     )),
+
+                    //SizedBox(height: screenHeightDp / 64),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
