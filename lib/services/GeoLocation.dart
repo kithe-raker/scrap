@@ -1,11 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:scrap/services/Util.dart';
 
-class GeoPoint {
+class GeoLocation {
   static Util _util = Util();
   double latitude, longitude;
 
-  GeoPoint(this.latitude, this.longitude);
+  GeoLocation(this.latitude, this.longitude);
 
   /// return geographical distance between two Co-ordinates
   static double distanceBetween(
@@ -18,17 +19,17 @@ class GeoPoint {
     return _util.neighbors(hash);
   }
 
-  /// return hash of [GeoPoint]
+  /// return hash of [GeoLocation]
   String get hash {
     return _util.encode(this.latitude, this.longitude, 9);
   }
 
-  /// return all neighbors of [GeoPoint]
+  /// return all neighbors of [GeoLocation]
   List<String> get neighbors {
     return _util.neighbors(this.hash);
   }
 
-  /// return [GeoPoint] of [GeoPoint]
+  /// return [GeoLocation] of [GeoLocation]
   GeoPoint get geoPoint {
     return GeoPoint(this.latitude, this.longitude);
   }
@@ -37,7 +38,7 @@ class GeoPoint {
     return Coordinates(this.latitude, this.longitude);
   }
 
-  /// return distance between [GeoPoint] and ([lat], [lng])
+  /// return distance between [GeoLocation] and ([lat], [lng])
   double distance({@required double lat, @required double lng}) {
     return distanceBetween(from: coords, to: Coordinates(lat, lng));
   }
@@ -46,10 +47,9 @@ class GeoPoint {
     return {'geopoint': this.geoPoint, 'geohash': this.hash};
   }
 
-  /// haversine distance between [GeoPoint] and ([lat], [lng])
+  /// haversine distance between [GeoLocation] and ([lat], [lng])
   haversineDistance({@required double lat, @required double lng}) {
-    return GeoPoint.distanceBetween(
-        from: coords, to: Coordinates(lat, lng));
+    return GeoLocation.distanceBetween(from: coords, to: Coordinates(lat, lng));
   }
 }
 

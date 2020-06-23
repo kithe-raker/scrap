@@ -6,7 +6,6 @@ import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:scrap/services/Geopoint.dart' as geo;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +21,7 @@ import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/models/PlaceModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
+import 'package:scrap/services/GeoLocation.dart';
 import 'package:scrap/stream/LoadStatus.dart';
 import 'package:scrap/services/QueryMethods.dart';
 import 'package:scrap/services/admob_service.dart';
@@ -1219,7 +1219,7 @@ class _MapScrapsState extends State<MapScraps>
         radius: 210);
     isSearching = true;
     setState(() => circles[circleId] = circle);
-    geo.GeoPoint center = geo.GeoPoint(position.latitude, position.longitude);
+    GeoLocation center = GeoLocation(position.latitude, position.longitude);
     var docs =
         await QueryMethods().getDocsInRadius(radius: 0.21, center: center);
     addDocsFromSearch(docs);
@@ -1235,7 +1235,7 @@ class _MapScrapsState extends State<MapScraps>
   }
 
   addMarkerFromSearch(DocumentSnapshot doc) {
-    geo.GeoPoint point = doc['position']['geopoint'];
+    GeoLocation point = doc['position']['geopoint'];
     var latLng = LatLng(point.latitude, point.longitude);
     final MarkerId markerId = MarkerId(doc.documentID);
     final Marker marker = Marker(
@@ -1272,7 +1272,7 @@ class _MapScrapsState extends State<MapScraps>
   void _updateMarkers(List<DocumentSnapshot> documentList) {
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
-      geo.GeoPoint loca = data['position']['geopoint'];
+      GeoLocation loca = data['position']['geopoint'];
       if (!inHistory('burn', document.documentID)) {
         allScrap.add(document);
         _addMarker(loca.latitude, loca.longitude, document, data['uid']);

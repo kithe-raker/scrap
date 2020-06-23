@@ -17,8 +17,8 @@ import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
+import 'package:scrap/services/GeoLocation.dart';
 import 'package:scrap/stream/UserStream.dart';
-import 'package:scrap/services/Geopoint.dart' as geo;
 
 final rtdb = FirebaseDatabase.instance;
 
@@ -162,9 +162,9 @@ class Scraps {
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
     var batch = Firestore.instance.batch();
-    geo.GeoPoint defaultPoint =
-        geo.GeoPoint(defaultLocation.latitude, defaultLocation.longitude);
-    geo.GeoPoint point = geo.GeoPoint(location.latitude, location.longitude);
+    GeoLocation defaultPoint =
+        GeoLocation(defaultLocation.latitude, defaultLocation.longitude);
+    GeoLocation point = GeoLocation(location.latitude, location.longitude);
     var ref = Firestore.instance.collection(
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
@@ -231,9 +231,9 @@ class Scraps {
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
     var batch = fireStore.batch();
-    geo.GeoPoint point;
-    geo.GeoPoint defaultPoint =
-        geo.GeoPoint(location.latitude, location.longitude);
+    GeoLocation point;
+    GeoLocation defaultPoint =
+        GeoLocation(location.latitude, location.longitude);
     var ref = fireStore.collection(
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
@@ -241,7 +241,7 @@ class Scraps {
     if (place != null) {
       var ranLocation = random.getLocation(
           lat: place.location.latitude, lng: place.location.longitude);
-      point = geo.GeoPoint(ranLocation.latitude, ranLocation.longitude);
+      point = GeoLocation(ranLocation.latitude, ranLocation.longitude);
       updatePlace(context,
           place: place,
           id: docId,
