@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/provider/UserData.dart';
@@ -124,38 +125,65 @@ class _BackpackState extends State<Backpack>
 
   Widget paperBlock(String fileName) {
     var requiredAtt = texture.point[fileName];
-    return Container(
-      height: screenWidthDp / 2.16 * 1.21,
-      width: screenWidthDp / 2.16,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          image: DecorationImage(
-              image: AssetImage('assets/$fileName'), fit: BoxFit.cover)),
-      child: att < requiredAtt
-          ? Container(
-              color: Colors.black.withOpacity(0.6),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(Icons.lock, color: Colors.black, size: s100),
-                  RichText(
-                      text: TextSpan(
-                    style: TextStyle(
-                        fontSize: s42,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'ThaiSans'),
-                    children: <TextSpan>[
-                      TextSpan(text: 'ต้องการ '),
-                      TextSpan(
-                          text: '$requiredAtt',
-                          style: TextStyle(color: Colors.lightBlue[300])),
-                      TextSpan(text: ' เอทเทนชั่น'),
-                    ],
-                  ))
-                ],
-              ))
-          : SizedBox(),
+    return Stack(
+      children: <Widget>[
+        Container(
+          height: screenWidthDp / 2.16 * 1.21,
+          width: screenWidthDp / 2.16,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            // image: DecorationImage(
+            //     image: AssetImage('assets/$fileName'), fit: BoxFit.cover)
+          ),
+          child: att < requiredAtt
+              ? Stack(
+                  children: <Widget>[
+                    Center(
+                      child: Container(
+                        child: SvgPicture.asset(
+                          'assets/$fileName',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                          height: screenWidthDp / 2.16 * 1.21,
+                          width: screenWidthDp / 2.16,
+                          color: Colors.black.withOpacity(0.6),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(Icons.lock, color: Colors.black, size: s100),
+                              RichText(
+                                  text: TextSpan(
+                                style: TextStyle(
+                                    fontSize: s42,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'ThaiSans'),
+                                children: <TextSpan>[
+                                  TextSpan(text: 'ต้องการ '),
+                                  TextSpan(
+                                      text: '$requiredAtt',
+                                      style: TextStyle(
+                                          color: Colors.lightBlue[300])),
+                                  TextSpan(text: ' เอทเทนชั่น'),
+                                ],
+                              ))
+                            ],
+                          )),
+                    ),
+                  ],
+                )
+              : Container(
+                  child: SvgPicture.asset(
+                    'assets/$fileName',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+        ),
+      ],
     );
   }
 }
