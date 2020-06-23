@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -51,7 +52,6 @@ class _PersonCardState extends State<PersonCard> {
       child: GestureDetector(
           child: Container(
             color: Colors.transparent,
-            width: a.width,
             height: a.width / 5,
             margin: EdgeInsets.only(bottom: a.width / 100, left: a.width / 100),
             child: Row(
@@ -84,11 +84,13 @@ class _PersonCardState extends State<PersonCard> {
                                   fontSize: a.width / 18,
                                   fontWeight: FontWeight.bold)),
                           SizedBox(
-                            height: screenHeightDp / 24,
-                            width: screenWidthDp / 2.1,
-                            child: Text(widget.data['status'] ?? '',
+                            width: screenWidthDp / 2.4,
+                            child: AutoSizeText(widget.data['status'] ?? '',
+                                maxLines: 1,
+                                minFontSize: 20,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                    color: Colors.grey, fontSize: s38)),
+                                    color: Colors.grey, fontSize: 21)),
                           )
                         ],
                       ),
