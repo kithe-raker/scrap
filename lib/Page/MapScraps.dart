@@ -6,11 +6,10 @@ import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flare_flutter/flare_actor.dart';
+import 'package:scrap/services/Geopoint.dart' as geo;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -1220,8 +1219,7 @@ class _MapScrapsState extends State<MapScraps>
         radius: 210);
     isSearching = true;
     setState(() => circles[circleId] = circle);
-    GeoFirePoint center = Geoflutterfire()
-        .point(latitude: position.latitude, longitude: position.longitude);
+    geo.GeoPoint center = geo.GeoPoint(position.latitude, position.longitude);
     var docs =
         await QueryMethods().getDocsInRadius(radius: 0.21, center: center);
     addDocsFromSearch(docs);
@@ -1237,7 +1235,7 @@ class _MapScrapsState extends State<MapScraps>
   }
 
   addMarkerFromSearch(DocumentSnapshot doc) {
-    GeoPoint point = doc['position']['geopoint'];
+    geo.GeoPoint point = doc['position']['geopoint'];
     var latLng = LatLng(point.latitude, point.longitude);
     final MarkerId markerId = MarkerId(doc.documentID);
     final Marker marker = Marker(
@@ -1274,7 +1272,7 @@ class _MapScrapsState extends State<MapScraps>
   void _updateMarkers(List<DocumentSnapshot> documentList) {
     documentList.forEach((DocumentSnapshot document) {
       var data = document.data;
-      GeoPoint loca = data['position']['geopoint'];
+      geo.GeoPoint loca = data['position']['geopoint'];
       if (!inHistory('burn', document.documentID)) {
         allScrap.add(document);
         _addMarker(loca.latitude, loca.longitude, document, data['uid']);
