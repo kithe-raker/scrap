@@ -25,6 +25,7 @@ class _WriteScrapState extends State<WriteScrap> {
   bool private = false;
   int textureIndex = 0;
   var _key = GlobalKey<FormState>();
+  bool showtheme = false;
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +55,11 @@ class _WriteScrapState extends State<WriteScrap> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             GestureDetector(
-                              child: Icon(Icons.arrow_back,
-                                  color: Color(0xfffa5a5a5), size: s60),
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                color: Color(0xfffa5a5a5),
+                                size: s52,
+                              ),
                               onTap: () => nav.pop(context),
                             ),
                             Text('เขียนสแครปของคุณ',
@@ -64,7 +68,11 @@ class _WriteScrapState extends State<WriteScrap> {
                             GestureDetector(
                                 child: Icon(Icons.color_lens,
                                     color: Color(0xfffa5a5a5), size: s60),
-                                onTap: () {}),
+                                onTap: () {
+                                  setState(() {
+                                    showtheme = !showtheme;
+                                  });
+                                }),
                           ],
                         )),
                     SizedBox(height: screenHeightDp / 32),
@@ -183,9 +191,10 @@ class _WriteScrapState extends State<WriteScrap> {
                       height: screenWidthDp / 7.5,
                     ),
                     // เลือกกระดาษ
+
                     // Container(
                     //     width: screenWidthDp,
-                    //คตนจ      height: screenHeightDp / 8.1,
+                    //     height: screenHeightDp / 8.1,
                     //     margin: EdgeInsets.only(top: screenWidthDp / 42),
                     //     child: ListView(
                     //       physics: AlwaysScrollableScrollPhysics(),
@@ -253,19 +262,129 @@ class _WriteScrapState extends State<WriteScrap> {
                 ),
               ),
             ),
-
-            // แปะโฆษณา
-            // Positioned(
-            //     bottom: 0,
-            //     child: Container(
-            //       child: AdmobBanner(
-            //           adUnitId: AdmobService().getBannerAdId(),
-            //           adSize: AdmobBannerSize.FULL_BANNER),
-            //     )),
+            showtheme == true ? showTheme() : SizedBox(),
             StreamLoading(stream: scrap.loading, blur: true)
           ],
         ),
       ),
+    );
+  }
+
+  Widget showTheme() {
+    return Container(
+      height: screenHeightDp,
+      width: screenWidthDp,
+      color: Colors.grey[900],
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Stack(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                //color picker
+                // Container(
+                //   margin: EdgeInsets.only(top: screenWidthDp / 42),
+                //   padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                //   width: screenWidthDp,
+                //   height: appBarHeight / 1.42,
+                //   child: Text('สี',
+                //       textAlign: TextAlign.start,
+                //       style: TextStyle(
+                //           color: Colors.white,
+                //           fontSize: s46,
+                //           fontWeight: FontWeight.bold)),
+                // ),
+                // Container(
+                //     width: screenWidthDp,
+                //     height: screenWidthDp / 8,
+                //     // height: screenHeightDp / 8.1,
+                //     margin: EdgeInsets.only(
+                //         top: screenWidthDp / 42, bottom: screenWidthDp / 42),
+                //     padding:
+                //         EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                //     child: ListView(
+                //       physics: AlwaysScrollableScrollPhysics(),
+                //       scrollDirection: Axis.horizontal,
+                //       children: <Widget>[
+                //         chooseColor(Colors.black),
+                //         chooseColor(Colors.white),
+                //         chooseColor(Colors.purple),
+                //         chooseColor(Colors.blue),
+                //         chooseColor(Colors.blueAccent),
+                //         chooseColor(Colors.green),
+                //         chooseColor(Colors.yellow),
+                //         chooseColor(Colors.orange),
+                //         chooseColor(Colors.red),
+                //       ],
+                //     )),
+                //paper picker
+                Container(
+                    height: appBarHeight / 1.42,
+                    width: screenWidthDp,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                    color: Colors.transparent,
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        // SizedBox(),
+                        Text('กระดาษ',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: s46,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    )),
+                Container(
+                    width: screenWidthDp,
+                    height: screenWidthDp / 2,
+                    // height: screenHeightDp / 8.1,
+                    margin: EdgeInsets.only(
+                        top: screenWidthDp / 42, bottom: screenWidthDp / 42),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                    child: ListView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      children: texture.textures
+                          .map((fileName) => paperBlock(fileName))
+                          .toList(),
+                    )),
+              ],
+            ),
+            Positioned(
+              right: screenWidthDp / 21,
+              top: screenWidthDp / 42,
+              child: Container(
+                child: GestureDetector(
+                    child:
+                        Icon(Icons.save, color: Color(0xffff5f5f5), size: s60),
+                    onTap: () {
+                      setState(() {
+                        showtheme = !showtheme;
+                      });
+                    }),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget chooseColor(Color colors) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(right: screenWidthDp / 45),
+          decoration: BoxDecoration(
+              color: colors,
+              borderRadius: BorderRadius.all(Radius.circular(screenWidthDp))),
+          height: screenWidthDp / 8,
+          width: screenWidthDp / 8,
+        ),
+      ],
     );
   }
 
@@ -276,38 +395,35 @@ class _WriteScrapState extends State<WriteScrap> {
     return userStream.att >= requiredAtt
         ? GestureDetector(
             child: Container(
-              margin: EdgeInsets.only(left: screenWidthDp / 42),
-              child: AspectRatio(
-                  aspectRatio: 0.826,
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        child: SvgPicture.asset('assets/$fileName'),
+              width: screenWidthDp / 2.3,
+              height: screenWidthDp,
+              //margin: EdgeInsets.only(left: screenWidthDp / 42),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    child: SvgPicture.asset(
+                      'assets/$fileName',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
                       ),
-                      Container(
-                          // height: screenWidthDp/6,
-                          // width: screenWidthDp/6,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            // image: DecorationImage(
-                            //     image: AssetImage('assets/$fileName'),
-                            //     fit: BoxFit.cover),
-                          ),
-                          child: fileIndex == textureIndex
-                              ? Center(
-                                  child: Container(
-                                      padding:
-                                          EdgeInsets.all(screenWidthDp / 81),
-                                      decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.72),
-                                          borderRadius: BorderRadius.circular(
-                                              screenWidthDp)),
-                                      child: Icon(Icons.check,
-                                          color: Colors.white, size: s38)),
-                                )
-                              : SizedBox()),
-                    ],
-                  )),
+                      child: fileIndex == textureIndex
+                          ? Center(
+                              child: Container(
+                                  padding: EdgeInsets.all(screenWidthDp / 81),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[800].withOpacity(0.72),
+                                      borderRadius:
+                                          BorderRadius.circular(screenWidthDp)),
+                                  child: Icon(Icons.check,
+                                      color: Colors.white, size: s38)),
+                            )
+                          : SizedBox()),
+                ],
+              ),
             ),
             onTap: () {
               scrapData.textureIndex = fileIndex;
