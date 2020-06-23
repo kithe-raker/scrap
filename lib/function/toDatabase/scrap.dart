@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -19,13 +18,13 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/stream/UserStream.dart';
+import 'package:scrap/services/Geopoint.dart' as geo;
 
 final rtdb = FirebaseDatabase.instance;
 
 class Scraps {
   PublishSubject<bool> loading = PublishSubject();
   final FirebaseMessaging fcm = FirebaseMessaging();
-  final Geoflutterfire geofire = Geoflutterfire();
 
   throwTo(BuildContext context,
       {@required Map data,
@@ -163,11 +162,9 @@ class Scraps {
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
     var batch = Firestore.instance.batch();
-    GeoFirePoint defaultPoint = Geoflutterfire().point(
-        latitude: defaultLocation.latitude,
-        longitude: defaultLocation.longitude);
-    GeoFirePoint point = Geoflutterfire()
-        .point(latitude: location.latitude, longitude: location.longitude);
+    geo.GeoPoint defaultPoint =
+        geo.GeoPoint(defaultLocation.latitude, defaultLocation.longitude);
+    geo.GeoPoint point = geo.GeoPoint(location.latitude, location.longitude);
     var ref = Firestore.instance.collection(
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
@@ -234,9 +231,9 @@ class Scraps {
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
     var batch = fireStore.batch();
-    GeoFirePoint point;
-    GeoFirePoint defaultPoint = geofire.point(
-        latitude: location.latitude, longitude: location.longitude);
+    geo.GeoPoint point;
+    geo.GeoPoint defaultPoint =
+        geo.GeoPoint(location.latitude, location.longitude);
     var ref = fireStore.collection(
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
@@ -244,8 +241,7 @@ class Scraps {
     if (place != null) {
       var ranLocation = random.getLocation(
           lat: place.location.latitude, lng: place.location.longitude);
-      point = geofire.point(
-          latitude: ranLocation.latitude, longitude: ranLocation.longitude);
+      point = geo.GeoPoint(ranLocation.latitude, ranLocation.longitude);
       updatePlace(context,
           place: place,
           id: docId,
@@ -282,11 +278,11 @@ class Scraps {
       },
     };
     if (place != null) {
-      scrap['position'] = point.data;
+      scrap['position'] = point;
       scrap['places'] = FieldValue.arrayUnion([place.placeId]);
     }
     batch.setData(ref.document(docId), scrap);
-    scrap['default'] = defaultPoint.data;
+    scrap['default'] = defaultPoint;
     scrap['burnt'] = false;
     batch.setData(
         fireStore
@@ -312,6 +308,7 @@ class Scraps {
       @required String text,
       @required int texture}) async {
     final db = Provider.of<RealtimeDB>(context, listen: false);
+    final user = Provider.of<UserData>(context, listen: false);
     var allPlace = FirebaseDatabase(app: db.placeAll);
     var ref = allPlace.reference().child('places/${place.placeId}');
     var placeData;
@@ -343,11 +340,17 @@ class Scraps {
           .setData(place.toJSON, merge: true);
     }
     var refDoc = fireStore.collection('Places').document(place.placeId);
-    fireStore.runTransaction(
-        (transaction) async => transaction.get(refDoc).then((doc) {
-              List recently = doc.data['recently'] ?? [];
+    fireStore
+        .runTransaction((transaction) => transaction.get(refDoc).then((doc) {
+              List recently = doc?.data['recently'] ?? [];
               if (recently.length > 7) recently.removeAt(0);
-              recently.add({'text': text, 'id': id, 'texture': texture});
+              recently.add({
+                'text': text,
+                'id': id,
+                'timeStamp': FieldValue.serverTimestamp(),
+                'region': user.region,
+                'texture': texture
+              });
               transaction.update(refDoc, {'recently': recently});
             }));
   }

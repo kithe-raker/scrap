@@ -67,10 +67,12 @@ packages:
   cloud_firestore:
     dependency: "direct main"
     description:
-      name: cloud_firestore
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.13.6"
+      path: "packages/cloud_firestore/cloud_firestore"
+      ref: bd4007a28b27fc5838d2849dae6ba875a8b635e2
+      resolved-ref: bd4007a28b27fc5838d2849dae6ba875a8b635e2
+      url: "https://github.com/pY4x3g/flutterfire.git"
+    source: git
+    version: "0.13.4+1"
   cloud_firestore_platform_interface:
     dependency: transitive
     description:
@@ -331,13 +333,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.1"
-  geoflutterfire:
-    dependency: "direct main"
-    description:
-      name: geoflutterfire
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.0"
   geolocator:
     dependency: "direct main"
     description:
