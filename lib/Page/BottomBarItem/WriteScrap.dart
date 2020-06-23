@@ -49,7 +49,7 @@ class _WriteScrapState extends State<WriteScrap> {
                         width: screenWidthDp,
                         padding: EdgeInsets.symmetric(
                             horizontal: screenWidthDp / 21),
-                        color: Colors.black,
+                        color: Colors.transparent,
                         alignment: Alignment.center,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -57,7 +57,7 @@ class _WriteScrapState extends State<WriteScrap> {
                             GestureDetector(
                               child: Icon(
                                 Icons.arrow_back_ios,
-                                color: Color(0xfffa5a5a5),
+                                color: Colors.white,
                                 size: s52,
                               ),
                               onTap: () => nav.pop(context),
@@ -67,7 +67,7 @@ class _WriteScrapState extends State<WriteScrap> {
                                     color: Colors.white, fontSize: s46)),
                             GestureDetector(
                                 child: Icon(Icons.color_lens,
-                                    color: Color(0xfffa5a5a5), size: s60),
+                                    color: Colors.white, size: s60),
                                 onTap: () {
                                   setState(() {
                                     showtheme = !showtheme;
@@ -338,19 +338,19 @@ class _WriteScrapState extends State<WriteScrap> {
                     )),
                 Container(
                     width: screenWidthDp,
-                    height: screenWidthDp / 2,
+                    height: screenWidthDp / 2.16 * 1.21,
+
                     // height: screenHeightDp / 8.1,
                     margin: EdgeInsets.only(
                         top: screenWidthDp / 42, bottom: screenWidthDp / 42),
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
                     child: ListView(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      children: texture.textures
-                          .map((fileName) => paperBlock(fileName))
-                          .toList(),
-                    )),
+                        physics: AlwaysScrollableScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        children: texture.textures
+                            .map((fileName) => paperBlock(fileName))
+                            .toList())),
               ],
             ),
             Positioned(
@@ -395,9 +395,11 @@ class _WriteScrapState extends State<WriteScrap> {
     return userStream.att >= requiredAtt
         ? GestureDetector(
             child: Container(
-              width: screenWidthDp / 2.3,
-              height: screenWidthDp,
-              //margin: EdgeInsets.only(left: screenWidthDp / 42),
+              // width: screenWidthDp / 2.3,
+              // height: screenWidthDp,
+              height: screenWidthDp / 2.16 * 1.21,
+              width: screenWidthDp / 2.16,
+              margin: EdgeInsets.only(right: screenWidthDp / 42),
               child: Stack(
                 children: <Widget>[
                   Container(
