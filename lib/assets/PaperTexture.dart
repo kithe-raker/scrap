@@ -1,7 +1,7 @@
 class PaperTexture {
-  static const List<String> _textures = ['paperscrap.jpg', 'paperboard.jpg'];
+  static const List<String> _textures = ['paperscrap.svg', 'paperboard.jpg'];
   static const Map<String, int> _point = {
-    'paperscrap.jpg': 0,
+    'paperscrap.svg': 0,
     'paperboard.jpg': 100
   };
 
