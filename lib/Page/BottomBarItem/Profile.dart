@@ -371,19 +371,6 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget footerList() {
-    return CustomFooter(builder: (BuildContext context, LoadStatus mode) {
-      switch (mode) {
-        case LoadStatus.loading:
-          return Center(child: CircularProgressIndicator());
-          break;
-        default:
-          return SizedBox();
-          break;
-      }
-    });
-  }
-
   Widget recentlyThrown(List docs) {
     Size a = MediaQuery.of(context).size;
     return Container(

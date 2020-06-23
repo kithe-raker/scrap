@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:scrap/Page/LitteringScrap.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/assets/PaperTexture.dart';
@@ -13,7 +14,6 @@ import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/streamWidget/StreamLoading.dart';
-import 'package:stream_transform/stream_transform.dart';
 
 class WriteScrap extends StatefulWidget {
   @override
@@ -303,10 +303,29 @@ class _SearchPeopleDialogState extends State<SearchPeopleDialog> {
   var searching = false;
   var _controller = TextEditingController();
   var focus = FocusNode();
-  StreamController<String> streamController = StreamController.broadcast();
+  Timer timer;
+  PublishSubject<String> searchController = PublishSubject<String>();
+
+  _onSearchChanged() {
+    if (timer?.isActive ?? false) timer.cancel();
+    timer = Timer(const Duration(milliseconds: 540), () {
+      var trim = _controller.text.trim();
+      trim.length > 0 && trim[0] == '@'
+          ? searchController.add(trim.substring(1))
+          : searchController.add(trim);
+    });
+  }
+
+  @override
+  void initState() {
+    _controller.addListener(_onSearchChanged);
+    super.initState();
+  }
 
   @override
   void dispose() {
+    timer.cancel();
+    _controller.removeListener(_onSearchChanged);
     _controller.dispose();
     focus.dispose();
     super.dispose();
@@ -332,6 +351,7 @@ class _SearchPeopleDialogState extends State<SearchPeopleDialog> {
               Center(
                 child: Container(
                   height: screenHeightDp / 1.21,
+                  margin: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
                   decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(12)),
@@ -357,30 +377,23 @@ class _SearchPeopleDialogState extends State<SearchPeopleDialog> {
                                 border: Border.all(color: Color(0xfff26A4FF))),
                             child: Stack(children: <Widget>[
                               TextField(
-                                controller: _controller,
-                                focusNode: focus,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: s42),
-                                textAlign: TextAlign.center,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'ค้นหาผู้คน',
-                                  contentPadding: EdgeInsets.all(4.8),
-                                  hintStyle: TextStyle(
-                                      color: Colors.white60, fontSize: s42),
-                                  // fillColor: Colors.red,
-                                ),
-                                onTap: () {
-                                  focus.requestFocus();
-                                  setState(() => searching = true);
-                                },
-                                onChanged: (val) {
-                                  var trim = val.trim();
-                                  trim[0] == '@'
-                                      ? streamController.add(trim.substring(1))
-                                      : streamController.add(trim);
-                                },
-                              ),
+                                  controller: _controller,
+                                  focusNode: focus,
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: s42),
+                                  textAlign: TextAlign.center,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: 'ค้นหาผู้คน',
+                                    contentPadding: EdgeInsets.all(4.8),
+                                    hintStyle: TextStyle(
+                                        color: Colors.white60, fontSize: s42),
+                                    // fillColor: Colors.red,
+                                  ),
+                                  onTap: () {
+                                    focus.requestFocus();
+                                    setState(() => searching = true);
+                                  }),
                               searching
                                   ? Container(
                                       alignment: Alignment.centerRight,
@@ -393,7 +406,7 @@ class _SearchPeopleDialogState extends State<SearchPeopleDialog> {
                                           onTap: () {
                                             focus.unfocus();
                                             _controller.clear();
-                                            streamController.add(null);
+                                            searchController.add(null);
                                             setState(() => searching = false);
                                           }),
                                     )
@@ -401,8 +414,7 @@ class _SearchPeopleDialogState extends State<SearchPeopleDialog> {
                             ])),
                         Expanded(
                           child: StreamBuilder(
-                              stream: streamController.stream
-                                  .debounce(Duration(milliseconds: 540)),
+                              stream: searchController.stream,
                               builder: (context, snapshot) {
                                 return Subpeople(
                                     searchText: snapshot?.data,
