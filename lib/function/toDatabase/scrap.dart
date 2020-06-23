@@ -242,11 +242,6 @@ class Scraps {
       var ranLocation = random.getLocation(
           lat: place.location.latitude, lng: place.location.longitude);
       point = GeoLocation(ranLocation.latitude, ranLocation.longitude);
-      updatePlace(context,
-          place: place,
-          id: docId,
-          text: scrapData.text,
-          texture: scrapData.textureIndex);
     }
 
     var trans = {
@@ -278,11 +273,11 @@ class Scraps {
       },
     };
     if (place != null) {
-      scrap['position'] = point;
+      scrap['position'] = point.data;
       scrap['places'] = FieldValue.arrayUnion([place.placeId]);
     }
     batch.setData(ref.document(docId), scrap);
-    scrap['default'] = defaultPoint;
+    scrap['default'] = defaultPoint.data;
     scrap['burnt'] = false;
     batch.setData(
         fireStore
@@ -296,6 +291,12 @@ class Scraps {
         .child('users/${user.uid}')
         .update({'papers': userStream.papers - 1});
     await batch.commit();
+    if (place != null)
+      await updatePlace(context,
+          place: place,
+          id: docId,
+          text: scrapData.text,
+          texture: scrapData.textureIndex);
     scrapData.clearData();
     loading.add(false);
     toast('คุณโยนสแครปไปที่คุณเลือกแล้ว');
@@ -340,14 +341,14 @@ class Scraps {
           .setData(place.toJSON, merge: true);
     }
     var refDoc = fireStore.collection('Places').document(place.placeId);
-    fireStore
+    await fireStore
         .runTransaction((transaction) => transaction.get(refDoc).then((doc) {
               List recently = doc?.data['recently'] ?? [];
               if (recently.length > 7) recently.removeAt(0);
               recently.add({
                 'text': text,
                 'id': id,
-                'timeStamp': FieldValue.serverTimestamp(),
+                'timeStamp': DateTime.now(),
                 'region': user.region,
                 'texture': texture
               });

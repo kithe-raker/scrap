@@ -22,7 +22,7 @@ class ScrapNearby extends StatefulWidget {
 class _ScrapNearbyState extends State<ScrapNearby> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
-  BitmapDescriptor scrapIcon;
+  BitmapDescriptor scrapIcon, placeIcon;
   GoogleMapController mapController;
   StreamSubscription scrapStream;
 
@@ -79,7 +79,7 @@ class _ScrapNearbyState extends State<ScrapNearby> {
                         children: <Widget>[
                           Row(children: <Widget>[
                             Hero(
-                              tag: 'placeTag',
+                              tag: widget.place.id,
                               child: Container(
                                   padding: EdgeInsets.all(screenWidthDp / 64),
                                   decoration: BoxDecoration(
@@ -154,6 +154,7 @@ class _ScrapNearbyState extends State<ScrapNearby> {
   void onMapCreated(GoogleMapController googleMapController) {
     this.mapController = googleMapController;
     changeMapMode();
+    placeMarker();
     addCircle();
     Future.delayed(Duration(milliseconds: 320), () {
       googleMapController.moveCamera(CameraUpdate.newCameraPosition(
@@ -164,6 +165,17 @@ class _ScrapNearbyState extends State<ScrapNearby> {
     });
     scrapStream = nearby.nearbyStream
         .listen((scraps) => scraps.forEach((scrap) => addMarkers(scrap)));
+  }
+
+  placeMarker() {
+    MarkerId markerId = MarkerId(widget.place.id);
+    LatLng position = widget.place.location;
+    Marker marker = Marker(
+        markerId: markerId,
+        position: position,
+        icon: placeIcon,
+        draggable: false);
+    if (this.mounted) setState(() => markers[markerId] = marker);
   }
 
   addMarkers(ScrapModel scrap) {
@@ -183,12 +195,18 @@ class _ScrapNearbyState extends State<ScrapNearby> {
     BitmapDescriptor.fromAssetImage(
             imageConfiguration, 'assets/paper-small.png')
         .then(_updateBitScrap);
+    BitmapDescriptor.fromAssetImage(
+            imageConfiguration, 'assets/locationmarker.png')
+        .then(updateBitplace);
+    // 'locationmarker.png'
   }
 
   void _updateBitScrap(BitmapDescriptor bitmap) {
-    setState(() {
-      scrapIcon = bitmap;
-    });
+    setState(() => scrapIcon = bitmap);
+  }
+
+  void updateBitplace(BitmapDescriptor bitmap) {
+    setState(() => placeIcon = bitmap);
   }
 
   addCircle() {

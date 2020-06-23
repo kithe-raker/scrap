@@ -10,10 +10,12 @@ import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/models/TopPlaceModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
+import 'package:scrap/stream/LoadStatus.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/explore/PlaceWidget.dart';
 import 'package:scrap/widget/footer.dart';
+import 'package:scrap/widget/streamWidget/StreamLoading.dart';
 
 class ExplorePage extends StatefulWidget {
   @override
@@ -179,6 +181,7 @@ class _ExplorePageState extends State<ExplorePage>
                                 footer: Footer(),
                                 onLoading: () => loadMorePlace(),
                                 child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: places
                                         .map((place) => PlaceWidget(
                                             place: place,
@@ -193,6 +196,7 @@ class _ExplorePageState extends State<ExplorePage>
             //   alignment: Alignment.topCenter,
             //   child:
             // )
+            Center(child: StreamLoading(stream: loadStatus.nearbyStatus))
           ],
         ),
       ),

@@ -63,11 +63,7 @@ dependencies:
   equatable: ^1.2.0
   dio: ^3.0.9
   screenshot: ^0.2.0
-  cloud_firestore:
-    git:
-      url: https://github.com/pY4x3g/flutterfire.git
-      ref: bd4007a28b27fc5838d2849dae6ba875a8b635e2
-      path: packages/cloud_firestore/cloud_firestore
+  cloud_firestore: ^0.13.7
 
 dev_dependencies:
   flutter_test:

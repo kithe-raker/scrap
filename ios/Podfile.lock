@@ -535,7 +535,7 @@ SPEC CHECKSUMS:
   abseil: 18063d773f5366ff8736a050fe035a28f635fd27
   admob_flutter: 8033bcca85371a0554aa99d525a83a4770e679f0
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
-  cloud_firestore: 49a237bd7b154ac2134bc1fca087e7d2f790973b
+  cloud_firestore: 2a4f8f802fb0b701cf809b283b6bec7477ebaa6f
   cloud_firestore_web: 9ec3dc7f5f98de5129339802d491c1204462bfec
   Firebase: 0219bb4782eb1406f1b9b0628a2e625484ce910d
   firebase_admob: d8c2bc95b5e0069406280ce6adb816cdee6aa595
