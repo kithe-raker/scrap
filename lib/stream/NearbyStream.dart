@@ -37,6 +37,7 @@ class NearbyStream {
 
   Future<void> initNearby(BuildContext context,
       {@required String placeId}) async {
+    loadStatus.nearbyStatus.add(true);
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     List<ScrapModel> queryScraps = [];
@@ -56,6 +57,7 @@ class NearbyStream {
       });
       nearbySubject.add(queryScraps);
     }
+    loadStatus.nearbyStatus.add(false);
   }
 
   Future<void> loadMore(BuildContext context,

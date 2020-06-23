@@ -41,7 +41,7 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                     child: Row(
                       children: <Widget>[
                         Hero(
-                          tag: 'placeTag',
+                          tag: widget.place.id,
                           child: Container(
                               padding: EdgeInsets.all(screenWidthDp / 64),
                               decoration: BoxDecoration(
