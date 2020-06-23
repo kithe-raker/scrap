@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:scrap/services/GeoLocation.dart';
 
 class PlaceModel extends Equatable {
   final String name;
@@ -34,8 +34,8 @@ class PlaceModel extends Equatable {
         'category': this.categoryId
       };
 
-  GeoFirePoint get geoPoint => Geoflutterfire().point(
-      latitude: this.location.latitude, longitude: this.location.longitude);
+  GeoLocation get geoPoint =>
+      GeoLocation(this.location.latitude, this.location.longitude);
 
   String get placeId => this.herePlaceId.split(':')[3].split('-')[1];
 }

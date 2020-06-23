@@ -20,11 +20,6 @@ import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:social_share/social_share.dart';
 
 class FeedScrap extends StatefulWidget {
   @override

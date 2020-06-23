@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/BottomBarItem/FeedScrap.dart';
 import 'package:scrap/Page/BottomBarItem/Profile.dart';
-import 'package:scrap/Page/BottomBarItem/searcheverything.dart';
+import 'package:scrap/Page/bottomBarItem/Explore/ExplorePage.dart';
 import 'package:scrap/Page/bottomBarItem/PageView/PageViewActivity.dart';
 import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
@@ -26,7 +26,7 @@ class _MainStreamState extends State<MainStream> {
 
   final bodyList = [
     FeedScrap(),
-    SearchEveryThing(),
+    ExplorePage(),
     PageViewActivity(),
     Profile(),
   ];

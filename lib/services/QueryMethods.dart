@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/services/GeoLocation.dart';
 import 'package:scrap/services/Util.dart';
 
 class QueryMethods {
   Future<List<DocumentSnapshot>> getDocsInRadius(
-      {@required double radius, @required GeoFirePoint center}) async {
+      {@required double radius, @required GeoLocation center}) async {
     int precision = Util.setPrecision(radius);
     List<DocumentSnapshot> docs = [];
     String centerHash = center.hash.substring(0, precision);
-    List<String> area = GeoFirePoint.neighborsOf(hash: centerHash)
+    List<String> area = GeoLocation.neighborsOf(hash: centerHash)
       ..add(centerHash);
     await Future.forEach(area, (hash) async {
       Query tempQuery = _queryPoint(hash, 'position');

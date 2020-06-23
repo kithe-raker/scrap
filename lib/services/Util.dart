@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:scrap/services/GeoLocation.dart';
 
 class Util {
   static const BASE32_CODES = '0123456789bcdefghjkmnpqrstuvwxyz';

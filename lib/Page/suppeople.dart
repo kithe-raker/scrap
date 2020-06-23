@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
@@ -85,21 +83,28 @@ class _SubpeopleState extends State<Subpeople>
                                 ),
                               ),
                             )
-                          : widget.searchText != null
-                              ? serachResult()
-                              : recently.length < 1 && following.length < 1
-                                  ? Center(child: guide('ไม่มีคนที่คุณติดตาม'))
-                                  : ListView(
-                                      physics: AlwaysScrollableScrollPhysics(),
-                                      children: <Widget>[
-                                        recently.length > 0
-                                            ? recentlyThrow()
-                                            : SizedBox(),
-                                        following.length > 0
-                                            ? followingList()
-                                            : SizedBox()
-                                      ],
-                                    ))
+                          : Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidthDp / 72),
+                              child: widget.searchText != null &&
+                                      widget.searchText.length > 0
+                                  ? serachResult()
+                                  : recently.length < 1 && following.length < 1
+                                      ? Center(
+                                          child: guide('ไม่มีคนที่คุณติดตาม'))
+                                      : ListView(
+                                          physics:
+                                              AlwaysScrollableScrollPhysics(),
+                                          children: <Widget>[
+                                            recently.length > 0
+                                                ? recentlyThrow()
+                                                : SizedBox(),
+                                            following.length > 0
+                                                ? followingList()
+                                                : SizedBox()
+                                          ],
+                                        ),
+                            ))
                 ],
               )
             ],
@@ -132,7 +137,6 @@ class _SubpeopleState extends State<Subpeople>
         width: screenWidthDp,
         decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Color(0xff292929)))),
-        padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 50),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
             Widget>[
           SizedBox(height: screenWidthDp / 24),
@@ -156,7 +160,6 @@ class _SubpeopleState extends State<Subpeople>
   Widget followingList() {
     return Container(
       width: screenWidthDp,
-      padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 50),
       child: Column(
         children: <Widget>[
           SizedBox(height: screenWidthDp / 24),
@@ -244,8 +247,6 @@ class _SubpeopleState extends State<Subpeople>
       children: <Widget>[
         Container(
             width: screenWidthDp,
-            padding: EdgeInsets.only(
-                left: screenWidthDp / 50, right: screenWidthDp / 50),
             child: Column(children: <Widget>[
               SizedBox(
                 height: screenWidthDp / 25,

@@ -256,6 +256,7 @@ class _OtherProfileState extends State<OtherProfile> {
                                 height: screenHeightDp / 8,
                                 child:
                                     Center(child: CircularProgressIndicator())),
+                        SizedBox(height: screenHeightDp / 42)
                         // SizedBox(height: screenWidthDp / 36),
                       ],
                     ),
