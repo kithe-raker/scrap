@@ -141,14 +141,7 @@ class _WriteScrapState extends State<WriteScrap> {
                             width: screenWidthDp / 1.04,
                             height: screenWidthDp / 1.04 * 1.115,
                             padding: EdgeInsets.symmetric(horizontal: 25),
-                            decoration: BoxDecoration(
-                                // color: Colors.red,
-                                // image: DecorationImage(
-                                //     image: AssetImage(
-                                //         'assets/${texture.textures[textureIndex]}'),
-                                //     fit: BoxFit.cover)
-
-                                ),
+                            decoration: BoxDecoration(),
                             child: Form(
                               key: _key,
                               child: TextFormField(

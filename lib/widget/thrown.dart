@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 
 import 'package:scrap/function/toDatabase/scrap.dart';
@@ -20,6 +22,7 @@ void writerScrap(BuildContext context,
     String region,
     bool isThrowBack = false}) {
   var _key = GlobalKey<FormState>();
+  int textureIndex = 0;
   bool private = false, loading = false;
   final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
   showDialog(
@@ -119,12 +122,8 @@ void writerScrap(BuildContext context,
                                 children: <Widget>[
                                   //รูปกระดาษ
                                   Container(
-                                    margin: EdgeInsets.all(s10 / 5),
-                                    child: Image.asset(
-                                      'assets/paperscrap.jpg',
-                                      //
-                                      width: a.width / 1.04,
-                                      height: a.width / 1.04 * 1.115,
+                                    child: SvgPicture.asset(
+                                      'assets/${texture.textures[textureIndex]}',
                                       fit: BoxFit.cover,
                                     ),
                                   ),

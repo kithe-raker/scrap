@@ -2,7 +2,9 @@ import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
@@ -25,6 +27,7 @@ class Paperstranger extends StatefulWidget {
   final bool self;
   final bool isHistory;
   final bool picked;
+
   Paperstranger(
       {@required this.scrap,
       this.self = false,
@@ -37,7 +40,7 @@ class Paperstranger extends StatefulWidget {
 
 class _PaperstrangerState extends State<Paperstranger> {
   bool pick;
-
+  int textureIndex = 0;
   @override
   void initState() {
     pick = widget.scrap['pick'] ?? false;
@@ -67,12 +70,17 @@ class _PaperstrangerState extends State<Paperstranger> {
                     child: Stack(
                       children: <Widget>[
                         Container(
+                          child: SvgPicture.asset(
+                              'assets/${texture.textures[textureIndex]}'),
+                        ),
+                        Container(
                           height: screenWidthDp / 1.04 * 1.115,
                           width: screenWidthDp / 1.04,
                           decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/paperscrap.jpg'),
-                                  fit: BoxFit.cover)),
+                              // image: DecorationImage(
+                              //     image: AssetImage('assets/paperscrap.jpg'),
+                              //     fit: BoxFit.cover)
+                              ),
                           child: Center(
                               child: Text(
                             scrap['text'],
