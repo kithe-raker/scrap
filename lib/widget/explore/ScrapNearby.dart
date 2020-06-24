@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/Page/bottomBarItem/Explore/FeedNearby.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/models/TopPlaceModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
@@ -185,7 +187,12 @@ class _ScrapNearbyState extends State<ScrapNearby> {
         markerId: markerId,
         position: position,
         icon: scrapIcon,
-        draggable: false);
+        draggable: false,
+        onTap: () {
+          setState(() => markers.remove(markerId));
+          nav.push(context,
+              FeedNearby(place: widget.place, tapScrapId: scrap.scrapId));
+        });
     if (this.mounted) setState(() => markers[markerId] = marker);
   }
 
