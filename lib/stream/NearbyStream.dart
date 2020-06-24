@@ -75,8 +75,9 @@ class NearbyStream {
       await Future.forEach(docs, (DocumentSnapshot doc) async {
         var ref = scrapAll.reference().child('scraps').child(doc.documentID);
         var data = await ref.once();
-        addScrap(ScrapModel.fromJSON(doc.data,
-            transaction: ScrapTransaction.fromJSON(data.value)));
+        var model = ScrapModel.fromJSON(doc.data,
+            transaction: ScrapTransaction.fromJSON(data.value));
+        if (!scraps.contains(model)) addScrap(model);
       });
     }
   }
