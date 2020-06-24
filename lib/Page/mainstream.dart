@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/BottomBarItem/FeedScrap.dart';
 import 'package:scrap/Page/BottomBarItem/Profile.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/ExplorePage.dart';
 import 'package:scrap/Page/bottomBarItem/PageView/PageViewActivity.dart';
 import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
+import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/provider/UserData.dart';
@@ -13,7 +13,6 @@ import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scrap/widget/guide.dart';
-import 'package:screenshot/screenshot.dart';
 
 class MainStream extends StatefulWidget {
   @override
@@ -25,7 +24,7 @@ class _MainStreamState extends State<MainStream> {
   final pageController = PageController();
 
   final bodyList = [
-    FeedScrap(),
+    FeedPage(),
     ExplorePage(),
     PageViewActivity(),
     Profile(),

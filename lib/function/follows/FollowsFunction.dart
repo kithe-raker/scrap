@@ -7,6 +7,7 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
+import 'package:scrap/stream/FollowFeedStream.dart';
 
 class FollowsFunction {
   PublishSubject<bool> loading = PublishSubject();
@@ -24,6 +25,7 @@ class FollowsFunction {
     var ref = userDb.reference().child('users/${user.uid}/follows');
     var otherRef = userDb.reference().child('users/$otherUid/follows');
     var data = await otherRef.child('followers').once();
+    followFeed.followList.add(otherUid);
     otherRef.update({'followers': data.value + 1});
     ref.update({'following': followingCounts + 1});
     cacheFriends.addFollowing(following: [otherUid]);
@@ -61,6 +63,7 @@ class FollowsFunction {
     var data = await otherRef.child('followers').once();
     otherRef.update({'followers': data.value - 1});
     ref.update({'following': followingCounts - 1});
+    followFeed.followList.remove(otherUid);
     cacheFriends.unFollowing(unFollowUid: otherUid);
     var otherDoc = await fireStore
         .collection('$otherCollRef/$otherUid/follower')
