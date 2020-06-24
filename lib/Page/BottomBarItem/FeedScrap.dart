@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter_svg/svg.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:social_share/social_share.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:flutter/material.dart';
@@ -135,6 +136,7 @@ class _FeedScrapState extends State<FeedScrap>
         )));
   }
 
+  int textureIndex = 0;
   String _platformVersion = 'Unknown';
 
   Future<void> initPlatformState() async {
@@ -517,9 +519,11 @@ class _FeedScrapState extends State<FeedScrap>
                       children: <Widget>[
                         Center(
                           child: Container(
-                            width: screenWidthDp / 1.04,
-                            height: screenWidthDp / 1.04 * 1.115,
-                            child: SvgPicture.asset('assets/paperscrap.svg'),
+                            child: SvgPicture.asset(
+                              'assets/${texture.textures[textureIndex]}',
+                              width: screenWidthDp / 1.04,
+                              height: screenWidthDp / 1.04 * 1.115,
+                            ),
                             //  child: Image.asset('assets/paperscrap.jpg'),
                           ),
                         ),

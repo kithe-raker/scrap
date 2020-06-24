@@ -71,7 +71,10 @@ class _PaperstrangerState extends State<Paperstranger> {
                       children: <Widget>[
                         Container(
                           child: SvgPicture.asset(
-                              'assets/${texture.textures[textureIndex]}'),
+                            'assets/${texture.textures[textureIndex]}',
+                            height: screenWidthDp / 1.04 * 1.115,
+                            width: screenWidthDp / 1.04,
+                          ),
                         ),
                         Container(
                           height: screenWidthDp / 1.04 * 1.115,
