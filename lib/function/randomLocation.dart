@@ -6,7 +6,7 @@ class RandomLocation {
   final random = Random();
 
   ///declear varieble [r] radius
-  var r = 1000 / 111300; // = 1000 meters
+  var r = 210 / 111300; // = 1000 meters
   LatLng getLocation({double lat, double lng}) {
     ///random 2 double then init varieble [u] and [v]
     double u = random.nextDouble();

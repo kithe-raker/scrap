@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/FeedNearby.dart';
+import 'package:scrap/Page/bottomBarItem/Explore/ScrapNearby.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/models/TopPlaceModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/stream/NearbyStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:scrap/widget/explore/ScrapNearby.dart';
 
 class PlaceWidget extends StatefulWidget {
   final TopPlaceModel place;

@@ -318,13 +318,13 @@ class Scraps {
       if (mutableData?.value != null) {
         var recently =
             DateTime.fromMillisecondsSinceEpoch(mutableData.value['recently']);
-        if (DateTime.now().difference(recently).inMinutes > 60) {
+        if (DateTime.now().difference(recently).inHours > 24) {
           mutableData.value['recently'] = ServerValue.timestamp;
           mutableData.value['count'] = -1;
-        } else {
+        } else
           mutableData.value['count'] = mutableData.value['count'] - 1;
-          mutableData.value['allCount'] = mutableData.value['allCount'] - 1;
-        }
+
+        mutableData.value['allCount'] = mutableData.value['allCount'] - 1;
       }
       return mutableData;
     });
