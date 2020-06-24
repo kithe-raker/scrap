@@ -3,19 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:scrap/Page/BottomBarItem/FeedScrap.dart';
 import 'package:scrap/Page/MainPage.dart';
-import 'package:scrap/Page/mainstream.dart';
-import 'package:scrap/bloc/FeedBloc.dart';
 import 'package:scrap/bloc/PlaceBloc.dart';
 import 'package:scrap/bloc/TestBloc.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
-import 'package:scrap/testt.dart';
-import 'package:scrap/widget/sheets/CommentSheet.dart';
-import 'package:scrap/widget/sheets/sharesheet.dart';
 
 import 'Page/MainPage.dart';
 

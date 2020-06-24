@@ -13,6 +13,7 @@ import 'package:scrap/models/TopPlaceModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/stream/NearbyStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/explore/PlaceIcon.dart';
 
 class ScrapNearby extends StatefulWidget {
   final TopPlaceModel place;
@@ -81,16 +82,9 @@ class _ScrapNearbyState extends State<ScrapNearby> {
                         children: <Widget>[
                           Row(children: <Widget>[
                             Hero(
-                              tag: widget.place.id,
-                              child: Container(
-                                  padding: EdgeInsets.all(screenWidthDp / 64),
-                                  decoration: BoxDecoration(
-                                      color: Color(0xff357EED),
-                                      borderRadius:
-                                          BorderRadius.circular(screenWidthDp)),
-                                  child: Icon(Icons.school,
-                                      size: s58, color: Colors.black87)),
-                            ),
+                                tag: widget.place.id,
+                                child: PlaceIcon(
+                                    categoryId: widget.place.categoryId)),
                             SizedBox(width: screenWidthDp / 64),
                             Text(
                               widget.place.name,

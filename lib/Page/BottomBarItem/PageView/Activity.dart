@@ -14,6 +14,7 @@ import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
@@ -89,6 +90,7 @@ class _ActivityState extends State<Activity>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     return Scaffold(
         backgroundColor: Colors.black,
@@ -119,7 +121,7 @@ class _ActivityState extends State<Activity>
                         child: StreamBuilder(
                             stream: fireStore
                                 .collection(
-                                    'Users/th/users/J4Dx9hXQbibuQCO9T10Urb8JR6K2/history')
+                                    'Users/${user.region}/users/${user.uid}/history')
                                 .orderBy('scrap.timeStamp', descending: true)
                                 .where('scrap.timeStamp',
                                     isGreaterThan: yesterDay())
@@ -173,7 +175,7 @@ class _ActivityState extends State<Activity>
                         child: StreamBuilder(
                             stream: fireStore
                                 .collection(
-                                    'Users/th/users/J4Dx9hXQbibuQCO9T10Urb8JR6K2/scrapCollection')
+                                    'Users/${user.region}/users/${user.uid}/scrapCollection')
                                 .orderBy('scrap.timeStamp', descending: true)
                                 .where('scrap.timeStamp',
                                     isGreaterThan: yesterDay())
