@@ -56,7 +56,7 @@ class _ScrapNearbyState extends State<ScrapNearby> {
                   markers: Set<Marker>.of(markers.values),
                   circles: Set<Circle>.of(circles.values),
                   initialCameraPosition: CameraPosition(
-                      target: widget.place.location, zoom: 14.8)),
+                      target: widget.place.location, zoom: 16.9)),
               Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: screenWidthDp / 54,
@@ -163,7 +163,7 @@ class _ScrapNearbyState extends State<ScrapNearby> {
           CameraPosition(
               target: LatLng(widget.place.location.latitude,
                   widget.place.location.longitude),
-              zoom: 14.8)));
+              zoom: 16.9)));
     });
     scrapStream = nearby.nearbyStream
         .listen((scraps) => scraps.forEach((scrap) => addMarkers(scrap)));
@@ -226,7 +226,7 @@ class _ScrapNearbyState extends State<ScrapNearby> {
         fillColor: Color.fromRGBO(67, 78, 80, 0.1),
         strokeWidth: 3,
         center: widget.place.location,
-        radius: 1000);
+        radius: 210);
     setState(() => circles[circleId] = circle);
   }
 
