@@ -27,6 +27,7 @@ class Category {
     '100': Icons.fastfood,
     '200': Icons.place,
     '300': Icons.place,
+    '350': Icons.nature_people,
     '400': Icons.drive_eta,
     '500': Icons.business,
     '550': Icons.place,

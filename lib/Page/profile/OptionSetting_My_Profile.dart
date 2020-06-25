@@ -28,6 +28,7 @@ import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/guide.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/streamWidget/StreamLoading.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 // stateless  ที่ทำให้ อ่าน webview ได้ [plugin webview]
@@ -575,17 +576,14 @@ class Manage_MyProfile extends StatefulWidget {
 }
 
 class _Manage_MyProfileState extends State<Manage_MyProfile> {
-  bool initInfoFinish = false, loading = false;
+  bool initInfoFinish = false;
   String status, id;
   var _key = GlobalKey<FormState>();
   File image;
-  StreamSubscription loadStream;
 
   @override
   void initState() {
     initUser();
-    loadStream =
-        setting.loading.listen((value) => setState(() => loading = value));
     super.initState();
   }
 
@@ -609,12 +607,6 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
       image = img;
       setState(() {});
     }
-  }
-
-  @override
-  void dispose() {
-    loadStream.cancel();
-    super.dispose();
   }
 
   @override
@@ -910,7 +902,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                       ),
                     )
                   : Center(child: CircularProgressIndicator()),
-              loading ? Loading() : SizedBox()
+              StreamLoading(stream: setting.loading, blur: true)
             ],
           )),
     );

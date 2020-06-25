@@ -8,6 +8,7 @@ import 'package:scrap/function/aboutUser/SettingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -118,12 +119,6 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
     super.dispose();
   }
 
-  Stream<Event> streamTransaction(String uid, String field) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    return userDb.reference().child('users/$uid/$field').onValue;
-  }
-
   Future<DataSnapshot> futureTransaction(String uid, String field) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
@@ -214,12 +209,12 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  dataProfile('เก็บไว้', user.uid,
-                                      field: 'pick'),
-                                  dataProfile('แอทเทนชัน', user.uid,
-                                      field: 'att'),
-                                  dataProfile('โดนปาใส่', user.uid,
-                                      field: 'thrown'),
+                                  dataProfile('เก็บไว้',
+                                      stream: userStream.pickSubject),
+                                  dataProfile('แอทเทนชัน',
+                                      stream: userStream.attSubject),
+                                  dataProfile('โดนปาใส่',
+                                      stream: userStream.thrownSubject),
                                 ],
                               )),
                     SizedBox(height: screenHeightDp / 24),
@@ -404,7 +399,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
               return Transform.scale(
                   scale: 1.3,
                   child: Switch(
-                      value: isSwitched,
+                      value: isSwitched ?? false,
                       onChanged: (value) {
                         if (value == false)
                           Fluttertoast.showToast(msg: 'ปิดการโดนปาใส่แล้ว');
@@ -546,20 +541,19 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
 
   //ข้อมูลผู้ใช้
 //name = [เก็บไว้, คนให้ความสนใจ, โดนปาใส่]
-  Widget dataProfile(String name, String uid, {@required String field}) {
+  Widget dataProfile(String name, {@required Stream stream}) {
     return SizedBox(
       width: screenWidthDp / 5.2,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           StreamBuilder(
-              stream: streamTransaction(uid, field),
+              stream: stream,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  var trans = snapshot.data.snapshot.value;
                   return Container(
                       height: screenWidthDp / 6,
-                      child: checkValue(trans.abs()));
+                      child: checkValue(snapshot.data.abs()));
                 } else {
                   return Text(
                     '0',
