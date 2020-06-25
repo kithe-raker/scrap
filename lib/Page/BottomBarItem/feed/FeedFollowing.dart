@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/models/ScrapModel.dart';
@@ -203,7 +204,8 @@ class _FeedFollowngState extends State<FeedFollowng>
                           child: Container(
                             width: screenWidthDp / 1.04,
                             height: screenWidthDp / 1.04 * 1.115,
-                            child: SvgPicture.asset('assets/paperscrap.svg'),
+                            child: SvgPicture.asset(
+                                'assets/${texture.textures[scrapModel.textureIndex]}'),
                             //  child: Image.asset('assets/paperscrap.jpg'),
                           ),
                         ),

@@ -4,8 +4,10 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
@@ -132,12 +134,12 @@ class _ScrapDialogState extends State<ScrapDialog> {
                               child: Stack(
                                 children: <Widget>[
                                   Container(
-                                    child: Image.asset(
-                                      'assets/paperscrap.jpg',
-                                      width: screenWidthDp / 1.04,
-                                      height: screenWidthDp / 1.04 * 1.115,
-                                      fit: BoxFit.cover,
-                                    ),
+                                    width: screenWidthDp / 1.04,
+                                    height: screenWidthDp / 1.04 * 1.115,
+                                    child: SvgPicture.asset(
+                                        'assets/${texture.textures[widget.data['scrap']['texture'] ?? 0]}',
+                                        fit: BoxFit.cover),
+                                    //  child: Image.asset('assets/paperscrap.jpg'),
                                   ),
                                   Container(
                                     alignment: Alignment.center,
@@ -405,10 +407,11 @@ class _ScrapDialogState extends State<ScrapDialog> {
                         Container(
                           width: screenWidthDp / 1.04,
                           height: screenWidthDp / 1.04 * 1.115,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/paperscrap.jpg'),
-                                  fit: BoxFit.cover)),
+                          child: SvgPicture.asset(
+                              'assets/${texture.textures[widget.data['scrap']['texture'] ?? 0]}',
+                              height: screenWidthDp / 2.16 * 1.21,
+                              width: screenWidthDp / 2.16,
+                              fit: BoxFit.cover),
                         ),
                         Positioned(
                           top: 12,

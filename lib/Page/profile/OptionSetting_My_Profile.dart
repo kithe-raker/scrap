@@ -12,6 +12,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/setting/ChangePassword.dart';
 import 'package:scrap/Page/setting/ChangePhone.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/aboutUser/ReportApp.dart';
 import 'package:scrap/function/aboutUser/SettingFunction.dart';
@@ -1173,22 +1174,22 @@ class _HistoryScrapState extends State<HistoryScrap> {
   }
 
   Widget scrap(DocumentSnapshot data) {
+    var fontRatio = s48 / screenWidthDp / 1.04;
     return GestureDetector(
       child: Container(
           height: screenWidthDp / 2.16 * 1.21,
           width: screenWidthDp / 2.16,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/paperscrap.jpg'),
-                  fit: BoxFit.cover)),
           child: Stack(children: <Widget>[
+            SvgPicture.asset(
+                'assets/${texture.textures[data['scrap']['texture'] ?? 0]}',
+                fit: BoxFit.cover),
             Center(
                 child: Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
               child: AutoSizeText(data['scrap']['text'],
                   textAlign: TextAlign.center,
                   group: textGroup,
-                  style: TextStyle(fontSize: s46)),
+                  style: TextStyle(fontSize: screenWidthDp / 2.16 * fontRatio)),
             )),
             data['burnt'] ?? false
                 ? Container(
@@ -1638,42 +1639,44 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
 
   Widget scrap(DocumentSnapshot data) {
     return Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/paperscrap.jpg'), fit: BoxFit.cover)),
         child: Stack(children: <Widget>[
-          Center(
-              child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
-            child: AutoSizeText(data['scrap']['text'],
-                textAlign: TextAlign.center,
-                group: textGroup,
-                style: TextStyle(fontSize: s46)),
-          )),
-          Positioned(
-            top: 0,
-            right: screenWidthDp / 70,
-            child: RaisedButton(
-              color: Colors.black,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(screenWidthDp / 54)),
-              child: Text(
-                'ปลดการปิดกั้น',
-                style: TextStyle(
-                    fontSize: s36,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              onPressed: () async {
-                setState(() => loading = true);
-                blockedScrap.remove(data);
-                await blocking.unBlockUser(context,
-                    otherUid: data['uid'], public: false);
-                setState(() => loading = false);
-              },
-            ),
-          )
-        ]));
+      SvgPicture.asset(
+          'assets/${texture.textures[data['scrap']['texture'] ?? 0]}',
+          height: screenWidthDp / 2.16 * 1.21,
+          width: screenWidthDp / 2.16,
+          fit: BoxFit.cover),
+      Center(
+          child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+        child: AutoSizeText(data['scrap']['text'],
+            textAlign: TextAlign.center,
+            group: textGroup,
+            style: TextStyle(fontSize: s46)),
+      )),
+      Positioned(
+        top: 0,
+        right: screenWidthDp / 70,
+        child: RaisedButton(
+          color: Colors.black,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(screenWidthDp / 54)),
+          child: Text(
+            'ปลดการปิดกั้น',
+            style: TextStyle(
+                fontSize: s36,
+                fontWeight: FontWeight.bold,
+                color: Colors.white),
+          ),
+          onPressed: () async {
+            setState(() => loading = true);
+            blockedScrap.remove(data);
+            await blocking.unBlockUser(context,
+                otherUid: data['uid'], public: false);
+            setState(() => loading = false);
+          },
+        ),
+      )
+    ]));
   }
 
   Widget blockUser(DocumentSnapshot data) {

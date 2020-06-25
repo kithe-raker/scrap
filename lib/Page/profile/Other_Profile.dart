@@ -4,8 +4,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
@@ -460,11 +462,10 @@ class _OtherProfileState extends State<OtherProfile> {
       child: Container(
           height: screenWidthDp / 2.16 * 1.21,
           width: screenWidthDp / 2.16,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/paperscrap.jpg'),
-                  fit: BoxFit.cover)),
           child: Stack(children: <Widget>[
+            SvgPicture.asset(
+                'assets/${texture.textures[data['scrap']['texture'] ?? 0]}',
+                fit: BoxFit.cover),
             Center(
                 child: Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),

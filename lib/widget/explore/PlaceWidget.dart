@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/FeedNearby.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/ScrapNearby.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/models/TopPlaceModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
@@ -110,11 +111,12 @@ class _PlaceWidgetState extends State<PlaceWidget> {
           height: screenWidthDp / 3.4 * 1.21,
           width: screenWidthDp / 3.4,
           margin: EdgeInsets.only(right: screenWidthDp / 64),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/paperscrap.jpg'),
-                  fit: BoxFit.cover)),
           child: Stack(children: <Widget>[
+            Container(
+              child: SvgPicture.asset(
+                  'assets/${texture.textures[recentScrap.textureIndex]}',
+                  fit: BoxFit.cover),
+            ),
             Center(
                 child: Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),

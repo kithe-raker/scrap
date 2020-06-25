@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter_svg/svg.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:social_share/social_share.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:flutter/material.dart';
@@ -93,56 +94,55 @@ class _FeedHotScrapState extends State<FeedHotScrap>
         backgroundColor: Colors.black,
         body: SafeArea(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                loadingFeed || !initHistory
-                    ? Center(child: LoadNoBlur())
-                    : Expanded(
-                        child: StreamBuilder(
-                            initialData: feed.scraps,
-                            stream: feed.feedStream,
-                            builder: (context,
-                                AsyncSnapshot<List<ScrapModel>> snapshot) {
-                              if (snapshot.hasData) {
-                                return Listener(
-                                  onPointerUp: (event) => listener(),
-                                  child: Screenshot(
-                                    controller: screenshotController,
-                                    child: PageView(
-                                        physics:
-                                            AlwaysScrollableScrollPhysics(),
-                                        controller: pageController,
-                                        onPageChanged: (index) {
-                                          if (current + 1 == index) {
-                                            feed.scraps.length < 24
-                                                ? feed.loadMore()
-                                                : feed.clearOldScrap();
-                                          }
-                                          current = index;
-                                        },
-                                        scrollDirection: Axis.vertical,
-                                        children: snapshot.data
-                                            .map((data) => scrapWidget(data))
-                                            .toList()),
-                                  ),
-                                );
-                              } else {
-                                return Center(child: LoadNoBlur());
-                              }
-                            }),
-                      ),
-                // RaisedButton(
-                //     child: Text('increment && loadMore'),
-                //     onPressed: () {
-                //       feed.loadMore();
-                //     }),
-                // RaisedButton(
-                //     child: Text('decrement'),
-                //     onPressed: () {
-                //       counterBloc.add(CounterEvents.decrement);
-                //     }),
-              ],
-            )));
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            loadingFeed || !initHistory
+                ? Center(child: LoadNoBlur())
+                : Expanded(
+                    child: StreamBuilder(
+                        initialData: feed.scraps,
+                        stream: feed.feedStream,
+                        builder: (context,
+                            AsyncSnapshot<List<ScrapModel>> snapshot) {
+                          if (snapshot.hasData) {
+                            return Listener(
+                              onPointerUp: (event) => listener(),
+                              child: Screenshot(
+                                controller: screenshotController,
+                                child: PageView(
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    controller: pageController,
+                                    onPageChanged: (index) {
+                                      if (current + 1 == index) {
+                                        feed.scraps.length < 24
+                                            ? feed.loadMore()
+                                            : feed.clearOldScrap();
+                                      }
+                                      current = index;
+                                    },
+                                    scrollDirection: Axis.vertical,
+                                    children: snapshot.data
+                                        .map((data) => scrapWidget(data))
+                                        .toList()),
+                              ),
+                            );
+                          } else {
+                            return Center(child: LoadNoBlur());
+                          }
+                        }),
+                  ),
+            // RaisedButton(
+            //     child: Text('increment && loadMore'),
+            //     onPressed: () {
+            //       feed.loadMore();
+            //     }),
+            // RaisedButton(
+            //     child: Text('decrement'),
+            //     onPressed: () {
+            //       counterBloc.add(CounterEvents.decrement);
+            //     }),
+          ],
+        )));
   }
 
   ScreenshotController screenshotController = ScreenshotController();
@@ -507,7 +507,8 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                           child: Container(
                             width: screenWidthDp / 1.04,
                             height: screenWidthDp / 1.04 * 1.115,
-                            child: SvgPicture.asset('assets/paperscrap.svg'),
+                            child: SvgPicture.asset(
+                                'assets/${texture.textures[scrapModel.textureIndex]}'),
                             //  child: Image.asset('assets/paperscrap.jpg'),
                           ),
                         ),
