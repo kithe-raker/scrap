@@ -117,7 +117,7 @@ class Scraps {
           'scrap': {
             'text': scrapData.text,
             'writer': user.id,
-            'texture': scrapData.textureIndex ?? 0,
+            'texture': scrapData.textureIndex,
             'timeStamp': FieldValue.serverTimestamp()
           }
         };
@@ -189,7 +189,7 @@ class Scraps {
       'region': user.region,
       'scrap': {
         'text': scrapData.text,
-        'texture': scrapData.textureIndex ?? 0,
+        'texture': scrapData.textureIndex,
         'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
         'timeStamp': FieldValue.serverTimestamp(),
       },
@@ -267,7 +267,7 @@ class Scraps {
       'region': user.region,
       'scrap': {
         'text': scrapData.text,
-        'texture': scrapData.textureIndex ?? 0,
+        'texture': scrapData.textureIndex,
         'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
         'timeStamp': FieldValue.serverTimestamp()
       },
