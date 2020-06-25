@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/OtherCache.dart';
 import 'package:scrap/models/ScrapModel.dart';
@@ -75,6 +76,7 @@ class FeedStream {
       loadStatus.feedStatus.add(false);
     } else
       loadStatus.feedStatus.add(false);
+    topbarStream.add(2100);
     print('------');
   }
 

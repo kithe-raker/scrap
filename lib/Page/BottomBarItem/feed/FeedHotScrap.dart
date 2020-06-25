@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter_svg/svg.dart';
+import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:social_share/social_share.dart';
 import 'package:screenshot/screenshot.dart';
@@ -500,30 +501,30 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Stack(
-                      //addscrappaper
-                      children: <Widget>[
-                        Center(
-                          child: Container(
-                            width: screenWidthDp / 1.04,
-                            height: screenWidthDp / 1.04 * 1.115,
-                            child: SvgPicture.asset(
-                                'assets/${texture.textures[scrapModel.textureIndex]}'),
-                            //  child: Image.asset('assets/paperscrap.jpg'),
-                          ),
+                    GestureDetector(
+                      child: Container(
+                        width: screenWidthDp / 1.04,
+                        height: screenWidthDp / 1.04 * 1.115,
+                        child: Stack(
+                          //addscrappaper
+                          children: <Widget>[
+                            SvgPicture.asset(
+                                'assets/${texture.textures[scrapModel.textureIndex]}',
+                                fit: BoxFit.cover),
+                            Center(
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.only(left: 25, right: 25),
+                                child: Text(scrapModel.text,
+                                    style:
+                                        TextStyle(height: 1.35, fontSize: s60),
+                                    textAlign: TextAlign.center),
+                              ),
+                            ),
+                          ],
                         ),
-                        Center(
-                          child: Container(
-                            width: screenWidthDp / 1.04,
-                            height: screenWidthDp / 1.04 * 1.115,
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.only(left: 25, right: 25),
-                            child: Text(scrapModel.text,
-                                style: TextStyle(height: 1.35, fontSize: s60),
-                                textAlign: TextAlign.center),
-                          ),
-                        ),
-                      ],
+                      ),
+                      onTap: () => topbarStream.add(2100),
                     ),
                     SizedBox(height: screenWidthDp / 36),
                     Container(
