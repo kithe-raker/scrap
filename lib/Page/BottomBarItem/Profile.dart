@@ -597,7 +597,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
             child: Container(
               width: screenWidthDp / 5.5,
               child: SvgPicture.asset('assets/paper.svg',
-                  // color: Colors.white60,
+                  //color: Colors.white60,
                   height: screenWidthDp / 3.2,
                   fit: BoxFit.contain),
             ),

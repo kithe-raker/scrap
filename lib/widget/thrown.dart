@@ -23,6 +23,7 @@ void writerScrap(BuildContext context,
     bool isThrowBack = false}) {
   var _key = GlobalKey<FormState>();
   int textureIndex = 0;
+  bool showtheme = false;
   bool private = false, loading = false;
   final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
   showDialog(
@@ -45,6 +46,35 @@ void writerScrap(BuildContext context,
                     onTap: () {
                       Navigator.pop(context);
                     }),
+                Container(
+                    height: appBarHeight / 1.42,
+                    width: screenWidthDp,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                    color: Colors.transparent,
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        GestureDetector(
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                            size: s52,
+                          ),
+                          onTap: () => nav.pop(context),
+                        ),
+                        Text('เขียนสแครปของคุณ',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: s46)),
+                        GestureDetector(
+                            child: Icon(Icons.color_lens,
+                                color: Colors.white, size: s60),
+                            onTap: () {
+                              setState(() {});
+                            }),
+                      ],
+                    )),
                 Container(
                   width: a.width,
                   margin: EdgeInsets.only(
@@ -270,14 +300,6 @@ void writerScrap(BuildContext context,
                     ],
                   ),
                 ),
-                // แปะโฆษณา
-                // Positioned(
-                //     bottom: 0,
-                //     child: Container(
-                //       child: AdmobBanner(
-                //           adUnitId: AdmobService().getBannerAdId(),
-                //           adSize: AdmobBannerSize.FULL_BANNER),
-                //     )),
                 loading ? Loading() : SizedBox()
               ],
             ),

@@ -13,6 +13,7 @@ import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scrap/widget/guide.dart';
+import 'package:scrap/widget/thrown.dart';
 import 'package:screenshot/screenshot.dart';
 
 class MainStream extends StatefulWidget {
@@ -116,6 +117,7 @@ class _MainStreamState extends State<MainStream> {
               ),
               onTap: () {
                 nav.push(context, WriteScrap());
+                //writerScrap(context);
               },
             ),
             activebutton(2, 'assets/bag-fill-icon.svg', 'assets/bag-icon.svg'),
