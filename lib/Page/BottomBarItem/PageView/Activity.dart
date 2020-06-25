@@ -6,14 +6,17 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
@@ -89,6 +92,7 @@ class _ActivityState extends State<Activity>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final user = Provider.of<UserData>(context, listen: false);
     screenutilInit(context);
     return Scaffold(
         backgroundColor: Colors.black,
@@ -119,7 +123,7 @@ class _ActivityState extends State<Activity>
                         child: StreamBuilder(
                             stream: fireStore
                                 .collection(
-                                    'Users/th/users/J4Dx9hXQbibuQCO9T10Urb8JR6K2/history')
+                                    'Users/${user.region}/users/${user.uid}/history')
                                 .orderBy('scrap.timeStamp', descending: true)
                                 .where('scrap.timeStamp',
                                     isGreaterThan: yesterDay())
@@ -173,7 +177,7 @@ class _ActivityState extends State<Activity>
                         child: StreamBuilder(
                             stream: fireStore
                                 .collection(
-                                    'Users/th/users/J4Dx9hXQbibuQCO9T10Urb8JR6K2/scrapCollection')
+                                    'Users/${user.region}/users/${user.uid}/scrapCollection')
                                 .orderBy('scrap.timeStamp', descending: true)
                                 .where('scrap.timeStamp',
                                     isGreaterThan: yesterDay())
@@ -246,12 +250,13 @@ class _ActivityState extends State<Activity>
             return Container(
               height: screenWidthDp / 2.16 * 1.21,
               width: screenWidthDp / 2.16,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/paperscrap.jpg'),
-                      fit: BoxFit.cover)),
               child: Stack(
                 children: <Widget>[
+                  Container(
+                    child: SvgPicture.asset(
+                        'assets/${texture.textures[data['scrap']['texture']]}',
+                        fit: BoxFit.cover),
+                  ),
                   Center(
                       child: Padding(
                     padding:
@@ -382,494 +387,5 @@ class _ActivityState extends State<Activity>
                   transform: Matrix4.rotationY(pi),
                   child: Icon(Icons.sms, color: Colors.white))
             ]));
-  }
-
-  void dialog(int index, List<DocumentSnapshot> docs) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) {
-      Size a = MediaQuery.of(context).size;
-      return StatefulBuilder(builder: (context, StateSetter setDialog) {
-        Map doc = docs[index].data;
-        DocumentSnapshot docData;
-        return Scaffold(
-            backgroundColor: Colors.black,
-            body: SafeArea(
-              child: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: (a.width - a.width / 1.04) / 2),
-                  width: a.width,
-                  height: a.height,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(height: a.height / 42),
-                        FutureBuilder(
-                            future: Firestore.instance
-                                .collection(doc['path'])
-                                .document(doc['id'])
-                                .get(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                var data = snapshot.data;
-                                docData = data;
-                                var scrap = data['scrap'];
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      child: Stack(
-                                        children: <Widget>[
-                                          Container(
-                                            child: Image.asset(
-                                              'assets/paperscrap.jpg',
-                                              //--เปลี่ยนขนาดกระดาษ
-                                              width: a.width / 1.04,
-                                              height: a.width / 1.04 * 1.115,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          Container(
-                                            alignment: Alignment.center,
-                                            padding: EdgeInsets.only(
-                                                left: 25, right: 25),
-                                            height: a.width / 1.04 * 1.115,
-                                            width: a.width / 1.04,
-                                            child: Text(
-                                              doc['text'],
-                                              style: TextStyle(
-                                                  height: 1.35, fontSize: s60),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 12,
-                                            right: 12,
-                                            child: GestureDetector(
-                                              child: Container(
-                                                width: screenWidthDp / 16,
-                                                height: screenWidthDp / 16,
-                                                decoration: BoxDecoration(
-                                                    color: Color(0xff000000)
-                                                        .withOpacity(0.47),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            screenWidthDp /
-                                                                18)),
-                                                child: Icon(Icons.close,
-                                                    color: Colors.white,
-                                                    size: s42),
-                                              ),
-                                              onTap: () {
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      onDoubleTap: () {
-                                        showDialog(
-                                          context: Scaffold.of(context).context,
-                                          builder: (BuildContext context) =>
-                                              MapSheet(
-                                            position: LatLng(
-                                                data['position']['geopoint']
-                                                    .latitude,
-                                                data['position']['geopoint']
-                                                    .longitude),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    SizedBox(height: screenWidthDp / 21),
-                                    Container(
-                                      width: a.width,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: screenWidthDp / 36),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(
-                                                scrap['writer'] ==
-                                                        'ไม่ระบุตัวตน'
-                                                    ? 'ใครบางคน'
-                                                    : '@${scrap['writer']}',
-                                                style: TextStyle(
-                                                    fontSize: s48,
-                                                    height: 1.1,
-                                                    color: scrap['writer'] ==
-                                                            'ไม่ระบุตัวตน'
-                                                        ? Colors.white
-                                                        : Color(0xff26A4FF)),
-                                              ),
-                                              CountDownText(
-                                                  startTime: data['scrap']
-                                                          ['timeStamp']
-                                                      .toDate())
-                                            ],
-                                          ),
-                                          GestureDetector(
-                                            child: Icon(Icons.more_horiz,
-                                                color: Colors.white, size: s70),
-                                            onTap: () => showMore(context,
-                                                scrap: docData),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              } else {
-                                return Column(
-                                  children: <Widget>[
-                                    Container(
-                                      width: a.width / 1.04,
-                                      height: a.width / 1.04 * 1.115,
-                                      decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/paperscrap.jpg'),
-                                              fit: BoxFit.cover)),
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
-                                    ),
-                                    SizedBox(height: screenHeightDp / 12)
-                                  ],
-                                );
-                              }
-                            }),
-                        SizedBox(height: screenWidthDp / 42),
-                        Divider(color: Color(0xff5D5D5D), thickness: 1.2),
-                        SizedBox(height: screenWidthDp / 46),
-                        SizedBox(
-                          width: a.width,
-                          height: screenHeightDp / 9.6,
-                          child: FutureBuilder(
-                              future: scrapTransaction(doc['id']),
-                              builder:
-                                  (context, AsyncSnapshot<DataSnapshot> event) {
-                                if (event.hasData) {
-                                  var trans = event.data;
-                                  var like = trans.value['like'];
-                                  var pick = trans.value['picked'];
-                                  return StatefulBuilder(
-                                      builder: (context, StateSetter setTrans) {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Container(
-                                          width: screenWidthDp / 2,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              GestureDetector(
-                                                child: iconWithLabel(
-                                                    like.abs().toString(),
-                                                    icon: inHistory(
-                                                            'like', doc['id'])
-                                                        ? Icons.favorite
-                                                        : Icons.favorite_border,
-                                                    background: inHistory(
-                                                            'like', doc['id'])
-                                                        ? Color(0xffFF4343)
-                                                        : Colors.white,
-                                                    iconColor: inHistory(
-                                                            'like', doc['id'])
-                                                        ? Colors.white
-                                                        : Color(0xffFF4343)),
-                                                onTap: () {
-                                                  if (docData != null) {
-                                                    if (isExpired(docData)) {
-                                                      scrap.toast(
-                                                          'แสครปนี้ย่อยสลายแล้ว');
-                                                    } else {
-                                                      if (inHistory(
-                                                          'like', doc['id'])) {
-                                                        ++like;
-                                                        history['like']
-                                                            .remove(doc['id']);
-                                                      } else {
-                                                        --like;
-                                                        history['like']
-                                                            .add(doc['id']);
-                                                      }
-                                                      scrap.updateScrapTrans(
-                                                          'like', context,
-                                                          doc: docData);
-                                                      setTrans(() {});
-                                                    }
-                                                  }
-                                                },
-                                              ),
-                                              GestureDetector(
-                                                child: iconWithLabel(
-                                                    pick.abs().toString(),
-                                                    background: inHistory(
-                                                            'picked', doc['id'])
-                                                        ? Color(0xff0099FF)
-                                                        : Colors.white,
-                                                    iconColor: inHistory(
-                                                            'picked', doc['id'])
-                                                        ? Colors.white
-                                                        : Color(0xff0099FF),
-                                                    icon: Icons.move_to_inbox),
-                                                onTap: () {
-                                                  if (docData != null) {
-                                                    if (isExpired(docData)) {
-                                                      scrap.toast(
-                                                          'แสครปนี้ย่อยสลายแล้ว');
-                                                    } else {
-                                                      if (inHistory('picked',
-                                                          doc['id'])) {
-                                                        ++pick;
-                                                        history['picked']
-                                                            .remove(doc['id']);
-                                                      } else {
-                                                        --pick;
-                                                        history['picked']
-                                                            .add(doc['id']);
-                                                      }
-                                                      scrap.updateScrapTrans(
-                                                          'picked', context,
-                                                          doc: docData,
-                                                          comments: trans.value[
-                                                              'comment']);
-                                                      setTrans(() {});
-                                                    }
-                                                  }
-                                                },
-                                              ),
-                                              GestureDetector(
-                                                  child: iconWithLabel(
-                                                      trans?.value['comment']
-                                                          .abs()
-                                                          .toString(),
-                                                      iconColor: Color(
-                                                              0xff000000)
-                                                          .withOpacity(0.83),
-                                                      icon: Icons.sms),
-                                                  onTap: () {
-                                                    if (docData != null)
-                                                      Scaffold.of(context)
-                                                          .showBottomSheet(
-                                                        (BuildContext
-                                                                context) =>
-                                                            CommentSheet(
-                                                                doc: docData),
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                      );
-                                                  })
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              right: screenWidthDp / 42),
-                                          child: GestureDetector(
-                                            child: iconWithLabel('ต่อไป',
-                                                iconColor: Color(0xff000000),
-                                                icon: Icons.forward),
-                                            onTap: () {
-                                              doc == cacheComments.last
-                                                  ? index = 0
-                                                  : ++index;
-                                              setDialog(() {});
-                                            },
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                  });
-                                } else {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                }
-                              }),
-                        ),
-                        SizedBox(height: screenWidthDp / 36),
-                        // Expanded(
-                        //   child: AdmobBanner(
-                        //       adUnitId: AdmobService().getBannerAdId(),
-                        //       adSize: AdmobBannerSize.FULL_BANNER),
-                        // )
-                      ])),
-            ));
-      });
-    }));
-  }
-
-  void showMore(context, {@required DocumentSnapshot scrap}) {
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        builder: (BuildContext context) {
-          return Container(
-            height: appBarHeight * 2.2,
-            decoration: BoxDecoration(
-              color: Color(0xff202020),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-            ),
-            child: Stack(
-              children: <Widget>[
-                Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 12, bottom: 4),
-                      width: screenWidthDp / 3.2,
-                      height: screenHeightDp / 81,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(screenHeightDp / 42),
-                        color: Color(0xff929292),
-                      ),
-                    )),
-                Container(
-                  // margin: EdgeInsets.only(
-                  //   bottom: appBarHeight - 20,
-                  // ),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: screenWidthDp / 12,
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(
-                                          screenHeightDp)),
-                                  child: Icon(Icons.whatshot,
-                                      color: Color(0xffFF8F3A),
-                                      size: appBarHeight / 3)),
-                              onTap: () {
-                                if (inHistory('burn', scrap.documentID)) {
-                                  toast.toast('คุณเคยเผาสแครปก้อนนี้แล้ว');
-                                } else {
-                                  final report = Provider.of<Report>(context,
-                                      listen: false);
-                                  report.scrapId = scrap.documentID;
-                                  report.scrapRef =
-                                      scrap.reference.parent().path;
-                                  report.targetId = scrap['uid'];
-                                  report.region = scrap['region'];
-                                  showdialogBurn(context,
-                                      burntScraps: history['burn']);
-                                }
-                              },
-                            ),
-                            Text(
-                              'เผา',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s42,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: screenWidthDp / 12,
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(
-                                          screenHeightDp)),
-                                  child: Icon(Icons.report_problem,
-                                      size: appBarHeight / 3)),
-                              onTap: () {
-                                final report =
-                                    Provider.of<Report>(context, listen: false);
-                                report.targetId = scrap['uid'];
-                                showDialogReport(context);
-                              },
-                            ),
-                            Text(
-                              'รายงาน',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s42,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Positioned(
-                //     bottom: 0,
-                //     child: Container(
-                //       child: AdmobBanner(
-                //           adUnitId: AdmobService().getBannerAdId(),
-                //           adSize: AdmobBannerSize.FULL_BANNER),
-                //     )),
-              ],
-            ),
-          );
-        });
-  }
-
-  Widget iconWithLabel(String label,
-      {Color background = Colors.white,
-      @required Color iconColor,
-      @required IconData icon}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          height: screenWidthDp / 9,
-          width: screenWidthDp / 9,
-          decoration: BoxDecoration(
-              color: background, // Color(0xffFF4343),
-              borderRadius: BorderRadius.circular(screenWidthDp / 8)),
-          child: Icon(
-            icon, // Icons.favorite_border,
-            color: iconColor,
-            size: s46,
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: s42,
-              height: 1.2,
-              fontWeight: FontWeight.bold),
-        )
-      ],
-    );
   }
 }

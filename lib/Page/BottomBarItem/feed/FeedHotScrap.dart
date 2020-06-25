@@ -22,12 +22,12 @@ import 'package:scrap/widget/sheets/MapSheet.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'dart:io';
 
-class FeedScrap extends StatefulWidget {
+class FeedHotScrap extends StatefulWidget {
   @override
-  _FeedScrapState createState() => _FeedScrapState();
+  _FeedHotScrapState createState() => _FeedHotScrapState();
 }
 
-class _FeedScrapState extends State<FeedScrap>
+class _FeedHotScrapState extends State<FeedHotScrap>
     with AutomaticKeepAliveClientMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   //GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -53,6 +53,15 @@ class _FeedScrapState extends State<FeedScrap>
     if (pageController.position.pixels >
         pageController.position.maxScrollExtent)
       toast.toast('คุณตามทันสแครปทั้งหมดแล้ว');
+  }
+
+  @override
+  void initState() {
+    initUserHistory();
+    initScrap();
+    loadStream = loadStatus.feedStatus
+        .listen((event) => setState(() => loadingFeed = event));
+    super.initState();
   }
 
   Future<void> initUserHistory() async {
@@ -136,6 +145,7 @@ class _FeedScrapState extends State<FeedScrap>
         )));
   }
 
+<<<<<<< HEAD:lib/Page/BottomBarItem/FeedScrap.dart
   int textureIndex = 0;
   String _platformVersion = 'Unknown';
 
@@ -159,6 +169,8 @@ class _FeedScrapState extends State<FeedScrap>
     initPlatformState();
   }
 
+=======
+>>>>>>> c525620c8330e40340779eec9f1e7900cececb3b:lib/Page/BottomBarItem/feed/FeedHotScrap.dart
   ScreenshotController screenshotController = ScreenshotController();
   void replyButtonSheet(context, {@required ScrapModel scrap}) {
     showModalBottomSheet(
@@ -519,11 +531,18 @@ class _FeedScrapState extends State<FeedScrap>
                       children: <Widget>[
                         Center(
                           child: Container(
+<<<<<<< HEAD:lib/Page/BottomBarItem/FeedScrap.dart
                             child: SvgPicture.asset(
                               'assets/${texture.textures[textureIndex]}',
                               width: screenWidthDp / 1.04,
                               height: screenWidthDp / 1.04 * 1.115,
                             ),
+=======
+                            width: screenWidthDp / 1.04,
+                            height: screenWidthDp / 1.04 * 1.115,
+                            child: SvgPicture.asset(
+                                'assets/${texture.textures[scrapModel.textureIndex]}'),
+>>>>>>> c525620c8330e40340779eec9f1e7900cececb3b:lib/Page/BottomBarItem/feed/FeedHotScrap.dart
                             //  child: Image.asset('assets/paperscrap.jpg'),
                           ),
                         ),

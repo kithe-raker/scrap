@@ -5,11 +5,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/FeedNearby.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/ScrapNearby.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/models/TopPlaceModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/stream/NearbyStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
+import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/explore/PlaceIcon.dart';
 
 class PlaceWidget extends StatefulWidget {
   final TopPlaceModel place;
@@ -42,16 +45,9 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                     child: Row(
                       children: <Widget>[
                         Hero(
-                          tag: widget.place.id,
-                          child: Container(
-                              padding: EdgeInsets.all(screenWidthDp / 64),
-                              decoration: BoxDecoration(
-                                  color: Color(0xff357EED),
-                                  borderRadius:
-                                      BorderRadius.circular(screenWidthDp)),
-                              child: Icon(Icons.school,
-                                  size: s58, color: Colors.black87)),
-                        ),
+                            tag: widget.place.id,
+                            child:
+                                PlaceIcon(categoryId: widget.place.categoryId)),
                         SizedBox(width: screenWidthDp / 64),
                         Text(
                           widget.place?.name ?? 'someWhere',
@@ -115,11 +111,12 @@ class _PlaceWidgetState extends State<PlaceWidget> {
           height: screenWidthDp / 3.4 * 1.21,
           width: screenWidthDp / 3.4,
           margin: EdgeInsets.only(right: screenWidthDp / 64),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/paperscrap.jpg'),
-                  fit: BoxFit.cover)),
           child: Stack(children: <Widget>[
+            Container(
+              child: SvgPicture.asset(
+                  'assets/${texture.textures[recentScrap.textureIndex]}',
+                  fit: BoxFit.cover),
+            ),
             Center(
                 child: Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
@@ -130,8 +127,11 @@ class _PlaceWidgetState extends State<PlaceWidget> {
           ])),
       onTap: () async {
         await nearby.initNearby(context, placeId: widget.place.id);
-        nav.push(context,
-            FeedNearby(place: widget.place, tapScrapId: recentScrap.id));
+        if (nearby.scraps != null && nearby.scraps.length > 0) {
+          nav.push(context,
+              FeedNearby(place: widget.place, tapScrapId: recentScrap.id));
+        } else
+          toast.toast('ไม่พบกระดาษแผ่นนี้');
       },
     );
   }

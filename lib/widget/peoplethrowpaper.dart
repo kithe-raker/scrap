@@ -2,7 +2,11 @@ import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:flutter_svg/svg.dart';
+=======
+import 'package:flutter_svg/flutter_svg.dart';
+>>>>>>> c525620c8330e40340779eec9f1e7900cececb3b
 import 'package:provider/provider.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
@@ -67,6 +71,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                 Container(
                   padding: EdgeInsets.only(top: appBarHeight / 5),
                   child: Center(
+<<<<<<< HEAD
                     child: Stack(
                       children: <Widget>[
                         Container(
@@ -85,27 +90,41 @@ class _PaperstrangerState extends State<Paperstranger> {
                               //     fit: BoxFit.cover)
                               ),
                           child: Center(
+=======
+                    child: Container(
+                      height: screenWidthDp / 1.04 * 1.115,
+                      width: screenWidthDp / 1.04,
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                            height: screenWidthDp / 1.04 * 1.115,
+                            width: screenWidthDp / 1.04,
+                            child: SvgPicture.asset(
+                                'assets/${texture.textures[widget.scrap['texture'] ?? 0]}'),
+                          ),
+                          Center(
+>>>>>>> c525620c8330e40340779eec9f1e7900cececb3b
                               child: Text(
                             scrap['text'],
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: s52),
                           )),
-                        ),
-                        Positioned(
-                            right: screenWidthDp / 42,
-                            child: Container(
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.cancel,
-                                  color: Color(0xfff707070),
-                                  size: s70,
+                          Positioned(
+                              right: screenWidthDp / 42,
+                              child: Container(
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.cancel,
+                                    color: Color(0xfff707070),
+                                    size: s70,
+                                  ),
+                                  onPressed: () {
+                                    nav.pop(context);
+                                  },
                                 ),
-                                onPressed: () {
-                                  nav.pop(context);
-                                },
-                              ),
-                            )),
-                      ],
+                              )),
+                        ],
+                      ),
                     ),
                   ),
                 ),

@@ -5,7 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:scrap/Page/HomePage.dart';
+import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/others/ResizeImage.dart';
@@ -26,7 +26,7 @@ class SettingFunction {
     loading.add(true);
     final user = Provider.of<UserData>(context, listen: false);
     var batch = fireStore.batch();
-    var now = DateTime.now().toIso8601String();
+    var now = DateTime.now().millisecondsSinceEpoch;
     var ref = fireStore
         .collection('Users/${user.region}/users/${user.uid}/info')
         .document(user.uid);
@@ -54,7 +54,7 @@ class SettingFunction {
         fireStore.collection('Account').document(user.uid), {'id': id});
     await batch.commit();
     loading.add(false);
-    nav.pushReplacement(context, HomePage());
+    nav.pushReplacement(context, MainStream());
   }
 }
 

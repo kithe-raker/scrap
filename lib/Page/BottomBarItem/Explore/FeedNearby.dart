@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter_svg/svg.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/models/TopPlaceModel.dart';
 import 'package:scrap/stream/NearbyStream.dart';
 import 'package:social_share/social_share.dart';
@@ -505,7 +506,8 @@ class _FeedNearbyState extends State<FeedNearby> {
                           child: Container(
                             width: screenWidthDp / 1.04,
                             height: screenWidthDp / 1.04 * 1.115,
-                            child: SvgPicture.asset('assets/paperscrap.svg'),
+                            child: SvgPicture.asset(
+                                'assets/${texture.textures[scrapModel.textureIndex]}'),
                             //  child: Image.asset('assets/paperscrap.jpg'),
                           ),
                         ),
