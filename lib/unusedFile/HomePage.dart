@@ -8,14 +8,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/BottomBarItem/Profile.dart';
-import 'package:scrap/Page/Gridfavorite.dart';
-import 'package:scrap/Page/MapScraps.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
-import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
+import 'package:scrap/unusedFile/Gridfavorite.dart';
+import 'package:scrap/unusedFile/MapScraps.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/warning.dart';
 
