@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:scrap/Page/HomePage.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/authentication/OTPScreen.dart';
 import 'package:scrap/Page/mainstream.dart';
@@ -82,7 +81,7 @@ class AuthenService {
           .document(user.uid)
           .updateData({'phone': user.phone});
       loading.add(false);
-      nav.pushReplacement(context, HomePage());
+      nav.pushReplacement(context, MainStream());
     } catch (e) {
       print(e.toString());
       switch (e.code) {
@@ -187,17 +186,17 @@ class AuthenService {
       await checkFinishSignUp(context);
     } catch (e) {
       print(e.toString());
-      // switch (e.code) {
-      //   case 'ERROR_NETWORK_REQUEST_FAILED':
-      //     warn('ตรวจสอบการเชื่อมต่อ');
-      //     break;
-      //   case 'ERROR_INVALID_VERIFICATION_CODE':
-      //     warn('เช็คใหม่');
-      //     break;
-      //   default:
-      //     warn('OTPอาจหมดอายุ');
-      //     break;
-      // }
+      switch (e.code) {
+        case 'ERROR_NETWORK_REQUEST_FAILED':
+          warn('ตรวจสอบการเชื่อมต่อ');
+          break;
+        case 'ERROR_INVALID_VERIFICATION_CODE':
+          warn('เช็คใหม่');
+          break;
+        default:
+          warn('OTPอาจหมดอายุ');
+          break;
+      }
     }
   }
 
@@ -240,7 +239,7 @@ class AuthenService {
           .document(user.uid)
           .updateData({'password': newPassword});
       loading.add(false);
-      nav.pushReplacement(context, HomePage());
+      nav.pushReplacement(context, MainStream());
     } else {
       warn('ตรวจสอบรหัสผ่านเก่าของคุณ');
     }
