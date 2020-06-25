@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 
 import 'package:scrap/function/toDatabase/scrap.dart';
@@ -20,6 +22,8 @@ void writerScrap(BuildContext context,
     String region,
     bool isThrowBack = false}) {
   var _key = GlobalKey<FormState>();
+  int textureIndex = 0;
+  bool showtheme = false;
   bool private = false, loading = false;
   final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
   showDialog(
@@ -42,6 +46,35 @@ void writerScrap(BuildContext context,
                     onTap: () {
                       Navigator.pop(context);
                     }),
+                Container(
+                    height: appBarHeight / 1.42,
+                    width: screenWidthDp,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                    color: Colors.transparent,
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        GestureDetector(
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                            size: s52,
+                          ),
+                          onTap: () => nav.pop(context),
+                        ),
+                        Text('เขียนสแครปของคุณ',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: s46)),
+                        GestureDetector(
+                            child: Icon(Icons.color_lens,
+                                color: Colors.white, size: s60),
+                            onTap: () {
+                              setState(() {});
+                            }),
+                      ],
+                    )),
                 Container(
                   width: a.width,
                   margin: EdgeInsets.only(
@@ -119,12 +152,8 @@ void writerScrap(BuildContext context,
                                 children: <Widget>[
                                   //รูปกระดาษ
                                   Container(
-                                    margin: EdgeInsets.all(s10 / 5),
-                                    child: Image.asset(
-                                      'assets/paperscrap.jpg',
-                                      //
-                                      width: a.width / 1.04,
-                                      height: a.width / 1.04 * 1.115,
+                                    child: SvgPicture.asset(
+                                      'assets/${texture.textures[textureIndex]}',
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -271,14 +300,6 @@ void writerScrap(BuildContext context,
                     ],
                   ),
                 ),
-                // แปะโฆษณา
-                // Positioned(
-                //     bottom: 0,
-                //     child: Container(
-                //       child: AdmobBanner(
-                //           adUnitId: AdmobService().getBannerAdId(),
-                //           adSize: AdmobBannerSize.FULL_BANNER),
-                //     )),
                 loading ? Loading() : SizedBox()
               ],
             ),

@@ -132,8 +132,6 @@ class _BackpackState extends State<Backpack>
           width: screenWidthDp / 2.16,
           decoration: BoxDecoration(
             color: Colors.white,
-            // image: DecorationImage(
-            //     image: AssetImage('assets/$fileName'), fit: BoxFit.cover)
           ),
           child: att < requiredAtt
               ? Stack(

@@ -145,6 +145,32 @@ class _FeedHotScrapState extends State<FeedHotScrap>
         )));
   }
 
+<<<<<<< HEAD:lib/Page/BottomBarItem/FeedScrap.dart
+  int textureIndex = 0;
+  String _platformVersion = 'Unknown';
+
+  Future<void> initPlatformState() async {
+    String platformVersion;
+
+    if (!mounted) return;
+
+    setState(() {
+      _platformVersion = platformVersion;
+    });
+  }
+
+  @override
+  void initState() {
+    initUserHistory();
+    initScrap();
+    loadStream = loadStatus.feedStatus
+        .listen((event) => setState(() => loadingFeed = event));
+    super.initState();
+    initPlatformState();
+  }
+
+=======
+>>>>>>> c525620c8330e40340779eec9f1e7900cececb3b:lib/Page/BottomBarItem/feed/FeedHotScrap.dart
   ScreenshotController screenshotController = ScreenshotController();
   void replyButtonSheet(context, {@required ScrapModel scrap}) {
     showModalBottomSheet(
@@ -505,10 +531,18 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                       children: <Widget>[
                         Center(
                           child: Container(
+<<<<<<< HEAD:lib/Page/BottomBarItem/FeedScrap.dart
+                            child: SvgPicture.asset(
+                              'assets/${texture.textures[textureIndex]}',
+                              width: screenWidthDp / 1.04,
+                              height: screenWidthDp / 1.04 * 1.115,
+                            ),
+=======
                             width: screenWidthDp / 1.04,
                             height: screenWidthDp / 1.04 * 1.115,
                             child: SvgPicture.asset(
                                 'assets/${texture.textures[scrapModel.textureIndex]}'),
+>>>>>>> c525620c8330e40340779eec9f1e7900cececb3b:lib/Page/BottomBarItem/feed/FeedHotScrap.dart
                             //  child: Image.asset('assets/paperscrap.jpg'),
                           ),
                         ),

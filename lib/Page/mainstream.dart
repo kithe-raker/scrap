@@ -115,6 +115,7 @@ class _MainStreamState extends State<MainStream> {
               ),
               onTap: () {
                 nav.push(context, WriteScrap());
+                //writerScrap(context);
               },
             ),
             activebutton(2, 'assets/bag-fill-icon.svg', 'assets/bag-icon.svg'),

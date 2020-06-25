@@ -4,7 +4,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+<<<<<<< HEAD
+import 'package:scrap/Page/BottomBarItem/WriteScrap.dart';
+=======
 import 'package:scrap/assets/PaperTexture.dart';
+>>>>>>> c525620c8330e40340779eec9f1e7900cececb3b
 import 'package:scrap/function/aboutUser/SettingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
@@ -589,7 +593,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
             child: Container(
               width: screenWidthDp / 5.5,
               child: SvgPicture.asset('assets/paper.svg',
-                  // color: Colors.white60,
+                  //color: Colors.white60,
                   height: screenWidthDp / 3.2,
                   fit: BoxFit.contain),
             ),
