@@ -62,13 +62,9 @@ class _MainPageState extends State<MainPage> {
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await messaging.show(
-      0,
-      message['notification']['title'],
-      message['notification']['body'],
-      platformChannelSpecifics,
-      payload: '',
-    );
+    await messaging.show(0, message['notification']['title'],
+        message['notification']['body'], platformChannelSpecifics,
+        payload: '');
   }
 
   Future onTapMessage(String payload) async {

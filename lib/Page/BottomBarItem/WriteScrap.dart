@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:scrap/Page/LitteringScrap.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
@@ -14,7 +15,6 @@ import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:scrap/widget/SelectPosition.dart';
 import 'package:scrap/widget/Toast.dart';
 
 class WriteScrap extends StatefulWidget {
@@ -37,7 +37,6 @@ class _WriteScrapState extends State<WriteScrap>
 
   @override
   void initState() {
-    userStream.initTransactionStream(context);
     super.initState();
   }
 
@@ -306,11 +305,8 @@ class _WriteScrapState extends State<WriteScrap>
                                               thrownUID: thrownUID,
                                               region: region);
                                         } else {
-                                          nav.pop(context);
-                                          nav.push(
-                                              context,
-                                              SelectPosition(
-                                                  defaultLatLng: latLng));
+                                          nav.pushReplacement(
+                                              context, LitteringScrap());
                                         }
                                       }
                                     }),
