@@ -28,23 +28,6 @@
                            
 <?xpacket end="w"?></metadata>
 <defs>
-    <style>
-      .cls-1 {
-        stroke: #ccc;
-        stroke-width: 3.15px;
-        fill: url(#linear-gradient);
-      }
-
-      .cls-1, .cls-2 {
-        fill-rule: evenodd;
-      }
-
-      .cls-2 {
-        stroke: red;
-        stroke-width: 3px;
-        fill: url(#linear-gradient-2);
-      }
-    </style>
     <linearGradient id="linear-gradient" x1="732" y1="1508" x2="732" y2="347" gradientUnits="userSpaceOnUse">
       <stop offset="0"/>
       <stop offset="1" stop-color="#fff"/>

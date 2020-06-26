@@ -82,6 +82,7 @@ class _CommentSheetState extends State<CommentSheet> {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
     final scrapAll = FirebaseDatabase(app: db.scrapAll);
+    var data;
     final userDb = FirebaseDatabase(app: db.userTransact);
     final defaultDb = FirebaseDatabase.instance;
     var refChild = 'scraps/$scrapId';
@@ -115,30 +116,38 @@ class _CommentSheetState extends State<CommentSheet> {
       'timeStamp': FieldValue.serverTimestamp()
     });
 
-    var mutableData = await defaultDb.reference().child(refChild).once();
-    var newPoint = mutableData.value['point'] - 0.3;
-    defaultDb.reference().child(refChild).update(
-        {'comment': mutableData.value['comment'] - 1, 'point': newPoint});
+    await defaultDb
+        .reference()
+        .child(refChild)
+        .runTransaction((mutableData) async {
+      if (mutableData?.value != null) {
+        data = mutableData;
+        mutableData.value['point'] = mutableData.value['point'] - 0.3;
+        mutableData.value['comment'] = mutableData.value['comment'] - 1;
+      }
+      return mutableData;
+    });
 
     scrap.pushNotification(
         scrapId, widget.scrapSnapshot?.writerUid ?? widget.doc['uid'],
-        notiRate: mutableData.value['CPN'],
-        currentPoint: mutableData.value['comment'] - 1,
+        notiRate: data.value['CPN'],
+        currentPoint: data.value['comment'] - 1,
         isComment: true);
 
-    scrapAll.reference().child(refChild).update(
-        {'comment': mutableData.value['comment'] - 1, 'point': newPoint});
+    scrapAll.reference().child(refChild).update({
+      'comment': data.value['comment'] - 1,
+      'point': data.value['point'] - 0.3
+    });
 
     userDb
         .reference()
         .child(
             'users/${widget.scrapSnapshot?.writerUid ?? widget.doc['uid']}/att')
-        .once()
-        .then((data) => userDb
-            .reference()
-            .child(
-                'users/${widget.scrapSnapshot?.writerUid ?? widget.doc['uid']}')
-            .update({'att': data.value + 0.3}));
+        .runTransaction((mutableData) async {
+      if (mutableData?.value != null)
+        mutableData.value = mutableData.value + 0.3;
+      return mutableData;
+    });
   }
 
   @override

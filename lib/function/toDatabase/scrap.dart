@@ -385,9 +385,14 @@ class Scraps {
             .child(ref)
             .update({field: mutableData.value[field] + 1, 'point': newPoint});
 
-        userDb.reference().child('users/$writerUid/att').once().then((data) =>
-            userDb.reference().child('users/$writerUid').update(
-                {'att': field == 'like' ? data.value - 1 : data.value - 3}));
+        userDb
+            .reference()
+            .child('users/$writerUid/att')
+            .runTransaction((data) async {
+          if (data?.value != null)
+            data.value = field == 'like' ? data.value - 1 : data.value - 3;
+          return data;
+        });
 
         if (field == 'like')
           fcm.unsubscribeFromTopic(scrapId);
@@ -416,9 +421,14 @@ class Scraps {
         pushNotification(scrapId, writerUid,
             notiRate: mutableData.value['PPN'], currentPoint: newPoint);
 
-        userDb.reference().child('users/$writerUid/att').once().then((data) =>
-            userDb.reference().child('users/$writerUid').update(
-                {'att': field == 'like' ? data.value + 2 : data.value + 3}));
+        userDb
+            .reference()
+            .child('users/$writerUid/att')
+            .runTransaction((data) async {
+          if (data?.value != null)
+            data.value = field == 'like' ? data.value + 2 : data.value + 3;
+          return data;
+        });
 
         if (field == 'like')
           fcm.subscribeToTopic(scrapId);
@@ -435,7 +445,6 @@ class Scraps {
     final user = Provider.of<UserData>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var ref = userDb.reference().child('users/${user.uid}');
-    var trans = await ref.child('pick').once();
     var data = scrap != null ? scrap.toJSON : doc.data;
     var scrapId = scrap?.scrapId ?? doc.documentID;
     if (cancel) {
@@ -443,7 +452,7 @@ class Scraps {
           .collection('Users/${user.region}/users/${user.uid}/scrapCollection')
           .document(scrapId)
           .delete();
-      ref.update({'pick': trans.value - 1});
+      ref.update({'pick': userStream.pick - 1});
     } else {
       data['picker'] = user.uid;
       data['timeStamp'] = FieldValue.serverTimestamp();
@@ -451,7 +460,7 @@ class Scraps {
           .collection('Users/${user.region}/users/${user.uid}/scrapCollection')
           .document(scrapId)
           .setData(data);
-      ref.update({'pick': trans.value + 1});
+      ref.update({'pick': userStream.pick + 1});
     }
   }
 
