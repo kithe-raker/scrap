@@ -15,13 +15,15 @@ import 'package:flutter_svg/svg.dart';
 import 'package:scrap/widget/guide.dart';
 
 class MainStream extends StatefulWidget {
+  final int initPage;
+  MainStream({this.initPage = 0});
   @override
   _MainStreamState createState() => _MainStreamState();
 }
 
 class _MainStreamState extends State<MainStream> {
   int currentIndex = 0;
-  final pageController = PageController();
+  var pageController;
 
   final bodyList = [
     FeedPage(),
@@ -38,6 +40,8 @@ class _MainStreamState extends State<MainStream> {
   @override
   void initState() {
     userStream.initTransactionStream(context);
+    currentIndex = widget.initPage;
+    pageController = PageController(initialPage: currentIndex);
     initUser();
     super.initState();
   }
@@ -59,7 +63,7 @@ class _MainStreamState extends State<MainStream> {
 
   @override
   Widget build(BuildContext context) {
-    var location = Provider.of<Position>(context);
+    final location = Provider.of<Position>(context);
     screenutilInit(context);
     return Scaffold(
         backgroundColor: Colors.transparent,
@@ -114,7 +118,8 @@ class _MainStreamState extends State<MainStream> {
                 ),
               ),
               onTap: () {
-                nav.push(context, WriteScrap());
+                final location = Provider.of<Position>(context);
+                if (location != null) nav.push(context, WriteScrap());
                 //writerScrap(context);
               },
             ),
