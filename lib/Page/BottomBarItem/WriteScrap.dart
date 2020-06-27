@@ -19,6 +19,8 @@ import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/streamWidget/StreamLoading.dart';
 
+import '../ShowTheme.dart';
+
 class WriteScrap extends StatefulWidget {
   final Map data;
   final String ref;
@@ -54,6 +56,22 @@ class _WriteScrapState extends State<WriteScrap> {
   @override
   void initState() {
     super.initState();
+  }
+
+  _navigateAndDisplaySelection(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ShowTheme()),
+    );
+
+    // After the Selection Screen returns a result, hide any previous snackbars
+    // and show the new result.
+    print(result);
+    setState(() {});
+
+    print(textureIndex);
   }
 
   @override
@@ -92,10 +110,8 @@ class _WriteScrapState extends State<WriteScrap> {
                         GestureDetector(
                             child: Icon(Icons.color_lens,
                                 color: Colors.white, size: s60),
-                            onTap: () {
-                              setState(() {
-                                //showtheme = true;
-                              });
+                            onTap: () async {
+                              _navigateAndDisplaySelection(context);
                             }),
                       ],
                     )),
@@ -143,7 +159,7 @@ class _WriteScrapState extends State<WriteScrap> {
                           child: Stack(
                             children: <Widget>[
                               SvgPicture.asset(
-                                  'assets/${texture.textures[textureIndex]}',
+                                  'assets/${texture.textures[scrapData.textureIndex]}',
                                   fit: BoxFit.cover),
                               Center(
                                 child: Container(
