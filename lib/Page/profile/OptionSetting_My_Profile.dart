@@ -193,7 +193,6 @@ void showPopup(BuildContext context) {
                                 onChanged: (String value) {
                                   a(() {
                                     _charCount = value.length;
-                                    print(_charCount);
                                   });
                                 },
                               ),

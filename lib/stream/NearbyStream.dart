@@ -23,7 +23,6 @@ class NearbyStream {
   }
 
   clearOldScrap() {
-    print('clear');
     var newList = scraps ?? [];
     newList.removeAt(0);
     nearbySubject.add(newList);
