@@ -39,9 +39,7 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                   child: Column(
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.symmetric(
-                        horizontal: screenWidthDp / 32,
-                        vertical: screenHeightDp / 81),
+                    margin: EdgeInsets.all(screenWidthDp / 34),
                     child: Row(
                       children: <Widget>[
                         Hero(
@@ -51,7 +49,7 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                                 height: screenWidthDp / 8.6,
                                 child: PlaceIcon(
                                     categoryId: widget.place.categoryId))),
-                        SizedBox(width: screenWidthDp / 64),
+                        SizedBox(width: screenWidthDp / 42),
                         Text(
                           widget.place?.name ?? 'someWhere',
                           style: TextStyle(
@@ -71,8 +69,8 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                 ],
               )),
               Positioned(
-                  top: screenWidthDp / 42,
-                  right: screenWidthDp / 42,
+                  top: screenWidthDp / 34,
+                  right: screenWidthDp / 34,
                   child: transactionBox(widget.place.id)),
             ],
           )),

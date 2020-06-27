@@ -228,10 +228,9 @@ class _ExplorePageState extends State<ExplorePage>
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'ค้นหา',
+                    hintText: 'ค้นหาโรงเรียนและเพื่อนๆ',
                     contentPadding: EdgeInsets.all(4.8),
                     hintStyle: TextStyle(color: Colors.white60, fontSize: s42),
-                    // fillColor: Colors.red,
                   ),
                   onTap: () => setState(() => isSearching = true),
                 ),

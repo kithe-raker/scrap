@@ -17,7 +17,25 @@ class OtherCache {
   Future<void> initFile() async {
     final file = await _localFile;
     var now = DateTime.now();
-    var cache = {'point': null, 'day': now.day};
+    var cache = {'point': null, 'day': now.day, 'introduce': false};
+    await file.writeAsString(json.encode(cache));
+  }
+
+  Future<bool> isNotIntroduce() async {
+    final file = await _localFile;
+    var isIntroduce;
+    if (await file.exists()) {
+      var cache = await json.decode(await file.readAsString());
+      isIntroduce = cache['introduce'];
+    } else
+      await initFile();
+    return isIntroduce == null || !isIntroduce;
+  }
+
+  Future<void> finishIntroduce() async {
+    final file = await _localFile;
+    var cache = await json.decode(await file.readAsString());
+    cache['introduce'] = true;
     await file.writeAsString(json.encode(cache));
   }
 

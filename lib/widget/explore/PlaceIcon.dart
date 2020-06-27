@@ -20,7 +20,7 @@ class _PlaceIconState extends State<PlaceIcon> {
           borderRadius: BorderRadius.circular(screenWidthDp)),
       child: SvgPicture.asset(
           'assets/placeIcon/${category.iconName(widget.categoryId)}',
-          color: Colors.black87,
+          color: Colors.white,
           fit: BoxFit.cover),
     );
   }

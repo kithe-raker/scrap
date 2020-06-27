@@ -14,11 +14,13 @@ import 'package:scrap/Page/Update.dart';
 import 'package:scrap/Page/authentication/LoginPage.dart';
 import 'package:scrap/Page/mainstream.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/OtherCache.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/realtimeDB/ConfigDatabase.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/ImgCacheManger.dart';
 import 'package:scrap/services/admob_service.dart';
+import 'package:scrap/widget/dialog/IntroduceApp.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -101,26 +103,33 @@ class _MainPageState extends State<MainPage> {
     final user = Provider.of<UserData>(context, listen: false);
     bool fileExist = await userinfo.fileExist();
     var img;
-    if (fileExist) {
-      var map = await userinfo.readContents();
-      user.region = map['region'];
-      user.phone = map['phone'];
-      img = map['img'];
-      if (img == null) {
+    if (await isLogin()) {
+      if (fileExist) {
+        var map = await userinfo.readContents();
+        user.region = map['region'];
+        user.phone = map['phone'];
+        img = map['img'];
+        if (img == null) {
+          await fireAuth.signOut();
+          nav.pushReplacement(context, LoginPage());
+        } else {
+          nav.pushReplacement(context, MainStream());
+        }
+      } else {
         await fireAuth.signOut();
         nav.pushReplacement(context, LoginPage());
-      } else {
-        nav.pushReplacement(context, MainStream());
       }
-    } else {
-      await fireAuth.signOut();
-      nav.pushReplacement(context, LoginPage());
-    }
-    // return (fileExist && img != null) ||
-    //     (doc?.exists != null && doc.exists && doc['img'] != null);
-    // await finishProfile()
-    //                             ? navigator(MainStream())
-    //                             : navigator(CreateProfile1())
+    } else
+      navigator(LoginPage());
+  }
+
+  Future<void> introduceApp() async {
+    if (await cacheOther.isNotIntroduce())
+      nav.push(context, IntroduceApp(onDoubleTap: () {
+        multiCaseNavigator();
+      }));
+    else
+      multiCaseNavigator();
   }
 
   @override
@@ -147,11 +156,7 @@ class _MainPageState extends State<MainPage> {
                   onSuccess: (data) async {
                     await serverChecker()
                         ? navigator(Sorry())
-                        : olderVersion()
-                            ? navigator(Update())
-                            : await isLogin()
-                                ? await multiCaseNavigator()
-                                : navigator(LoginPage());
+                        : olderVersion() ? navigator(Update()) : introduceApp();
                   },
                   loopAnimation: '1',
                   until: () => Future.delayed(Duration(seconds: 1)),
