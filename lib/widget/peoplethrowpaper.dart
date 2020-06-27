@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
@@ -229,19 +230,24 @@ class _PaperstrangerState extends State<Paperstranger> {
                               onTap: () {
                                 userStream.papers > 0
                                     ? user.promise
-                                        ? writerScrap(context,
-                                            isThrowBack: true,
-                                            region: widget.scrap['region'],
-                                            thrownUID: widget.scrap['uid'])
+                                        ? nav.push(
+                                            context,
+                                            WriteScrap(
+                                                isThrowBack: true,
+                                                region: widget.scrap['region'],
+                                                thrownUid: widget.scrap['uid']))
                                         : dialogcontract(context,
                                             onPromise: () async {
                                             await userinfo.promiseUser();
-                                            nav.pop(context);
                                             user.promise = true;
-                                            writerScrap(context,
-                                                isThrowBack: true,
-                                                region: widget.scrap['region'],
-                                                thrownUID: widget.scrap['uid']);
+                                            nav.pushReplacement(
+                                                context,
+                                                WriteScrap(
+                                                    isThrowBack: true,
+                                                    region:
+                                                        widget.scrap['region'],
+                                                    thrownUid:
+                                                        widget.scrap['uid']));
                                           })
                                     : toast.toast('กระดาษของคุณหมดแล้ว');
                               },

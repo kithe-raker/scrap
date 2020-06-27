@@ -3,32 +3,48 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scrap/Page/LitteringScrap.dart';
 import 'package:scrap/Page/suppeople.dart';
 import 'package:scrap/assets/PaperTexture.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/method/Navigator.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/stream/UserStream.dart';
-import 'package:scrap/widget/Loading.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/showcontract.dart';
+import 'package:scrap/widget/streamWidget/StreamLoading.dart';
 
 class WriteScrap extends StatefulWidget {
+  final Map data;
+  final String ref;
+  final String thrownUid;
+  final bool isThrow;
+  final bool isThrowBack;
+  final String region;
+  final bool main;
+  WriteScrap(
+      {this.data,
+      this.isThrow = false,
+      this.isThrowBack = false,
+      this.ref,
+      this.region,
+      this.thrownUid,
+      this.main = false});
   @override
   _WriteScrapState createState() => _WriteScrapState();
 }
 
-class _WriteScrapState extends State<WriteScrap>
-    with AutomaticKeepAliveClientMixin {
+class _WriteScrapState extends State<WriteScrap> {
   int textureIndex = 0;
-  bool showtheme = false;
+  var _key = GlobalKey<FormState>();
+  bool private = false, showtheme = false;
   final pageController = PageController();
-  @override
-  bool get wantKeepAlive => true;
+
   @override
   void dispose() {
     pageController.dispose();
@@ -41,291 +57,251 @@ class _WriteScrapState extends State<WriteScrap>
   }
 
   @override
-  Widget build(BuildContext context,
-      {LatLng latLng,
-      Map data,
-      String ref,
-      String thrownUID,
-      bool isThrow = false,
-      String region,
-      bool isThrowBack = false}) {
+  Widget build(BuildContext context) {
     screenutilInit(context);
-    var _key = GlobalKey<FormState>();
-
-    bool private = false, loading = false;
-
-    Size a = MediaQuery.of(context).size;
+    final user = Provider.of<UserData>(context, listen: false);
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
-    return StatefulBuilder(builder: (context, StateSetter setState) {
-      scrap.loading.listen((value) => setState(() => loading = value));
-      return Scaffold(
-        backgroundColor: Colors.grey[900],
-        resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: Stack(
-            children: <Widget>[
-              GestureDetector(
-                  child: Container(
-                    width: a.width,
-                    height: a.height,
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                  }),
-              Container(
-                  height: appBarHeight / 1.42,
-                  width: screenWidthDp,
-                  padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
-                  color: Colors.transparent,
-                  alignment: Alignment.center,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      GestureDetector(
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                          size: s52,
+    return Scaffold(
+      backgroundColor: Colors.grey[900],
+      body: SafeArea(
+        child: Stack(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                Container(
+                    height: appBarHeight / 1.42,
+                    width: screenWidthDp,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                    color: Colors.transparent,
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        GestureDetector(
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                            size: s52,
+                          ),
+                          onTap: () => nav.pop(context),
                         ),
-                        onTap: () => nav.pop(context),
-                      ),
-                      Text('เขียนสแครปของคุณ',
-                          style: TextStyle(color: Colors.white, fontSize: s46)),
-                      GestureDetector(
-                          child: Icon(Icons.color_lens,
-                              color: Colors.white, size: s60),
-                          onTap: () {
-                            setState(() {
-                              //showtheme = true;
-                            });
-                          }),
-                    ],
-                  )),
-              Container(
-                width: a.width,
-                margin: EdgeInsets.only(
-                    top: a.height / 8,
-                    right: a.width / 60,
-                    left: a.width / 60,
-                    bottom: a.width / 8),
-                child: ListView(
-                  children: <Widget>[
-                    Form(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            width: a.height,
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                //ปุ่มกดหากต้องการที่จะเปิดเผยตัวตน
-                                isThrowBack
-                                    ? SizedBox()
-                                    : Container(
-                                        child: Row(
-                                          children: <Widget>[
-                                            Container(
-                                              width: a.width / 13,
-                                              height: a.width / 13,
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                  border: Border.all(
-                                                      color:
-                                                          Colors.transparent)),
-                                              child: Checkbox(
-                                                tristate: false,
-                                                activeColor: Color(0xfff707070),
-                                                value: private,
-                                                onChanged: (bool value) {
-                                                  private = value;
-                                                  setState(() {});
-                                                },
-                                              ),
-                                            ),
-                                            Container(
-                                              child: Text(
-                                                "\t" + "ไม่ระบุตัวตน",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                    fontSize: a.width / 20),
-                                              ),
-                                            )
-                                          ],
+                        Text('เขียนสแครปของคุณ',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: s46)),
+                        GestureDetector(
+                            child: Icon(Icons.color_lens,
+                                color: Colors.white, size: s60),
+                            onTap: () {
+                              setState(() {
+                                //showtheme = true;
+                              });
+                            }),
+                      ],
+                    )),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: screenHeightDp / 27),
+                        widget.isThrowBack
+                            ? SizedBox(height: screenWidthDp / 13)
+                            : Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: screenWidthDp / 13,
+                                      width: screenWidthDp / 13,
+                                      child: Checkbox(
+                                          tristate: false,
+                                          activeColor: Color(0xfff707070),
+                                          value: private,
+                                          onChanged: (bool value) {
+                                            private = value;
+                                            setState(() {});
+                                          }),
+                                    ),
+                                    Text(
+                                      "\t" + "ไม่ระบุตัวตน",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: s42),
+                                    )
+                                  ],
+                                ),
+                              ),
+                        SizedBox(height: 5.4),
+                        Container(
+                          width: screenWidthDp / 1.04,
+                          height: screenWidthDp / 1.04 * 1.115,
+                          child: Stack(
+                            children: <Widget>[
+                              SvgPicture.asset(
+                                  'assets/${texture.textures[textureIndex]}',
+                                  fit: BoxFit.cover),
+                              Center(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 25),
+                                  child: Form(
+                                    key: _key,
+                                    child: TextFormField(
+                                      maxLength: 250,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          height: 1.35, fontSize: s54),
+                                      maxLines: null,
+                                      keyboardType: TextInputType.text,
+                                      decoration: InputDecoration(
+                                        errorStyle: TextStyle(height: 0.0),
+                                        counterText: "",
+                                        counterStyle: TextStyle(
+                                            color: Colors.transparent),
+                                        border: InputBorder
+                                            .none, //สำหรับให้เส้นใต้หาย
+                                        hintText: 'เขียนบางอย่างที่คุณอยากบอก',
+                                        hintStyle: TextStyle(
+                                          fontSize: s46,
+                                          color: Colors.grey,
                                         ),
                                       ),
-                                //ออกจากหน้าปากระดาษ
-                              ],
-                            ),
-                          ),
-                          //กระดาษที่ไว้เขียนไงจ้ะ
-                          Container(
-                            margin: EdgeInsets.only(
-                                top: a.width / 150,
-                                left: s10 / 2,
-                                right: s10 / 2),
-                            width: a.width / 1,
-                            height: a.height / 1.8,
-                            //ใช้สแต็กเอา
-                            child: Stack(
-                              children: <Widget>[
-                                //รูปกระดาษ
-                                Container(
-                                  child: SvgPicture.asset(
-                                    'assets/${texture.textures[textureIndex]}',
-                                    fit: BoxFit.cover,
+                                      validator: (val) {
+                                        return val.trim() == ""
+                                            ? toast.validateToast(
+                                                "ลองเขียนข้อความบางอย่างสิ")
+                                            : null;
+                                      },
+                                      onSaved: (val) {
+                                        scrapData.text = val.trim();
+                                      },
+                                    ),
                                   ),
                                 ),
-                                Positioned(
-                                    child: Container(
-                                  color: Colors.transparent,
-                                  width: a.width,
-                                  height: a.height,
-                                  alignment: Alignment.center,
-                                  child: Container(
-                                    //color: Colors.red,
-                                    padding: EdgeInsets.only(
-                                      left: 25,
-                                      right: 25,
-                                    ),
-                                    // width: a.width,
-                                    child: Form(
-                                      key: _key,
-                                      child: TextFormField(
-                                        maxLength: 250,
-                                        textAlignVertical:
-                                            TextAlignVertical.center,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            height: 1.35,
-                                            fontSize: a.width / 14),
-                                        maxLines: null,
-                                        keyboardType: TextInputType.text,
-                                        decoration: InputDecoration(
-                                          errorStyle: TextStyle(height: 0.0),
-                                          counterText: "",
-                                          counterStyle: TextStyle(
-                                              color: Colors.transparent),
-                                          border: InputBorder
-                                              .none, //สำหรับให้เส้นใต้หาย
-                                          hintText:
-                                              'เขียนบางอย่างที่คุณอยากบอก',
-                                          hintStyle: TextStyle(
-                                            fontSize: a.width / 18,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        validator: (val) {
-                                          return val.trim() == ""
-                                              ? toast.validateToast(
-                                                  "ลองเขียนข้อความบางอย่างสิ")
-                                              : null;
-                                        },
-                                        onSaved: (val) {
-                                          scrapData.text = val.trim();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                )),
-                              ],
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                    vertical: screenWidthDp / 21),
-                                child: GestureDetector(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Color(0xfff333333),
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      width: a.width / 4.2,
-                                      height: a.width / 8,
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'ยกเลิก',
-                                        style: TextStyle(
-                                            color: Color(0xfffD8D8D8),
-                                            fontSize: a.width / 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    }),
-                              ),
-                              SizedBox(
-                                width: appBarHeight / 2.8,
-                              ),
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                    vertical: screenWidthDp / 21),
-                                child: GestureDetector(
-                                    child: Container(
-                                      width: a.width / 4.2,
-                                      height: a.width / 8,
-                                      decoration: BoxDecoration(
-                                          color: isThrow
-                                              ? Colors.white
-                                              : Color(0xff26A4FF),
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                          isThrow
-                                              ? "ปาใส่"
-                                              : isThrowBack
-                                                  ? 'ปากลับ'
-                                                  : 'โยนไว้',
-                                          style: TextStyle(
-                                              color: isThrow
-                                                  ? Color(0xff26A4FF)
-                                                  : Colors.white,
-                                              fontSize: a.width / 18,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                    onTap: () {
-                                      if (_key.currentState.validate()) {
-                                        _key.currentState.save();
-                                        scrapData.private = private;
-                                        if (isThrow) {
-                                          scrap.throwTo(context,
-                                              data: data,
-                                              thrownUID: thrownUID,
-                                              collRef: ref);
-                                        } else if (isThrowBack) {
-                                          scrap.throwBack(context,
-                                              thrownUID: thrownUID,
-                                              region: region);
-                                        } else {
-                                          nav.pushReplacement(
-                                              context, LitteringScrap());
-                                        }
-                                      }
-                                    }),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: screenWidthDp / 21),
+                              child: GestureDetector(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: widget.main
+                                            ? Colors.white
+                                            : Color(0xfff333333),
+                                        borderRadius: BorderRadius.circular(5)),
+                                    width: screenWidthDp / 4.2,
+                                    height: screenWidthDp / 8,
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      widget.main ? 'ปาใส่' : 'ยกเลิก',
+                                      style: TextStyle(
+                                          color: widget.main
+                                              ? Color(0xff26A4FF)
+                                              : Color(0xfffD8D8D8),
+                                          fontSize: s46,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    if (widget.main) {
+                                      if (_key.currentState.validate()) {
+                                        _key.currentState.save();
+                                        scrapData.private = private;
+                                        user.promise
+                                            ? showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        SearchPeopleDialog())
+                                            : dialogcontract(context,
+                                                onPromise: () async {
+                                                await userinfo.promiseUser();
+                                                user.promise = true;
+                                                nav.pop(context);
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        SearchPeopleDialog());
+                                              });
+                                      }
+                                    } else
+                                      nav.pop(context);
+                                  }),
+                            ),
+                            SizedBox(width: appBarHeight / 2.8),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: screenWidthDp / 21),
+                              child: GestureDetector(
+                                  child: Container(
+                                    width: screenWidthDp / 4.2,
+                                    height: screenWidthDp / 8,
+                                    decoration: BoxDecoration(
+                                        color: widget.isThrow
+                                            ? Colors.white
+                                            : Color(0xff26A4FF),
+                                        borderRadius: BorderRadius.circular(5)),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                        widget.isThrow
+                                            ? "ปาใส่"
+                                            : widget.isThrowBack
+                                                ? 'ปากลับ'
+                                                : 'โยนไว้',
+                                        style: TextStyle(
+                                            color: widget.isThrow
+                                                ? Color(0xff26A4FF)
+                                                : Colors.white,
+                                            fontSize: s46,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  onTap: () {
+                                    if (_key.currentState.validate()) {
+                                      _key.currentState.save();
+                                      scrapData.private = private;
+                                      if (widget.isThrow) {
+                                        scrap.throwTo(context,
+                                            data: widget.data,
+                                            thrownUID: widget.thrownUid,
+                                            collRef: widget.ref);
+                                      } else if (widget.isThrowBack) {
+                                        scrap.throwBack(context,
+                                            thrownUID: widget.thrownUid,
+                                            region: widget.region);
+                                      } else {
+                                        nav.pushReplacement(
+                                            context, LitteringScrap());
+                                      }
+                                    }
+                                  }),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              showtheme == true ? showTheme() : SizedBox(),
-              loading ? Loading() : SizedBox()
-            ],
-          ),
+              ],
+            ),
+            showtheme == true ? showTheme() : SizedBox(),
+            StreamLoading(stream: scrap.loading, blur: true)
+          ],
         ),
-      );
-    });
+      ),
+    );
     // *! ---------------
     //Scaffold(
     //   backgroundColor: Colors.black,
@@ -769,7 +745,7 @@ class _SearchPeopleDialogState extends State<SearchPeopleDialog> {
 
   @override
   void dispose() {
-    timer.cancel();
+    timer?.cancel();
     _controller.removeListener(_onSearchChanged);
     _controller.dispose();
     focus.dispose();

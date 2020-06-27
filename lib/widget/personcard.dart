@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
@@ -159,7 +160,9 @@ class _PersonCardState extends State<PersonCard> {
           data: widget.data, thrownUID: uid, collRef: ref, fromMain: true);
       nav.pop(context);
     } else
-      writerScrap(context,
-          isThrow: true, data: widget.data, thrownUID: uid, ref: ref);
+      nav.push(
+          context,
+          WriteScrap(
+              isThrow: true, data: widget.data, thrownUid: uid, ref: ref));
   }
 }

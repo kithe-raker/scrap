@@ -119,8 +119,7 @@ class _MainStreamState extends State<MainStream> {
               ),
               onTap: () {
                 final location = Provider.of<Position>(context, listen: false);
-                if (location != null) nav.push(context, WriteScrap());
-                //writerScrap(context);
+                if (location != null) nav.push(context, WriteScrap(main: true));
               },
             ),
             activebutton(2, 'assets/bag-fill-icon.svg', 'assets/bag-icon.svg'),

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
@@ -388,21 +389,24 @@ class _OtherProfileState extends State<OtherProfile> {
                         onTap: () {
                           userStream.papers > 0
                               ? user.promise
-                                  ? writerScrap(context,
-                                      isThrow: true,
-                                      data: widget.data,
-                                      thrownUID: uid,
-                                      ref: widget.ref)
+                                  ? nav.push(
+                                      context,
+                                      WriteScrap(
+                                          isThrow: true,
+                                          data: widget.data,
+                                          thrownUid: uid,
+                                          ref: widget.ref))
                                   : dialogcontract(context,
                                       onPromise: () async {
                                       await userinfo.promiseUser();
                                       user.promise = true;
-                                      nav.pop(context);
-                                      writerScrap(context,
-                                          isThrow: true,
-                                          data: widget.data,
-                                          thrownUID: uid,
-                                          ref: widget.ref);
+                                      nav.pushReplacement(
+                                          context,
+                                          WriteScrap(
+                                              isThrow: true,
+                                              data: widget.data,
+                                              thrownUid: uid,
+                                              ref: widget.ref));
                                     })
                               : toast.toast('กระดาษคุณหมดแล้ว');
                         }))

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
@@ -9,111 +10,108 @@ void dialogcontract(context, {@required Function onPromise}) {
   showDialog(
       context: context,
       builder: (builder) {
-        return StatefulBuilder(builder: (context, StateSetter setState) {
-          Size a = MediaQuery.of(context).size;
-          screenutilInit(context);
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(
-              margin: EdgeInsets.only(
-                top: a.width / 20,
-                right: a.width / 20,
-                left: a.width / 20,
-              ),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    width: a.width,
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              top: a.width / 20, bottom: a.width / 15),
-                          width: a.width / 12,
-                          height: a.width / 12,
-                          child: Center(
-                            child: Icon(
-                              Icons.clear,
-                              color: Colors.white,
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: StatefulBuilder(builder: (context, StateSetter setState) {
+            screenutilInit(context);
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                margin: EdgeInsets.all(screenWidthDp / 20),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width: screenWidthDp,
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: screenWidthDp / 18),
+                            width: screenWidthDp / 12,
+                            height: screenWidthDp / 12,
+                            child: Center(
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.white,
+                              ),
                             ),
+                            decoration: BoxDecoration(
+                                color: Colors.white24,
+                                borderRadius:
+                                    BorderRadius.circular(screenWidthDp)),
                           ),
-                          decoration: BoxDecoration(
-                              color: Colors.white24,
-                              borderRadius: BorderRadius.circular(a.width)),
-                        ),
-                        onTap: () => nav.pop(context)),
-                  ),
-                  Container(
-                      decoration: BoxDecoration(
-                          color: Color(0xff282828),
-                          borderRadius: BorderRadius.circular(a.width / 50)),
-                      width: a.width,
-                      padding: EdgeInsets.all(a.width / 50),
-                      height: a.height / 1.5,
-                      child: Scaffold(
-                          backgroundColor: Color(0xff282828),
-                          body: Column(
-                            children: <Widget>[
-                              Container(
-                                width: a.width,
-                                height: a.width / 8,
+                          onTap: () => nav.pop(context)),
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                            color: Color(0xff282828),
+                            borderRadius:
+                                BorderRadius.circular(screenWidthDp / 50)),
+                        width: screenWidthDp,
+                        height: screenHeightDp / 1.54,
+                        padding: EdgeInsets.all(screenWidthDp / 50),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 1,
+                              child: Container(
                                 alignment: Alignment.topCenter,
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
-                                            width: a.width / 1000,
+                                            width: screenWidthDp / 1000,
                                             color: Colors.grey))),
                                 child: Text(
                                   "สัญญากับเรา",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: a.width / 15,
+                                      fontSize: s46,
                                       color: Colors.white),
                                 ),
                               ),
-                              Container(
-                                padding: EdgeInsets.all(a.width / 25),
-                                child: SizedBox(
-                                  width: a.width,
-                                  child: Text(
-                                    "เพื่อสร้างชุมชนที่ดีขึ้นของสแครป คุณสัญญาว่าจะไม่ทำสิ่งเหล่านี้\n\n1.กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย\n2.ส่งข้อความสแปมไปยังผู้ใช้รายอื่น\n3.เขียนเนื้อหาที่ส่งเสริมความรุนแรง\n4.เขียนเนื้อหาที่มีการคุกคามทางเพศ\n\n* หากคณไม่ทำตามสัญญาดังกล่าวสแครปขออนุญาติให้ความร่วมมือกับหบ่วยงานทางกฎหมายมากเท่าที่เราจะทำได้",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: a.width / 20),
-                                  ),
+                            ),
+                            Expanded(
+                              flex: 9,
+                              child: Container(
+                                padding: EdgeInsets.all(screenWidthDp / 25),
+                                child: AutoSizeText(
+                                  "เพื่อสร้างชุมชนที่ดีขึ้นของสแครป คุณสัญญาว่าจะไม่ทำสิ่งเหล่านี้\n\n1.กล่าวอ้างถึงบุคคลที่สามในทางเสียหาย\n2.ส่งข้อความสแปมไปยังผู้ใช้รายอื่น\n3.เขียนเนื้อหาที่ส่งเสริมความรุนแรง\n4.เขียนเนื้อหาที่มีการคุกคามทางเพศ\n\n* หากคณไม่ทำตามสัญญาดังกล่าวสแครปขออนุญาติให้ความร่วมมือกับหบ่วยงานทางกฎหมายมากเท่าที่เราจะทำได้",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: s42),
                                 ),
                               ),
-                              SizedBox(
-                                height: appBarHeight / 2,
-                              ),
-                              GestureDetector(
-                                  child: Container(
-                                    padding: EdgeInsets.fromLTRB(
-                                        appBarHeight / 2,
-                                        appBarHeight / 22,
-                                        appBarHeight / 2,
-                                        appBarHeight / 22),
-                                    decoration: BoxDecoration(
-                                        color: Color(0xfff27A4FF),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(23))),
-                                    child: Text(
-                                      'สัญญา',
-                                      style: TextStyle(
-                                          color: Color(0xfffFFFFFF),
-                                          fontSize: s52,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                            ),
+                            // SizedBox(height: screenHeightDp / 64),
+                            GestureDetector(
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      bottom: screenHeightDp / 42),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: appBarHeight / 2,
+                                      vertical: appBarHeight / 22),
+                                  decoration: BoxDecoration(
+                                      color: Color(0xfff27A4FF),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(23))),
+                                  child: Text(
+                                    'สัญญา',
+                                    style: TextStyle(
+                                        color: Color(0xfffFFFFFF),
+                                        fontSize: s52,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  onTap: onPromise),
-                            ],
-                          ))),
-                ],
+                                ),
+                                onTap: onPromise),
+                          ],
+                        )),
+                  ],
+                ),
               ),
-            ),
-          );
-        });
+            );
+          }),
+        );
       });
 }
 
