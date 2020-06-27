@@ -232,6 +232,7 @@ class _ActivityState extends State<Activity>
 
   Widget scrapWidget(DocumentSnapshot data,
       {List docs, bool showComment = true}) {
+    var fontRatio = s48 / screenWidthDp / 1.04;
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     int ments, comments;
@@ -240,7 +241,6 @@ class _ActivityState extends State<Activity>
           cacheComments.where((cache) => cache['id'] == data['id']).toList();
       result.length > 0 ? comments = result.first['comments'] : comments = 0;
     }
-
     return GestureDetector(
       child: FutureBuilder(
           future:
@@ -264,7 +264,8 @@ class _ActivityState extends State<Activity>
                     child: AutoSizeText(data['text'] ?? data['scrap']['text'],
                         textAlign: TextAlign.center,
                         group: textGroup,
-                        style: TextStyle(fontSize: s46)),
+                        style: TextStyle(
+                            fontSize: screenWidthDp / 2.16 * fontRatio)),
                   )),
                   showComment
                       ? snapshot.hasData && snapshot.data?.value == null

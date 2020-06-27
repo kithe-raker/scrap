@@ -393,11 +393,11 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                     }),
                         ),
                         SizedBox(height: screenWidthDp / 36),
-                        Expanded(
-                          child: AdmobBanner(
-                              adUnitId: AdmobService().getBannerAdId(),
-                              adSize: AdmobBannerSize.FULL_BANNER),
-                        )
+                        // Expanded(
+                        //   child: AdmobBanner(
+                        //       adUnitId: AdmobService().getBannerAdId(),
+                        //       adSize: AdmobBannerSize.FULL_BANNER),
+                        // )
                       ]);
                 } else if (event.connectionState == ConnectionState.waiting) {
                   return Container(

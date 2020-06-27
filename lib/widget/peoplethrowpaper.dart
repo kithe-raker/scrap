@@ -20,7 +20,6 @@ import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
-import 'package:scrap/widget/thrown.dart';
 
 class Paperstranger extends StatefulWidget {
   final DocumentSnapshot scrap;
@@ -41,7 +40,7 @@ class Paperstranger extends StatefulWidget {
 
 class _PaperstrangerState extends State<Paperstranger> {
   bool pick;
-  int textureIndex = 0;
+
   @override
   void initState() {
     pick = widget.scrap['pick'] ?? false;
@@ -77,7 +76,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                             height: screenWidthDp / 1.04 * 1.115,
                             width: screenWidthDp / 1.04,
                             child: SvgPicture.asset(
-                                'assets/${texture.textures[widget.scrap['texture'] ?? 0]}'),
+                                'assets/${texture.textures[scrap['texture'] ?? 0]}'),
                           ),
                           Center(
                               child: Text(
@@ -256,13 +255,13 @@ class _PaperstrangerState extends State<Paperstranger> {
                         ),
                       ),
               ]),
-              Positioned(
-                  bottom: 0,
-                  child: Container(
-                    child: AdmobBanner(
-                        adUnitId: AdmobService().getBannerAdId(),
-                        adSize: AdmobBannerSize.FULL_BANNER),
-                  )),
+              // Positioned(
+              //     bottom: 0,
+              //     child: Container(
+              //       child: AdmobBanner(
+              //           adUnitId: AdmobService().getBannerAdId(),
+              //           adSize: AdmobBannerSize.FULL_BANNER),
+              //     )),
             ],
           ),
         ));
@@ -366,7 +365,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                                         )),
                                     onTap: () {
                                       unPick();
-                                      widget.currentList.remove(widget.scrap);
                                       toast.toast('นำสแครปออกแล้ว');
                                       nav.pop(context);
                                       nav.pop(context);
@@ -474,16 +472,19 @@ class _PaperstrangerState extends State<Paperstranger> {
         });
   }
 
-  pickScrap() async {
+  pickScrap() {
     widget.scrap.reference
         .updateData({'pick': true, 'timeStamp': FieldValue.serverTimestamp()});
+    widget.currentList.add(widget.scrap);
     setState(() => pick = true);
     toast.toast('เก็บสแครปก้อนนี้แล้ว');
   }
 
-  unPick() async {
+  unPick() {
     widget.scrap.reference
         .updateData({'pick': false, 'timeStamp': FieldValue.delete()});
+    widget.currentList
+        .removeWhere((scrap) => scrap.documentID == widget.scrap.documentID);
     setState(() => pick = false);
   }
 }

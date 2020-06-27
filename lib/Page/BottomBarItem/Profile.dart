@@ -283,55 +283,63 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
-                                GestureDetector(
-                                  child: Container(
-                                    height: appBarHeight / 2,
-                                    decoration: BoxDecoration(
-                                      border: pickedScrap
-                                          ? Border(
-                                              bottom: BorderSide(
-                                                  width: 2.0,
-                                                  color: Colors.white),
-                                            )
-                                          : null,
-                                    ),
-                                    child: Text(
-                                      'เก็บจากที่ทิ้งไว้',
-                                      style: TextStyle(
-                                          fontSize: s48,
-                                          color: Colors.white,
-                                          fontWeight: pickedScrap
-                                              ? FontWeight.bold
-                                              : null),
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    pickedScrap = true;
-                                    setProfile(() {});
-                                  },
-                                ),
-                                GestureDetector(
-                                    onTap: () {
-                                      pickedScrap = false;
-                                      setProfile(() {});
-                                    },
+                                Expanded(
+                                  flex: 1,
+                                  child: GestureDetector(
                                     child: Container(
+                                      alignment: Alignment.center,
                                       height: appBarHeight / 2,
                                       decoration: BoxDecoration(
-                                          border: pickedScrap
-                                              ? null
-                                              : Border(
-                                                  bottom: BorderSide(
-                                                      width: 2.0,
-                                                      color: Colors.white))),
-                                      child: Text('เก็บจากโดนปาใส่',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: s48,
-                                              fontWeight: pickedScrap
-                                                  ? null
-                                                  : FontWeight.bold)),
-                                    ))
+                                        border: pickedScrap
+                                            ? Border(
+                                                bottom: BorderSide(
+                                                    width: 2.0,
+                                                    color: Colors.white),
+                                              )
+                                            : null,
+                                      ),
+                                      child: Text(
+                                        'เก็บจากที่ทิ้งไว้',
+                                        style: TextStyle(
+                                            fontSize: s48,
+                                            color: Colors.white,
+                                            fontWeight: pickedScrap
+                                                ? FontWeight.bold
+                                                : null),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      pickedScrap = true;
+                                      setProfile(() {});
+                                    },
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        pickedScrap = false;
+                                        setProfile(() {});
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: appBarHeight / 2,
+                                        decoration: BoxDecoration(
+                                            border: pickedScrap
+                                                ? null
+                                                : Border(
+                                                    bottom: BorderSide(
+                                                        width: 2.0,
+                                                        color: Colors.white))),
+                                        child: Text('เก็บจากโดนปาใส่',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: s48,
+                                                fontWeight: pickedScrap
+                                                    ? null
+                                                    : FontWeight.bold)),
+                                      )),
+                                )
                               ]),
                           Divider(color: Colors.grey, height: 0),
                           SizedBox(height: screenWidthDp / 36),
@@ -446,7 +454,8 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
           height: screenWidthDp / 2.16 * 1.21,
           width: screenWidthDp / 2.16,
           child: Stack(children: <Widget>[
-            SvgPicture.asset('assets/${texture.textures[data['scrap']['texture'] ?? 0]}',
+            SvgPicture.asset(
+                'assets/${texture.textures[data['scrap']['texture'] ?? 0]}',
                 fit: BoxFit.cover),
             Center(
                 child: Padding(
@@ -595,16 +604,16 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
             ),
           ),
         ),
-        onTap: () {
-          showDialog(
+        onTap: () async {
+          await showDialog(
               context: context,
-              builder: (BuildContext contwxt) =>
-                  Paperstranger(scrap: data, self: true));
+              builder: (BuildContext contwxt) => Paperstranger(
+                  scrap: data, currentList: scrapCrate, self: true));
           if (!read) {
             cacheHistory.addReadScrap(data);
             readScrap.add(data.documentID);
-            setState(() {});
           }
+          setState(() {});
         });
   }
 }
