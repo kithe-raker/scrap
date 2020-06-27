@@ -148,7 +148,6 @@ void dialogvideo(BuildContext context, String uid) {
                                             adUnitId:
                                                 AdmobService().getVideoAdId(),
                                             listener: (event) async {
-                                              print(event);
                                               if (event ==
                                                       MobileAdEvent
                                                           .impression ||

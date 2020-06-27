@@ -46,8 +46,11 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                       children: <Widget>[
                         Hero(
                             tag: widget.place.id,
-                            child:
-                                PlaceIcon(categoryId: widget.place.categoryId)),
+                            child: Container(
+                                width: screenWidthDp / 8.6,
+                                height: screenWidthDp / 8.6,
+                                child: PlaceIcon(
+                                    categoryId: widget.place.categoryId))),
                         SizedBox(width: screenWidthDp / 64),
                         Text(
                           widget.place?.name ?? 'someWhere',

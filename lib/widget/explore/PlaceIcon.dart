@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 
 class PlaceIcon extends StatefulWidget {
@@ -13,41 +14,49 @@ class _PlaceIconState extends State<PlaceIcon> {
   Widget build(BuildContext context) {
     screenutilInit(context);
     return Container(
-        padding: EdgeInsets.all(screenWidthDp / 64),
-        decoration: BoxDecoration(
-            color: Color(0xfff26A4FF),
-            borderRadius: BorderRadius.circular(screenWidthDp)),
-        child: Icon(category.icon(widget.categoryId),
-            size: s58, color: Colors.black87));
+      padding: EdgeInsets.all(screenWidthDp / 42),
+      decoration: BoxDecoration(
+          color: Color(0xfff26A4FF),
+          borderRadius: BorderRadius.circular(screenWidthDp)),
+      child: SvgPicture.asset(
+          'assets/placeIcon/${category.iconName(widget.categoryId)}',
+          color: Colors.black87,
+          fit: BoxFit.cover),
+    );
   }
 }
 
 class Category {
-  static const Map<String, IconData> pCategory = {
-    '100': Icons.fastfood,
-    '200': Icons.place,
-    '300': Icons.place,
-    '350': Icons.nature_people,
-    '400': Icons.drive_eta,
-    '500': Icons.business,
-    '550': Icons.place,
-    '600': Icons.shopping_cart,
-    '700': Icons.business,
-    '800': Icons.place,
-    '900': Icons.business
+  static const Map<String, String> pCategory = {
+    '100': 'restaurant-icon.svg',
+    '200': 'pubandbar-icon.svg',
+    '300': 'travellocation-icon.svg',
+    '350': 'forest-icon.svg',
+    '400': 'vehicle-icon .svg',
+    '500': 'town-icon.svg',
+    '550': 'forest-icon.svg',
+    '600': 'shopping-icon.svg',
+    '700': 'building-icon.svg',
+    '800': 'building-icon.svg',
+    '900': 'building-icon.svg'
   };
-  static const Map<String, IconData> category = {
-    '800-8100': Icons.account_balance,
-    '800-8200': Icons.school,
-    '800-8300': Icons.local_library,
-    '800-8600': Icons.fitness_center
+  static const Map<String, String> category = {
+    '550-5520': 'zoo-icon.svg',
+    '700-7000': 'bank-icon.svg',
+    '700-7010': 'bank-icon.svg',
+    '700-7050': 'bank-icon.svg',
+    '800-8100': 'government-icon.svg',
+    '800-8200': 'school-icon.svg',
+    '800-8300': 'library-icon.svg',
+    '800-8600': 'gym-icon.svg',
+    '900-9100': 'town-icon.svg'
   };
 
-  IconData icon(String categoryId) {
+  String iconName(String categoryId) {
     var icon;
     icon = category[categoryId.substring(0, 8)];
     if (icon == null) icon = pCategory[categoryId.substring(0, 3)];
-    return icon;
+    return icon ?? 'building-icon.svg';
   }
 }
 

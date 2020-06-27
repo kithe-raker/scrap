@@ -435,19 +435,15 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                     // else
                                                     //   loadMoreFollowingScrap
                                                     //       .add(true);
-                                                  } else {
+                                                  } else
                                                     toast.toast(
                                                         'คุณตามทันสแครปทั้งหมดแล้ว');
-                                                  }
                                                 },
                                               ),
                                             )
                                           ],
                                         );
-                                      })
-
-                                      // }),
-                                      ),
+                                      })),
                                   // SizedBox(height: screenWidthDp / 36),
                                   // counter.count == adsRate
                                   //     ? SizedBox()
@@ -621,22 +617,16 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
           height: screenWidthDp / 9,
           width: screenWidthDp / 9,
           decoration: BoxDecoration(
-              color: background, // Color(0xffFF4343),
+              color: background,
               borderRadius: BorderRadius.circular(screenWidthDp / 8)),
-          child: Icon(
-            icon, // Icons.favorite_border,
-            color: iconColor,
-            size: s46,
-          ),
+          child: Icon(icon, color: iconColor, size: s46),
         ),
-        Text(
-          label,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: s42,
-              height: 1.2,
-              fontWeight: FontWeight.bold),
-        )
+        Text(label,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: s42,
+                height: 1.2,
+                fontWeight: FontWeight.bold))
       ],
     );
   }
@@ -651,9 +641,8 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
             decoration: BoxDecoration(
               color: Color(0xff202020),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0)),
             ),
             child: Stack(
               children: <Widget>[
@@ -664,10 +653,9 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                       width: screenWidthDp / 3.2,
                       height: screenHeightDp / 81,
                       decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(screenHeightDp / 42),
-                        color: Color(0xff929292),
-                      ),
+                          borderRadius:
+                              BorderRadius.circular(screenHeightDp / 42),
+                          color: Color(0xff929292)),
                     )),
                 Container(
                   // margin: EdgeInsets.only(
@@ -716,10 +704,9 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                             Text(
                               'เผา',
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: s42,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                  color: Colors.white,
+                                  fontSize: s42,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),

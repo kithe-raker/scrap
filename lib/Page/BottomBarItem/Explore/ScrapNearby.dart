@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,15 +84,24 @@ class _ScrapNearbyState extends State<ScrapNearby> {
                           Row(children: <Widget>[
                             Hero(
                                 tag: widget.place.id,
-                                child: PlaceIcon(
-                                    categoryId: widget.place.categoryId)),
+                                child: Container(
+                                  width: screenWidthDp / 8.6,
+                                  height: screenWidthDp / 8.6,
+                                  child: PlaceIcon(
+                                      categoryId: widget.place.categoryId),
+                                )),
                             SizedBox(width: screenWidthDp / 64),
-                            Text(
-                              widget.place.name,
-                              style: TextStyle(
-                                  fontSize: s52,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
+                            SizedBox(
+                              width: screenWidthDp / 1.6,
+                              child: AutoSizeText(
+                                widget.place.name,
+                                maxLines: 1,
+                                minFontSize: 18,
+                                style: TextStyle(
+                                    fontSize: s52,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             )
                           ]),
                           transactionBox(widget.place.id)

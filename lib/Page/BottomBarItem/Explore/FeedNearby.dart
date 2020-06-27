@@ -69,7 +69,6 @@ class _FeedNearbyState extends State<FeedNearby> {
         .toList();
     if (whereMatch.length > 0)
       current = nearby.scraps.indexOf(whereMatch.first);
-    print(current);
     if (current < 0) current = 0;
     pageController = PageController(initialPage: current);
     if (current == nearby.scraps.length - 1)

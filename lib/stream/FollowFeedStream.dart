@@ -25,7 +25,6 @@ class FollowFeedStream {
   }
 
   clearOldScrap() {
-    print('clear');
     var newList = scraps ?? [];
     newList.removeAt(0);
     followfeedSubject.add(newList);
