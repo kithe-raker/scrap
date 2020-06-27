@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:social_share/social_share.dart';
@@ -216,14 +217,26 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            SocialShare.shareInstagramStory(
-                                                image.path,
-                                                "#212121",
-                                                "#000000",
-                                                "https://scrap.bualoitech.com/");
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['instagram'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    SocialShare.shareInstagramStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/");
+                                                  })
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดไอจีก่อนค่ะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -253,28 +266,44 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            Platform.isAndroid
-                                                ? SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/",
-                                                        appId:
-                                                            "152617042778122")
-                                                    .then((data) {
-                                                    print(data);
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['facebook'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    {
+                                                      Platform.isAndroid
+                                                          ? SocialShare.shareFacebookStory(
+                                                                  image.path,
+                                                                  "#212121",
+                                                                  "#000000",
+                                                                  "https://scrap.bualoitech.com/",
+                                                                  appId:
+                                                                      "152617042778122")
+                                                              .then((data) {
+                                                              print(data);
+                                                            })
+                                                          : SocialShare
+                                                                  .shareFacebookStory(
+                                                                      image
+                                                                          .path,
+                                                                      "#212121",
+                                                                      "#000000",
+                                                                      "https://scrap.bualoitech.com/")
+                                                              .then((data) {
+                                                              print(data);
+                                                            });
+                                                    }
                                                   })
-                                                : SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/")
-                                                    .then((data) {
-                                                    print(data);
-                                                  });
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดเฟซบุ๊คก่อนค่ะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -643,7 +672,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                           : Colors.white),
                                   onTap: () {
                                     if (isExpired(scrapModel.litteredTime)) {
-                                      scrap.toast('สเเครปนี้ย่อยสลายแล้ว');
+                                      scrap.toast('สเเค���ปนี้ย่อยสลายแล้ว');
                                     } else {
                                       scrap.updateScrapTrans('picked', context,
                                           scrap: scrapModel,
