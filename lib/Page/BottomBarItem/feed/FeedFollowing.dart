@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
 import 'package:scrap/assets/PaperTexture.dart';
@@ -20,6 +21,7 @@ import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/guide.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
+import 'package:scrap/widget/showdialogreport.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
 
@@ -520,14 +522,26 @@ class _FeedFollowngState extends State<FeedFollowng>
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            SocialShare.shareInstagramStory(
-                                                image.path,
-                                                "#212121",
-                                                "#000000",
-                                                "https://scrap.bualoitech.com/");
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['instagram'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    SocialShare.shareInstagramStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/");
+                                                  })
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดไอจีก่อนค่ะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -557,28 +571,44 @@ class _FeedFollowngState extends State<FeedFollowng>
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            Platform.isAndroid
-                                                ? SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/",
-                                                        appId:
-                                                            "152617042778122")
-                                                    .then((data) {
-                                                    print(data);
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['facebook'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    {
+                                                      Platform.isAndroid
+                                                          ? SocialShare.shareFacebookStory(
+                                                                  image.path,
+                                                                  "#212121",
+                                                                  "#000000",
+                                                                  "https://scrap.bualoitech.com/",
+                                                                  appId:
+                                                                      "152617042778122")
+                                                              .then((data) {
+                                                              print(data);
+                                                            })
+                                                          : SocialShare
+                                                                  .shareFacebookStory(
+                                                                      image
+                                                                          .path,
+                                                                      "#212121",
+                                                                      "#000000",
+                                                                      "https://scrap.bualoitech.com/")
+                                                              .then((data) {
+                                                              print(data);
+                                                            });
+                                                    }
                                                   })
-                                                : SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/")
-                                                    .then((data) {
-                                                    print(data);
-                                                  });
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดเฟสบุ๊คก่อนค่ะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -708,6 +738,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                                             context,
                                             listen: false);
                                         report.targetId = scrap.writerUid;
+                                        showDialogReport(context);
                                       },
                                     ),
                                     Text(

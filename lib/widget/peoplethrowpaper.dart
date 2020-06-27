@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +10,7 @@ import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/aboutUser/BlockingFunction.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
@@ -20,6 +22,8 @@ import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:social_share/social_share.dart';
 
 class Paperstranger extends StatefulWidget {
   final DocumentSnapshot scrap;
@@ -40,11 +44,17 @@ class Paperstranger extends StatefulWidget {
 
 class _PaperstrangerState extends State<Paperstranger> {
   bool pick;
+  ScreenshotController screenshotController = ScreenshotController();
+  Map<String, List> history = {};
 
   @override
   void initState() {
     pick = widget.scrap['pick'] ?? false;
     super.initState();
+  }
+
+  bool inHistory(String field, String id) {
+    return history[field].contains(id);
   }
 
   @override
@@ -63,198 +73,221 @@ class _PaperstrangerState extends State<Paperstranger> {
         body: SafeArea(
           child: Stack(
             children: <Widget>[
-              Column(children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(top: appBarHeight / 5),
-                  child: Center(
-                    child: Container(
-                      height: screenWidthDp / 1.04 * 1.115,
-                      width: screenWidthDp / 1.04,
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            height: screenWidthDp / 1.04 * 1.115,
-                            width: screenWidthDp / 1.04,
-                            child: SvgPicture.asset(
-                                'assets/${texture.textures[scrap['texture'] ?? 0]}'),
-                          ),
-                          Center(
-                              child: Text(
-                            scrap['text'],
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: s52),
-                          )),
-                          Positioned(
-                              right: screenWidthDp / 42,
-                              child: Container(
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.cancel,
-                                    color: Color(0xfff707070),
-                                    size: s70,
-                                  ),
-                                  onPressed: () {
-                                    nav.pop(context);
-                                  },
-                                ),
-                              )),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: appBarHeight / 10),
-                Container(
-                  height: appBarHeight * 1,
-                  width: screenWidthDp,
-                  child: Stack(
-                    children: <Widget>[
-                      Positioned(
-                          left: appBarHeight / 7,
-                          child: Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                SizedBox(
-                                  height: appBarHeight / 8,
-                                ),
-                                Text(
-                                  scrap['writer'] == 'ไม่ระบุตัวตน'
-                                      ? 'ใครบางคน'
-                                      : '@${scrap['writer']}',
-                                  style: TextStyle(
-                                      fontSize: s48,
-                                      height: 1.1,
-                                      color: scrap['writer'] == 'ไม่ระบุตัวตน'
-                                          ? Colors.white
-                                          : Color(0xff26A4FF)),
-                                ),
-                                CountDownText(
-                                    startTime: scrap['timeStamp'].toDate())
-                              ],
-                            ),
-                          )),
-                      widget.self
-                          ? Positioned(
-                              top: appBarHeight / 8,
-                              right: appBarHeight / 7,
-                              child: Container(
-                                child: GestureDetector(
-                                  child: Icon(
-                                    Icons.more_horiz,
-                                    color: Colors.white,
-                                    size: s70 * 1.2,
-                                  ),
-                                  onTap: () {
-                                    showMore(context, scrap: widget.scrap);
-                                  },
-                                ),
-                              ))
-                          : SizedBox()
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(width: 1.0, color: Color(0xff5D5D5D)),
-                    ),
-                  ),
-                ),
-                /* Divider(
-                  color: Colors.grey,
-                ),*/
-                SizedBox(height: appBarHeight / 10),
-                widget.isHistory
-                    ? SizedBox()
-                    : Container(
-                        width: screenWidthDp,
-                        height: appBarHeight,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+              Screenshot(
+                controller: screenshotController,
+                child: Column(children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(top: appBarHeight / 5),
+                    child: Center(
+                      child: Container(
+                        height: screenWidthDp / 1.04 * 1.115,
+                        width: screenWidthDp / 1.04,
+                        child: Stack(
                           children: <Widget>[
-                            SizedBox(
-                              width: appBarHeight / 5,
+                            Container(
+                              height: screenWidthDp / 1.04 * 1.115,
+                              width: screenWidthDp / 1.04,
+                              child: SvgPicture.asset(
+                                  'assets/${texture.textures[scrap['texture'] ?? 0]}'),
                             ),
-                            GestureDetector(
-                              child: Container(
-                                  padding: EdgeInsets.all(appBarHeight / 8),
-                                  child: Icon(
-                                    Icons.move_to_inbox,
-                                    color: pick
-                                        ? Colors.white
-                                        : Color(0xfff0099FF),
+                            Center(
+                                child: Text(
+                              scrap['text'],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: s52),
+                            )),
+                            Positioned(
+                                right: screenWidthDp / 42,
+                                child: Container(
+                                  child: IconButton(
+                                    icon: Icon(
+                                      Icons.cancel,
+                                      color: Color(0xfff707070),
+                                      size: s70,
+                                    ),
+                                    onPressed: () {
+                                      nav.pop(context);
+                                    },
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: pick
-                                        ? Color(0xfff0099FF)
-                                        : Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(22)),
-                                  )),
-                              onTap: () {
-                                pick ? unPick() : pickScrap();
-                              },
-                            ),
-                            SizedBox(
-                              width: appBarHeight / 5,
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                  padding: EdgeInsets.only(
-                                      left: appBarHeight / 5,
-                                      right: appBarHeight / 5,
-                                      top: appBarHeight / 8,
-                                      bottom: appBarHeight / 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.reply,
-                                        //  size: s60 * 1.2,
-                                        color: Colors.white,
-                                      ),
-                                      Text('ปากลับ',
-                                          style: TextStyle(
-                                            fontSize: s42,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ))
-                                    ],
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xfff26A4FF),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50)),
-                                  )),
-                              onTap: () {
-                                userStream.papers > 0
-                                    ? user.promise
-                                        ? nav.push(
-                                            context,
-                                            WriteScrap(
-                                                isThrowBack: true,
-                                                region: widget.scrap['region'],
-                                                thrownUid: widget.scrap['uid']))
-                                        : dialogcontract(context,
-                                            onPromise: () async {
-                                            await userinfo.promiseUser();
-                                            user.promise = true;
-                                            nav.pushReplacement(
-                                                context,
-                                                WriteScrap(
-                                                    isThrowBack: true,
-                                                    region:
-                                                        widget.scrap['region'],
-                                                    thrownUid:
-                                                        widget.scrap['uid']));
-                                          })
-                                    : toast.toast('กระดาษของคุณหมดแล้ว');
-                              },
-                            ),
+                                )),
                           ],
                         ),
                       ),
-              ]),
+                    ),
+                  ),
+                  SizedBox(height: appBarHeight / 10),
+                  Container(
+                    height: appBarHeight * 1,
+                    width: screenWidthDp,
+                    child: Stack(
+                      children: <Widget>[
+                        Positioned(
+                            left: appBarHeight / 7,
+                            child: Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: appBarHeight / 8,
+                                  ),
+                                  Text(
+                                    scrap['writer'] == 'ไม่ระบุตัวตน'
+                                        ? 'ใครบางคน'
+                                        : '@${scrap['writer']}',
+                                    style: TextStyle(
+                                        fontSize: s48,
+                                        height: 1.1,
+                                        color: scrap['writer'] == 'ไม่ระบุตัวตน'
+                                            ? Colors.white
+                                            : Color(0xff26A4FF)),
+                                  ),
+                                  CountDownText(
+                                      startTime: scrap['timeStamp'].toDate())
+                                ],
+                              ),
+                            )),
+                        widget.self
+                            ? Positioned(
+                                top: appBarHeight / 8,
+                                right: appBarHeight / 7,
+                                child: Container(
+                                  child: GestureDetector(
+                                    child: Icon(
+                                      Icons.reply,
+                                      color: Colors.white,
+                                      size: s65,
+                                    ),
+                                    onTap: () {
+                                      // replyButtonSheet(context, scrap: scrapModel);
+                                      showMore(context, scrap: widget.scrap);
+                                      //replyButtonSheet(context, scrap: widget.scrap);
+                                    },
+                                  ),
+                                ))
+                            : SizedBox()
+                      ],
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom:
+                            BorderSide(width: 1.0, color: Color(0xff5D5D5D)),
+                      ),
+                    ),
+                  ),
+                  /* Divider(
+                    color: Colors.grey,
+                  ),*/
+                  SizedBox(height: appBarHeight / 10),
+                  widget.isHistory
+                      ? SizedBox()
+                      : Container(
+                          width: screenWidthDp,
+                          height: appBarHeight,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                width: appBarHeight / 5,
+                              ),
+                              GestureDetector(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        color: pick
+                                            ? Color(0xfff0099FF)
+                                            : Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                            screenWidthDp)),
+                                    padding: EdgeInsets.all(screenWidthDp / 40),
+                                    child: SvgPicture.asset(
+                                      'assets/keep-icon.svg',
+                                      height: screenWidthDp / 15,
+                                      width: screenWidthDp / 15,
+                                      color: pick
+                                          ? Colors.white
+                                          : Color(0xfff0099FF),
+                                    )),
+                                // child: Container(
+                                //     padding: EdgeInsets.all(appBarHeight / 8),
+                                //     child: Icon(
+                                //       Icons.move_to_inbox,
+                                //       color: pick
+                                //           ? Colors.white
+                                //           : Color(0xfff0099FF),
+                                //     ),
+                                //     decoration: BoxDecoration(
+                                //       color: pick
+                                //           ? Color(0xfff0099FF)
+                                //           : Colors.white,
+                                //       borderRadius:
+                                //           BorderRadius.all(Radius.circular(22)),
+                                //     )),
+                                onTap: () {
+                                  pick ? unPick() : pickScrap();
+                                },
+                              ),
+                              SizedBox(
+                                width: appBarHeight / 5,
+                              ),
+                              GestureDetector(
+                                child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: screenWidthDp / 54,
+                                        horizontal: screenWidthDp / 21),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        // Icon(
+                                        //   Icons.reply,
+                                        //   //  size: s60 * 1.2,
+                                        //   color: Colors.white,
+                                        // ),
+                                        Text('ปากลับ',
+                                            style: TextStyle(
+                                              fontSize: s42,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ))
+                                      ],
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xfff26A4FF),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(50)),
+                                    )),
+                                onTap: () {
+                                  userStream.papers > 0
+                                      ? user.promise
+                                          ? nav.push(
+                                              context,
+                                              WriteScrap(
+                                                  isThrowBack: true,
+                                                  region:
+                                                      widget.scrap['region'],
+                                                  thrownUid:
+                                                      widget.scrap['uid']))
+                                          : dialogcontract(context,
+                                              onPromise: () async {
+                                              await userinfo.promiseUser();
+                                              user.promise = true;
+                                              nav.pushReplacement(
+                                                  context,
+                                                  WriteScrap(
+                                                      isThrowBack: true,
+                                                      region: widget
+                                                          .scrap['region'],
+                                                      thrownUid:
+                                                          widget.scrap['uid']));
+                                            })
+                                      : toast.toast('กระดาษของคุณหมดแล้ว');
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                ]),
+              ),
               // Positioned(
               //     bottom: 0,
               //     child: Container(
@@ -267,14 +300,13 @@ class _PaperstrangerState extends State<Paperstranger> {
         ));
   }
 
-  void showMore(context, {@required DocumentSnapshot scrap}) {
+  void replyButtonSheet(context, {@required ScrapModel scrap}) {
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
           return Container(
-            height: appBarHeight * 2.2,
-            //  height: appBarHeight * 3.4,
+            height: screenWidthDp / 1.1,
             decoration: BoxDecoration(
               color: Color(0xff202020),
               borderRadius: BorderRadius.only(
@@ -297,175 +329,819 @@ class _PaperstrangerState extends State<Paperstranger> {
                       ),
                     )),
                 Container(
-                  alignment: Alignment.center,
-                  /*  margin: EdgeInsets.only(
-                    bottom: appBarHeight - 20,
-                  ),*/
+                  margin: EdgeInsets.only(bottom: screenWidthDp / 15),
                   child: Center(
-                    child: Row(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //  SizedBox(
+                        //   height: screenWidthDp / 20,
+                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: screenWidthDp / 12,
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(
-                                          screenHeightDp)),
-                                  child: Icon(Icons.whatshot,
-                                      color: Color(0xffFF8F3A),
-                                      size: appBarHeight / 3)),
-                              onTap: () {
-                                final report =
-                                    Provider.of<Report>(context, listen: false);
-                                report.scrapId = scrap.documentID;
-                                report.scrapRef = scrap.reference.parent().path;
-                                report.targetId = scrap['uid'];
-                                report.region = scrap['region'];
-                                showdialogBurn(context, thrown: true);
-                              },
+                              width: screenWidthDp / 25,
                             ),
                             Text(
-                              'เผา',
+                              'แบ่งปันไปยัง',
                               style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: s42,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        widget.picked
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  SizedBox(height: screenWidthDp / 12),
-                                  GestureDetector(
-                                    child: Container(
-                                        width: 50,
-                                        height: 50,
-                                        margin: EdgeInsets.symmetric(
-                                          horizontal: 15,
-                                        ),
-                                        child: Icon(Icons.delete_outline,
-                                            size: appBarHeight / 3),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(screenWidthDp)),
-                                        )),
-                                    onTap: () {
-                                      unPick();
-                                      toast.toast('นำสแครปออกแล้ว');
-                                      nav.pop(context);
-                                      nav.pop(context);
-                                    },
-                                  ),
-                                  Text(
-                                    'นำออก',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: s42,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              )
-                            : SizedBox(),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: screenWidthDp / 12,
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(
-                                          screenHeightDp)),
-                                  child: Icon(Icons.block,
-                                      size: appBarHeight / 3)),
-                              onTap: () async {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        Loading());
-                                await blocking.blockUser(context,
-                                    otherUid: widget.scrap['uid'],
-                                    public: widget.scrap['scrap']['writer'] !=
-                                        'ไม่ระบุตัวตน',
-                                    scrap: widget.scrap);
-                                nav.pop(context);
-                              },
-                            ),
-                            Text(
-                              'ปิดกั้นการปา',
-                              style: TextStyle(
+                                fontSize: s48,
                                 color: Colors.white,
-                                fontSize: s42,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+
+                        Container(
+                          padding: EdgeInsets.only(top: screenWidthDp / 25),
+                          width: screenWidthDp,
+                          height: screenWidthDp / 3.9,
+                          child: ListView(
+                            //mainAxisAlignment: MainAxisAlignment.start,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            children: <Widget>[
+                              // story ig
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                        onTap: () async {
+                                          await screenshotController
+                                              .capture(pixelRatio: 1.5)
+                                              .then((image) async {
+                                            SocialShare.shareInstagramStory(
+                                                image.path,
+                                                "#212121",
+                                                "#000000",
+                                                "https://scrap.bualoitech.com/");
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          height: screenWidthDp / 7,
+                                          width: screenWidthDp / 7,
+                                          child: SvgPicture.asset(
+                                            'assets/ig-story-icon.svg',
+                                          ),
+                                        )),
+                                    Text(
+                                      'stories',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // facebook story
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                        onTap: () async {
+                                          await screenshotController
+                                              .capture(pixelRatio: 1.5)
+                                              .then((image) async {
+                                            Platform.isAndroid
+                                                ? SocialShare.shareFacebookStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/",
+                                                        appId:
+                                                            "152617042778122")
+                                                    .then((data) {
+                                                    print(data);
+                                                  })
+                                                : SocialShare.shareFacebookStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/")
+                                                    .then((data) {
+                                                    print(data);
+                                                  });
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          height: screenWidthDp / 7,
+                                          width: screenWidthDp / 7,
+                                          child: SvgPicture.asset(
+                                            'assets/facebook-icon.svg',
+                                          ),
+                                        )),
+                                    Text(
+                                      'facebook',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Divider(
+                          color: Color(0xfffa5a5a5),
+                          indent: screenWidthDp / 25,
+                          endIndent: screenWidthDp / 25,
+                        ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: screenWidthDp / 12,
+                              width: screenWidthDp / 25,
                             ),
-                            GestureDetector(
-                              child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(
-                                          screenHeightDp)),
-                                  child: Icon(Icons.report_problem,
-                                      size: appBarHeight / 3)),
-                              onTap: () {
-                                final report =
-                                    Provider.of<Report>(context, listen: false);
-                                report.targetId = scrap['uid'];
-                                showDialogReport(context);
-                              },
+                            Text(
+                              'เพิ่มเติม',
+                              style: TextStyle(
+                                fontSize: s48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            Text('รายงาน',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: s42,
-                                    fontWeight: FontWeight.bold))
                           ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(top: screenWidthDp / 25),
+                          width: screenWidthDp,
+                          height: screenWidthDp / 4,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            //mainAxisAlignment: MainAxisAlignment.start,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            children: <Widget>[
+                              Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      screenHeightDp)),
+                                          child: Icon(Icons.whatshot,
+                                              color: Color(0xffFF8F3A),
+                                              size: appBarHeight / 2.4)),
+                                      onTap: () {
+                                        if (inHistory('burn', scrap.scrapId)) {
+                                          toast.toast(
+                                              'คุณเคยเผาสแครปก้อนนี้แล้ว');
+                                        } else {
+                                          final report = Provider.of<Report>(
+                                              context,
+                                              listen: false);
+                                          report.scrapId = scrap.scrapId;
+                                          report.scrapRef =
+                                              scrap.path.parent().path;
+                                          report.targetId = scrap.writerUid;
+                                          report.region = scrap.scrapRegion;
+                                          showdialogBurn(context,
+                                              burntScraps: history['burn']);
+                                        }
+                                      },
+                                    ),
+                                    Text(
+                                      'เผา',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      screenHeightDp)),
+                                          child: Icon(Icons.report_problem,
+                                              size: appBarHeight / 2.4)),
+                                      onTap: () {
+                                        final report = Provider.of<Report>(
+                                            context,
+                                            listen: false);
+                                        report.targetId = scrap.writerUid;
+                                        showDialogReport(context);
+                                      },
+                                    ),
+                                    Text(
+                                      'รายงาน',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                // Positioned(
-                //     bottom: 0,
-                //     child: Container(
-                //       child: AdmobBanner(
-                //           adUnitId: AdmobService().getBannerAdId(),
-                //           adSize: AdmobBannerSize.FULL_BANNER),
-                //     )),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: screenWidthDp / 9,
+                        width: screenWidthDp,
+                        color: Colors.grey[800],
+                        // color: Color(0xfffa5a5a5),
+                        child: Center(
+                          child: Text(
+                            'ยกเลิก',
+                            style: TextStyle(
+                                fontSize: s48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  void showMore(context, {@required DocumentSnapshot scrap}) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return
+              //Container(
+              //   height: appBarHeight * 2.2,
+              //   //  height: appBarHeight * 3.4,
+              //   decoration: BoxDecoration(
+              //     color: Color(0xff202020),
+              //     borderRadius: BorderRadius.only(
+              //       topLeft: Radius.circular(20.0),
+              //       topRight: Radius.circular(20.0),
+              //     ),
+              //   ),
+              //   child: Stack(
+              //     children: <Widget>[
+              //       Align(
+              //           alignment: Alignment.topCenter,
+              //           child: Container(
+              //             margin: EdgeInsets.only(top: 12, bottom: 4),
+              //             width: screenWidthDp / 3.2,
+              //             height: screenHeightDp / 81,
+              //             decoration: BoxDecoration(
+              //               borderRadius:
+              //                   BorderRadius.circular(screenHeightDp / 42),
+              //               color: Color(0xff929292),
+              //             ),
+              //           )),
+              //       Container(
+              //         alignment: Alignment.center,
+              //         /*  margin: EdgeInsets.only(
+              //           bottom: appBarHeight - 20,
+              //         ),*/
+              //         child: Center(
+              //           child: Row(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: <Widget>[
+              //               Column(
+              //                 mainAxisAlignment: MainAxisAlignment.center,
+              //                 children: [
+
+              //                   GestureDetector(
+              //                     child: Container(
+              //                         height: 50,
+              //                         width: 50,
+              //                         margin: EdgeInsets.symmetric(
+              //                           horizontal: 15,
+              //                         ),
+              //                         decoration: BoxDecoration(
+              //                             color: Colors.white,
+              //                             borderRadius: BorderRadius.circular(
+              //                                 screenHeightDp)),
+              //                         child: Icon(Icons.whatshot,
+              //                             color: Color(0xffFF8F3A),
+              //                             size: appBarHeight / 3)),
+              //                     onTap: () {
+              //                       final report =
+              //                           Provider.of<Report>(context, listen: false);
+              //                       report.scrapId = scrap.documentID;
+              //                       report.scrapRef = scrap.reference.parent().path;
+              //                       report.targetId = scrap['uid'];
+              //                       report.region = scrap['region'];
+              //                       showdialogBurn(context, thrown: true);
+              //                     },
+              //                   ),
+              //                   Text(
+              //                     'เผา',
+              //                     style: TextStyle(
+              //                         color: Colors.white,
+              //                         fontSize: s42,
+              //                         fontWeight: FontWeight.bold),
+              //                   ),
+              //                 ],
+              //               ),
+              //               widget.picked
+              //                   ? Column(
+              //                       mainAxisAlignment: MainAxisAlignment.center,
+              //                       children: <Widget>[
+              //                         SizedBox(height: screenWidthDp / 12),
+              //                         GestureDetector(
+              //                           child: Container(
+              //                               width: 50,
+              //                               height: 50,
+              //                               margin: EdgeInsets.symmetric(
+              //                                 horizontal: 15,
+              //                               ),
+              //                               child: Icon(Icons.delete_outline,
+              //                                   size: appBarHeight / 3),
+              //                               decoration: BoxDecoration(
+              //                                 color: Colors.white,
+              //                                 borderRadius: BorderRadius.all(
+              //                                     Radius.circular(screenWidthDp)),
+              //                               )),
+              //                           onTap: () {
+              //                             unPick();
+              //                             toast.toast('นำสแครปออกแล้ว');
+              //                             nav.pop(context);
+              //                             nav.pop(context);
+              //                           },
+              //                         ),
+              //                         Text(
+              //                           'นำออก',
+              //                           style: TextStyle(
+              //                               color: Colors.white,
+              //                               fontSize: s42,
+              //                               fontWeight: FontWeight.bold),
+              //                         ),
+              //                       ],
+              //                     )
+              //                   : SizedBox(),
+              //               Column(
+              //                 mainAxisAlignment: MainAxisAlignment.center,
+              //                 children: [
+              //                   SizedBox(
+              //                     height: screenWidthDp / 12,
+              //                   ),
+              //                   GestureDetector(
+              //                     child: Container(
+              //                         height: 50,
+              //                         width: 50,
+              //                         margin: EdgeInsets.symmetric(
+              //                           horizontal: 15,
+              //                         ),
+              //                         decoration: BoxDecoration(
+              //                             color: Colors.white,
+              //                             borderRadius: BorderRadius.circular(
+              //                                 screenHeightDp)),
+              //                         child: Icon(Icons.block,
+              //                             size: appBarHeight / 3)),
+              //                     onTap: () async {
+              //                       showDialog(
+              //                           context: context,
+              //                           builder: (BuildContext context) =>
+              //                               Loading());
+              //                       await blocking.blockUser(context,
+              //                           otherUid: widget.scrap['uid'],
+              //                           public: widget.scrap['scrap']['writer'] !=
+              //                               'ไม่ระบุตัวตน',
+              //                           scrap: widget.scrap);
+              //                       nav.pop(context);
+              //                     },
+              //                   ),
+              //                   Text(
+              //                     'ปิดกั้นการปา',
+              //                     style: TextStyle(
+              //                       color: Colors.white,
+              //                       fontSize: s42,
+              //                       fontWeight: FontWeight.bold,
+              //                     ),
+              //                   ),
+              //                 ],
+              //               ),
+              //               Column(
+              //                 mainAxisAlignment: MainAxisAlignment.center,
+              //                 children: [
+              //                   SizedBox(
+              //                     height: screenWidthDp / 12,
+              //                   ),
+              //                   GestureDetector(
+              //                     child: Container(
+              //                         height: 50,
+              //                         width: 50,
+              //                         margin: EdgeInsets.symmetric(
+              //                           horizontal: 15,
+              //                         ),
+              //                         decoration: BoxDecoration(
+              //                             color: Colors.white,
+              //                             borderRadius: BorderRadius.circular(
+              //                                 screenHeightDp)),
+              //                         child: Icon(Icons.report_problem,
+              //                             size: appBarHeight / 3)),
+              //                     onTap: () {
+              //                       final report =
+              //                           Provider.of<Report>(context, listen: false);
+              //                       report.targetId = scrap['uid'];
+              //                       showDialogReport(context);
+              //                     },
+              //                   ),
+              //                   Text('รายงาน',
+              //                       style: TextStyle(
+              //                           color: Colors.white,
+              //                           fontSize: s42,
+              //                           fontWeight: FontWeight.bold))
+              //                 ],
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //       ),
+              //       // Positioned(
+              //       //     bottom: 0,
+              //       //     child: Container(
+              //       //       child: AdmobBanner(
+              //       //           adUnitId: AdmobService().getBannerAdId(),
+              //       //           adSize: AdmobBannerSize.FULL_BANNER),
+              //       //     )),
+              //     ],
+              //   ),
+              // );
+              Container(
+            height: screenWidthDp / 1.1,
+            decoration: BoxDecoration(
+              color: Color(0xff202020),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
+            child: Stack(
+              children: <Widget>[
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 12, bottom: 4),
+                      width: screenWidthDp / 3.2,
+                      height: screenHeightDp / 81,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(screenHeightDp / 42),
+                        color: Color(0xff929292),
+                      ),
+                    )),
+                Container(
+                  margin: EdgeInsets.only(bottom: screenWidthDp / 15),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //  SizedBox(
+                        //   height: screenWidthDp / 20,
+                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: screenWidthDp / 25,
+                            ),
+                            Text(
+                              'แบ่งปันไปยัง',
+                              style: TextStyle(
+                                fontSize: s48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Container(
+                          padding: EdgeInsets.only(top: screenWidthDp / 25),
+                          width: screenWidthDp,
+                          height: screenWidthDp / 3.9,
+                          child: ListView(
+                            //mainAxisAlignment: MainAxisAlignment.start,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            children: <Widget>[
+                              // story ig
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                        onTap: () async {
+                                          await screenshotController
+                                              .capture(pixelRatio: 1.5)
+                                              .then((image) async {
+                                            SocialShare.shareInstagramStory(
+                                                image.path,
+                                                "#212121",
+                                                "#000000",
+                                                "https://scrap.bualoitech.com/");
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          height: screenWidthDp / 7,
+                                          width: screenWidthDp / 7,
+                                          child: SvgPicture.asset(
+                                            'assets/ig-story-icon.svg',
+                                          ),
+                                        )),
+                                    Text(
+                                      'stories',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // facebook story
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                        onTap: () async {
+                                          await screenshotController
+                                              .capture(pixelRatio: 1.5)
+                                              .then((image) async {
+                                            Platform.isAndroid
+                                                ? SocialShare.shareFacebookStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/",
+                                                        appId:
+                                                            "152617042778122")
+                                                    .then((data) {
+                                                    print(data);
+                                                  })
+                                                : SocialShare.shareFacebookStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/")
+                                                    .then((data) {
+                                                    print(data);
+                                                  });
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          height: screenWidthDp / 7,
+                                          width: screenWidthDp / 7,
+                                          child: SvgPicture.asset(
+                                            'assets/facebook-icon.svg',
+                                          ),
+                                        )),
+                                    Text(
+                                      'facebook',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: s42,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Divider(
+                          color: Color(0xfffa5a5a5),
+                          indent: screenWidthDp / 25,
+                          endIndent: screenWidthDp / 25,
+                        ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: screenWidthDp / 25,
+                            ),
+                            Text(
+                              'เพิ่มเติม',
+                              style: TextStyle(
+                                fontSize: s48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(top: screenWidthDp / 25),
+                          width: screenWidthDp,
+                          height: screenWidthDp / 4,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            //mainAxisAlignment: MainAxisAlignment.start,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            children: <Widget>[
+                              //------- เผา
+
+                              Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      screenHeightDp)),
+                                          child: Icon(Icons.whatshot,
+                                              color: Color(0xffFF8F3A),
+                                              size: appBarHeight / 3)),
+                                      onTap: () {
+                                        final report = Provider.of<Report>(
+                                            context,
+                                            listen: false);
+                                        report.scrapId = scrap.documentID;
+                                        report.scrapRef =
+                                            scrap.reference.parent().path;
+                                        report.targetId = scrap['uid'];
+                                        report.region = scrap['region'];
+                                        showdialogBurn(context, thrown: true);
+                                      },
+                                    ),
+                                    Text(
+                                      'เผา',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: s42,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // blockuser
+                              widget.picked
+                                  ? Container(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            child: Container(
+                                                width: 50,
+                                                height: 50,
+                                                margin: EdgeInsets.symmetric(
+                                                  horizontal: 15,
+                                                ),
+                                                child: Icon(
+                                                    Icons.delete_outline,
+                                                    size: appBarHeight / 3),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              screenWidthDp)),
+                                                )),
+                                            onTap: () {
+                                              unPick();
+                                              toast.toast('นำสแครปออกแล้ว');
+                                              nav.pop(context);
+                                              nav.pop(context);
+                                            },
+                                          ),
+                                          Text(
+                                            'นำออก',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: s42,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : SizedBox(),
+                              Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      screenHeightDp)),
+                                          child: Icon(Icons.report_problem,
+                                              size: appBarHeight / 3)),
+                                      onTap: () {
+                                        final report = Provider.of<Report>(
+                                            context,
+                                            listen: false);
+                                        report.targetId = scrap['uid'];
+                                        showDialogReport(context);
+                                      },
+                                    ),
+                                    Text('รายงาน',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: s42,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: screenWidthDp / 9,
+                        width: screenWidthDp,
+                        color: Colors.grey[800],
+                        // color: Color(0xfffa5a5a5),
+                        child: Center(
+                          child: Text(
+                            'ยกเลิก',
+                            style: TextStyle(
+                                fontSize: s48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           );
