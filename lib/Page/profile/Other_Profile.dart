@@ -26,7 +26,6 @@ import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
-import 'package:scrap/widget/thrown.dart';
 
 class OtherProfile extends StatefulWidget {
   final Map data;

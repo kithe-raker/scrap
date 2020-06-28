@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 
@@ -7,26 +6,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
-import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
-import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
-import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:scrap/widget/Toast.dart';
-import 'package:scrap/widget/beforeburn.dart';
 import 'package:scrap/widget/dialog/ScrapDialog.dart';
 import 'package:scrap/widget/dialog/ScrapFeedDialog.dart';
-import 'package:scrap/widget/sheets/CommentSheet.dart';
-import 'package:scrap/widget/sheets/MapSheet.dart';
-import 'package:scrap/widget/showdialogreport.dart';
 
 class Activity extends StatefulWidget {
   @override
