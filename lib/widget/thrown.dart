@@ -49,7 +49,7 @@ void writerScrap(BuildContext context,
                     height: appBarHeight / 1.42,
                     width: screenWidthDp,
                     padding:
-                        EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
                     color: Colors.transparent,
                     alignment: Alignment.center,
                     child: Row(

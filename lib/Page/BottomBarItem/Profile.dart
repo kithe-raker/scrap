@@ -44,30 +44,21 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   //Appbar สำหรับหน้าโปรไฟล์ของฉัน
   Widget appbarProfile(BuildContext context) {
     return Container(
-      height: appBarHeight / 1.42,
-      width: screenWidthDp,
+      // height: appBarHeight / 1.42,
+      // width: screenWidthDp,
       color: Colors.black,
       padding: EdgeInsets.symmetric(
-        horizontal: screenWidthDp / 21,
+        horizontal: screenWidthDp / 42,
+        vertical: screenWidthDp / 42,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          GestureDetector(
-              child: Icon(Icons.arrow_back, color: Colors.black, size: s60),
-              onTap: () {
-                // Navigator.pop(context);
-              }),
-          GestureDetector(
-              child: Icon(Icons.settings, color: Colors.white, size: s60),
-              onTap: () {
-                //showButtonSheet(context);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => OptionSetting()));
-              }),
-        ],
-      ),
+      child: GestureDetector(
+          child: Container(
+              alignment: Alignment.centerRight,
+              child: Icon(Icons.settings, color: Colors.white, size: s60)),
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => OptionSetting()));
+          }),
     );
   }
 

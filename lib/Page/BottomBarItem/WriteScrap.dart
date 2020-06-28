@@ -90,7 +90,7 @@ class _WriteScrapState extends State<WriteScrap> {
                     height: appBarHeight / 1.42,
                     width: screenWidthDp,
                     padding:
-                        EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 42),
                     color: Colors.transparent,
                     alignment: Alignment.center,
                     child: Row(
@@ -108,8 +108,16 @@ class _WriteScrapState extends State<WriteScrap> {
                             style:
                                 TextStyle(color: Colors.white, fontSize: s46)),
                         GestureDetector(
-                            child: Icon(Icons.color_lens,
-                                color: Colors.white, size: s60),
+                            // child: Icon(Icons.color_lens,
+                            //     color: Colors.white, size: s60),
+                            child: Container(
+                              height: screenWidthDp / 15,
+                              width: screenWidthDp / 15,
+                              child: SvgPicture.asset(
+                                'assets/paperchange.svg',
+                                color: Colors.white,
+                              ),
+                            ),
                             onTap: () async {
                               _navigateAndDisplaySelection(context);
                             }),
@@ -120,7 +128,7 @@ class _WriteScrapState extends State<WriteScrap> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        SizedBox(height: screenHeightDp / 27),
+                        // SizedBox(height: screenHeightDp / 27),
                         widget.isThrowBack
                             ? SizedBox(height: screenWidthDp / 13)
                             : Container(
