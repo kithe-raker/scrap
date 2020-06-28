@@ -382,7 +382,6 @@ class _MapScrapsState extends State<MapScraps>
                                                           scrap
                                                               .updateScrapTrans(
                                                                   'like',
-                                                                  context,
                                                                   doc: data);
                                                           if (inHistory('like',
                                                               data.documentID)) {
@@ -424,7 +423,7 @@ class _MapScrapsState extends State<MapScraps>
                                                               'สเเครปนี้ย่อยสลายแล้ว');
                                                         } else {
                                                           scrap.updateScrapTrans(
-                                                              'picked', context,
+                                                              'picked',
                                                               doc: data,
                                                               comments: trans
                                                                       .value[

@@ -299,7 +299,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                           'สเเครปนี้ย่อยสลายแล้ว');
                                                     } else {
                                                       scrap.updateScrapTrans(
-                                                          'like', context,
+                                                          'like',
                                                           doc: widget.data);
                                                       if (inHistory(
                                                           'like',
@@ -343,7 +343,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                           'สเเครปนี้ย่อยสลายแล้ว');
                                                     } else {
                                                       scrap.updateScrapTrans(
-                                                          'picked', context,
+                                                          'picked',
                                                           doc: widget.data,
                                                           comments: trans.value[
                                                               'comment']);

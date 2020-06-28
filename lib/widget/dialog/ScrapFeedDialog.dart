@@ -327,7 +327,7 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                             'สเเครปนี้ย่อยสลายแล้ว');
                                                       } else {
                                                         scrap.updateScrapTrans(
-                                                            'like', context,
+                                                            'like',
                                                             doc: data);
                                                         if (inHistory('like',
                                                             data.documentID)) {
@@ -365,7 +365,7 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                             'สเเครปนี้ย่อยสลายแล้ว');
                                                       } else {
                                                         scrap.updateScrapTrans(
-                                                            'picked', context,
+                                                            'picked',
                                                             doc: data,
                                                             comments:
                                                                 trans.value[
@@ -737,7 +737,7 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                               },
                             ),
                             Text(
-                              'รายงาน',
+                              'รายงา��',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: s42,

@@ -483,7 +483,7 @@ class _OtherProfileState extends State<OtherProfile> {
         showDialog(
             context: context,
             builder: (BuildContext context) => pickedScrap
-                ? ScrapDialog(data: data, showTransaction: false)
+                ? ScrapDialog(data: data, showTransaction: true)
                 : Paperstranger(scrap: data, isHistory: true));
       },
     );

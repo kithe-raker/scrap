@@ -473,7 +473,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                 ? ScrapDialog(
                     data: data,
                     self: true,
-                    showTransaction: false,
+                    showTransaction: true,
                     currentList: pickScrap)
                 : Paperstranger(
                     scrap: data,

@@ -290,7 +290,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                             .add(doc['id']);
                                                       }
                                                       scrap.updateScrapTrans(
-                                                          'like', context,
+                                                          'like',
                                                           doc: docData);
 
                                                       setTrans(() {});
@@ -327,7 +327,7 @@ class _GridfavoriteState extends State<Gridfavorite> {
                                                             .add(doc['id']);
                                                       }
                                                       scrap.updateScrapTrans(
-                                                          'picked', context,
+                                                          'picked',
                                                           doc: docData,
                                                           comments: trans.value[
                                                               'comment']);

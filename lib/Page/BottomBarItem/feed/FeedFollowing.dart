@@ -161,9 +161,6 @@ class _FeedFollowngState extends State<FeedFollowng>
   Widget scrapWidget(ScrapModel scrapModel) {
     var transac = scrapModel.transaction;
     return StatefulBuilder(builder: (context, StateSetter setDialog) {
-      var like = transac.like;
-      var pick = transac.picked;
-
       return Container(
           padding: EdgeInsets.symmetric(
               horizontal: (screenWidthDp - screenWidthDp / 1.04) / 2),
@@ -308,7 +305,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                                       inHistory('like', scrapModel.scrapId)
                                           ? 'assets/heart-fill-icon.svg'
                                           : 'assets/heart-icon.svg',
-                                      like.abs().toString(),
+                                      transac.like.abs().toString(),
                                       iconColor:
                                           inHistory('like', scrapModel.scrapId)
                                               ? Colors.white
@@ -321,15 +318,15 @@ class _FeedFollowngState extends State<FeedFollowng>
                                     if (isExpired(scrapModel.litteredTime)) {
                                       toast.toast('สเเครปนี้ย่อยสลายแล้ว');
                                     } else {
-                                      scrap.updateScrapTrans('like', context,
+                                      scrap.updateScrapTrans('like',
                                           scrap: scrapModel);
                                       if (inHistory(
                                           'like', scrapModel.scrapId)) {
-                                        ++like;
+                                        ++transac.like;
                                         history['like']
                                             .remove(scrapModel.scrapId);
                                       } else {
-                                        --like;
+                                        --transac.like;
                                         history['like'].add(scrapModel.scrapId);
                                       }
                                       setTrans(() {});
@@ -341,7 +338,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                                       inHistory('picked', scrapModel.scrapId)
                                           ? 'assets/keep-icon.svg'
                                           : 'assets/keep-icon.svg',
-                                      pick.abs().toString(),
+                                      transac.picked.abs().toString(),
                                       iconColor: inHistory(
                                               'picked', scrapModel.scrapId)
                                           ? Colors.white
@@ -354,16 +351,16 @@ class _FeedFollowngState extends State<FeedFollowng>
                                     if (isExpired(scrapModel.litteredTime)) {
                                       scrap.toast('สเเครปนี้ย่อยสลายแล้ว');
                                     } else {
-                                      scrap.updateScrapTrans('picked', context,
+                                      scrap.updateScrapTrans('picked', 
                                           scrap: scrapModel,
                                           comments: transac.comment);
                                       if (inHistory(
                                           'picked', scrapModel.scrapId)) {
-                                        ++pick;
+                                        ++transac.picked;
                                         history['picked']
                                             .remove(scrapModel.scrapId);
                                       } else {
-                                        --pick;
+                                        --transac.picked;
                                         history['picked']
                                             .add(scrapModel.scrapId);
                                       }
