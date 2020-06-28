@@ -110,7 +110,7 @@ class _ActivityState extends State<Activity>
                         padding: EdgeInsets.symmetric(
                             horizontal: screenWidthDp / 48),
                         child: Text(
-                          'สแครปโยนล่าสุดของคุณ',
+                          'โยนล่าสุด',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: s46,
@@ -163,7 +163,7 @@ class _ActivityState extends State<Activity>
                         padding: EdgeInsets.symmetric(
                             horizontal: screenWidthDp / 48),
                         child: Text(
-                          'สแครปเก็บล่าสุดของคุณ',
+                          'เก็บล่าสุด',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: s46,

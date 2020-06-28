@@ -96,7 +96,7 @@ class _PlaceWidgetState extends State<PlaceWidget> {
             alignment: Alignment.topCenter,
             margin: EdgeInsets.only(top: screenHeightDp / 18),
             child: Text(
-              'ไม่มีพบสแครปบริเวณนี้',
+              'ไม่พบสแครปบริเวณนี้',
               style: TextStyle(
                   color: Colors.white.withOpacity(0.51),
                   fontWeight: FontWeight.bold,

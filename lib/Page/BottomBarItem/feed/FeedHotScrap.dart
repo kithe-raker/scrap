@@ -672,7 +672,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                           : Colors.white),
                                   onTap: () {
                                     if (isExpired(scrapModel.litteredTime)) {
-                                      scrap.toast('สเเค���ปนี้ย่อยสลายแล้ว');
+                                      scrap.toast('สเเครปนี้ย่อยสลายแล้ว');
                                     } else {
                                       scrap.updateScrapTrans('picked', context,
                                           scrap: scrapModel,

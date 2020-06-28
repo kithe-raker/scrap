@@ -299,14 +299,14 @@ class _CommentSheetState extends State<CommentSheet> {
                                   borderRadius:
                                       BorderRadius.circular(screenWidthDp),
                                   child: private
-                                      ? Padding(
+                                      ? Image.file(File(user.img),
+                                          fit: BoxFit.cover)
+                                      : Padding(
                                           padding: EdgeInsets.all(5.6),
                                           child: SvgPicture.asset(
                                               'assets/anonymouse.svg',
                                               color: Colors.black),
-                                        )
-                                      : Image.file(File(user.img),
-                                          fit: BoxFit.cover),
+                                        ),
                                 ),
                               ),
                               onTap: () {
