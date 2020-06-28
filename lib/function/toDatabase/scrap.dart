@@ -398,10 +398,10 @@ class Scraps {
           return data;
         });
 
-        if (field == 'like')
+        if (field != 'like') {
           fcm.unsubscribeFromTopic(scrapId);
-        else
           pickScrap(scrap: scrap, doc: doc, cancel: true);
+        }
       } else
         toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     } else {
@@ -431,10 +431,10 @@ class Scraps {
           return data;
         });
 
-        if (field == 'like')
+        if (field != 'like') {
           fcm.subscribeToTopic(scrapId);
-        else
           pickScrap(scrap: scrap, doc: doc);
+        }
       } else
         toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     }

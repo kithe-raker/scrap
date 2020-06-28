@@ -367,8 +367,8 @@ class _OptionSettingState extends State<OptionSetting> {
                           children: [
                             GestureDetector(
                               child: ClipRRect(
-                                  child: SvgPicture.asset(
-                                      'assets/scraplogofinal.svg',
+                                  child: Image.asset(
+                                      'assets/logo_asset.png',
                                       width: a.width / 4,
                                       fit: BoxFit.contain)),
                               onTap: () async {
