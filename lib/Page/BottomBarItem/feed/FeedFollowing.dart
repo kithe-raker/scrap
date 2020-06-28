@@ -133,9 +133,12 @@ class _FeedFollowngState extends State<FeedFollowng>
                               );
                             } else
                               return Center(
-                                  child: guide(
-                                      Size(screenWidthDp, screenHeightDp),
-                                      'ไม่มีจ่ะ'));
+                                  child: GestureDetector(
+                                child: guide(
+                                    Size(screenWidthDp, screenHeightDp),
+                                    'ไม่มีจ่ะ'),
+                                onTap: () => topbarStream.add(2100),
+                              ));
                           } else {
                             return Center(child: LoadNoBlur());
                           }

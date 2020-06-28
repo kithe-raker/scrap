@@ -72,7 +72,8 @@ class ScrapModel extends Equatable {
   factory ScrapModel.fromJSON(Map<String, dynamic> json,
       {@required ScrapTransaction transaction}) {
     var scrap = json['scrap'];
-    var position = json['position']['geopoint'];
+    var position =
+        json['position'] != null ? json['position']['geopoint'] : null;
     return ScrapModel(
         text: scrap['text'],
         writer: scrap['writer'],
@@ -82,8 +83,10 @@ class ScrapModel extends Equatable {
         writerUid: json['uid'],
         scrapRegion: json['region'],
         transaction: transaction,
-        geoHash: json['position']['geohash'],
-        position: LatLng(position.latitude, position.longitude));
+        geoHash: position != null ? json['position']['geohash'] : null,
+        position: position != null
+            ? LatLng(position.latitude, position.longitude)
+            : null);
   }
 }
 

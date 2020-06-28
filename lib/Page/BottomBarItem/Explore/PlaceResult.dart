@@ -48,6 +48,7 @@ class _PlaceResultState extends State<PlaceResult>
                 var places = snapshot.data;
                 return places.length > 0
                     ? ListView(
+                        physics: AlwaysScrollableScrollPhysics(),
                         children: places
                             .map((place) => PlaceWidget(place: place))
                             .toList(),
