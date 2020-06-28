@@ -14,7 +14,6 @@ import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/showcontract.dart';
-import 'package:scrap/widget/thrown.dart';
 
 class PersonCard extends StatefulWidget {
   final Map data;

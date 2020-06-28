@@ -12,6 +12,7 @@ import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/randomLocation.dart';
+import 'package:scrap/method/Globalkey.dart';
 import 'package:scrap/models/PlaceModel.dart';
 import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
@@ -25,6 +26,7 @@ final rtdb = FirebaseDatabase.instance;
 class Scraps {
   PublishSubject<bool> loading = PublishSubject();
   final FirebaseMessaging fcm = FirebaseMessaging();
+  final globalContext = myGlobals.scaffoldKey.currentContext;
 
   throwTo(BuildContext context,
       {@required Map data,
@@ -180,7 +182,6 @@ class Scraps {
       'id': docId,
       'point': 0.0,
       'burn': 0,
-      'PPN': -5,
       'CPN': -5
     };
     Map<String, dynamic> scrap = {
@@ -258,7 +259,6 @@ class Scraps {
       'like': 0,
       'picked': 0,
       'burn': 0,
-      'PPN': -5,
       'CPN': -5
     };
     Map<String, dynamic> scrap = {
@@ -356,12 +356,16 @@ class Scraps {
             }));
   }
 
-  void updateScrapTrans(String field, BuildContext context,
+  bool updating = false;
+
+  void updateScrapTrans(String field,
       {int comments, ScrapModel scrap, DocumentSnapshot doc}) async {
+    assert(!updating);
+    updating = true;
     Map<String, List> history = {};
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
-    final db = Provider.of<RealtimeDB>(context, listen: false);
+    final db = Provider.of<RealtimeDB>(globalContext, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
     var defaultDb = FirebaseDatabase.instance;
     var userDb = FirebaseDatabase(app: db.userTransact);
@@ -397,7 +401,7 @@ class Scraps {
         if (field == 'like')
           fcm.unsubscribeFromTopic(scrapId);
         else
-          pickScrap(context, scrap: scrap, doc: doc, cancel: true);
+          pickScrap(scrap: scrap, doc: doc, cancel: true);
       } else
         toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     } else {
@@ -418,9 +422,6 @@ class Scraps {
             .child(ref)
             .update({field: transac.value - 1, 'point': newPoint});
 
-        pushNotification(scrapId, writerUid,
-            notiRate: mutableData.value['PPN'], currentPoint: newPoint);
-
         userDb
             .reference()
             .child('users/$writerUid/att')
@@ -433,16 +434,17 @@ class Scraps {
         if (field == 'like')
           fcm.subscribeToTopic(scrapId);
         else
-          pickScrap(context, scrap: scrap, doc: doc);
+          pickScrap(scrap: scrap, doc: doc);
       } else
         toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     }
+    updating = false;
   }
 
-  pickScrap(BuildContext context,
+  pickScrap(
       {bool cancel = false, ScrapModel scrap, DocumentSnapshot doc}) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    final user = Provider.of<UserData>(context, listen: false);
+    final db = Provider.of<RealtimeDB>(globalContext, listen: false);
+    final user = Provider.of<UserData>(globalContext, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var ref = userDb.reference().child('users/${user.uid}');
     var data = scrap != null ? scrap.toJSON : doc.data;
@@ -465,13 +467,13 @@ class Scraps {
   }
 
   pushNotification(String scrapId, String writerUid,
-      {@required int notiRate,
-      @required dynamic currentPoint,
-      bool isComment = false}) {
-    var target = isComment ? 'CPN' : 'PPN';
+      {@required int notiRate, @required dynamic currentPoint}) {
+    var target = 'CPN';
     if (currentPoint <= notiRate) {
-      fireStore.collection('ScrapNotification').document(scrapId).setData(
-          {'id': scrapId, 'isComment': isComment, 'writer': writerUid});
+      fireStore
+          .collection('ScrapNotification')
+          .document(scrapId)
+          .setData({'id': scrapId, 'isComment': true, 'writer': writerUid});
       FirebaseDatabase.instance
           .reference()
           .child('scraps/$scrapId')
@@ -479,8 +481,8 @@ class Scraps {
     }
   }
 
-  resetScrap(BuildContext context, {@required String uid}) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
+  resetScrap({@required String uid}) async {
+    final db = Provider.of<RealtimeDB>(globalContext, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     await userDb.reference().child('users/$uid').update({'papers': 10});
   }

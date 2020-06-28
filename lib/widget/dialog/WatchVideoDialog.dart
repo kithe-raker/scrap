@@ -153,7 +153,7 @@ void dialogvideo(BuildContext context, String uid) {
                                                           .impression ||
                                                   event ==
                                                       MobileAdEvent.closed) {
-                                                await scrap.resetScrap(context,
+                                                await scrap.resetScrap(
                                                     uid: uid);
                                                 setState(() => loading = false);
                                                 dialogfinishpaper(context);

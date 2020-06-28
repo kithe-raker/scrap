@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/subjects.dart';
@@ -150,45 +151,51 @@ class _ExplorePageState extends State<ExplorePage>
                 appBar(),
                 Expanded(
                   child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
-                    child: isSearching
-                        ? PageView(
-                            controller: pageController,
-                            physics: NeverScrollableScrollPhysics(),
-                            children: <Widget>[
-                              StreamBuilder(
-                                  stream: streamController.stream,
-                                  builder: (context, string) {
-                                    return PlaceResult(
-                                        searchText: string?.data);
-                                  }),
-                              StreamBuilder(
-                                  stream: streamController.stream,
-                                  builder: (context, string) {
-                                    return Subpeople(
-                                        hasAppbar: false,
-                                        searchText: string?.data);
-                                  })
-                            ],
-                          )
-                        : loading
-                            ? Center(child: LoadNoBlur())
-                            : SmartRefresher(
-                                controller: refreshController,
-                                enablePullDown: false,
-                                enablePullUp: true,
-                                footer: Footer(),
-                                onLoading: () => loadMorePlace(),
-                                child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: places
-                                        .map((place) => PlaceWidget(
-                                            place: place,
-                                            count: counts[place.id] ?? 0))
-                                        .toList()),
-                              ),
-                  ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
+                      child: PageView(
+                        controller: pageController,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: screenWidthDp / 64),
+                            child: StreamBuilder(
+                                stream: streamController.stream,
+                                builder: (context, string) {
+                                  return string?.data != null &&
+                                          string.data.length > 0
+                                      ? PlaceResult(searchText: string?.data)
+                                      : loading
+                                          ? Center(child: LoadNoBlur())
+                                          : SmartRefresher(
+                                              controller: refreshController,
+                                              enablePullDown: false,
+                                              enablePullUp: true,
+                                              footer: Footer(),
+                                              onLoading: () => loadMorePlace(),
+                                              child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: places
+                                                      .map((place) =>
+                                                          PlaceWidget(
+                                                              place: place,
+                                                              count: counts[place
+                                                                      .id] ??
+                                                                  0))
+                                                      .toList()),
+                                            );
+                                }),
+                          ),
+                          StreamBuilder(
+                              stream: streamController.stream,
+                              builder: (context, string) {
+                                return Subpeople(
+                                    hasAppbar: false, searchText: string?.data);
+                              })
+                        ],
+                      )),
                 )
               ],
             ),
@@ -217,105 +224,113 @@ class _ExplorePageState extends State<ExplorePage>
                     vertical: screenHeightDp / 81),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                    borderRadius: BorderRadius.circular(screenWidthDp / 32),
                     //color: Color(0xff262626),
-                    color: Colors.black,
-                    border: Border.all(color: Color(0xfff26A4FF))),
-                child: TextField(
-                  focusNode: focus,
-                  controller: _searchController,
-                  style: TextStyle(color: Colors.white, fontSize: s42),
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'ค้นหาโรงเรียนและเพื่อนๆ',
-                    contentPadding: EdgeInsets.all(4.8),
-                    hintStyle: TextStyle(color: Colors.white60, fontSize: s42),
-                  ),
-                  onTap: () => setState(() => isSearching = true),
+                    color: Color(0xff2E2E2E),
+                    border: Border.all(color: Color(0xff2E2E2E))),
+                child: Stack(
+                  children: <Widget>[
+                    TextField(
+                      focusNode: focus,
+                      controller: _searchController,
+                      style: TextStyle(color: Colors.white, fontSize: s42),
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: index == 0 ? 'ค้นหาโรงเรียน' : 'ค้นหาเพื่อนๆ',
+                        contentPadding: EdgeInsets.all(4.8),
+                        hintStyle:
+                            TextStyle(color: Colors.white60, fontSize: s42),
+                      ),
+                      onTap: () => setState(() => isSearching = true),
+                    ),
+                    isSearching
+                        ? Align(
+                            alignment: Alignment.centerRight,
+                            child: GestureDetector(
+                              child: Container(
+                                margin: EdgeInsets.only(right: 4.2),
+                                child: Icon(Icons.clear,
+                                    color: Colors.grey, size: s46),
+                              ),
+                              onTap: () {
+                                _searchController.clear();
+                                focus.unfocus();
+                                setState(() => isSearching = false);
+                              },
+                            ))
+                        : SizedBox()
+                  ],
                 ),
               ),
             ),
-            isSearching
-                ? GestureDetector(
-                    child: Container(
-                      margin: EdgeInsets.only(right: screenWidthDp / 64),
-                      child: Text(
-                        'ยกเลิก',
-                        style: TextStyle(
-                            color: Color(0xfff26A4FF),
-                            fontSize: s42,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    onTap: () {
-                      focus.unfocus();
-                      index = 0;
-                      setState(() => isSearching = false);
-                    },
-                  )
-                : SizedBox()
+            GestureDetector(
+                child: Container(
+                    margin: EdgeInsets.only(right: screenWidthDp / 64),
+                    width: screenWidthDp / 10,
+                    height: screenWidthDp / 10,
+                    child: index != 0
+                        ? Padding(
+                            padding: EdgeInsets.all(5.4),
+                            child: SvgPicture.asset('assets/location-icon.svg',
+                                fit: BoxFit.contain, color: Colors.white),
+                          )
+                        : Icon(Icons.people, size: s54, color: Colors.white)),
+                onTap: () => onTap(index == 0 ? 1 : 0))
           ],
         ),
-        isSearching
-            ? Container(
-                height: screenWidthDp / 10,
-                width: screenWidthDp,
-                child: ListView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    SizedBox(width: screenWidthDp / 64),
-                    Container(
-                      width: screenWidthDp / 5,
-                      child: GestureDetector(
-                        onTap: () => onTap(0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xfff26A4FF)),
-                              borderRadius:
-                                  BorderRadius.circular(screenWidthDp),
-                              color: index == 0
-                                  ? Color(0xfff26A4FF)
-                                  : Colors.black),
-                          child: Text(
-                            'สถานที่',
-                            style: TextStyle(
-                              color: index == 0
-                                  ? Colors.white
-                                  : Color(0xfff26A4FF),
-                              fontSize: s52,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: screenWidthDp / 50),
-                    Container(
-                        width: screenWidthDp / 5,
-                        child: GestureDetector(
-                            onTap: () => onTap(1),
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: Color(0xfff26A4FF)),
-                                    borderRadius:
-                                        BorderRadius.circular(screenWidthDp),
-                                    color: index == 1
-                                        ? Color(0xfff26A4FF)
-                                        : Colors.black),
-                                child: Text('ผู้คน',
-                                    style: TextStyle(
-                                      color: index == 1
-                                          ? Colors.white
-                                          : Color(0xfff26A4FF),
-                                      fontSize: s52,
-                                    ),
-                                    textAlign: TextAlign.center))))
-                  ],
-                ))
-            : SizedBox(),
+        // Container(
+        //     height: screenWidthDp / 10,
+        //     width: screenWidthDp,
+        //     child: ListView(
+        //       physics: AlwaysScrollableScrollPhysics(),
+        //       scrollDirection: Axis.horizontal,
+        //       children: <Widget>[
+        //         SizedBox(width: screenWidthDp / 64),
+        //         Container(
+        //           width: screenWidthDp / 5,
+        //           child: GestureDetector(
+        //             onTap: () => onTap(0),
+        //             child: Container(
+        //               decoration: BoxDecoration(
+        //                   border: Border.all(color: Color(0xfff26A4FF)),
+        //                   borderRadius: BorderRadius.circular(screenWidthDp),
+        //                   color:
+        //                       index == 0 ? Color(0xfff26A4FF) : Colors.black),
+        //               child: Text(
+        //                 'สถานที่',
+        //                 style: TextStyle(
+        //                   color: index == 0 ? Colors.white : Color(0xfff26A4FF),
+        //                   fontSize: s52,
+        //                 ),
+        //                 textAlign: TextAlign.center,
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //         SizedBox(width: screenWidthDp / 50),
+        //         Container(
+        //             width: screenWidthDp / 5,
+        //             child: GestureDetector(
+        //                 onTap: () => onTap(1),
+        //                 child: Container(
+        //                     decoration: BoxDecoration(
+        //                         border: Border.all(color: Color(0xfff26A4FF)),
+        //                         borderRadius:
+        //                             BorderRadius.circular(screenWidthDp),
+        //                         color: index == 1
+        //                             ? Color(0xfff26A4FF)
+        //                             : Colors.black),
+        //                     child: Text('ผู้คน',
+        //                         style: TextStyle(
+        //                           color: index == 1
+        //                               ? Colors.white
+        //                               : Color(0xfff26A4FF),
+        //                           fontSize: s52,
+        //                         ),
+        //                         textAlign: TextAlign.center))))
+        //       ],
+        //     ))
       ],
     );
   }

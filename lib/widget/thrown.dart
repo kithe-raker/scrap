@@ -23,7 +23,6 @@ void writerScrap(BuildContext context,
     bool isThrowBack = false}) {
   var _key = GlobalKey<FormState>();
   int textureIndex = 0;
-  bool showtheme = false;
   bool private = false, loading = false;
   final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
   showDialog(

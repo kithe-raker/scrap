@@ -70,8 +70,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future onTapMessage(String payload) async {
-    final auth = await FirebaseAuth.instance.currentUser();
-    if (auth != null) nav.push(context, MainStream(initPage: 2));
+    if (await isLogin()) nav.push(context, MainStream(initPage: 2));
   }
 
   Future<bool> serverChecker() async {

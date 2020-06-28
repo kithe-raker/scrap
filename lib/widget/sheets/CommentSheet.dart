@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -130,9 +132,7 @@ class _CommentSheetState extends State<CommentSheet> {
 
     scrap.pushNotification(
         scrapId, widget.scrapSnapshot?.writerUid ?? widget.doc['uid'],
-        notiRate: data.value['CPN'],
-        currentPoint: data.value['comment'] - 1,
-        isComment: true);
+        notiRate: data.value['CPN'], currentPoint: data.value['comment'] - 1);
 
     scrapAll.reference().child(refChild).update({
       'comment': data.value['comment'] - 1,
@@ -297,14 +297,14 @@ class _CommentSheetState extends State<CommentSheet> {
                                   borderRadius:
                                       BorderRadius.circular(screenWidthDp),
                                   child: private
-                                      ? Padding(
+                                      ? Image.file(File(user.img),
+                                          fit: BoxFit.cover)
+                                      : Padding(
                                           padding: EdgeInsets.all(5.6),
                                           child: SvgPicture.asset(
                                               'assets/anonymouse.svg',
                                               color: Colors.black),
-                                        )
-                                      : Image.asset('assets/M10.png',
-                                          fit: BoxFit.cover),
+                                        ),
                                 ),
                               ),
                               onTap: () {

@@ -92,7 +92,7 @@ class _ScrapNearbyState extends State<ScrapNearby> {
                                 )),
                             SizedBox(width: screenWidthDp / 64),
                             SizedBox(
-                              width: screenWidthDp / 1.6,
+                              width: screenWidthDp / 1.8,
                               child: AutoSizeText(
                                 widget.place.name,
                                 maxLines: 1,

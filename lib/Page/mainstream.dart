@@ -7,6 +7,7 @@ import 'package:scrap/Page/bottomBarItem/PageView/PageViewActivity.dart';
 import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
 import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/method/Globalkey.dart';
 import 'package:scrap/method/Navigator.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/stream/UserStream.dart';
@@ -66,6 +67,7 @@ class _MainStreamState extends State<MainStream> {
     final location = Provider.of<Position>(context);
     screenutilInit(context);
     return Scaffold(
+        key: myGlobals.scaffoldKey,
         backgroundColor: Colors.transparent,
         bottomNavigationBar: bottom(),
         body: location != null

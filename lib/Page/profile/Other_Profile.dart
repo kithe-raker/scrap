@@ -26,7 +26,6 @@ import 'package:scrap/widget/footer.dart';
 import 'package:scrap/widget/peoplethrowpaper.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
-import 'package:scrap/widget/thrown.dart';
 
 class OtherProfile extends StatefulWidget {
   final Map data;
@@ -483,7 +482,7 @@ class _OtherProfileState extends State<OtherProfile> {
         showDialog(
             context: context,
             builder: (BuildContext context) => pickedScrap
-                ? ScrapDialog(data: data, showTransaction: false)
+                ? ScrapDialog(data: data, showTransaction: true)
                 : Paperstranger(scrap: data, isHistory: true));
       },
     );

@@ -72,7 +72,8 @@ class ScrapModel extends Equatable {
   factory ScrapModel.fromJSON(Map<String, dynamic> json,
       {@required ScrapTransaction transaction}) {
     var scrap = json['scrap'];
-    var position = json['position']['geopoint'];
+    var position =
+        json['position'] != null ? json['position']['geopoint'] : null;
     return ScrapModel(
         text: scrap['text'],
         writer: scrap['writer'],
@@ -82,21 +83,34 @@ class ScrapModel extends Equatable {
         writerUid: json['uid'],
         scrapRegion: json['region'],
         transaction: transaction,
-        geoHash: json['position']['geohash'],
-        position: LatLng(position.latitude, position.longitude));
+        geoHash: position != null ? json['position']['geohash'] : null,
+        position: position != null
+            ? LatLng(position.latitude, position.longitude)
+            : null);
   }
 }
 
-class ScrapTransaction extends Equatable {
-  final int like;
-  final int picked;
-  final int comment;
-  final double point;
+class ScrapTransaction {
+  int like;
+  int picked;
+  int comment;
+  double point;
 
   ScrapTransaction({this.comment, this.like, this.picked, this.point});
 
   @override
-  List<Object> get props => [like, picked, comment, point];
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ScrapTransaction &&
+          runtimeType == other.runtimeType &&
+          like == other.like &&
+          picked == other.picked &&
+          comment == other.comment &&
+          point == other.point;
+
+  @override
+  int get hashCode =>
+      like.hashCode ^ picked.hashCode ^ comment.hashCode ^ point.hashCode;
 
   factory ScrapTransaction.fromJSON(Map<dynamic, dynamic> json) =>
       ScrapTransaction(
