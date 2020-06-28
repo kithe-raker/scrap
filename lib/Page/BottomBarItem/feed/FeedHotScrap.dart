@@ -232,7 +232,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                                         "https://scrap.bualoitech.com/");
                                                   })
                                                 : Fluttertoast.showToast(
-                                                    msg: "โหลดไอจีก่อนค่ะ",
+                                                    msg: "โหลดไอจีก่อนฮะ",
                                                     toastLength:
                                                         Toast.LENGTH_SHORT,
                                                     gravity:
@@ -299,7 +299,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                                     }
                                                   })
                                                 : Fluttertoast.showToast(
-                                                    msg: "โหลดเฟซบุ๊คก่อนค่ะ",
+                                                    msg: "โหลดเฟซบุ๊คก่อนฮะ",
                                                     toastLength:
                                                         Toast.LENGTH_SHORT,
                                                     gravity:

@@ -543,7 +543,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                                                         "https://scrap.bualoitech.com/");
                                                   })
                                                 : Fluttertoast.showToast(
-                                                    msg: "โหลดไอจีก่อนค่ะ",
+                                                    msg: "โหลดไอจีก่อนฮะ",
                                                     toastLength:
                                                         Toast.LENGTH_SHORT,
                                                     gravity:
@@ -610,7 +610,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                                                     }
                                                   })
                                                 : Fluttertoast.showToast(
-                                                    msg: "โหลดเฟสบุ๊คก่อนค่ะ",
+                                                    msg: "โหลดเฟสบุ๊คก่อนฮะ",
                                                     toastLength:
                                                         Toast.LENGTH_SHORT,
                                                     gravity:
