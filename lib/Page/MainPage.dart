@@ -33,7 +33,7 @@ class _MainPageState extends State<MainPage> {
   ImgCacheManager imgCacheManager = ImgCacheManager();
   DocumentSnapshot appInfo;
   initLocalMessage() {
-    var android = AndroidInitializationSettings('noti_ic');
+    var android = AndroidInitializationSettings('notilogo');
     var ios = IOSInitializationSettings();
     var initMessaging = InitializationSettings(android, ios);
     messaging.initialize(initMessaging, onSelectNotification: onTapMessage);

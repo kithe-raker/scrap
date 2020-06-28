@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
             // BlocProvider<FeedBloc>.value(value: FeedBloc()),
           ],
           child: MaterialApp(
+              color: Colors.grey[900],
               debugShowCheckedModeBanner: false,
               title: 'Scrap.',
               theme: ThemeData(
