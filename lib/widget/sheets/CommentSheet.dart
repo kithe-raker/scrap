@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -303,7 +305,7 @@ class _CommentSheetState extends State<CommentSheet> {
                                               'assets/anonymouse.svg',
                                               color: Colors.black),
                                         )
-                                      : Image.asset('assets/M10.png',
+                                      : Image.file(File(user.img),
                                           fit: BoxFit.cover),
                                 ),
                               ),
