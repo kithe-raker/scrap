@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -251,8 +251,15 @@ class _FeedFollowngState extends State<FeedFollowng>
                             ],
                           ),
                           GestureDetector(
-                              child: Icon(Icons.more_horiz,
-                                  color: Colors.white, size: s70),
+                              child: Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.rotationY(math.pi),
+                                child: Icon(
+                                  Icons.reply,
+                                  color: Colors.white,
+                                  size: s65,
+                                ),
+                              ),
                               onTap: () async {
                                 // showShareSheet(context, scrap: scrapModel);
                                 replyButtonSheet(context, scrap: scrapModel);

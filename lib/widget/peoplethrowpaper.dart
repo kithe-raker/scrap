@@ -24,6 +24,7 @@ import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
+import 'dart:math' as math;
 
 class Paperstranger extends StatefulWidget {
   final DocumentSnapshot scrap;
@@ -124,6 +125,8 @@ class _PaperstrangerState extends State<Paperstranger> {
                         Positioned(
                             left: appBarHeight / 7,
                             child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidthDp / 36),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,16 +155,20 @@ class _PaperstrangerState extends State<Paperstranger> {
                                 top: appBarHeight / 8,
                                 right: appBarHeight / 7,
                                 child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: screenWidthDp / 36),
                                   child: GestureDetector(
-                                    child: Icon(
-                                      Icons.reply,
-                                      color: Colors.white,
-                                      size: s65,
+                                    child: Transform(
+                                      alignment: Alignment.center,
+                                      transform: Matrix4.rotationY(math.pi),
+                                      child: Icon(
+                                        Icons.reply,
+                                        color: Colors.white,
+                                        size: s65,
+                                      ),
                                     ),
                                     onTap: () {
-                                      // replyButtonSheet(context, scrap: scrapModel);
                                       showMore(context, scrap: widget.scrap);
-                                      //replyButtonSheet(context, scrap: widget.scrap);
                                     },
                                   ),
                                 ))
