@@ -23,6 +23,7 @@ import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'dart:io';
+import 'dart:math' as math;
 
 class FeedHotScrap extends StatefulWidget {
   @override
@@ -231,7 +232,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                                         "https://scrap.bualoitech.com/");
                                                   })
                                                 : Fluttertoast.showToast(
-                                                    msg: "โหลดไอจีก่อนค่ะ",
+                                                    msg: "โหลดไอจีก่อนฮะ",
                                                     toastLength:
                                                         Toast.LENGTH_SHORT,
                                                     gravity:
@@ -298,7 +299,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                                     }
                                                   })
                                                 : Fluttertoast.showToast(
-                                                    msg: "โหลดเฟซบุ๊คก่อนค่ะ",
+                                                    msg: "โหลดเฟซบุ๊คก่อนฮะ",
                                                     toastLength:
                                                         Toast.LENGTH_SHORT,
                                                     gravity:
@@ -581,8 +582,15 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                             ],
                           ),
                           GestureDetector(
-                              child: Icon(Icons.more_horiz,
-                                  color: Colors.white, size: s70),
+                              child: Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.rotationY(math.pi),
+                                child: Icon(
+                                  Icons.reply,
+                                  color: Colors.white,
+                                  size: s65,
+                                ),
+                              ),
                               onTap: () async {
                                 // showShareSheet(context, scrap: scrapModel);
                                 replyButtonSheet(context, scrap: scrapModel);

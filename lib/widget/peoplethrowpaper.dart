@@ -4,6 +4,7 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
 import 'package:scrap/assets/PaperTexture.dart';
@@ -24,6 +25,7 @@ import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
+import 'dart:math' as math;
 
 class Paperstranger extends StatefulWidget {
   final DocumentSnapshot scrap;
@@ -124,6 +126,8 @@ class _PaperstrangerState extends State<Paperstranger> {
                         Positioned(
                             left: appBarHeight / 7,
                             child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidthDp / 36),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,16 +156,20 @@ class _PaperstrangerState extends State<Paperstranger> {
                                 top: appBarHeight / 8,
                                 right: appBarHeight / 7,
                                 child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: screenWidthDp / 36),
                                   child: GestureDetector(
-                                    child: Icon(
-                                      Icons.reply,
-                                      color: Colors.white,
-                                      size: s65,
+                                    child: Transform(
+                                      alignment: Alignment.center,
+                                      transform: Matrix4.rotationY(math.pi),
+                                      child: Icon(
+                                        Icons.reply,
+                                        color: Colors.white,
+                                        size: s65,
+                                      ),
                                     ),
                                     onTap: () {
-                                      // replyButtonSheet(context, scrap: scrapModel);
                                       showMore(context, scrap: widget.scrap);
-                                      //replyButtonSheet(context, scrap: widget.scrap);
                                     },
                                   ),
                                 ))
@@ -369,14 +377,26 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            SocialShare.shareInstagramStory(
-                                                image.path,
-                                                "#212121",
-                                                "#000000",
-                                                "https://scrap.bualoitech.com/");
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['instagram'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    SocialShare.shareInstagramStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/");
+                                                  })
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดไอจีก่อนฮะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -406,28 +426,44 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            Platform.isAndroid
-                                                ? SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/",
-                                                        appId:
-                                                            "152617042778122")
-                                                    .then((data) {
-                                                    print(data);
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['facebook'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    {
+                                                      Platform.isAndroid
+                                                          ? SocialShare.shareFacebookStory(
+                                                                  image.path,
+                                                                  "#212121",
+                                                                  "#000000",
+                                                                  "https://scrap.bualoitech.com/",
+                                                                  appId:
+                                                                      "152617042778122")
+                                                              .then((data) {
+                                                              print(data);
+                                                            })
+                                                          : SocialShare
+                                                                  .shareFacebookStory(
+                                                                      image
+                                                                          .path,
+                                                                      "#212121",
+                                                                      "#000000",
+                                                                      "https://scrap.bualoitech.com/")
+                                                              .then((data) {
+                                                              print(data);
+                                                            });
+                                                    }
                                                   })
-                                                : SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/")
-                                                    .then((data) {
-                                                    print(data);
-                                                  });
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดเฟสบุ๊คก่อนฮะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -614,203 +650,7 @@ class _PaperstrangerState extends State<Paperstranger> {
         context: context,
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
-          return
-              //Container(
-              //   height: appBarHeight * 2.2,
-              //   //  height: appBarHeight * 3.4,
-              //   decoration: BoxDecoration(
-              //     color: Color(0xff202020),
-              //     borderRadius: BorderRadius.only(
-              //       topLeft: Radius.circular(20.0),
-              //       topRight: Radius.circular(20.0),
-              //     ),
-              //   ),
-              //   child: Stack(
-              //     children: <Widget>[
-              //       Align(
-              //           alignment: Alignment.topCenter,
-              //           child: Container(
-              //             margin: EdgeInsets.only(top: 12, bottom: 4),
-              //             width: screenWidthDp / 3.2,
-              //             height: screenHeightDp / 81,
-              //             decoration: BoxDecoration(
-              //               borderRadius:
-              //                   BorderRadius.circular(screenHeightDp / 42),
-              //               color: Color(0xff929292),
-              //             ),
-              //           )),
-              //       Container(
-              //         alignment: Alignment.center,
-              //         /*  margin: EdgeInsets.only(
-              //           bottom: appBarHeight - 20,
-              //         ),*/
-              //         child: Center(
-              //           child: Row(
-              //             mainAxisAlignment: MainAxisAlignment.center,
-              //             children: <Widget>[
-              //               Column(
-              //                 mainAxisAlignment: MainAxisAlignment.center,
-              //                 children: [
-
-              //                   GestureDetector(
-              //                     child: Container(
-              //                         height: 50,
-              //                         width: 50,
-              //                         margin: EdgeInsets.symmetric(
-              //                           horizontal: 15,
-              //                         ),
-              //                         decoration: BoxDecoration(
-              //                             color: Colors.white,
-              //                             borderRadius: BorderRadius.circular(
-              //                                 screenHeightDp)),
-              //                         child: Icon(Icons.whatshot,
-              //                             color: Color(0xffFF8F3A),
-              //                             size: appBarHeight / 3)),
-              //                     onTap: () {
-              //                       final report =
-              //                           Provider.of<Report>(context, listen: false);
-              //                       report.scrapId = scrap.documentID;
-              //                       report.scrapRef = scrap.reference.parent().path;
-              //                       report.targetId = scrap['uid'];
-              //                       report.region = scrap['region'];
-              //                       showdialogBurn(context, thrown: true);
-              //                     },
-              //                   ),
-              //                   Text(
-              //                     'เผา',
-              //                     style: TextStyle(
-              //                         color: Colors.white,
-              //                         fontSize: s42,
-              //                         fontWeight: FontWeight.bold),
-              //                   ),
-              //                 ],
-              //               ),
-              //               widget.picked
-              //                   ? Column(
-              //                       mainAxisAlignment: MainAxisAlignment.center,
-              //                       children: <Widget>[
-              //                         SizedBox(height: screenWidthDp / 12),
-              //                         GestureDetector(
-              //                           child: Container(
-              //                               width: 50,
-              //                               height: 50,
-              //                               margin: EdgeInsets.symmetric(
-              //                                 horizontal: 15,
-              //                               ),
-              //                               child: Icon(Icons.delete_outline,
-              //                                   size: appBarHeight / 3),
-              //                               decoration: BoxDecoration(
-              //                                 color: Colors.white,
-              //                                 borderRadius: BorderRadius.all(
-              //                                     Radius.circular(screenWidthDp)),
-              //                               )),
-              //                           onTap: () {
-              //                             unPick();
-              //                             toast.toast('นำสแครปออกแล้ว');
-              //                             nav.pop(context);
-              //                             nav.pop(context);
-              //                           },
-              //                         ),
-              //                         Text(
-              //                           'นำออก',
-              //                           style: TextStyle(
-              //                               color: Colors.white,
-              //                               fontSize: s42,
-              //                               fontWeight: FontWeight.bold),
-              //                         ),
-              //                       ],
-              //                     )
-              //                   : SizedBox(),
-              //               Column(
-              //                 mainAxisAlignment: MainAxisAlignment.center,
-              //                 children: [
-              //                   SizedBox(
-              //                     height: screenWidthDp / 12,
-              //                   ),
-              //                   GestureDetector(
-              //                     child: Container(
-              //                         height: 50,
-              //                         width: 50,
-              //                         margin: EdgeInsets.symmetric(
-              //                           horizontal: 15,
-              //                         ),
-              //                         decoration: BoxDecoration(
-              //                             color: Colors.white,
-              //                             borderRadius: BorderRadius.circular(
-              //                                 screenHeightDp)),
-              //                         child: Icon(Icons.block,
-              //                             size: appBarHeight / 3)),
-              //                     onTap: () async {
-              //                       showDialog(
-              //                           context: context,
-              //                           builder: (BuildContext context) =>
-              //                               Loading());
-              //                       await blocking.blockUser(context,
-              //                           otherUid: widget.scrap['uid'],
-              //                           public: widget.scrap['scrap']['writer'] !=
-              //                               'ไม่ระบุตัวตน',
-              //                           scrap: widget.scrap);
-              //                       nav.pop(context);
-              //                     },
-              //                   ),
-              //                   Text(
-              //                     'ปิดกั้นการปา',
-              //                     style: TextStyle(
-              //                       color: Colors.white,
-              //                       fontSize: s42,
-              //                       fontWeight: FontWeight.bold,
-              //                     ),
-              //                   ),
-              //                 ],
-              //               ),
-              //               Column(
-              //                 mainAxisAlignment: MainAxisAlignment.center,
-              //                 children: [
-              //                   SizedBox(
-              //                     height: screenWidthDp / 12,
-              //                   ),
-              //                   GestureDetector(
-              //                     child: Container(
-              //                         height: 50,
-              //                         width: 50,
-              //                         margin: EdgeInsets.symmetric(
-              //                           horizontal: 15,
-              //                         ),
-              //                         decoration: BoxDecoration(
-              //                             color: Colors.white,
-              //                             borderRadius: BorderRadius.circular(
-              //                                 screenHeightDp)),
-              //                         child: Icon(Icons.report_problem,
-              //                             size: appBarHeight / 3)),
-              //                     onTap: () {
-              //                       final report =
-              //                           Provider.of<Report>(context, listen: false);
-              //                       report.targetId = scrap['uid'];
-              //                       showDialogReport(context);
-              //                     },
-              //                   ),
-              //                   Text('รายงาน',
-              //                       style: TextStyle(
-              //                           color: Colors.white,
-              //                           fontSize: s42,
-              //                           fontWeight: FontWeight.bold))
-              //                 ],
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //       ),
-              //       // Positioned(
-              //       //     bottom: 0,
-              //       //     child: Container(
-              //       //       child: AdmobBanner(
-              //       //           adUnitId: AdmobService().getBannerAdId(),
-              //       //           adSize: AdmobBannerSize.FULL_BANNER),
-              //       //     )),
-              //     ],
-              //   ),
-              // );
-              Container(
+          return Container(
             height: screenWidthDp / 1.1,
             decoration: BoxDecoration(
               color: Color(0xff202020),
@@ -874,14 +714,26 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            SocialShare.shareInstagramStory(
-                                                image.path,
-                                                "#212121",
-                                                "#000000",
-                                                "https://scrap.bualoitech.com/");
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['instagram'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    SocialShare.shareInstagramStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/");
+                                                  })
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดไอจีก่อนฮะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -911,28 +763,44 @@ class _PaperstrangerState extends State<Paperstranger> {
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            Platform.isAndroid
-                                                ? SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/",
-                                                        appId:
-                                                            "152617042778122")
-                                                    .then((data) {
-                                                    print(data);
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['facebook'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    {
+                                                      Platform.isAndroid
+                                                          ? SocialShare.shareFacebookStory(
+                                                                  image.path,
+                                                                  "#212121",
+                                                                  "#000000",
+                                                                  "https://scrap.bualoitech.com/",
+                                                                  appId:
+                                                                      "152617042778122")
+                                                              .then((data) {
+                                                              print(data);
+                                                            })
+                                                          : SocialShare
+                                                                  .shareFacebookStory(
+                                                                      image
+                                                                          .path,
+                                                                      "#212121",
+                                                                      "#000000",
+                                                                      "https://scrap.bualoitech.com/")
+                                                              .then((data) {
+                                                              print(data);
+                                                            });
+                                                    }
                                                   })
-                                                : SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/")
-                                                    .then((data) {
-                                                    print(data);
-                                                  });
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดเฟสบุ๊คก่อนฮะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -959,7 +827,6 @@ class _PaperstrangerState extends State<Paperstranger> {
                             ],
                           ),
                         ),
-
                         Divider(
                           color: Color(0xfffa5a5a5),
                           indent: screenWidthDp / 25,
