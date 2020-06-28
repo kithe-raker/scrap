@@ -86,46 +86,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         SizedBox(height: screenHeightDp / 42),
-                        // counter.count == adsRate
-                        //     ? SizedBox(
-                        //         width: a.width / 1.04,
-                        //         height: a.width / 1.04 * 1.29,
-                        //         child: Stack(
-                        //           children: <Widget>[
-                        //             Container(
-                        //               width: a.width / 1.04,
-                        //               height: a.width / 1.04 * 1.29,
-                        //               child: AdmobBanner(
-                        //                   adUnitId:
-                        //                       AdmobService().getBannerAdId(),
-                        //                   adSize: AdmobBannerSize.FULL_BANNER),
-                        //             ),
-                        //             Positioned(
-                        //                 top: 12,
-                        //                 right: 12,
-                        //                 child: GestureDetector(
-                        //                     child: Container(
-                        //                       width: screenWidthDp / 16,
-                        //                       height: screenWidthDp / 16,
-                        //                       decoration: BoxDecoration(
-                        //                           color: Color(0xff000000)
-                        //                               .withOpacity(0.47),
-                        //                           borderRadius:
-                        //                               BorderRadius.circular(
-                        //                                   screenWidthDp / 18)),
-                        //                       child: Icon(Icons.close,
-                        //                           color: Colors.white,
-                        //                           size: s42),
-                        //                     ),
-                        //                     onTap: () {
-                        //                       randomAdsRate();
-                        //                       counter.count = 0;
-                        //                       Navigator.pop(context);
-                        //                     }))
-                        //           ],
-                        //         ),
-                        //       )
-                        //     :
+
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,27 +232,26 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                   MainAxisAlignment.spaceEvenly,
                                               children: <Widget>[
                                                 GestureDetector(
-                                                  child: iconWithLabel(
+                                                  child: iconfrommilla(
+                                                      inHistory(
+                                                              'like',
+                                                              widget.data
+                                                                  .documentID)
+                                                          ? 'assets/heart-fill-icon.svg'
+                                                          : 'assets/heart-icon.svg',
                                                       like.abs().toString(),
-                                                      icon: inHistory(
-                                                              'like',
-                                                              widget.data
-                                                                  .documentID)
-                                                          ? Icons.favorite
-                                                          : Icons
-                                                              .favorite_border,
-                                                      background: inHistory(
-                                                              'like',
-                                                              widget.data
-                                                                  .documentID)
-                                                          ? Color(0xffFF4343)
-                                                          : Colors.white,
                                                       iconColor: inHistory(
                                                               'like',
                                                               widget.data
                                                                   .documentID)
                                                           ? Colors.white
-                                                          : Color(0xffFF4343)),
+                                                          : Colors.red,
+                                                      backgroundColor: inHistory(
+                                                              'like',
+                                                              widget.data
+                                                                  .documentID)
+                                                          ? Colors.red
+                                                          : Colors.white),
                                                   onTap: () {
                                                     if (isExpired(
                                                         widget.data)) {
@@ -320,22 +280,42 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                   },
                                                 ),
                                                 GestureDetector(
-                                                  child: iconWithLabel(
-                                                      pick.abs().toString(),
-                                                      background: inHistory(
+                                                  child: iconfrommilla(
+                                                      inHistory(
                                                               'picked',
                                                               widget.data
                                                                   .documentID)
-                                                          ? Color(0xff0099FF)
-                                                          : Colors.white,
+                                                          ? 'assets/keep-icon.svg'
+                                                          : 'assets/keep-icon.svg',
+                                                      pick.abs().toString(),
                                                       iconColor: inHistory(
                                                               'picked',
                                                               widget.data
                                                                   .documentID)
+                                                          ? Colors.blue
+                                                          : Colors.white,
+                                                      backgroundColor: inHistory(
+                                                              'picked',
+                                                              widget.data
+                                                                  .documentID)
                                                           ? Colors.white
-                                                          : Color(0xff0099FF),
-                                                      icon:
-                                                          Icons.move_to_inbox),
+                                                          : Colors.blue),
+                                                  // child: iconWithLabel(
+                                                  //     pick.abs().toString(),
+                                                  //     background: inHistory(
+                                                  //             'picked',
+                                                  //             widget.data
+                                                  //                 .documentID)
+                                                  //         ? Color(0xff0099FF)
+                                                  //         : Colors.white,
+                                                  //     iconColor: inHistory(
+                                                  //             'picked',
+                                                  //             widget.data
+                                                  //                 .documentID)
+                                                  //         ? Colors.white
+                                                  //         : Color(0xff0099FF),
+                                                  //     icon:
+                                                  //         Icons.move_to_inbox),
                                                   onTap: () {
                                                     if (isExpired(
                                                         widget.data)) {
@@ -520,6 +500,148 @@ class _ScrapDialogState extends State<ScrapDialog> {
         ]);
   }
 
+  Widget iconfrommilla(
+    String asset,
+    String label, {
+    //Color background = Colors.white,
+    @required Color iconColor,
+    @required Color backgroundColor,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(screenWidthDp / 40),
+          decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(screenWidthDp)),
+          //  child:
+          child: SvgPicture.asset(
+            asset,
+            color: iconColor,
+            height: screenWidthDp / 15,
+            width: screenWidthDp / 15,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+              color: Color(0xffff5f5f5),
+              fontSize: s42,
+              height: 1.2,
+              fontWeight: FontWeight.bold),
+        )
+      ],
+    );
+  }
+
+  // Widget burntScrap({@required Function onNext}) {
+  //   return Column(
+  //       mainAxisAlignment: MainAxisAlignment.start,
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: <Widget>[
+  //         Container(
+  //           margin: EdgeInsets.only(top: screenHeightDp / 42),
+  //           child: Stack(
+  //             children: <Widget>[
+  //               Container(
+  //                   width: screenWidthDp / 1.04,
+  //                   height: screenWidthDp / 1.04 * 1.115,
+  //                   decoration: BoxDecoration(
+  //                       image: DecorationImage(
+  //                           image: AssetImage('assets/paperscrap.jpg'),
+  //                           fit: BoxFit.cover)),
+  //                   child: BackdropFilter(
+  //                     filter: ImageFilter.blur(sigmaX: 3.2, sigmaY: 3.2),
+  //                     child: Column(
+  //                       mainAxisAlignment: MainAxisAlignment.center,
+  //                       children: <Widget>[
+  //                         Icon(Icons.whatshot,
+  //                             size: screenWidthDp / 3,
+  //                             color: Color(0xffFF8F3A)),
+  //                         Text("สแครปนี้โดนเผาแล้ว !",
+  //                             style: TextStyle(
+  //                                 fontSize: s54,
+  //                                 color: Colors.black87,
+  //                                 fontWeight: FontWeight.bold)),
+  //                       ],
+  //                     ),
+  //                   )),
+  //               Positioned(
+  //                 top: 12,
+  //                 right: 12,
+  //                 child: GestureDetector(
+  //                   child: Container(
+  //                     width: screenWidthDp / 16,
+  //                     height: screenWidthDp / 16,
+  //                     decoration: BoxDecoration(
+  //                         color: Color(0xff000000).withOpacity(0.47),
+  //                         borderRadius:
+  //                             BorderRadius.circular(screenWidthDp / 18)),
+  //                     child: Icon(Icons.close, color: Colors.white, size: s42),
+  //                   ),
+  //                   onTap: () {
+  //                     Navigator.pop(context);
+  //                   },
+  //                 ),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //         SizedBox(height: screenWidthDp / 21),
+  //         SizedBox(height: screenWidthDp / 42),
+  //         Divider(color: Color(0xff5D5D5D), thickness: 1.2),
+  //         SizedBox(height: screenWidthDp / 46),
+  //         Container(
+  //             padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 36),
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: <Widget>[
+  //                 Text(
+  //                   'กระดาษแผ่นนี้ถูกเผาแล้ว🔥',
+  //                   style: TextStyle(color: Colors.white, fontSize: s46),
+  //                 ),
+  //                 GestureDetector(
+  //                   child: iconWithLabel('ต่อไป',
+  //                       iconColor: Color(0xff000000), icon: Icons.forward),
+  //                   onTap: onNext,
+  //                 ),
+  //               ],
+  //             )),
+  //         SizedBox(height: screenWidthDp / 36),
+  //         Expanded(
+  //           child: AdmobBanner(
+  //               adUnitId: AdmobService().getBannerAdId(),
+  //               adSize: AdmobBannerSize.FULL_BANNER),
+  //         )
+  //       ]);
+  // }
+
+  Widget iconWithLabel(String label,
+      {Color background = Colors.white,
+      @required Color iconColor,
+      @required IconData icon}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          height: screenWidthDp / 9,
+          width: screenWidthDp / 9,
+          decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(screenWidthDp / 8)),
+          child: Icon(icon, color: iconColor, size: s46),
+        ),
+        Text(label,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: s42,
+                height: 1.2,
+                fontWeight: FontWeight.bold))
+      ],
+    );
+  }
+
   void showMore(context, {@required String writerUid}) {
     final user = Provider.of<UserData>(context, listen: false);
     showModalBottomSheet(
@@ -661,36 +783,5 @@ class _ScrapDialogState extends State<ScrapDialog> {
             ),
           );
         });
-  }
-
-  Widget iconWithLabel(String label,
-      {Color background = Colors.white,
-      @required Color iconColor,
-      @required IconData icon}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          height: screenWidthDp / 9,
-          width: screenWidthDp / 9,
-          decoration: BoxDecoration(
-              color: background, // Color(0xffFF4343),
-              borderRadius: BorderRadius.circular(screenWidthDp / 8)),
-          child: Icon(
-            icon, // Icons.favorite_border,
-            color: iconColor,
-            size: s46,
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: s42,
-              height: 1.2,
-              fontWeight: FontWeight.bold),
-        )
-      ],
-    );
   }
 }
