@@ -111,13 +111,13 @@ class _LitteringScrapState extends State<LitteringScrap> {
                       padding:
                           EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
                       alignment: Alignment.center,
-                      color: Color(0xff26A4FF),
+                      color: selected == null ? Colors.grey[600] : Color(0xff26A4FF),
                       child: selected == null
                           ? Text(
-                              'โยนไปในช่วงว่างระหว่างเวลา',
+                              'เลือกบริเวณที่จะโยนไป',
                               style: TextStyle(
                                   fontSize: s54,
-                                  color: Colors.white,
+                                  color: Colors.grey,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'ThaiSans'),
                             )
@@ -139,7 +139,8 @@ class _LitteringScrapState extends State<LitteringScrap> {
                               maxLines: 1),
                     ),
                     onTap: () {
-                      scrap.litter(context, place: selected);
+                      if (selected != null)
+                        scrap.litter(context, place: selected);
                     })
               ],
             ),
