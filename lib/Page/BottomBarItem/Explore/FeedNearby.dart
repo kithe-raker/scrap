@@ -21,6 +21,7 @@ import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
 import 'package:scrap/widget/showdialogreport.dart';
 import 'dart:io';
+import 'dart:math' as math;
 
 class FeedNearby extends StatefulWidget {
   final TopPlaceModel place;
@@ -546,8 +547,15 @@ class _FeedNearbyState extends State<FeedNearby> {
                             ],
                           ),
                           GestureDetector(
-                              child: Icon(Icons.more_horiz,
-                                  color: Colors.white, size: s70),
+                              child: Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.rotationY(math.pi),
+                                child: Icon(
+                                  Icons.reply,
+                                  color: Colors.white,
+                                  size: s65,
+                                ),
+                              ),
                               onTap: () async {
                                 // showShareSheet(context, scrap: scrapModel);
                                 replyButtonSheet(context, scrap: scrapModel);
