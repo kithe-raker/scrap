@@ -341,19 +341,19 @@ class Scraps {
           .setData(place.toJSON, merge: true);
     }
     var refDoc = fireStore.collection('Places').document(place.placeId);
-    await fireStore
-        .runTransaction((transaction) => transaction.get(refDoc).then((doc) {
-              List recently = doc?.data['recently'] ?? [];
-              if (recently.length > 7) recently.removeAt(0);
-              recently.add({
-                'text': text,
-                'id': id,
-                'timeStamp': DateTime.now(),
-                'region': user.region,
-                'texture': texture
-              });
-              transaction.update(refDoc, {'recently': recently});
-            }));
+    await fireStore.runTransaction((transaction) async {
+      var doc = await transaction.get(refDoc);
+      List recently = doc?.data['recently'] ?? [];
+      if (recently.length > 7) recently.removeAt(0);
+      recently.add({
+        'text': text,
+        'id': id,
+        'timeStamp': DateTime.now(),
+        'region': user.region,
+        'texture': texture
+      });
+      await transaction.update(refDoc, {'recently': recently});
+    });
   }
 
   bool updating = false;
