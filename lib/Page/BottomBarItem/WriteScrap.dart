@@ -97,30 +97,30 @@ class _WriteScrapState extends State<WriteScrap> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         GestureDetector(
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                            size: s52,
-                          ),
+                          child: Icon(Icons.arrow_back_ios,
+                              color: Colors.white, size: s52),
                           onTap: () => nav.pop(context),
                         ),
                         Text('เขียนสแครปของคุณ',
                             style:
                                 TextStyle(color: Colors.white, fontSize: s46)),
-                        GestureDetector(
-                            // child: Icon(Icons.color_lens,
-                            //     color: Colors.white, size: s60),
-                            child: Container(
-                              height: screenWidthDp / 15,
-                              width: screenWidthDp / 15,
-                              child: SvgPicture.asset(
-                                'assets/paperchange.svg',
-                                color: Colors.white,
+                        Container(
+                          margin: EdgeInsets.only(right: screenWidthDp / 72),
+                          child: GestureDetector(
+                              // child: Icon(Icons.color_lens,
+                              //     color: Colors.white, size: s60),
+                              child: Container(
+                                height: screenWidthDp / 15,
+                                width: screenWidthDp / 15,
+                                child: SvgPicture.asset(
+                                    'assets/paperchange.svg',
+                                    color: Colors.white,
+                                    fit: BoxFit.contain),
                               ),
-                            ),
-                            onTap: () async {
-                              _navigateAndDisplaySelection(context);
-                            }),
+                              onTap: () async {
+                                _navigateAndDisplaySelection(context);
+                              }),
+                        ),
                       ],
                     )),
                 Expanded(
@@ -128,7 +128,7 @@ class _WriteScrapState extends State<WriteScrap> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        // SizedBox(height: screenHeightDp / 27),
+                        SizedBox(height: screenHeightDp / 24),
                         widget.isThrowBack
                             ? SizedBox(height: screenWidthDp / 13)
                             : Container(

@@ -80,7 +80,7 @@ class _AllfollowingState extends State<Allfollowing> {
                                 Navigator.pop(context);
                               }),
                           Text(
-                            'ผู้ติดตาม',
+                            'กำลังติดตาม',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: a.width / 18,

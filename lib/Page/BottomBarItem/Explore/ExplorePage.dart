@@ -238,7 +238,7 @@ class _ExplorePageState extends State<ExplorePage>
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: index == 0 ? 'ค้นหาโรงเรียน' : 'ค้นหาเพื่อนๆ',
-                        contentPadding: EdgeInsets.all(4.8),
+                        contentPadding: EdgeInsets.all(5.2),
                         hintStyle:
                             TextStyle(color: Colors.white60, fontSize: s42),
                       ),
