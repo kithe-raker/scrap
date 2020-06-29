@@ -328,7 +328,7 @@ class Scraps {
       }
       return mutableData;
     });
-    if (placeData == null) {
+    if (placeData == null || placeData['id'] == null) {
       ref.update({
         'id': place.placeId,
         'recently': ServerValue.timestamp,
