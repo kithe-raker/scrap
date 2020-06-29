@@ -54,7 +54,7 @@ class SettingFunction {
         fireStore.collection('Account').document(user.uid), {'id': id});
     await batch.commit();
     loading.add(false);
-    nav.pushReplacement(context, MainStream());
+    nav.pushReplacement(context, MainStream(initPage: 3));
   }
 }
 

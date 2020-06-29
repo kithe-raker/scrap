@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/BottomBarItem/Profile.dart';
@@ -14,6 +15,7 @@ import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scrap/widget/guide.dart';
+import 'package:scrap/widget/warning.dart';
 
 class MainStream extends StatefulWidget {
   final int initPage;
@@ -57,6 +59,15 @@ class _MainStreamState extends State<MainStream> {
   }
 
   @override
+  void didUpdateWidget(MainStream oldWidget) {
+    pageController.dispose();
+    currentIndex = widget.initPage;
+    pageController = PageController(initialPage: currentIndex);
+    initUser();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void dispose() {
     pageController.dispose();
     super.dispose();
@@ -66,20 +77,28 @@ class _MainStreamState extends State<MainStream> {
   Widget build(BuildContext context) {
     final location = Provider.of<Position>(context);
     screenutilInit(context);
-    return Scaffold(
-        key: myGlobals.scaffoldKey,
-        backgroundColor: Colors.transparent,
-        bottomNavigationBar: bottom(),
-        body: location != null
-            ? PageView(
-                controller: pageController,
-                children: bodyList,
-                physics: NeverScrollableScrollPhysics(), // No sliding
-              )
-            : Center(
-                child: guide(Size(screenWidthDp, screenHeightDp),
-                    'กรุณาตรวจสอบ GPS ของคุณ'),
-              ));
+    return WillPopScope(
+      onWillPop: () async {
+        Dg().warnDialog(context, 'คุณต้องการออกจาก Scrap ใช่หรือไม่', () {
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        });
+        return null;
+      },
+      child: Scaffold(
+          key: myGlobals.scaffoldKey,
+          backgroundColor: Colors.transparent,
+          bottomNavigationBar: bottom(),
+          body: location != null
+              ? PageView(
+                  controller: pageController,
+                  children: bodyList,
+                  physics: NeverScrollableScrollPhysics(), // No sliding
+                )
+              : Center(
+                  child: guide(Size(screenWidthDp, screenHeightDp),
+                      'กรุณาตรวจสอบ GPS ของคุณ'),
+                )),
+    );
   }
 
   Widget activebutton(var _index, String activeicon, String unactiveicon) {
