@@ -226,15 +226,12 @@ class Scraps {
     loading.add(true);
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
-    var location = Provider.of<Position>(context, listen: false);
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var allScrap = FirebaseDatabase(app: db.scrapAll);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var now = DateTime.now();
     var batch = fireStore.batch();
     GeoLocation point;
-    GeoLocation defaultPoint =
-        GeoLocation(location.latitude, location.longitude);
     var ref = fireStore.collection(
         'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
     var docId = ref.document().documentID;
@@ -277,7 +274,6 @@ class Scraps {
       scrap['places'] = FieldValue.arrayUnion([place.placeId]);
     }
     batch.setData(ref.document(docId), scrap);
-    scrap['default'] = defaultPoint.data;
     scrap['burnt'] = false;
     batch.setData(
         fireStore

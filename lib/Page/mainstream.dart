@@ -75,7 +75,6 @@ class _MainStreamState extends State<MainStream> {
 
   @override
   Widget build(BuildContext context) {
-    final location = Provider.of<Position>(context);
     screenutilInit(context);
     return WillPopScope(
       onWillPop: () async {
@@ -88,16 +87,11 @@ class _MainStreamState extends State<MainStream> {
           key: myGlobals.scaffoldKey,
           backgroundColor: Colors.transparent,
           bottomNavigationBar: bottom(),
-          body: location != null
-              ? PageView(
-                  controller: pageController,
-                  children: bodyList,
-                  physics: NeverScrollableScrollPhysics(), // No sliding
-                )
-              : Center(
-                  child: guide(Size(screenWidthDp, screenHeightDp),
-                      'กรุณาตรวจสอบ GPS ของคุณ'),
-                )),
+          body: PageView(
+            controller: pageController,
+            children: bodyList,
+            physics: NeverScrollableScrollPhysics(), // No sliding
+          )),
     );
   }
 
@@ -139,8 +133,7 @@ class _MainStreamState extends State<MainStream> {
                 ),
               ),
               onTap: () {
-                final location = Provider.of<Position>(context, listen: false);
-                if (location != null) nav.push(context, WriteScrap(main: true));
+                nav.push(context, WriteScrap(main: true));
               },
             ),
             activebutton(2, 'assets/bag-fill-icon.svg', 'assets/bag-icon.svg'),

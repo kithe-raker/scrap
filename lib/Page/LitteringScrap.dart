@@ -33,7 +33,8 @@ class _LitteringScrapState extends State<LitteringScrap> {
 
   Future<void> initSuggestPlaces() async {
     try {
-      var location = Provider.of<Position>(context, listen: false);
+      var location = Provider.of<Position>(context, listen: false) ??
+          Position(latitude: 13.754661, longitude: 100.500931);
       String baseURL =
           'https://autosuggest.search.hereapi.com/v1/autosuggest?at=${location.latitude},${location.longitude}';
       String request =
@@ -111,7 +112,9 @@ class _LitteringScrapState extends State<LitteringScrap> {
                       padding:
                           EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
                       alignment: Alignment.center,
-                      color: selected == null ? Colors.grey[600] : Color(0xff26A4FF),
+                      color: selected == null
+                          ? Colors.grey[600]
+                          : Color(0xff26A4FF),
                       child: selected == null
                           ? Text(
                               'เลือกบริเวณที่จะโยนไป',

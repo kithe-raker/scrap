@@ -38,7 +38,8 @@ class _SearchPlaceBoxState extends State<SearchPlaceBox> {
     places.clear();
     if (input.length > 0) {
       try {
-        var location = Provider.of<Position>(context, listen: false);
+        var location = Provider.of<Position>(context, listen: false) ??
+            Position(latitude: 13.754661, longitude: 100.500931);
         String baseURL =
             'https://autosuggest.search.hereapi.com/v1/autosuggest?at=${location.latitude},${location.longitude}';
         String request =
