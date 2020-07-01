@@ -48,10 +48,20 @@ class _SearchPlaceBoxState extends State<SearchPlaceBox> {
         Response response = await dio.get(request);
         final predictions = response.data['items'];
 
-        predictions.forEach((dat) => places.add(PlaceModel.fromJSON(dat)));
+        await Future.forEach(predictions, (dat) async {
+          var info = await getPlacePosition(dat['id']);
+          places.add(PlaceModel.fromJSON(info));
+        });
       } catch (e) {}
     }
     setState(() {});
+  }
+
+  Future getPlacePosition(String id) async {
+    String baseUrl = 'https://lookup.search.hereapi.com/v1/lookup';
+    String request = '$baseUrl?id=$id&apiKey=${hereConfig.apiKey}';
+    Response response = await dio.get(request);
+    return response.data;
   }
 
   @override

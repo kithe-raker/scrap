@@ -43,12 +43,21 @@ class _LitteringScrapState extends State<LitteringScrap> {
       Response response = await dio.get(request);
       final predictions = response.data['items'];
 
-      predictions.forEach((dat) {
-        if (suggestPlaces.length < 6)
-          suggestPlaces.add(PlaceModel.fromJSON(dat));
+      await Future.forEach(predictions, (dat) async {
+        if (suggestPlaces.length < 6) {
+          var info = await getPlacePosition(dat['id']);
+          suggestPlaces.add(PlaceModel.fromJSON(info));
+        }
       });
     } catch (e) {}
     setState(() => initedSuggestion = true);
+  }
+
+  Future getPlacePosition(String id) async {
+    String baseUrl = 'https://lookup.search.hereapi.com/v1/lookup';
+    String request = '$baseUrl?id=$id&apiKey=${hereConfig.apiKey}';
+    Response response = await dio.get(request);
+    return response.data;
   }
 
   Future<DataSnapshot> placeTransaction(String placeId) {
