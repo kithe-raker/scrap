@@ -82,12 +82,13 @@ class _MainPageState extends State<MainPage> {
   }
 
   bool olderVersion() {
-    String recent = '2.0.1', incoming;
+    String recent = '2.1.1';
+    List allowed = [];
     bool isIOS = Platform.isIOS;
     isIOS
-        ? incoming = appInfo['versions']['ios']
-        : incoming = appInfo['versions']['android'];
-    return recent != incoming;
+        ? allowed = appInfo['allowed']['ios']
+        : allowed = appInfo['allowed']['android'];
+    return !allowed.contains(recent);
   }
 
   Future<bool> isLogin() async {
