@@ -118,10 +118,9 @@ class _FeedFollowngState extends State<FeedFollowng>
                                       physics: AlwaysScrollableScrollPhysics(),
                                       controller: pageController,
                                       onPageChanged: (index) {
-                                        if (current + 1 == index) {
-                                          followFeed.scraps.length < 24
-                                              ? followFeed.loadMore(context)
-                                              : followFeed.clearOldScrap();
+                                        if (current + 1 == index &&
+                                            (index + 1) % 3 == 0) {
+                                          followFeed.loadMore(context);
                                         }
                                         current = index;
                                       },
@@ -351,7 +350,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                                     if (isExpired(scrapModel.litteredTime)) {
                                       scrap.toast('สเเครปนี้ย่อยสลายแล้ว');
                                     } else {
-                                      scrap.updateScrapTrans('picked', 
+                                      scrap.updateScrapTrans('picked',
                                           scrap: scrapModel,
                                           comments: transac.comment);
                                       if (inHistory(

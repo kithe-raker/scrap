@@ -121,11 +121,10 @@ class _FeedNearbyState extends State<FeedNearby> {
                                     physics: AlwaysScrollableScrollPhysics(),
                                     controller: pageController,
                                     onPageChanged: (index) {
-                                      if (current + 1 == index) {
-                                        nearby.scraps.length < 24
-                                            ? nearby.loadMore(context,
-                                                placeId: widget.place.id)
-                                            : nearby.clearOldScrap();
+                                      if (current + 1 == index &&
+                                          (index + 1) % 3 == 0) {
+                                        nearby.loadMore(context,
+                                            placeId: widget.place.id);
                                       }
                                       current = index;
                                     },

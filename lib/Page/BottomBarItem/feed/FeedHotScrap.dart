@@ -116,10 +116,9 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                     physics: AlwaysScrollableScrollPhysics(),
                                     controller: pageController,
                                     onPageChanged: (index) {
-                                      if (current + 1 == index) {
-                                        feed.scraps.length < 24
-                                            ? feed.loadMore()
-                                            : feed.clearOldScrap();
+                                      if (current + 1 == index &&
+                                          (index + 1) % 3 == 0) {
+                                        feed.loadMore();
                                       }
                                       current = index;
                                     },

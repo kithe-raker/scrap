@@ -24,12 +24,6 @@ class FollowFeedStream {
     followfeedSubject.add(newList);
   }
 
-  clearOldScrap() {
-    var newList = scraps ?? [];
-    newList.removeAt(0);
-    followfeedSubject.add(newList);
-  }
-
   Timestamp yesterDay() {
     var now = DateTime.now();
     return Timestamp.fromDate(

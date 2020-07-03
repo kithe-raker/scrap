@@ -22,12 +22,6 @@ class NearbyStream {
     nearbySubject.add(newList);
   }
 
-  clearOldScrap() {
-    var newList = scraps ?? [];
-    newList.removeAt(0);
-    nearbySubject.add(newList);
-  }
-
   Timestamp yesterDay() {
     var now = DateTime.now();
     return Timestamp.fromDate(

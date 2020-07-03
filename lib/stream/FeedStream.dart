@@ -22,13 +22,6 @@ class FeedStream {
     feedSubject.add(newList);
   }
 
-  clearOldScrap() {
-    print('clear');
-    var newList = scraps ?? [];
-    newList.removeAt(0);
-    feedSubject.add(newList);
-  }
-
   Timestamp yesterDay() {
     var now = DateTime.now();
     return Timestamp.fromDate(
