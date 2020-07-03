@@ -626,7 +626,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                         child: Column(
                           children: [
                             appbar_ListOptionSetting(
-                                context, Icons.face, 'จัดการบัญชีของฉัน'),
+                                context, Icons.face, 'จัดการ���ัญชีของฉัน'),
                             Container(
                               margin: EdgeInsets.only(bottom: 10),
                               height: screenHeightDp / 5.5,
@@ -1023,14 +1023,6 @@ class _HistoryScrapState extends State<HistoryScrap> {
     super.dispose();
   }
 
-  bool isExpired(DocumentSnapshot data) {
-    DateTime startTime = data['scrap']['timeStamp'].toDate();
-    return DateTime(startTime.year, startTime.month, startTime.day + 1,
-            startTime.hour, startTime.second)
-        .difference(DateTime.now())
-        .isNegative;
-  }
-
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
@@ -1210,22 +1202,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
                             ]),
                       ),
                     ))
-                : isExpired(data)
-                    ? Container(
-                        margin: EdgeInsets.all(4),
-                        height: screenWidthDp / 2.16 * 1.21,
-                        width: screenWidthDp / 2.16,
-                        color: Colors.black38,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.history,
-                                  size: 50, color: Colors.white),
-                              Text('หมดเวลา',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: s48)),
-                            ]))
-                    : SizedBox()
+                : SizedBox()
           ])),
       onTap: () {
         showDialog(

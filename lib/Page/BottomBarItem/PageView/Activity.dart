@@ -50,25 +50,6 @@ class _ActivityState extends State<Activity>
         DateTime(now.year, now.month, now.day - 1, now.hour, now.minute));
   }
 
-  bool isExpired(DocumentSnapshot data) {
-    DateTime startTime = data['scrap']['timeStamp'].toDate();
-    return DateTime(startTime.year, startTime.month, startTime.day + 1,
-            startTime.hour, startTime.second)
-        .difference(DateTime.now())
-        .isNegative;
-  }
-
-  Future<DataSnapshot> scrapTransaction(String docId) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var ref = scrapAll.reference().child('scraps').child(docId);
-    return ref.once();
-  }
-
-  bool inHistory(String field, String id) {
-    return history[field].contains(id);
-  }
-
   @override
   void dispose() {
     refreshController.dispose();
