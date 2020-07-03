@@ -39,25 +39,30 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                   child: Column(
                 children: <Widget>[
                   Container(
+                    width: screenWidthDp,
                     margin: EdgeInsets.all(screenWidthDp / 34),
-                    child: Row(
-                      children: <Widget>[
-                        Hero(
-                            tag: widget.place.id,
-                            child: Container(
-                                width: screenWidthDp / 8.6,
-                                height: screenWidthDp / 8.6,
-                                child: PlaceIcon(
-                                    categoryId: widget.place.categoryId))),
-                        SizedBox(width: screenWidthDp / 42),
-                        Text(
-                          widget.place?.name ?? 'someWhere',
-                          style: TextStyle(
-                              fontSize: s52,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: BouncingScrollPhysics(),
+                      child: Row(
+                        children: <Widget>[
+                          Hero(
+                              tag: widget.place.id,
+                              child: Container(
+                                  width: screenWidthDp / 8.6,
+                                  height: screenWidthDp / 8.6,
+                                  child: PlaceIcon(
+                                      categoryId: widget.place.categoryId))),
+                          SizedBox(width: screenWidthDp / 42),
+                          Text(
+                            widget.place?.name ?? 'someWhere',
+                            style: TextStyle(
+                                fontSize: s52,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: 7.2),
@@ -68,10 +73,10 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                       child: recentltScraps())
                 ],
               )),
-              Positioned(
-                  top: screenWidthDp / 34,
-                  right: screenWidthDp / 34,
-                  child: transactionBox(widget.place.id)),
+              // Positioned(
+              //     top: screenWidthDp / 34,
+              //     right: screenWidthDp / 34,
+              //     child: transactionBox(widget.place.id)),
             ],
           )),
       onTap: () async {
