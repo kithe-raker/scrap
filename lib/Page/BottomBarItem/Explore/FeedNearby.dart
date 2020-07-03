@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/assets/PaperTexture.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/models/TopPlaceModel.dart';
 import 'package:scrap/stream/NearbyStream.dart';
 import 'package:social_share/social_share.dart';
@@ -213,14 +215,26 @@ class _FeedNearbyState extends State<FeedNearby> {
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            SocialShare.shareInstagramStory(
-                                                image.path,
-                                                "#212121",
-                                                "#000000",
-                                                "https://scrap.bualoitech.com/");
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['instagram'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    SocialShare.shareInstagramStory(
+                                                        image.path,
+                                                        "#212121",
+                                                        "#000000",
+                                                        "https://scrap.bualoitech.com/");
+                                                  })
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดไอจีก่อนฮะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -250,28 +264,44 @@ class _FeedNearbyState extends State<FeedNearby> {
                                   children: <Widget>[
                                     GestureDetector(
                                         onTap: () async {
-                                          await screenshotController
-                                              .capture(pixelRatio: 1.5)
-                                              .then((image) async {
-                                            Platform.isAndroid
-                                                ? SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/",
-                                                        appId:
-                                                            "152617042778122")
-                                                    .then((data) {
-                                                    print(data);
+                                          SocialShare
+                                                  .checkInstalledAppsForShare()
+                                              .then((data) async {
+                                            data['facebook'] == true
+                                                ? await screenshotController
+                                                    .capture(pixelRatio: 1.5)
+                                                    .then((image) async {
+                                                    {
+                                                      Platform.isAndroid
+                                                          ? SocialShare.shareFacebookStory(
+                                                                  image.path,
+                                                                  "#212121",
+                                                                  "#000000",
+                                                                  "https://scrap.bualoitech.com/",
+                                                                  appId:
+                                                                      "152617042778122")
+                                                              .then((data) {
+                                                              print(data);
+                                                            })
+                                                          : SocialShare
+                                                                  .shareFacebookStory(
+                                                                      image
+                                                                          .path,
+                                                                      "#212121",
+                                                                      "#000000",
+                                                                      "https://scrap.bualoitech.com/")
+                                                              .then((data) {
+                                                              print(data);
+                                                            });
+                                                    }
                                                   })
-                                                : SocialShare.shareFacebookStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/")
-                                                    .then((data) {
-                                                    print(data);
-                                                  });
+                                                : Fluttertoast.showToast(
+                                                    msg: "โหลดเฟซบุ๊คก่อนฮะ",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                  );
                                           });
                                         },
                                         child: Container(
@@ -517,6 +547,29 @@ class _FeedNearbyState extends State<FeedNearby> {
                                 style: TextStyle(height: 1.35, fontSize: s60),
                                 textAlign: TextAlign.center),
                           ),
+                        ),
+                        Positioned(
+                          top: screenWidthDp / 21,
+                          left: screenWidthDp / 21,
+                          child: GestureDetector(
+                              onTap: () {
+                                nav.pop(context);
+                              },
+                              child: Container(
+                                width: screenWidthDp / 10,
+                                height: screenWidthDp / 10,
+                                padding:
+                                    EdgeInsets.only(right: screenWidthDp / 168),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[800].withOpacity(0.5),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(screenWidthDp))),
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.white,
+                                  size: s48,
+                                ),
+                              )),
                         ),
                       ],
                     ),

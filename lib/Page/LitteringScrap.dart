@@ -170,7 +170,9 @@ class _LitteringScrapState extends State<LitteringScrap> {
                 ),
               ),
             ),
-            Center(child: StreamLoading(stream: scrap.loading, blur: true))
+            Center(
+              child: StreamLoading(stream: scrap.loading, blur: true),
+            ),
           ],
         ),
       ),

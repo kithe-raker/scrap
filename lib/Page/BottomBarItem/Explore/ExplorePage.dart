@@ -237,7 +237,7 @@ class _ExplorePageState extends State<ExplorePage>
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: index == 0 ? 'ค้นหาโรงเรียน' : 'ค้นหาเพื่อนๆ',
+                        hintText: index == 0 ? 'ค้นหาสถานที่' : 'ค้นหาเพื่อนๆ',
                         contentPadding: EdgeInsets.all(5.2),
                         hintStyle:
                             TextStyle(color: Colors.white60, fontSize: s42),

@@ -259,16 +259,21 @@ class _CommentSheetState extends State<CommentSheet> {
                                     setSheet(() {});
                                   },
                                   decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 5),
                                       border: InputBorder.none,
                                       hintText: 'พิมพ์อะไรสักอย่างสิ',
                                       hintStyle: TextStyle(
-                                          color: Colors.white38,
-                                          fontSize: s48,
-                                          height: 0.72)),
+                                        color: Colors.white38,
+                                        fontSize: s48,
+                                        //height: 1
+                                      )),
                                   style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: s48,
-                                      height: 0.72),
+                                    color: Colors.white,
+                                    fontSize: s48,
+                                    //height: 1
+                                  ),
                                   textInputAction: TextInputAction.done,
                                   onSubmitted: comment.text != null &&
                                           comment.text.length > 0
