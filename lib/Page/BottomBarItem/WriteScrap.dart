@@ -98,7 +98,7 @@ class _WriteScrapState extends State<WriteScrap> {
                       children: <Widget>[
                         GestureDetector(
                           child: Icon(Icons.arrow_back_ios,
-                              color: Colors.white, size: s52),
+                              color: Colors.white, size: s42),
                           onTap: () => nav.pop(context),
                         ),
                         Text('เขียนสแครปของคุณ',

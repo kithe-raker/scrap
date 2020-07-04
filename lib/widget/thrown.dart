@@ -59,7 +59,7 @@ void writerScrap(BuildContext context,
                           child: Icon(
                             Icons.arrow_back_ios,
                             color: Colors.white,
-                            size: s52,
+                            size: s42,
                           ),
                           onTap: () => nav.pop(context),
                         ),
