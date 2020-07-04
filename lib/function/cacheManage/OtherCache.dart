@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 class OtherCache {
@@ -51,23 +52,28 @@ class OtherCache {
     return file.exists();
   }
 
-  Future<double> recentlyPoint() async {
+  Future<Map<String, dynamic>> recentlyPoint() async {
     final file = await _localFile;
     double point;
+    String id;
     var now = DateTime.now();
     if (await exist()) {
       Map data = await json.decode(await file.readAsString());
-      if (data['day'] == now.day) point = data['point'];
+      if (data['day'] == now.day) {
+        point = data['point'];
+        id = data['id'];
+      }
     } else
       await initFile();
-    return point;
+    return {'point': point, 'id': id};
   }
 
-  Future<void> update(double point) async {
+  Future<void> update({@required double point, @required String id}) async {
     final file = await _localFile;
     var cache = await readFile();
     var now = DateTime.now();
     cache['point'] = point;
+    cache['id'] = id;
     cache['day'] = now.day;
     await file.writeAsString(json.encode(cache));
   }

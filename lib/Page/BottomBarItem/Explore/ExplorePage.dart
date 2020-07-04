@@ -31,6 +31,7 @@ class _ExplorePageState extends State<ExplorePage>
   List<TopPlaceModel> places = [];
   Map<String, int> counts = {};
   bool isSearching = false, loading = true, lastQuery = false;
+  String lessCountId;
   int lessCount;
   int index = 0;
   var refreshController = RefreshController();
@@ -73,9 +74,10 @@ class _ExplorePageState extends State<ExplorePage>
       data.value.forEach((key, value) {
         docId.add(value['id']);
         counts[value['id']] = value['allCount'];
-        if (lessCount == null)
+        if (lessCount == null || lessCount < value['count']) {
           lessCount = value['count'];
-        else if (lessCount < value['count']) lessCount = value['count'];
+          lessCountId = value['id'];
+        }
       });
       docId.removeWhere((id) => id == null);
       if (docId.length > 0) {
@@ -91,33 +93,42 @@ class _ExplorePageState extends State<ExplorePage>
   }
 
   loadMorePlace() async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var placeAll = FirebaseDatabase(app: db.placeAll);
-    List<String> docId = [];
-    var ref = placeAll
-        .reference()
-        .child('places')
-        .orderByChild('count')
-        .startAt(lessCount + 1)
-        .limitToFirst(8);
-    DataSnapshot data = await ref.once();
-    if (data.value?.length != null && data.value.length > 0) {
-      data.value.forEach((key, value) {
-        docId.add(value['id']);
-        counts[value['id']] = value['allCount'];
-        if (lessCount < value['count']) lessCount = value['count'];
-      });
-    }
-    docId.removeWhere((id) => id == null);
-    if (docId.length > 0 && !lastQuery) {
-      var docs = await fireStore
-          .collection('Places')
-          .where('id', whereIn: docId)
-          .getDocuments();
-      if (docs.documents.length < 8) lastQuery = true;
-      docs.documents
-          .forEach((doc) => places.add(TopPlaceModel.fromJSON(doc.data)));
-      setState(() => refreshController.loadComplete());
+    if (places.length < 40) {
+      final db = Provider.of<RealtimeDB>(context, listen: false);
+      var placeAll = FirebaseDatabase(app: db.placeAll);
+      List<String> docId = [];
+      var ref = placeAll
+          .reference()
+          .child('places')
+          .orderByChild('count')
+          .startAt(lessCount, key: lessCountId)
+          .limitToFirst(8);
+      DataSnapshot data = await ref.once();
+      if (data.value?.length != null && data.value.length > 0) {
+        data.value.forEach((key, value) {
+          if (counts[value['id']] == null) {
+            docId.add(value['id']);
+            counts[value['id']] = value['allCount'];
+            if (lessCount <= value['count']) {
+              lessCount = value['count'];
+              lessCountId = value['id'];
+            }
+          }
+        });
+      }
+      docId.removeWhere((id) => id == null);
+      if (docId.length > 0) {
+        var docs = await fireStore
+            .collection('Places')
+            .where('id', whereIn: docId)
+            .getDocuments();
+        docs.documents.forEach((doc) {
+          if (places.length < 40) places.add(TopPlaceModel.fromJSON(doc.data));
+        });
+        setState(() => refreshController.loadComplete());
+      } else {
+        refreshController.loadNoData();
+      }
     } else {
       refreshController.loadNoData();
     }

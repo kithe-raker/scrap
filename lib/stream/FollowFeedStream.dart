@@ -76,7 +76,8 @@ class FollowFeedStream {
               .reference()
               .child('scraps/${doc.documentID}')
               .once();
-          addScrap(ScrapModel.fromJSON(doc.data, transaction: data.value));
+          addScrap(ScrapModel.fromJSON(doc.data,
+              transaction: ScrapTransaction.fromJSON(data.value)));
         });
       }
     }

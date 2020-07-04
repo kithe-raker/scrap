@@ -73,12 +73,10 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                       child: recentltScraps())
                 ],
               )),
-              // Positioned(
-              //     top: screenWidthDp / 34,
-              //     right: screenWidthDp / 34,
-              //     child: Container(
-              //         color: Colors.red,
-              //         child: transactionBox(widget.place.id))),
+              Positioned(
+                  top: screenWidthDp / 34,
+                  right: screenWidthDp / 34,
+                  child: transactionBox(widget.place.id)),
             ],
           )),
       onTap: () async {
