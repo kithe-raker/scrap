@@ -42,7 +42,7 @@ class _ScrapNearbyState extends State<ScrapNearby> {
     _createScrapImageFromAsset(context);
     screenutilInit(context);
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         // appBar: AppBar(
         //   backgroundColor: Colors.black,
         //   title: Text(
@@ -67,7 +67,7 @@ class _ScrapNearbyState extends State<ScrapNearby> {
                     vertical: screenWidthDp / 42),
                 margin: EdgeInsets.symmetric(
                     horizontal: screenWidthDp / 32,
-                    vertical: screenHeightDp / 46),
+                    vertical: screenHeightDp / 8.5),
                 decoration: BoxDecoration(
                     color: Color(0xff2E2E2E),
                     boxShadow: [
