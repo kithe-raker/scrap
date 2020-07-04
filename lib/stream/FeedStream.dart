@@ -11,10 +11,11 @@ class FeedStream {
   BehaviorSubject<List<ScrapModel>> feedSubject =
       BehaviorSubject<List<ScrapModel>>();
   double _lessPoint;
+  String lessPointId;
+  Map<String, ScrapTransaction> transacs = {};
 
   Stream<List<ScrapModel>> get feedStream => feedSubject.stream;
   List<ScrapModel> get scraps => feedSubject.value;
-  double get lesspoint => _lessPoint;
 
   addScrap(ScrapModel scrap) {
     var newList = scraps ?? [];
@@ -29,17 +30,18 @@ class FeedStream {
   }
 
   Future<void> initFeed() async {
-    _lessPoint = await cacheOther.recentlyPoint();
+    var cache = await cacheOther.recentlyPoint();
+    _lessPoint = cache['point'];
+    lessPointId = cache['id'];
     if (_lessPoint == null || _lessPoint >= -5.6) _lessPoint = null;
     loadStatus.feedStatus.add(true);
-    var transacs = {};
     List<String> docId = [];
     var ref = _lessPoint != null
         ? FirebaseDatabase.instance
             .reference()
             .child('scraps')
             .orderByChild('point')
-            .startAt(_lessPoint)
+            .startAt(_lessPoint, key: lessPointId)
             .limitToFirst(9)
         : FirebaseDatabase.instance
             .reference()
@@ -51,8 +53,10 @@ class FeedStream {
       data.value.forEach((key, value) {
         docId.add(value['id']);
         transacs[value['id']] = ScrapTransaction.fromJSON(value);
-        if (_lessPoint == null || _lessPoint < value['point'])
+        if (_lessPoint == null || _lessPoint < value['point']) {
           _lessPoint = value['point'].toDouble();
+          lessPointId = value['id'];
+        }
       });
     }
     docId.removeWhere((id) => id == null);
@@ -74,23 +78,25 @@ class FeedStream {
   }
 
   Future<void> loadMore() async {
-    var queryPoint = _lessPoint + 0.1;
-    if (queryPoint <= 0) {
-      var transacs = {};
+    if (_lessPoint <= 0) {
       List<String> docId = [];
       var ref = FirebaseDatabase.instance
           .reference()
           .child('scraps')
           .orderByChild('point')
-          .startAt(queryPoint)
+          .startAt(_lessPoint, key: lessPointId)
           .limitToFirst(2);
       DataSnapshot data = await ref.once();
       if (data.value?.length != null && data.value.length > 0) {
         data.value.forEach((key, value) {
-          docId.add(value['id']);
-          transacs[value['id']] = ScrapTransaction.fromJSON(value);
-          if (queryPoint < value['point'])
-            queryPoint = value['point'].toDouble();
+          if (transacs[value['id']]?.point == null) {
+            docId.add(value['id']);
+            transacs[value['id']] = ScrapTransaction.fromJSON(value);
+            if (_lessPoint < value['point']) {
+              _lessPoint = value['point'].toDouble();
+              lessPointId = value['id'];
+            }
+          }
         });
       }
       docId.removeWhere((id) => id == null);
@@ -106,9 +112,7 @@ class FeedStream {
         });
         print('------');
       }
-
-      _lessPoint = queryPoint.toDouble();
-      cacheOther.update(queryPoint);
+      cacheOther.update(point: _lessPoint, id: lessPointId);
     }
   }
 }
