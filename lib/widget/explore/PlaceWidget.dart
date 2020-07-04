@@ -76,7 +76,9 @@ class _PlaceWidgetState extends State<PlaceWidget> {
               // Positioned(
               //     top: screenWidthDp / 34,
               //     right: screenWidthDp / 34,
-              //     child: transactionBox(widget.place.id)),
+              //     child: Container(
+              //         color: Colors.red,
+              //         child: transactionBox(widget.place.id))),
             ],
           )),
       onTap: () async {
