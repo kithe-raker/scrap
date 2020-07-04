@@ -49,7 +49,9 @@ class _SearchPlaceBoxState extends State<SearchPlaceBox> {
         final predictions = response.data['items'];
 
         await Future.forEach(predictions, (dat) async {
-          var info = await getPlacePosition(dat['id']);
+          var info = dat;
+          if (info['position']['lat'] == null)
+            info = await getPlacePosition(dat['id']);
           places.add(PlaceModel.fromJSON(info));
         });
       } catch (e) {}

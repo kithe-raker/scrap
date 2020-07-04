@@ -45,7 +45,9 @@ class _LitteringScrapState extends State<LitteringScrap> {
 
       await Future.forEach(predictions, (dat) async {
         if (suggestPlaces.length < 6) {
-          var info = await getPlacePosition(dat['id']);
+          var info = dat;
+          if (info['position']['lat'] == null)
+            info = await getPlacePosition(info['id']);
           suggestPlaces.add(PlaceModel.fromJSON(info));
         }
       });
