@@ -541,15 +541,17 @@ class _FeedNearbyState extends State<FeedNearby> {
                           ),
                         ),
                         Positioned(
-                          top: screenWidthDp / 21,
-                          left: screenWidthDp / 21,
+                          // top: screenWidthDp / 21 / 1.5,
+                          // left: screenWidthDp / 21 / 1.5,
+                          top: screenWidthDp / 42,
+                          left: screenWidthDp / 42,
                           child: GestureDetector(
                               onTap: () {
                                 nav.pop(context);
                               },
                               child: Container(
-                                width: screenWidthDp / 10,
-                                height: screenWidthDp / 10,
+                                width: screenWidthDp / 12,
+                                height: screenWidthDp / 12,
                                 padding:
                                     EdgeInsets.only(right: screenWidthDp / 168),
                                 decoration: BoxDecoration(
@@ -559,7 +561,7 @@ class _FeedNearbyState extends State<FeedNearby> {
                                 child: Icon(
                                   Icons.arrow_back_ios,
                                   color: Colors.white,
-                                  size: s48,
+                                  size: s42,
                                 ),
                               )),
                         ),

@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/FeedNearby.dart';
@@ -41,13 +42,14 @@ class _ScrapNearbyState extends State<ScrapNearby> {
     _createScrapImageFromAsset(context);
     screenutilInit(context);
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: Text(
-            'สแครปบริเวณต่างๆ',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: s48),
-          ),
-        ),
+        backgroundColor: Colors.black,
+        // appBar: AppBar(
+        //   backgroundColor: Colors.black,
+        //   title: Text(
+        //     'สแครปบริเวณต่างๆ',
+        //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: s48),
+        //   ),
+        // ),
         body: SafeArea(
           child: Stack(
             children: <Widget>[
@@ -109,6 +111,37 @@ class _ScrapNearbyState extends State<ScrapNearby> {
                   ],
                 ),
               ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 21),
+                alignment: Alignment.center,
+                color: Colors.black,
+                height: appBarHeight,
+                width: screenWidthDp,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: s42,
+                      ),
+                      onTap: () {
+                        nav.pop(context);
+                      },
+                    ),
+                    Text(
+                      'สแครปบริเวณต่างๆ',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: s48,
+                          color: Colors.white),
+                    ),
+                    SizedBox()
+                  ],
+                ),
+              )
             ],
           ),
         ));
