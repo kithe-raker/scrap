@@ -75,14 +75,6 @@ class _FeedFollowngState extends State<FeedFollowng>
     return history[field].contains(id);
   }
 
-  bool isExpired(DateTime litteredTime) {
-    DateTime startTime = litteredTime;
-    return DateTime(startTime.year, startTime.month, startTime.day + 1,
-            startTime.hour, startTime.second)
-        .difference(DateTime.now())
-        .isNegative;
-  }
-
   void listener() {
     if (pageController.position.pixels >
         pageController.position.maxScrollExtent)
@@ -118,10 +110,9 @@ class _FeedFollowngState extends State<FeedFollowng>
                                       physics: AlwaysScrollableScrollPhysics(),
                                       controller: pageController,
                                       onPageChanged: (index) {
-                                        if (current + 1 == index) {
-                                          followFeed.scraps.length < 24
-                                              ? followFeed.loadMore(context)
-                                              : followFeed.clearOldScrap();
+                                        if (current + 1 == index &&
+                                            (index + 1) % 3 == 0) {
+                                          followFeed.loadMore(context);
                                         }
                                         current = index;
                                       },
@@ -301,23 +292,20 @@ class _FeedFollowngState extends State<FeedFollowng>
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 GestureDetector(
-                                  child: iconfrommilla(
-                                      inHistory('like', scrapModel.scrapId)
-                                          ? 'assets/heart-fill-icon.svg'
-                                          : 'assets/heart-icon.svg',
-                                      transac.like.abs().toString(),
-                                      iconColor:
-                                          inHistory('like', scrapModel.scrapId)
-                                              ? Colors.white
-                                              : Colors.red,
-                                      backgroundColor:
-                                          inHistory('like', scrapModel.scrapId)
-                                              ? Colors.red
-                                              : Colors.white),
-                                  onTap: () {
-                                    if (isExpired(scrapModel.litteredTime)) {
-                                      toast.toast('สเเครปนี้ย่อยสลายแล้ว');
-                                    } else {
+                                    child: iconfrommilla(
+                                        inHistory('like', scrapModel.scrapId)
+                                            ? 'assets/heart-fill-icon.svg'
+                                            : 'assets/heart-icon.svg',
+                                        transac.like.abs().toString(),
+                                        iconColor: inHistory(
+                                                'like', scrapModel.scrapId)
+                                            ? Colors.white
+                                            : Colors.red,
+                                        backgroundColor: inHistory(
+                                                'like', scrapModel.scrapId)
+                                            ? Colors.red
+                                            : Colors.white),
+                                    onTap: () {
                                       scrap.updateScrapTrans('like',
                                           scrap: scrapModel);
                                       if (inHistory(
@@ -330,28 +318,23 @@ class _FeedFollowngState extends State<FeedFollowng>
                                         history['like'].add(scrapModel.scrapId);
                                       }
                                       setTrans(() {});
-                                    }
-                                  },
-                                ),
+                                    }),
                                 GestureDetector(
-                                  child: iconfrommilla(
-                                      inHistory('picked', scrapModel.scrapId)
-                                          ? 'assets/keep-icon.svg'
-                                          : 'assets/keep-icon.svg',
-                                      transac.picked.abs().toString(),
-                                      iconColor: inHistory(
-                                              'picked', scrapModel.scrapId)
-                                          ? Colors.white
-                                          : Colors.blue,
-                                      backgroundColor: inHistory(
-                                              'picked', scrapModel.scrapId)
-                                          ? Colors.blue
-                                          : Colors.white),
-                                  onTap: () {
-                                    if (isExpired(scrapModel.litteredTime)) {
-                                      scrap.toast('สเเครปนี้ย่อยสลายแล้ว');
-                                    } else {
-                                      scrap.updateScrapTrans('picked', 
+                                    child: iconfrommilla(
+                                        inHistory('picked', scrapModel.scrapId)
+                                            ? 'assets/keep-icon.svg'
+                                            : 'assets/keep-icon.svg',
+                                        transac.picked.abs().toString(),
+                                        iconColor: inHistory(
+                                                'picked', scrapModel.scrapId)
+                                            ? Colors.white
+                                            : Colors.blue,
+                                        backgroundColor: inHistory(
+                                                'picked', scrapModel.scrapId)
+                                            ? Colors.blue
+                                            : Colors.white),
+                                    onTap: () {
+                                      scrap.updateScrapTrans('picked',
                                           scrap: scrapModel,
                                           comments: transac.comment);
                                       if (inHistory(
@@ -365,9 +348,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                                             .add(scrapModel.scrapId);
                                       }
                                       setTrans(() {});
-                                    }
-                                  },
-                                ),
+                                    }),
                                 GestureDetector(
                                   child: iconfrommilla(
                                       'assets/comment-icon.svg',

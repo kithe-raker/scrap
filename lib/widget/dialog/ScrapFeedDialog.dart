@@ -55,14 +55,6 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
     return history[field].contains(id);
   }
 
-  bool isExpired(DocumentSnapshot data) {
-    DateTime startTime = data['scrap']['timeStamp'].toDate();
-    return DateTime(startTime.year, startTime.month, startTime.day + 1,
-            startTime.hour, startTime.second)
-        .difference(DateTime.now())
-        .isNegative;
-  }
-
   Future<DataSnapshot> scrapTransaction(String docId) {
     final db = Provider.of<RealtimeDB>(context, listen: false);
     var scrapAll = FirebaseDatabase(app: db.scrapAll);
@@ -324,27 +316,29 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                         .spaceEvenly,
                                                 children: <Widget>[
                                                   GestureDetector(
-                                                    child: iconfrommilla(
-                                                        inHistory('like',
-                                                                data.documentID)
-                                                            ? 'assets/heart-fill-icon.svg'
-                                                            : 'assets/heart-icon.svg',
-                                                        like.abs().toString(),
-                                                        iconColor: inHistory(
-                                                                'like',
-                                                                data.documentID)
-                                                            ? Colors.white
-                                                            : Colors.red,
-                                                        backgroundColor: inHistory(
-                                                                'like',
-                                                                data.documentID)
-                                                            ? Colors.red
-                                                            : Colors.white),
-                                                    onTap: () {
-                                                      if (isExpired(data)) {
-                                                        toast.toast(
-                                                            'สเเครปนี้ย่อยสลายแล้ว');
-                                                      } else {
+                                                      child: iconfrommilla(
+                                                          inHistory(
+                                                                  'like',
+                                                                  data
+                                                                      .documentID)
+                                                              ? 'assets/heart-fill-icon.svg'
+                                                              : 'assets/heart-icon.svg',
+                                                          like.abs().toString(),
+                                                          iconColor: inHistory(
+                                                                  'like',
+                                                                  data
+                                                                      .documentID)
+                                                              ? Colors.white
+                                                              : Colors.red,
+                                                          backgroundColor:
+                                                              inHistory(
+                                                                      'like',
+                                                                      data
+                                                                          .documentID)
+                                                                  ? Colors.red
+                                                                  : Colors
+                                                                      .white),
+                                                      onTap: () {
                                                         scrap.updateScrapTrans(
                                                             'like',
                                                             doc: data);
@@ -360,31 +354,31 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                               data.documentID);
                                                         }
                                                         setTrans(() {});
-                                                      }
-                                                    },
-                                                  ),
+                                                      }),
                                                   GestureDetector(
-                                                    child: iconfrommilla(
-                                                        inHistory('picked',
-                                                                data.documentID)
-                                                            ? 'assets/keep-icon.svg'
-                                                            : 'assets/keep-icon.svg',
-                                                        pick.abs().toString(),
-                                                        iconColor: inHistory(
-                                                                'picked',
-                                                                data.documentID)
-                                                            ? Colors.white
-                                                            : Colors.blue,
-                                                        backgroundColor: inHistory(
-                                                                'picked',
-                                                                data.documentID)
-                                                            ? Colors.blue
-                                                            : Colors.white),
-                                                    onTap: () {
-                                                      if (isExpired(data)) {
-                                                        scrap.toast(
-                                                            'สเเครปนี้ย่อยสลายแล้ว');
-                                                      } else {
+                                                      child: iconfrommilla(
+                                                          inHistory(
+                                                                  'picked',
+                                                                  data
+                                                                      .documentID)
+                                                              ? 'assets/keep-icon.svg'
+                                                              : 'assets/keep-icon.svg',
+                                                          pick.abs().toString(),
+                                                          iconColor: inHistory(
+                                                                  'picked',
+                                                                  data
+                                                                      .documentID)
+                                                              ? Colors.white
+                                                              : Colors.blue,
+                                                          backgroundColor:
+                                                              inHistory(
+                                                                      'picked',
+                                                                      data
+                                                                          .documentID)
+                                                                  ? Colors.blue
+                                                                  : Colors
+                                                                      .white),
+                                                      onTap: () {
                                                         scrap.updateScrapTrans(
                                                             'picked',
                                                             doc: data,
@@ -403,9 +397,7 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                               data.documentID);
                                                         }
                                                         setTrans(() {});
-                                                      }
-                                                    },
-                                                  ),
+                                                      }),
                                                   GestureDetector(
                                                     child: iconfrommilla(
                                                         'assets/comment-icon.svg',

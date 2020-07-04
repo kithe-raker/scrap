@@ -44,14 +44,6 @@ class _FeedNearbyState extends State<FeedNearby> {
     return history[field].contains(id);
   }
 
-  bool isExpired(DateTime litteredTime) {
-    DateTime startTime = litteredTime;
-    return DateTime(startTime.year, startTime.month, startTime.day + 1,
-            startTime.hour, startTime.second)
-        .difference(DateTime.now())
-        .isNegative;
-  }
-
   @override
   void initState() {
     initIndex();
@@ -123,11 +115,10 @@ class _FeedNearbyState extends State<FeedNearby> {
                                     physics: AlwaysScrollableScrollPhysics(),
                                     controller: pageController,
                                     onPageChanged: (index) {
-                                      if (current + 1 == index) {
-                                        nearby.scraps.length < 24
-                                            ? nearby.loadMore(context,
-                                                placeId: widget.place.id)
-                                            : nearby.clearOldScrap();
+                                      if (current + 1 == index &&
+                                          (index + 1) % 3 == 0) {
+                                        nearby.loadMore(context,
+                                            placeId: widget.place.id);
                                       }
                                       current = index;
                                     },
@@ -666,22 +657,17 @@ class _FeedNearbyState extends State<FeedNearby> {
                                               ? Colors.red
                                               : Colors.white),
                                   onTap: () {
-                                    if (isExpired(scrapModel.litteredTime)) {
-                                      toast.toast('สเเครปนี้ย่อยสลายแล้ว');
+                                    scrap.updateScrapTrans('like',
+                                        scrap: scrapModel);
+                                    if (inHistory('like', scrapModel.scrapId)) {
+                                      ++transac.like;
+                                      history['like']
+                                          .remove(scrapModel.scrapId);
                                     } else {
-                                      scrap.updateScrapTrans('like',
-                                          scrap: scrapModel);
-                                      if (inHistory(
-                                          'like', scrapModel.scrapId)) {
-                                        ++transac.like;
-                                        history['like']
-                                            .remove(scrapModel.scrapId);
-                                      } else {
-                                        --transac.like;
-                                        history['like'].add(scrapModel.scrapId);
-                                      }
-                                      setTrans(() {});
+                                      --transac.like;
+                                      history['like'].add(scrapModel.scrapId);
                                     }
+                                    setTrans(() {});
                                   },
                                 ),
                                 GestureDetector(
@@ -699,24 +685,19 @@ class _FeedNearbyState extends State<FeedNearby> {
                                           ? Colors.blue
                                           : Colors.white),
                                   onTap: () {
-                                    if (isExpired(scrapModel.litteredTime)) {
-                                      scrap.toast('สเเครปนี้ย่อยสลายแล้ว');
+                                    scrap.updateScrapTrans('picked',
+                                        scrap: scrapModel,
+                                        comments: transac.comment);
+                                    if (inHistory(
+                                        'picked', scrapModel.scrapId)) {
+                                      ++transac.picked;
+                                      history['picked']
+                                          .remove(scrapModel.scrapId);
                                     } else {
-                                      scrap.updateScrapTrans('picked',
-                                          scrap: scrapModel,
-                                          comments: transac.comment);
-                                      if (inHistory(
-                                          'picked', scrapModel.scrapId)) {
-                                        ++transac.picked;
-                                        history['picked']
-                                            .remove(scrapModel.scrapId);
-                                      } else {
-                                        --transac.picked;
-                                        history['picked']
-                                            .add(scrapModel.scrapId);
-                                      }
-                                      setTrans(() {});
+                                      --transac.picked;
+                                      history['picked'].add(scrapModel.scrapId);
                                     }
+                                    setTrans(() {});
                                   },
                                 ),
                                 GestureDetector(

@@ -64,21 +64,6 @@ class _CommentSheetState extends State<CommentSheet> {
     super.dispose();
   }
 
-  bool isExpired(List commentList, CollectionReference ref,
-      {@required String comment}) {
-    DateTime startTime = widget.scrapSnapshot?.litteredTime ??
-        widget.doc['scrap']['timeStamp'].toDate();
-    if (DateTime(startTime.year, startTime.month, startTime.day + 1,
-            startTime.hour, startTime.second)
-        .difference(DateTime.now())
-        .isNegative) {
-      return true;
-    } else {
-      addComment(commentList, ref, scrapId, comment: comment);
-      return false;
-    }
-  }
-
   addComment(List commentList, CollectionReference ref, String scrapId,
       {@required String comment}) async {
     final db = Provider.of<RealtimeDB>(context, listen: false);
@@ -278,14 +263,11 @@ class _CommentSheetState extends State<CommentSheet> {
                                   onSubmitted: comment.text != null &&
                                           comment.text.length > 0
                                       ? (val) {
-                                          if (isExpired(commentList, ref,
-                                              comment: comment.text.trim())) {
-                                            scrap.toast('แสครปนี้ย่อยสลายแล้ว');
-                                          } else {
-                                            comment.clear();
-                                            setSheet(() {});
-                                            controller.requestRefresh();
-                                          }
+                                          addComment(commentList, ref, scrapId,
+                                              comment: comment.text.trim());
+                                          comment.clear();
+                                          setSheet(() {});
+                                          controller.requestRefresh();
                                         }
                                       : null),
                             )),
@@ -330,14 +312,11 @@ class _CommentSheetState extends State<CommentSheet> {
                                 onTap: comment.text != null &&
                                         comment.text.length > 0
                                     ? () {
-                                        if (isExpired(commentList, ref,
-                                            comment: comment.text.trim())) {
-                                          scrap.toast('แสครปนี้ย่อยสลายแล้ว');
-                                        } else {
-                                          comment.clear();
-                                          setSheet(() {});
-                                          controller.requestRefresh();
-                                        }
+                                        addComment(commentList, ref, scrapId,
+                                            comment: comment.text.trim());
+                                        comment.clear();
+                                        setSheet(() {});
+                                        controller.requestRefresh();
                                       }
                                     : null),
                             SizedBox(width: screenWidthDp / 32),
