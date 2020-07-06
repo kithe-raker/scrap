@@ -70,7 +70,6 @@ class _CommentSheetState extends State<CommentSheet> {
     final user = Provider.of<UserData>(context, listen: false);
     final scrapAll = dbRef.scrapAll;
     final userDb = dbRef.userTransact;
-    final defaultDb = FirebaseDatabase.instance;
     var refChild = 'scraps/$scrapId';
     String userId;
     var data;
@@ -103,10 +102,7 @@ class _CommentSheetState extends State<CommentSheet> {
       'timeStamp': FieldValue.serverTimestamp()
     });
 
-    await defaultDb
-        .reference()
-        .child(refChild)
-        .runTransaction((mutableData) async {
+    await scrapAll.child(refChild).runTransaction((mutableData) async {
       if (mutableData?.value != null) {
         data = mutableData;
         mutableData.value['point'] = mutableData.value['point'] - 0.3;

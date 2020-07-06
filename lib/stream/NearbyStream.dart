@@ -32,7 +32,7 @@ class NearbyStream {
     var scrapAll = dbRef.scrapAll;
     List<ScrapModel> queryScraps = [];
     var ref = fireStore
-        .collectionGroup('ScrapDailys-th')
+        .collectionGroup('history')
         .where('places', arrayContains: placeId)
         .orderBy('scrap.timeStamp', descending: true)
         .limit(16);
@@ -54,7 +54,7 @@ class NearbyStream {
       {@required String placeId}) async {
     var scrapAll = dbRef.scrapAll;
     var ref = fireStore
-        .collectionGroup('ScrapDailys-th')
+        .collectionGroup('history')
         .where('places', arrayContains: placeId)
         .orderBy('scrap.timeStamp', descending: true)
         .startAfterDocument(lastDoc)

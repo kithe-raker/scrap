@@ -3,8 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
@@ -20,11 +18,14 @@ import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/services/GeoLocation.dart';
 import 'package:scrap/stream/UserStream.dart';
 
-final rtdb = FirebaseDatabase.instance;
+final rtdb = FirebaseDatabase.instance.reference();
 
 class Scraps {
   PublishSubject<bool> loading = PublishSubject();
   final FirebaseMessaging fcm = FirebaseMessaging();
+  final scrapAll = dbRef.scrapAll;
+  final userDb = dbRef.userTransact;
+  final allPlace = dbRef.placeAll;
   final globalContext = myGlobals.scaffoldKey.currentContext;
 
   throwTo(BuildContext context,
@@ -35,7 +36,6 @@ class Scraps {
     loading.add(true);
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
     final batch = fireStore.batch();
-    var userDb = dbRef.userTransact;
     final user = Provider.of<UserData>(context, listen: false);
     var refDb = userDb.child('users/$thrownUID');
     bool allow = (await refDb.child('allowThrow').once()).value;
@@ -95,7 +95,6 @@ class Scraps {
       {@required String thrownUID, @required String region}) async {
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
-    var userDb = dbRef.userTransact;
     var batch = fireStore.batch();
     loading.add(true);
     var refDb = userDb.child('users/$thrownUID');
@@ -147,80 +146,15 @@ class Scraps {
     scrapData.clearData();
   }
 
-  binScrap(BuildContext context,
-      {@required LatLng location, @required LatLng defaultLocation}) async {
-    loading.add(true);
-    final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
-    final user = Provider.of<UserData>(context, listen: false);
-    var allScrap = dbRef.scrapAll;
-    var userDb = dbRef.userTransact;
-    var now = DateTime.now();
-    var batch = Firestore.instance.batch();
-    GeoLocation defaultPoint =
-        GeoLocation(defaultLocation.latitude, defaultLocation.longitude);
-    GeoLocation point = GeoLocation(location.latitude, location.longitude);
-    var ref = Firestore.instance.collection(
-        'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
-    var docId = ref.document().documentID;
-    var trans = {
-      'comment': 0,
-      'id': docId,
-      'point': 0.0,
-      'like': 0,
-      'picked': 0
-    };
-    var mainTrans = {
-      'comment': 0,
-      'id': docId,
-      'point': 0.0,
-      'burn': 0,
-      'CPN': -5
-    };
-    Map<String, dynamic> scrap = {
-      'id': docId,
-      'uid': user.uid,
-      'region': user.region,
-      'scrap': {
-        'text': scrapData.text,
-        'texture': scrapData.textureIndex,
-        'writer': scrapData.private ? 'ไม่ระบุตัวตน' : user.id,
-        'timeStamp': FieldValue.serverTimestamp(),
-      },
-      'position': point.data,
-    };
-    batch.setData(ref.document(docId), scrap);
-    scrap['default'] = defaultPoint.data;
-    scrap['burnt'] = false;
-    batch.setData(
-        fireStore
-            .collection('Users/${user.region}/users/${user.uid}/history')
-            .document(docId),
-        scrap);
-
-    await allScrap.child('scraps/$docId').set(trans);
-    await rtdb.reference().child('scraps/$docId').set(mainTrans);
-    await userDb
-        .child('users/${user.uid}')
-        .update({'papers': userStream.papers - 1});
-    await batch.commit();
-    scrapData.clearData();
-    loading.add(false);
-    toast('คุณโยนสแครปไปที่คุณเลือกแล้ว');
-    Navigator.pop(context);
-  }
-
   Future<void> litter(BuildContext context,
       {@required PlaceModel place}) async {
     loading.add(true);
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
-    var allScrap = dbRef.scrapAll;
-    var userDb = dbRef.userTransact;
-    var now = DateTime.now();
     var batch = fireStore.batch();
     GeoLocation point;
-    var ref = fireStore.collection(
-        'Scraps/th/${DateFormat('yyyyMMdd').format(now)}/${now.hour}/ScrapDailys-th');
+    var ref =
+        fireStore.collection('Users/${user.region}/users/${user.uid}/history');
     var docId = ref.document().documentID;
 
     if (place != null) {
@@ -229,13 +163,6 @@ class Scraps {
       point = GeoLocation(ranLocation.latitude, ranLocation.longitude);
     }
 
-    var trans = {
-      'comment': 0,
-      'id': docId,
-      'point': 0.0,
-      'like': 0,
-      'picked': 0
-    };
     var mainTrans = {
       'comment': 0,
       'id': docId,
@@ -249,6 +176,7 @@ class Scraps {
       'id': docId,
       'uid': user.uid,
       'region': user.region,
+      'burnt': false,
       'scrap': {
         'text': scrapData.text,
         'texture': scrapData.textureIndex,
@@ -259,16 +187,13 @@ class Scraps {
     if (place != null) {
       scrap['position'] = point.data;
       scrap['places'] = FieldValue.arrayUnion([place.placeId]);
+      scrap['placeName'] = place.name;
     }
     batch.setData(ref.document(docId), scrap);
-    scrap['burnt'] = false;
-    batch.setData(
-        fireStore
-            .collection('Users/${user.region}/users/${user.uid}/history')
-            .document(docId),
-        scrap);
-    await allScrap.child('scraps/$docId').set(trans);
-    await rtdb.reference().child('scraps/$docId').set(mainTrans);
+    await rtdb
+        .child('scrap-app/allScrap')
+        .runTransaction((mutableData) async => (mutableData?.value ?? 0) + 1);
+    await scrapAll.child('scraps/$docId').set(mainTrans);
     await userDb
         .child('users/${user.uid}')
         .update({'papers': userStream.papers - 1});
@@ -291,7 +216,6 @@ class Scraps {
       @required String text,
       @required int texture}) async {
     final user = Provider.of<UserData>(context, listen: false);
-    var allPlace = dbRef.placeAll;
     var ref = allPlace.child('places/${place.placeId}');
     var placeData;
     await ref.runTransaction((mutableData) async {
@@ -346,8 +270,7 @@ class Scraps {
     Map<String, List> history = {};
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
-    var scrapAll = dbRef.scrapAll;
-    var userDb = dbRef.userTransact;
+
     var scrapId = scrap != null ? scrap.scrapId : doc.documentID;
     var writerUid = scrap != null ? scrap.writerUid : doc['uid'];
     var ref = 'scraps/$scrapId';
@@ -359,10 +282,6 @@ class Scraps {
         var newPoint = field == 'like'
             ? mutableData.value['point'] + 2
             : mutableData.value['point'] + 3;
-        rtdb
-            .reference()
-            .child(ref)
-            .update({'point': newPoint, field: mutableData.value[field] + 1});
         scrapAll
             .child(ref)
             .update({field: mutableData.value[field] + 1, 'point': newPoint});
@@ -380,21 +299,16 @@ class Scraps {
       } else
         toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     } else {
-      var transac = await scrapAll.child('$ref/$field').once();
-      if (transac?.value != null) {
+      var mutableData = await scrapAll.child('$ref/$field').once();
+      if (mutableData?.value != null) {
         cacheHistory.addHistory(scrap, doc, field: field, comments: comments);
-        var mutableData = await rtdb.reference().child(ref).once();
 
         var newPoint = field == 'like'
             ? mutableData.value['point'] - 2
             : mutableData.value['point'] - 3;
-        rtdb
-            .reference()
-            .child(ref)
-            .update({'point': newPoint, field: transac.value - 1});
         scrapAll
             .child(ref)
-            .update({field: transac.value - 1, 'point': newPoint});
+            .update({field: mutableData.value - 1, 'point': newPoint});
 
         userDb.child('users/$writerUid/att').runTransaction((data) async {
           if (data?.value != null)
@@ -415,7 +329,6 @@ class Scraps {
   pickScrap(
       {bool cancel = false, ScrapModel scrap, DocumentSnapshot doc}) async {
     final user = Provider.of<UserData>(globalContext, listen: false);
-    var userDb = dbRef.userTransact;
     var ref = userDb.child('users/${user.uid}');
     var data = scrap != null ? scrap.toJSON : doc.data;
     var scrapId = scrap?.scrapId ?? doc.documentID;
@@ -444,15 +357,13 @@ class Scraps {
           .collection('ScrapNotification')
           .document(scrapId)
           .setData({'id': scrapId, 'isComment': true, 'writer': writerUid});
-      rtdb
-          .reference()
+      scrapAll
           .child('scraps/$scrapId')
           .update({target: notiRate < 5 ? 5 : notiRate * 2});
     }
   }
 
-  resetScrap({@required String uid}) async {
-    var userDb = dbRef.userTransact;
+  Future<void> resetScrap({@required String uid}) async {
     await userDb.child('users/$uid').update({'papers': 10});
   }
 

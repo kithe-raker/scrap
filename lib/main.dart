@@ -11,8 +11,6 @@ import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/WriteScrapProvider.dart';
 
-import 'Page/MainPage.dart';
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);

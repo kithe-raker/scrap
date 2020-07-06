@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/OtherCache.dart';
 import 'package:scrap/models/ScrapModel.dart';
+import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/stream/LoadStatus.dart';
 
 class FeedStream {
@@ -12,6 +12,7 @@ class FeedStream {
       BehaviorSubject<List<ScrapModel>>();
   double _lessPoint;
   String lessPointId;
+  final allScrap = dbRef.scrapAll;
   Map<String, ScrapTransaction> transacs = {};
 
   Stream<List<ScrapModel>> get feedStream => feedSubject.stream;
@@ -23,12 +24,6 @@ class FeedStream {
     feedSubject.add(newList);
   }
 
-  Timestamp yesterDay() {
-    var now = DateTime.now();
-    return Timestamp.fromDate(
-        DateTime(now.year, now.month, now.day - 1, now.hour, now.minute));
-  }
-
   Future<void> initFeed() async {
     var cache = await cacheOther.recentlyPoint();
     _lessPoint = cache['point'];
@@ -37,17 +32,12 @@ class FeedStream {
     loadStatus.feedStatus.add(true);
     List<String> docId = [];
     var ref = _lessPoint != null
-        ? FirebaseDatabase.instance
-            .reference()
+        ? allScrap
             .child('scraps')
             .orderByChild('point')
             .startAt(_lessPoint, key: lessPointId)
             .limitToFirst(9)
-        : FirebaseDatabase.instance
-            .reference()
-            .child('scraps')
-            .orderByChild('point')
-            .limitToFirst(9);
+        : allScrap.child('scraps').orderByChild('point').limitToFirst(9);
     DataSnapshot data = await ref.once();
     if (data.value?.length != null && data.value.length > 0) {
       data.value.forEach((key, value) {
@@ -62,9 +52,9 @@ class FeedStream {
     docId.removeWhere((id) => id == null);
     if (docId.length > 0) {
       var docs = await fireStore
-          .collectionGroup('ScrapDailys-th')
+          .collectionGroup('history')
           .where('id', whereIn: docId)
-          .where('scrap.timeStamp', isGreaterThan: yesterDay())
+          .where('burnt', isEqualTo: false)
           .getDocuments();
       docs.documents.forEach((scrap) {
         addScrap(ScrapModel.fromJSON(scrap.data,
@@ -80,12 +70,11 @@ class FeedStream {
   Future<void> loadMore() async {
     if (_lessPoint <= 0) {
       List<String> docId = [];
-      var ref = FirebaseDatabase.instance
-          .reference()
+      var ref = allScrap
           .child('scraps')
           .orderByChild('point')
           .startAt(_lessPoint, key: lessPointId)
-          .limitToFirst(2);
+          .limitToFirst(8);
       DataSnapshot data = await ref.once();
       if (data.value?.length != null && data.value.length > 0) {
         data.value.forEach((key, value) {
@@ -102,9 +91,9 @@ class FeedStream {
       docId.removeWhere((id) => id == null);
       if (docId.length > 0) {
         var docs = await fireStore
-            .collectionGroup('ScrapDailys-th')
+            .collectionGroup('history')
             .where('id', whereIn: docId)
-            .where('scrap.timeStamp', isGreaterThan: yesterDay())
+            .where('burnt', isEqualTo: false)
             .getDocuments();
         docs.documents.forEach((scrap) {
           addScrap(ScrapModel.fromJSON(scrap.data,
