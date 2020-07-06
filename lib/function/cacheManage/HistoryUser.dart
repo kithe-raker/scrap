@@ -44,12 +44,8 @@ class HistoryUser {
   }
 
   Future<List> readHistory({@required String field}) async {
-    var now = DateTime.now();
     Map data = await read();
     List histList = data['$field'] ?? [];
-    if (histList.length > 0)
-      histList.removeWhere((hist) =>
-          now.difference(DateTime.parse(hist['timeStamp'])).inHours >= 24);
     return histList;
   }
 

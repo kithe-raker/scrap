@@ -68,10 +68,8 @@ class _ExplorePageState extends State<ExplorePage>
       data.value.forEach((key, value) {
         docId.add(value['id']);
         counts[value['id']] = value['allCount'];
-        if (lessCount == null || lessCount < value['count']) {
-          lessCount = value['count'];
-          lessCountId = value['id'];
-        }
+        lessCount = value['count'];
+        lessCountId = value['id'];
       });
       docId.removeWhere((id) => id == null);
       if (docId.length > 0) {

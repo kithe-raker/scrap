@@ -35,7 +35,7 @@ class NearbyStream {
         .collectionGroup('history')
         .where('places', arrayContains: placeId)
         .orderBy('scrap.timeStamp', descending: true)
-        .limit(16);
+        .limit(7);
     var docs = (await ref.getDocuments()).documents;
     if (docs.length > 0) {
       lastDoc = docs.last;
@@ -58,7 +58,7 @@ class NearbyStream {
         .where('places', arrayContains: placeId)
         .orderBy('scrap.timeStamp', descending: true)
         .startAfterDocument(lastDoc)
-        .limit(3);
+        .limit(8);
     var docs = (await ref.getDocuments()).documents;
     if (docs.length > 0) {
       await Future.forEach(docs, (DocumentSnapshot doc) async {

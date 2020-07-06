@@ -299,7 +299,7 @@ class Scraps {
       } else
         toast('กระดาษแผ่นนี้ถูกเผาแล้ว');
     } else {
-      var mutableData = await scrapAll.child('$ref/$field').once();
+      var mutableData = await scrapAll.child(ref).once();
       if (mutableData?.value != null) {
         cacheHistory.addHistory(scrap, doc, field: field, comments: comments);
 
@@ -308,7 +308,7 @@ class Scraps {
             : mutableData.value['point'] - 3;
         scrapAll
             .child(ref)
-            .update({field: mutableData.value - 1, 'point': newPoint});
+            .update({field: mutableData.value[field] - 1, 'point': newPoint});
 
         userDb.child('users/$writerUid/att').runTransaction((data) async {
           if (data?.value != null)
