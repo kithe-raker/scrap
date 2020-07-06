@@ -24,72 +24,71 @@ class _PlaceWidgetState extends State<PlaceWidget> {
   @override
   Widget build(BuildContext context) {
     screenutilInit(context);
-    return GestureDetector(
-      child: Container(
-          padding: EdgeInsets.only(bottom: screenWidthDp / 21),
-          margin: EdgeInsets.only(top: screenHeightDp / 54),
-          decoration: BoxDecoration(
-              color: Color(0xff2E2E2E),
-              borderRadius: BorderRadius.circular(screenWidthDp / 32)),
-          child: Stack(
-            children: <Widget>[
-              Center(
-                  child: Column(
-                children: <Widget>[
-                  Container(
-                    width: screenWidthDp,
-                    margin: EdgeInsets.all(screenWidthDp / 34),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: BouncingScrollPhysics(),
-                      child: Row(
-                        children: <Widget>[
-                          Hero(
-                              tag: widget.place.id,
-                              child: Container(
-                                  width: screenWidthDp / 8.6,
-                                  height: screenWidthDp / 8.6,
-                                  child: PlaceIcon(
-                                      categoryId: widget.place.categoryId))),
-                          SizedBox(width: screenWidthDp / 42),
-                          Text(
-                            widget.place?.name ?? 'someWhere',
-                            style: TextStyle(
-                                fontSize: s52,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+    return widget.place.recentScraps.length > 0
+        ? GestureDetector(
+            child: Container(
+                padding: EdgeInsets.only(bottom: screenWidthDp / 21),
+                margin: EdgeInsets.only(top: screenHeightDp / 54),
+                decoration: BoxDecoration(
+                    color: Color(0xff2E2E2E),
+                    borderRadius: BorderRadius.circular(screenWidthDp / 32)),
+                child: Stack(
+                  children: <Widget>[
+                    Center(
+                        child: Column(
+                      children: <Widget>[
+                        Container(
+                          width: screenWidthDp,
+                          margin: EdgeInsets.all(screenWidthDp / 34),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            physics: BouncingScrollPhysics(),
+                            child: Row(
+                              children: <Widget>[
+                                Hero(
+                                    tag: widget.place.id,
+                                    child: Container(
+                                        width: screenWidthDp / 8.6,
+                                        height: screenWidthDp / 8.6,
+                                        child: PlaceIcon(
+                                            categoryId:
+                                                widget.place.categoryId))),
+                                SizedBox(width: screenWidthDp / 42),
+                                Text(
+                                  widget.place?.name ?? 'someWhere',
+                                  style: TextStyle(
+                                      fontSize: s52,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 7.2),
-                  Container(
-                      height: screenWidthDp / 3.4 * 1.21,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: screenWidthDp / 32),
-                      child: recentltScraps())
-                ],
-              )),
-              Positioned(
-                  top: screenWidthDp / 34,
-                  right: screenWidthDp / 34,
-                  child: transactionBox(widget.place.id)),
-            ],
-          )),
-      onTap: () async {
-        await nearby.initNearby(context, placeId: widget.place.id);
-        nav.push(context, ScrapNearby(place: widget.place));
-      },
-    );
+                        ),
+                        SizedBox(height: 7.2),
+                        Container(
+                            height: screenWidthDp / 3.4 * 1.21,
+                            margin: EdgeInsets.symmetric(
+                                horizontal: screenWidthDp / 32),
+                            child: recentltScraps())
+                      ],
+                    )),
+                    Positioned(
+                        top: screenWidthDp / 34,
+                        right: screenWidthDp / 34,
+                        child: transactionBox(widget.place.id)),
+                  ],
+                )),
+            onTap: () async {
+              await nearby.initNearby(context, placeId: widget.place.id);
+              nav.push(context, ScrapNearby(place: widget.place));
+            },
+          )
+        : SizedBox();
   }
 
   Widget recentltScraps() {
-    var now = DateTime.now();
-    var scraps = widget.place.recentScraps
-        .where((scrap) => now.difference(scrap.timeStamp).inHours < 24)
-        .toList();
-    return scraps.length > 0
+    return widget.place.recentScraps.length > 0
         ? ListView(
             scrollDirection: Axis.horizontal,
             children: widget.place.recentScraps

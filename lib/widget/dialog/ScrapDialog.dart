@@ -294,14 +294,14 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                                 'picked',
                                                                 widget.data
                                                                     .documentID)
-                                                            ? Colors.blue
-                                                            : Colors.white,
+                                                            ? Colors.white
+                                                            : Colors.blue,
                                                         backgroundColor: inHistory(
                                                                 'picked',
                                                                 widget.data
                                                                     .documentID)
-                                                            ? Colors.white
-                                                            : Colors.blue),
+                                                            ? Colors.blue
+                                                            : Colors.white),
                                                     // child: iconWithLabel(
                                                     //     pick.abs().toString(),
                                                     //     background: inHistory(

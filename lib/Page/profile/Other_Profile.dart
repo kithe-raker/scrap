@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +43,6 @@ class _OtherProfileState extends State<OtherProfile> {
   List followList = [];
   List<DocumentSnapshot> pickScrap = [], scrapCrate = [];
   bool loading = true;
-  var textGroup = AutoSizeGroup();
   StreamSubscription loadStream;
   var refreshController = RefreshController();
   var controller = PageController();
@@ -459,6 +457,7 @@ class _OtherProfileState extends State<OtherProfile> {
   }
 
   Widget scrap(DocumentSnapshot data) {
+    var fontRatio = s48 / screenWidthDp / 1.04;
     return GestureDetector(
       child: Container(
           height: screenWidthDp / 2.16 * 1.21,
@@ -470,10 +469,9 @@ class _OtherProfileState extends State<OtherProfile> {
             Center(
                 child: Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidthDp / 64),
-              child: AutoSizeText(data['scrap']['text'],
+              child: Text(data['scrap']['text'],
                   textAlign: TextAlign.center,
-                  group: textGroup,
-                  style: TextStyle(fontSize: s46)),
+                  style: TextStyle(fontSize: screenWidthDp / 2.16 * fontRatio)),
             )),
           ])),
       onTap: () {
