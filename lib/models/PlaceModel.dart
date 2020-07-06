@@ -4,7 +4,7 @@ import 'package:scrap/services/GeoLocation.dart';
 
 class PlaceModel extends Equatable {
   final String name;
-  final String herePlaceId;
+  final String placeId;
   final String description;
   final LatLng location;
   final String categoryId;
@@ -13,16 +13,16 @@ class PlaceModel extends Equatable {
       this.description,
       this.location,
       this.categoryId,
-      this.herePlaceId});
+      this.placeId});
 
   @override
   List<Object> get props =>
-      [name, description, location, categoryId, herePlaceId];
+      [name, description, location, categoryId, placeId];
 
   factory PlaceModel.fromJSON(Map<String, dynamic> json) => PlaceModel(
       name: json['title'],
       description: json['address']['label'],
-      herePlaceId: json['id'],
+      placeId: json['id'].split(':')[3].split('-')[1],
       categoryId: json['categories'][0]['id'],
       location: LatLng(json['position']['lat'], json['position']['lng']));
 
@@ -36,6 +36,4 @@ class PlaceModel extends Equatable {
 
   GeoLocation get geoPoint =>
       GeoLocation(this.location.latitude, this.location.longitude);
-
-  String get placeId => this.herePlaceId.split(':')[3].split('-')[1];
 }

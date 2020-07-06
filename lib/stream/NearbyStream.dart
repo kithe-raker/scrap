@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/models/ScrapModel.dart';
@@ -31,8 +29,7 @@ class NearbyStream {
   Future<void> initNearby(BuildContext context,
       {@required String placeId}) async {
     loadStatus.nearbyStatus.add(true);
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+    var scrapAll = dbRef.scrapAll;
     List<ScrapModel> queryScraps = [];
     var ref = fireStore
         .collectionGroup('ScrapDailys-th')
@@ -43,7 +40,7 @@ class NearbyStream {
     if (docs.length > 0) {
       lastDoc = docs.last;
       await Future.forEach(docs, (DocumentSnapshot doc) async {
-        var ref = scrapAll.reference().child('scraps').child(doc.documentID);
+        var ref = scrapAll.child('scraps').child(doc.documentID);
         var data = await ref.once();
         queryScraps.add(ScrapModel.fromJSON(doc.data,
             transaction: ScrapTransaction.fromJSON(data.value)));
@@ -55,8 +52,7 @@ class NearbyStream {
 
   Future<void> loadMore(BuildContext context,
       {@required String placeId}) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+    var scrapAll = dbRef.scrapAll;
     var ref = fireStore
         .collectionGroup('ScrapDailys-th')
         .where('places', arrayContains: placeId)
@@ -66,7 +62,7 @@ class NearbyStream {
     var docs = (await ref.getDocuments()).documents;
     if (docs.length > 0) {
       await Future.forEach(docs, (DocumentSnapshot doc) async {
-        var ref = scrapAll.reference().child('scraps').child(doc.documentID);
+        var ref = scrapAll.child('scraps').child(doc.documentID);
         var data = await ref.once();
         var model = ScrapModel.fromJSON(doc.data,
             transaction: ScrapTransaction.fromJSON(data.value));

@@ -1,8 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/FeedNearby.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/ScrapNearby.dart';
 import 'package:scrap/assets/PaperTexture.dart';
@@ -145,9 +143,8 @@ class _PlaceWidgetState extends State<PlaceWidget> {
   Future<int> placeTransaction(String placeId) async {
     int count;
     if (widget.count == null) {
-      final db = Provider.of<RealtimeDB>(context, listen: false);
-      var placeAll = FirebaseDatabase(app: db.placeAll);
-      var ref = placeAll.reference().child('places/$placeId/allCount');
+      var placeAll = dbRef.placeAll;
+      var ref = placeAll.child('places/$placeId/allCount');
       var data = await ref.once();
       count = data?.value ?? 0;
     } else {

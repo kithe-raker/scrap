@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:scrap/models/PlaceModel.dart';
 
 class TopPlaceModel extends Equatable {
   final String name;
@@ -34,6 +35,13 @@ class TopPlaceModel extends Equatable {
         recentScraps: scraps,
         location: LatLng(position.latitude, position.longitude));
   }
+
+  PlaceModel toPlaceModel() => PlaceModel(
+      name: this.name,
+      description: this.description,
+      location: this.location,
+      categoryId: this.categoryId,
+      placeId: this.id);
 }
 
 class RecentScrap extends Equatable {
