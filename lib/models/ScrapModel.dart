@@ -2,14 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
-import 'package:scrap/function/authentication/AuthenService.dart';
 
 class ScrapModel extends Equatable {
   final String text;
   final int textureIndex;
   final String writer;
   final DateTime litteredTime;
+  final String placeName;
   final LatLng position;
   final String geoHash;
   final String writerUid;
@@ -21,6 +20,7 @@ class ScrapModel extends Equatable {
       {this.text,
       this.litteredTime,
       this.textureIndex,
+      this.placeName,
       this.position,
       this.geoHash,
       this.scrapId,
@@ -39,15 +39,9 @@ class ScrapModel extends Equatable {
         scrapRegion,
         writer,
         writerUid,
+        placeName,
         transaction
       ];
-
-  DocumentReference get path {
-    var date = DateFormat('yyyyMMdd').format(this.litteredTime);
-    var docPath =
-        'Scraps/${this.scrapRegion}/$date/${this.litteredTime.hour}/ScrapDailys-${this.scrapRegion}/${this.scrapId}';
-    return fireStore.document(docPath);
-  }
 
   Map<String, dynamic> get toJSON {
     var location = {
@@ -64,6 +58,7 @@ class ScrapModel extends Equatable {
       'id': this.scrapId,
       'region': this.scrapRegion,
       'uid': this.writerUid,
+      'placeName': this.placeName,
       'scrap': scrap,
       'position': location
     };
@@ -81,6 +76,7 @@ class ScrapModel extends Equatable {
         scrapId: json['id'],
         textureIndex: scrap['texture'] ?? 0,
         writerUid: json['uid'],
+        placeName: json['placeName'],
         scrapRegion: json['region'],
         transaction: transaction,
         geoHash: position != null ? json['position']['geohash'] : null,

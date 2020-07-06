@@ -13,8 +13,8 @@ import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/stream/FollowFeedStream.dart';
 import 'package:scrap/stream/LoadStatus.dart';
-import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
+import 'package:scrap/widget/PlaceText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/beforeburn.dart';
@@ -238,7 +238,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                                         ? Colors.white
                                         : Color(0xff26A4FF)),
                               ),
-                              CountDownText(startTime: scrapModel.litteredTime)
+                              PlaceText(placeName: scrapModel.placeName)
                             ],
                           ),
                           GestureDetector(
@@ -683,8 +683,6 @@ class _FeedFollowngState extends State<FeedFollowng>
                                               context,
                                               listen: false);
                                           report.scrapId = scrap.scrapId;
-                                          report.scrapRef =
-                                              scrap.path.parent().path;
                                           report.targetId = scrap.writerUid;
                                           report.region = scrap.scrapRegion;
                                           showdialogBurn(context,

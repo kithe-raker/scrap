@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
 import 'package:scrap/assets/PaperTexture.dart';
+import 'package:scrap/widget/PlaceText.dart';
 import 'package:social_share/social_share.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,6 @@ import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/stream/LoadStatus.dart';
 import 'package:scrap/stream/FeedStream.dart';
-import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
@@ -382,8 +382,6 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                               context,
                                               listen: false);
                                           report.scrapId = scrap.scrapId;
-                                          report.scrapRef =
-                                              scrap.path.parent().path;
                                           report.targetId = scrap.writerUid;
                                           report.region = scrap.scrapRegion;
                                           showdialogBurn(context,
@@ -566,7 +564,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                         ? Colors.white
                                         : Color(0xff26A4FF)),
                               ),
-                              CountDownText(startTime: scrapModel.litteredTime)
+                              PlaceText(placeName: scrapModel.placeName)
                             ],
                           ),
                           GestureDetector(
@@ -648,20 +646,20 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                       setTrans(() {});
                                     }),
                                 GestureDetector(
-                                  child: iconfrommilla(
-                                      inHistory('picked', scrapModel.scrapId)
-                                          ? 'assets/keep-icon.svg'
-                                          : 'assets/keep-icon.svg',
-                                      transac.picked.abs().toString(),
-                                      iconColor: inHistory(
-                                              'picked', scrapModel.scrapId)
-                                          ? Colors.white
-                                          : Colors.blue,
-                                      backgroundColor: inHistory(
-                                              'picked', scrapModel.scrapId)
-                                          ? Colors.blue
-                                          : Colors.white),
-                                  onTap: () {
+                                    child: iconfrommilla(
+                                        inHistory('picked', scrapModel.scrapId)
+                                            ? 'assets/keep-icon.svg'
+                                            : 'assets/keep-icon.svg',
+                                        transac.picked.abs().toString(),
+                                        iconColor: inHistory(
+                                                'picked', scrapModel.scrapId)
+                                            ? Colors.white
+                                            : Colors.blue,
+                                        backgroundColor: inHistory(
+                                                'picked', scrapModel.scrapId)
+                                            ? Colors.blue
+                                            : Colors.white),
+                                    onTap: () {
                                       scrap.updateScrapTrans('picked',
                                           scrap: scrapModel,
                                           comments: transac.comment);
@@ -676,8 +674,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                             .add(scrapModel.scrapId);
                                       }
                                       setTrans(() {});
-                                    }
-                                ),
+                                    }),
                                 GestureDetector(
                                   child: iconfrommilla(
                                       'assets/comment-icon.svg',
@@ -877,131 +874,5 @@ class _FeedHotScrapState extends State<FeedHotScrap>
         )
       ],
     );
-  }
-
-  void showMore(context, {@required ScrapModel scrap}) {
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        builder: (BuildContext context) {
-          return Container(
-            height: screenWidthDp / 1.8,
-            decoration: BoxDecoration(
-              color: Color(0xff202020),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(24.0),
-                topRight: Radius.circular(24.0),
-              ),
-            ),
-            child: Stack(
-              children: <Widget>[
-                Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 12, bottom: 4),
-                      width: screenWidthDp / 3.2,
-                      height: screenHeightDp / 81,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(screenHeightDp / 42),
-                        color: Color(0xff929292),
-                      ),
-                    )),
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: screenWidthDp / 12,
-                              ),
-                              GestureDetector(
-                                child: Container(
-                                    height: 50,
-                                    width: 50,
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                    ),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(
-                                            screenHeightDp)),
-                                    child: Icon(Icons.whatshot,
-                                        color: Color(0xffFF8F3A),
-                                        size: screenWidthDp / 2)),
-                                onTap: () {
-                                  if (inHistory('burn', scrap.scrapId)) {
-                                    toast.toast('คุณเคยเผาสแครปก้อนนี้แล้ว');
-                                  } else {
-                                    final report = Provider.of<Report>(context,
-                                        listen: false);
-                                    report.scrapId = scrap.scrapId;
-                                    report.scrapRef = scrap.path.parent().path;
-                                    report.targetId = scrap.writerUid;
-                                    report.region = scrap.scrapRegion;
-                                    showdialogBurn(context,
-                                        burntScraps: history['burn']);
-                                  }
-                                },
-                              ),
-                              Text(
-                                'เผา',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: s42,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: screenWidthDp / 12,
-                              ),
-                              GestureDetector(
-                                child: Container(
-                                    height: 50,
-                                    width: 50,
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                    ),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(
-                                            screenHeightDp)),
-                                    child: Icon(Icons.report_problem,
-                                        size: appBarHeight / 3)),
-                                onTap: () {
-                                  final report = Provider.of<Report>(context,
-                                      listen: false);
-                                  report.targetId = scrap.writerUid;
-                                  showDialogReport(context);
-                                },
-                              ),
-                              Text(
-                                'รายงาน',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: s42,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
   }
 }

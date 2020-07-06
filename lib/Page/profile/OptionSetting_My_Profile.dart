@@ -626,7 +626,7 @@ class _Manage_MyProfileState extends State<Manage_MyProfile> {
                         child: Column(
                           children: [
                             appbar_ListOptionSetting(
-                                context, Icons.face, 'จัดการ���ัญชีของฉัน'),
+                                context, Icons.face, 'จัดการบัญชีของฉัน'),
                             Container(
                               margin: EdgeInsets.only(bottom: 10),
                               height: screenHeightDp / 5.5,

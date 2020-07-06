@@ -17,9 +17,9 @@ import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/services/admob_service.dart';
-import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
 import 'package:scrap/widget/Loading.dart';
+import 'package:scrap/widget/PlaceText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/beforeburn.dart';
@@ -254,10 +254,9 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                             : Color(
                                                                 0xff26A4FF)),
                                                   ),
-                                                  CountDownText(
-                                                      startTime: data['scrap']
-                                                              ['timeStamp']
-                                                          .toDate())
+                                                  PlaceText(
+                                                      placeName:
+                                                          data['placeName'])
                                                 ],
                                               ),
                                               GestureDetector(

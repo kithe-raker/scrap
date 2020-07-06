@@ -17,8 +17,8 @@ import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/admob_service.dart';
-import 'package:scrap/widget/CountDownText.dart';
 import 'package:scrap/widget/LoadNoBlur.dart';
+import 'package:scrap/widget/PlaceText.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
@@ -181,10 +181,8 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                   ? Colors.white
                                                   : Color(0xff26A4FF)),
                                         ),
-                                        CountDownText(
-                                            startTime: widget.data['scrap']
-                                                    ['timeStamp']
-                                                .toDate())
+                                        PlaceText(
+                                            placeName: widget.data['placeName'])
                                       ],
                                     ),
                                     widget.self

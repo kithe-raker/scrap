@@ -184,8 +184,8 @@ class _SelectPositionState extends State<SelectPosition> {
                       ),
                     ),
                     onTap: () {
-                      scrap.binScrap(context,
-                          location: scrapLocation, defaultLocation: location);
+                      // scrap.binScrap(context,
+                      //     location: scrapLocation, defaultLocation: location);
                     },
                   ),
                 ),
