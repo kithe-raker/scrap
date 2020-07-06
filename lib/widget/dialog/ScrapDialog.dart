@@ -52,9 +52,8 @@ class _ScrapDialogState extends State<ScrapDialog> {
   }
 
   Future<DataSnapshot> scrapTransaction(String docId) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var ref = scrapAll.reference().child('scraps').child(docId);
+    var scrapAll = dbRef.scrapAll;
+    var ref = scrapAll.child('scraps').child(docId);
     history['like'] = await cacheHistory.readOnlyId(field: 'like') ?? [];
     history['picked'] = await cacheHistory.readOnlyId(field: 'picked') ?? [];
     return ref.once();
@@ -999,14 +998,9 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                           child: Icon(Icons.delete_outline,
                                               size: appBarHeight / 2.4)),
                                       onTap: () async {
-                                        final db = Provider.of<RealtimeDB>(
-                                            context,
-                                            listen: false);
-                                        var userDb = FirebaseDatabase(
-                                            app: db.userTransact);
-                                        var ref = userDb
-                                            .reference()
-                                            .child('users/${user.uid}');
+                                        var userDb = dbRef.userTransact;
+                                        var ref =
+                                            userDb.child('users/${user.uid}');
                                         var trans =
                                             await ref.child('pick').once();
                                         ref.update({'pick': trans.value - 1});

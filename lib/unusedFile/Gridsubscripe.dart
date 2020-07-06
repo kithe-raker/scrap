@@ -22,8 +22,7 @@ class Gridsubscripe extends StatefulWidget {
 PublishSubject<bool> loadMoreTopScrap = PublishSubject();
 PublishSubject<bool> loadMoreFollowingScrap = PublishSubject();
 
-class _GridsubscripeState extends State<Gridsubscripe>
-    with AutomaticKeepAliveClientMixin {
+class _GridsubscripeState extends State<Gridsubscripe> {
   int page = 0;
   var controller = PageController();
   var followingController = RefreshController();
@@ -41,8 +40,7 @@ class _GridsubscripeState extends State<Gridsubscripe>
   //following
   List<DocumentSnapshot> followingScraps = [];
   List friends = [];
-  @override
-  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     initScraps();

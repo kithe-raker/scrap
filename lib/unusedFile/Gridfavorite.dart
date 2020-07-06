@@ -62,9 +62,8 @@ class _GridfavoriteState extends State<Gridfavorite> {
   ///0.000012
   ///0.000312
   Future<DataSnapshot> scrapTransaction(String docId) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var ref = scrapAll.reference().child('scraps').child(docId);
+    var scrapAll = dbRef.scrapAll;
+    var ref = scrapAll.child('scraps').child(docId);
     return ref.once();
   }
 
@@ -728,13 +727,11 @@ class _GridfavoriteState extends State<Gridfavorite> {
 
   Widget scrapWidget(Map data) {
     Size a = MediaQuery.of(context).size;
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+    var scrapAll = dbRef.scrapAll;
     int ments;
     return GestureDetector(
       child: FutureBuilder(
-          future:
-              scrapAll.reference().child('scraps/${data['id']}/comment').once(),
+          future: scrapAll.child('scraps/${data['id']}/comment').once(),
           builder: (context, snapshot) {
             ments = snapshot.data?.value ?? null;
             return Container(

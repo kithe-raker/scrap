@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/PlaceResult.dart';
@@ -61,14 +60,9 @@ class _ExplorePageState extends State<ExplorePage>
   }
 
   initTopPlaces() async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var placeAll = FirebaseDatabase(app: db.placeAll);
+    var placeAll = dbRef.placeAll;
     List<String> docId = [];
-    var ref = placeAll
-        .reference()
-        .child('places')
-        .orderByChild('count')
-        .limitToFirst(8);
+    var ref = placeAll.child('places').orderByChild('count').limitToFirst(8);
     DataSnapshot data = await ref.once();
     if (data.value?.length != null && data.value.length > 0) {
       data.value.forEach((key, value) {
@@ -93,12 +87,10 @@ class _ExplorePageState extends State<ExplorePage>
   }
 
   loadMorePlace() async {
-    if (places.length < 40) {
-      final db = Provider.of<RealtimeDB>(context, listen: false);
-      var placeAll = FirebaseDatabase(app: db.placeAll);
+    if (places.length < 40 && lessCount <= -2) {
+      var placeAll = dbRef.placeAll;
       List<String> docId = [];
       var ref = placeAll
-          .reference()
           .child('places')
           .orderByChild('count')
           .startAt(lessCount, key: lessCountId)

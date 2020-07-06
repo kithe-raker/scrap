@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -249,8 +248,7 @@ class AuthenService {
       {@required DateTime birthday, @required String gender}) async {
     loading.add(true);
     var token = await getToken();
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var userDb = FirebaseDatabase(app: db.userTransact);
+    var userDb = dbRef.userTransact;
     final userData = Provider.of<UserData>(context, listen: false);
     var user = await fireAuth.currentUser();
     var now = DateTime.now();
@@ -270,12 +268,9 @@ class AuthenService {
     }
     initFile(context);
     cacheHistory.initHistory();
-    userDb.reference().child('users/$uid').set(
+    userDb.child('users/$uid').set(
         {'att': 0, 'papers': 10, 'pick': 0, 'thrown': 0, 'allowThrow': false});
-    userDb
-        .reference()
-        .child('users/$uid/follows')
-        .set({'followers': 0, 'following': 0});
+    userDb.child('users/$uid/follows').set({'followers': 0, 'following': 0});
     batch.setData(
         accRef,
         {

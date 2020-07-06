@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -203,8 +202,7 @@ class _ActivityState extends State<Activity>
   Widget scrapWidget(DocumentSnapshot data,
       {List docs, bool showComment = true}) {
     var fontRatio = s48 / screenWidthDp / 1.04;
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+    var scrapAll = dbRef.scrapAll;
     int ments, comments;
     if (showComment && cacheComments.length > 0) {
       var result =
@@ -214,7 +212,7 @@ class _ActivityState extends State<Activity>
     return GestureDetector(
       child: FutureBuilder(
           future:
-              scrapAll.reference().child('scraps/${data['id']}/comment').once(),
+              scrapAll.child('scraps/${data['id']}/comment').once(),
           builder: (context, snapshot) {
             ments = snapshot.data?.value ?? null;
             return Container(

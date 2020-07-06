@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
@@ -17,13 +16,12 @@ class FollowsFunction {
       @required String otherCollRef,
       @required int followingCounts}) async {
     loading.add(true);
-    final db = Provider.of<RealtimeDB>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
     final batch = fireStore.batch();
     var index = followingCounts ~/ 1000;
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    var ref = userDb.reference().child('users/${user.uid}/follows');
-    var otherRef = userDb.reference().child('users/$otherUid/follows');
+    var userDb = dbRef.userTransact;
+    var ref = userDb.child('users/${user.uid}/follows');
+    var otherRef = userDb.child('users/$otherUid/follows');
     var data = await otherRef.child('followers').once();
     followFeed.followList.add(otherUid);
     otherRef.update({'followers': data.value + 1});
@@ -54,12 +52,11 @@ class FollowsFunction {
       @required String otherCollRef,
       @required int followingCounts}) async {
     loading.add(true);
-    final db = Provider.of<RealtimeDB>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
     final batch = fireStore.batch();
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    var ref = userDb.reference().child('users/${user.uid}/follows');
-    var otherRef = userDb.reference().child('users/$otherUid/follows');
+    var userDb = dbRef.userTransact;
+    var ref = userDb.child('users/${user.uid}/follows');
+    var otherRef = userDb.child('users/$otherUid/follows');
     var data = await otherRef.child('followers').once();
     otherRef.update({'followers': data.value - 1});
     ref.update({'following': followingCounts - 1});

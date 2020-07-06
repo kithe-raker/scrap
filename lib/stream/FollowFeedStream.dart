@@ -1,7 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/FriendsCache.dart';
@@ -30,9 +27,8 @@ class FollowFeedStream {
         DateTime(now.year, now.month, now.day - 1, now.hour, now.minute));
   }
 
-  Future<void> initFeed(BuildContext context) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+  Future<void> initFeed() async {
+    var scrapAll = dbRef.scrapAll;
     loadStatus.followFeedStatus.add(true);
     followfeedSubject.add([]);
     followList = await cacheFriends.getFollowing();
@@ -46,10 +42,7 @@ class FollowFeedStream {
       if (followDocs.documents.length > 0) {
         lastDoc = followDocs.documents.last;
         await Future.forEach(followDocs.documents, (doc) async {
-          var data = await scrapAll
-              .reference()
-              .child('scraps/${doc.documentID}')
-              .once();
+          var data = await scrapAll.child('scraps/${doc.documentID}').once();
           addScrap(ScrapModel.fromJSON(doc.data,
               transaction: ScrapTransaction.fromJSON(data.value)));
         });
@@ -58,9 +51,8 @@ class FollowFeedStream {
     loadStatus.followFeedStatus.add(false);
   }
 
-  Future<void> loadMore(BuildContext context) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
+  Future<void> loadMore() async {
+    var scrapAll = dbRef.scrapAll;
     if (followList.length > 0) {
       var followDocs = await fireStore
           .collectionGroup('scrapCollection')
@@ -72,10 +64,7 @@ class FollowFeedStream {
       if (followDocs.documents.length > 0) {
         lastDoc = followDocs.documents.last;
         await Future.forEach(followDocs.documents, (doc) async {
-          var data = await scrapAll
-              .reference()
-              .child('scraps/${doc.documentID}')
-              .once();
+          var data = await scrapAll.child('scraps/${doc.documentID}').once();
           addScrap(ScrapModel.fromJSON(doc.data,
               transaction: ScrapTransaction.fromJSON(data.value)));
         });

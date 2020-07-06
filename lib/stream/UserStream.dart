@@ -18,7 +18,7 @@ class UserStream {
 
   void initTransactionStream(BuildContext context) {
     final user = Provider.of<UserData>(context, listen: false);
-    final db = Provider.of<RealtimeDB>(context, listen: false);
+    final db = Provider.of<RealtimeDBProvider>(context, listen: false);
     var userDb = FirebaseDatabase(app: db.userTransact);
     var ref = userDb.reference().child('users/${user.uid}');
     ref

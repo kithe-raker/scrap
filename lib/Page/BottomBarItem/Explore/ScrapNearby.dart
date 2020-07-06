@@ -1,14 +1,12 @@
 import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/FeedNearby.dart';
+import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/models/TopPlaceModel.dart';
@@ -141,6 +139,36 @@ class _ScrapNearbyState extends State<ScrapNearby> {
                     SizedBox()
                   ],
                 ),
+              ),
+              Positioned(
+                right: screenWidthDp / 18,
+                bottom: screenWidthDp / 14.2,
+                child: GestureDetector(
+                  child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(screenWidthDp / 21),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 6.0,
+                                spreadRadius: 3.0,
+                                offset: Offset(0.0, 3.2))
+                          ],
+                          color: Colors.white),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: screenWidthDp / 27, vertical: 3.6),
+                      child: Row(children: <Widget>[
+                        Text('ปาที่นี่',
+                            style: TextStyle(
+                                fontSize: s52, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 3.2),
+                        Icon(Icons.edit, size: s52)
+                      ])),
+                  onTap: () {
+                    nav.push(context, WriteScrap(place: widget.place));
+                  },
+                ),
               )
             ],
           ),
@@ -148,9 +176,8 @@ class _ScrapNearbyState extends State<ScrapNearby> {
   }
 
   Stream placeTransaction(String placeId) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var placeAll = FirebaseDatabase(app: db.placeAll);
-    var ref = placeAll.reference().child('places/$placeId/allCount');
+    var placeAll = dbRef.placeAll;
+    var ref = placeAll.child('places/$placeId/allCount');
     var data = ref.onValue;
     return data;
   }

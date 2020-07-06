@@ -47,9 +47,8 @@ class _SubpeopleState extends State<Subpeople>
 
   Stream<Event> streamTransaction(String field) {
     final user = Provider.of<UserData>(context, listen: false);
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    return userDb.reference().child('users/${user.uid}/follows/$field').onValue;
+    var userDb = dbRef.userTransact;
+    return userDb.child('users/${user.uid}/follows/$field').onValue;
   }
 
   bool subindex = true;

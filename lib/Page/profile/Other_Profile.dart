@@ -50,15 +50,13 @@ class _OtherProfileState extends State<OtherProfile> {
   var controller = PageController();
 
   Stream<Event> streamTransaction(String uid, String field) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    return userDb.reference().child('users/$uid/$field').onValue;
+    var userDb = dbRef.userTransact;
+    return userDb.child('users/$uid/$field').onValue;
   }
 
   Future<DataSnapshot> futureTransaction(String uid, String field) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    return userDb.reference().child('users/$uid/$field').once();
+    var userDb = dbRef.userTransact;
+    return userDb.child('users/$uid/$field').once();
   }
 
   @override

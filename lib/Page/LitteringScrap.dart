@@ -63,9 +63,8 @@ class _LitteringScrapState extends State<LitteringScrap> {
   }
 
   Future<DataSnapshot> placeTransaction(String placeId) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var placeAll = FirebaseDatabase(app: db.placeAll);
-    var ref = placeAll.reference().child('places/$placeId/allCount');
+    var placeAll = dbRef.placeAll;
+    var ref = placeAll.child('places/$placeId/allCount');
     return ref.once();
   }
 

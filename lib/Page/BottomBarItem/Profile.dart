@@ -112,9 +112,8 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   }
 
   Future<DataSnapshot> futureTransaction(String uid, String field) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    return userDb.reference().child('users/$uid/$field').once();
+    var userDb = dbRef.userTransact;
+    return userDb.child('users/$uid/$field').once();
   }
 
   //Run

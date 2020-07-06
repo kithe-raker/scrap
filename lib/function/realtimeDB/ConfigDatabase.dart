@@ -13,7 +13,7 @@ class ConfigDateBase {
   bool isIOS = Platform.isIOS;
 
   Future<void> initRTDB(BuildContext context) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
+    final db = Provider.of<RealtimeDBProvider>(context, listen: false);
     db.scrapAll = await FirebaseApp.configure(
         name: 'scraps-all',
         options: firebaseOption(dbUrl: 'https://scraps-all.firebaseio.com/'));

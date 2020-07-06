@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/models/ScrapModel.dart';
@@ -66,14 +67,13 @@ class _CommentSheetState extends State<CommentSheet> {
 
   addComment(List commentList, CollectionReference ref, String scrapId,
       {@required String comment}) async {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
     final user = Provider.of<UserData>(context, listen: false);
-    final scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var data;
-    final userDb = FirebaseDatabase(app: db.userTransact);
+    final scrapAll = dbRef.scrapAll;
+    final userDb = dbRef.userTransact;
     final defaultDb = FirebaseDatabase.instance;
     var refChild = 'scraps/$scrapId';
     String userId;
+    var data;
 
     if (private) {
       var tmpId = commentedId[scrapId];
@@ -123,6 +123,7 @@ class _CommentSheetState extends State<CommentSheet> {
       'comment': data.value['comment'] - 1,
       'point': data.value['point'] - 0.3
     });
+    fcm.subscribeToTopic(scrapId);
 
     userDb
         .reference()

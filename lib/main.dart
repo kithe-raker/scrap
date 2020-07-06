@@ -31,7 +31,8 @@ class MyApp extends StatelessWidget {
         providers: [
           // ChangeNotifierProvider<AdsCounterProvider>.value(
           //     value: AdsCounterProvider()),
-          ChangeNotifierProvider<RealtimeDB>.value(value: RealtimeDB()),
+          ChangeNotifierProvider<RealtimeDBProvider>.value(
+              value: RealtimeDBProvider()),
           ChangeNotifierProvider<Report>.value(value: Report()),
           ChangeNotifierProvider<UserData>.value(value: UserData()),
           ChangeNotifierProvider<WriteScrapProvider>.value(

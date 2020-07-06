@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:scrap/method/Globalkey.dart';
 
-class RealtimeDB extends ChangeNotifier {
+class RealtimeDBProvider extends ChangeNotifier {
   FirebaseApp _scrapAll;
   FirebaseApp _userTransact;
   FirebaseApp _placeAll;
@@ -25,3 +28,24 @@ class RealtimeDB extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class RealtimeDB {
+  final globalContext = myGlobals.scaffoldKey.currentContext;
+
+  DatabaseReference get scrapAll {
+    final db = Provider.of<RealtimeDBProvider>(globalContext, listen: false);
+    return FirebaseDatabase(app: db.scrapAll).reference();
+  }
+
+  DatabaseReference get userTransact {
+    final db = Provider.of<RealtimeDBProvider>(globalContext, listen: false);
+    return FirebaseDatabase(app: db.userTransact).reference();
+  }
+
+  DatabaseReference get placeAll {
+    final db = Provider.of<RealtimeDBProvider>(globalContext, listen: false);
+    return FirebaseDatabase(app: db.placeAll).reference();
+  }
+}
+
+final dbRef = RealtimeDB();

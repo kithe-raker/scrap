@@ -58,7 +58,7 @@ class _FeedFollowngState extends State<FeedFollowng>
 
   void initScrap() {
     if (followFeed.scraps == null || followFeed.scraps.length < 1)
-      followFeed.initFeed(context);
+      followFeed.initFeed();
   }
 
   @override
@@ -112,7 +112,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                                       onPageChanged: (index) {
                                         if (current + 1 == index &&
                                             (index + 1) % 3 == 0) {
-                                          followFeed.loadMore(context);
+                                          followFeed.loadMore();
                                         }
                                         current = index;
                                       },

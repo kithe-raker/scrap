@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/BottomBarItem/Profile.dart';
 import 'package:scrap/Page/bottomBarItem/Explore/ExplorePage.dart';
@@ -14,7 +13,6 @@ import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:scrap/widget/guide.dart';
 import 'package:scrap/widget/warning.dart';
 
 class MainStream extends StatefulWidget {

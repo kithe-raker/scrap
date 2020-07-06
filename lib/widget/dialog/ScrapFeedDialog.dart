@@ -56,9 +56,8 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
   }
 
   Future<DataSnapshot> scrapTransaction(String docId) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var ref = scrapAll.reference().child('scraps').child(docId);
+    var scrapAll = dbRef.scrapAll;
+    var ref = scrapAll.child('scraps').child(docId);
     return ref.once();
   }
 

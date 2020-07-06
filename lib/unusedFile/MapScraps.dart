@@ -90,9 +90,8 @@ class _MapScrapsState extends State<MapScraps>
   }
 
   Future<DataSnapshot> scrapTransaction(String docId) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var scrapAll = FirebaseDatabase(app: db.scrapAll);
-    var ref = scrapAll.reference().child('scraps/$docId');
+    var scrapAll = dbRef.scrapAll;
+    var ref = scrapAll.child('scraps/$docId');
     return ref.once();
   }
 

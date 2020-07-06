@@ -138,13 +138,11 @@ void showdialogBurn(context, {bool thrown = false, List burntScraps}) {
 
 burnThrownScrap(BuildContext context) async {
   final report = Provider.of<Report>(context, listen: false);
-  final db = Provider.of<RealtimeDB>(context, listen: false);
   final rand = Random();
-  var userDb = FirebaseDatabase(app: db.userTransact);
+  var userDb = dbRef.userTransact;
   var batch = fireStore.batch();
   var burn = rand.nextInt(1) + 3;
-  var papers =
-      await userDb.reference().child('users/${report.targetId}/papers').once();
+  var papers = await userDb.child('users/${report.targetId}/papers').once();
   batch.delete(fireStore.collection(report.scrapRef).document(report.scrapId));
   batch.updateData(
       fireStore
@@ -152,7 +150,7 @@ burnThrownScrap(BuildContext context) async {
               'Users/${report.region}/users/${report.targetId}/thrownLog')
           .document(report.scrapId),
       {'burnt': true});
-  await userDb.reference().child('users/${report.targetId}').update(
+  await userDb.child('users/${report.targetId}').update(
       {'papers': (papers.value - burn).isNegative ? 0 : papers.value - burn});
   await batch.commit();
   burntDialog(context, thrownScrap: true);

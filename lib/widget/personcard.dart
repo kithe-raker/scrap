@@ -37,9 +37,8 @@ class _PersonCardState extends State<PersonCard> {
   }
 
   Stream<Event> streamTransaction(String field) {
-    final db = Provider.of<RealtimeDB>(context, listen: false);
-    var userDb = FirebaseDatabase(app: db.userTransact);
-    return userDb.reference().child('users/$uid/$field').onValue;
+    var userDb = dbRef.userTransact;
+    return userDb.child('users/$uid/$field').onValue;
   }
 
   @override
