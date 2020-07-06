@@ -100,8 +100,10 @@ class FeedStream {
               transaction: transacs[scrap.documentID]));
         });
         print('------');
+        cacheOther.update(point: _lessPoint, id: lessPointId);
+      } else {
+        cacheOther.update(point: null, id: lessPointId);
       }
-      cacheOther.update(point: _lessPoint, id: lessPointId);
     }
   }
 }
