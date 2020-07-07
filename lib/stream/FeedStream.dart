@@ -24,7 +24,13 @@ class FeedStream {
     feedSubject.add(newList);
   }
 
+//timeStamp
   Future<void> initFeed() async {
+    // allScrap
+    //         .child('scraps')
+    //         .orderByChild('timeStamp')
+    //         .startAt(DateTime.now().subtract(Duration(hours: 48)))
+    //         .limitToFirst(9);
     var cache = await cacheOther.recentlyPoint();
     _lessPoint = cache['point'];
     lessPointId = cache['id'];
@@ -41,11 +47,13 @@ class FeedStream {
     DataSnapshot data = await ref.once();
     if (data.value?.length != null && data.value.length > 0) {
       data.value.forEach((key, value) {
-        docId.add(value['id']);
-        transacs[value['id']] = ScrapTransaction.fromJSON(value);
-        if (_lessPoint == null || _lessPoint < value['point']) {
-          _lessPoint = value['point'].toDouble();
-          lessPointId = value['id'];
+        if (transacs[value['id']]?.point == null) {
+          docId.add(value['id']);
+          transacs[value['id']] = ScrapTransaction.fromJSON(value);
+          if (_lessPoint == null || _lessPoint < value['point']) {
+            _lessPoint = value['point'].toDouble();
+            lessPointId = value['id'];
+          }
         }
       });
     }

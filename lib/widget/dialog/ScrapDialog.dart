@@ -183,7 +183,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                         ),
                                         PlaceText(
                                             time: widget.data['scrap']
-                                                ['timeStamp'],
+                                                ['timeStamp'].toDate(),
                                             placeName: widget.data['placeName'])
                                       ],
                                     ),

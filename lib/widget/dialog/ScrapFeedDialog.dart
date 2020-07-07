@@ -165,7 +165,7 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                     1.04 *
                                                     1.115,
                                                 child: SvgPicture.asset(
-                                                    'assets/${texture.textures[data['scrap']['texture'] ?? 0]?? 'paperscrap.svg'}',
+                                                    'assets/${texture.textures[data['scrap']['texture'] ?? 0] ?? 'paperscrap.svg'}',
                                                     fit: BoxFit.cover),
                                                 //  child: Image.asset('assets/paperscrap.jpg'),
                                               ),
@@ -256,7 +256,8 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                   ),
                                                   PlaceText(
                                                       time: data['scrap']
-                                                          ['timeStamp'],
+                                                              ['timeStamp']
+                                                          .toDate(),
                                                       placeName:
                                                           data['placeName'])
                                                 ],
@@ -478,7 +479,7 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                     width: screenWidthDp / 1.04,
                                     height: screenWidthDp / 1.04 * 1.115,
                                     child: SvgPicture.asset(
-                                        'assets/${texture.textures[data['scrap']['texture'] ?? 0]?? 'paperscrap.svg'}',
+                                        'assets/${texture.textures[data['scrap']['texture'] ?? 0] ?? 'paperscrap.svg'}',
                                         fit: BoxFit.cover),
                                   ),
                                   Positioned(

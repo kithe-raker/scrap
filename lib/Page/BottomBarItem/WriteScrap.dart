@@ -197,9 +197,8 @@ class _WriteScrapState extends State<WriteScrap> {
                                           hintText:
                                               'เขียนบางอย่างที่คุณอยากบอก',
                                           hintStyle: TextStyle(
-                                            fontSize: s46,
-                                            color: Colors.grey,
-                                          ),
+                                              fontSize: s46,
+                                              color: Colors.grey),
                                         ),
                                         validator: (val) {
                                           return val.trim() == ""

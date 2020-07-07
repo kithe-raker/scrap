@@ -85,7 +85,7 @@ class _ExplorePageState extends State<ExplorePage>
   }
 
   loadMorePlace() async {
-    if (places.length < 40 && lessCount <= -2) {
+    if (places.length < 40 && lessCount <= 0) {
       var placeAll = dbRef.placeAll;
       List<String> docId = [];
       var ref = placeAll

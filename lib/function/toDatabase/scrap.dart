@@ -170,6 +170,7 @@ class Scraps {
       'like': 0,
       'picked': 0,
       'burn': 0,
+      'timeStamp': ServerValue.timestamp,
       'CPN': -1
     };
     Map<String, dynamic> scrap = {

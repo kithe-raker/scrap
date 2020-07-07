@@ -155,15 +155,22 @@ class _ScrapNearbyState extends State<ScrapNearby> {
                                 spreadRadius: 3.0,
                                 offset: Offset(0.0, 3.2))
                           ],
-                          color: Colors.white),
+                          color: Color(0xff26A4FF)),
                       padding: EdgeInsets.symmetric(
                           horizontal: screenWidthDp / 27, vertical: 3.6),
                       child: Row(children: <Widget>[
-                        Text('ปาที่นี่',
+                        Text('โยนที่นี่',
                             style: TextStyle(
-                                fontSize: s52, fontWeight: FontWeight.bold)),
+                                fontSize: s52,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
                         SizedBox(width: 3.2),
-                        Icon(Icons.edit, size: s52)
+                        Container(
+                          height: screenWidthDp / 16,
+                          width: screenWidthDp / 16,
+                          child: SvgPicture.asset('assets/write-icon.svg',
+                              color: Colors.white),
+                        ),
                       ])),
                   onTap: () {
                     nav.push(context, WriteScrap(place: widget.place));
