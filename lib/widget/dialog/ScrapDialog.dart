@@ -99,7 +99,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                       width: screenWidthDp / 1.04,
                                       height: screenWidthDp / 1.04 * 1.115,
                                       child: SvgPicture.asset(
-                                          'assets/${texture.textures[widget.data['scrap']['texture'] ?? 0]}',
+                                          'assets/${texture.textures[widget.data['scrap']['texture'] ?? 0]?? 'paperscrap.svg'}',
                                           fit: BoxFit.cover),
                                       //  child: Image.asset('assets/paperscrap.jpg'),
                                     ),
@@ -385,7 +385,7 @@ class _ScrapDialogState extends State<ScrapDialog> {
                           width: screenWidthDp / 1.04,
                           height: screenWidthDp / 1.04 * 1.115,
                           child: SvgPicture.asset(
-                              'assets/${texture.textures[widget.data['scrap']['texture'] ?? 0]}',
+                              'assets/${texture.textures[widget.data['scrap']['texture'] ?? 0]?? 'paperscrap.svg'}',
                               height: screenWidthDp / 2.16 * 1.21,
                               width: screenWidthDp / 2.16,
                               fit: BoxFit.cover),

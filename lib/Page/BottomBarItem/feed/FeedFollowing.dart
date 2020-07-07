@@ -199,7 +199,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                           //addscrappaper
                           children: <Widget>[
                             SvgPicture.asset(
-                                'assets/${texture.textures[scrapModel.textureIndex]}',
+                                'assets/${texture.textures[scrapModel.textureIndex]?? 'paperscrap.svg'}',
                                 fit: BoxFit.cover),
                             Center(
                               child: Container(

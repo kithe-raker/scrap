@@ -464,7 +464,7 @@ class _OtherProfileState extends State<OtherProfile> {
           width: screenWidthDp / 2.16,
           child: Stack(children: <Widget>[
             SvgPicture.asset(
-                'assets/${texture.textures[data['scrap']['texture'] ?? 0]}',
+                'assets/${texture.textures[data['scrap']['texture'] ?? 0]?? 'paperscrap.svg'}',
                 fit: BoxFit.cover),
             Center(
                 child: Padding(

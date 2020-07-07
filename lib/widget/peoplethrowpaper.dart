@@ -86,7 +86,7 @@ class _PaperstrangerState extends State<Paperstranger> {
                               height: screenWidthDp / 1.04 * 1.115,
                               width: screenWidthDp / 1.04,
                               child: SvgPicture.asset(
-                                  'assets/${texture.textures[scrap['texture'] ?? 0]}'),
+                                  'assets/${texture.textures[scrap['texture'] ?? 0]?? 'paperscrap.svg'}'),
                             ),
                             Center(
                                 child: Text(

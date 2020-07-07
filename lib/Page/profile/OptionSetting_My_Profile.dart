@@ -1172,7 +1172,7 @@ class _HistoryScrapState extends State<HistoryScrap> {
           width: screenWidthDp / 2.16,
           child: Stack(children: <Widget>[
             SvgPicture.asset(
-                'assets/${texture.textures[data['scrap']['texture'] ?? 0]}',
+                'assets/${texture.textures[data['scrap']['texture'] ?? 0]?? 'paperscrap.svg'}',
                 fit: BoxFit.cover),
             Center(
                 child: Padding(
@@ -1617,7 +1617,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
     return Container(
         child: Stack(children: <Widget>[
       SvgPicture.asset(
-          'assets/${texture.textures[data['scrap']['texture'] ?? 0]}',
+          'assets/${texture.textures[data['scrap']['texture'] ?? 0]?? 'paperscrap.svg'}',
           height: screenWidthDp / 2.16 * 1.21,
           width: screenWidthDp / 2.16,
           fit: BoxFit.cover),

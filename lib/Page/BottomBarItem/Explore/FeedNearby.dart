@@ -523,7 +523,7 @@ class _FeedNearbyState extends State<FeedNearby> {
                             width: screenWidthDp / 1.04,
                             height: screenWidthDp / 1.04 * 1.115,
                             child: SvgPicture.asset(
-                                'assets/${texture.textures[scrapModel.textureIndex]}'),
+                                'assets/${texture.textures[scrapModel.textureIndex] ?? 'paperscrap.svg'}'),
                             //  child: Image.asset('assets/paperscrap.jpg'),
                           ),
                         ),

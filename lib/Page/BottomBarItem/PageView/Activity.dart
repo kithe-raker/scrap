@@ -222,7 +222,7 @@ class _ActivityState extends State<Activity>
                 children: <Widget>[
                   Container(
                     child: SvgPicture.asset(
-                        'assets/${texture.textures[data['scrap']['texture']]}',
+                        'assets/${texture.textures[data['scrap']['texture']]?? 'paperscrap.svg'}',
                         fit: BoxFit.cover),
                   ),
                   Center(

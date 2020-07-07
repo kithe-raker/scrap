@@ -170,7 +170,7 @@ class _WriteScrapState extends State<WriteScrap> {
                             child: Stack(
                               children: <Widget>[
                                 SvgPicture.asset(
-                                    'assets/${texture.textures[scrapData.textureIndex]}',
+                                    'assets/${texture.textures[scrapData.textureIndex] ?? 'paperscrap.svg'}',
                                     fit: BoxFit.cover),
                                 Center(
                                   child: Container(
