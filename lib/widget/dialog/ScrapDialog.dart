@@ -182,6 +182,8 @@ class _ScrapDialogState extends State<ScrapDialog> {
                                                   : Color(0xff26A4FF)),
                                         ),
                                         PlaceText(
+                                            time: widget.data['scrap']
+                                                ['timeStamp'],
                                             placeName: widget.data['placeName'])
                                       ],
                                     ),

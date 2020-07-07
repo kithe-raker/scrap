@@ -587,7 +587,9 @@ class _FeedNearbyState extends State<FeedNearby> {
                                         ? Colors.white
                                         : Color(0xff26A4FF)),
                               ),
-                              PlaceText(placeName: scrapModel.placeName)
+                              PlaceText(
+                                  time: scrapModel.litteredTime,
+                                  placeName: scrapModel.placeName)
                             ],
                           ),
                           GestureDetector(

@@ -35,7 +35,7 @@ class NearbyStream {
         .collectionGroup('history')
         .where('places', arrayContains: placeId)
         .orderBy('scrap.timeStamp', descending: true)
-        .limit(7);
+        .limit(9);
     var docs = (await ref.getDocuments()).documents;
     if (docs.length > 0) {
       lastDoc = docs.last;

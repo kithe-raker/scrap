@@ -238,7 +238,9 @@ class _FeedFollowngState extends State<FeedFollowng>
                                         ? Colors.white
                                         : Color(0xff26A4FF)),
                               ),
-                              PlaceText(placeName: scrapModel.placeName)
+                              PlaceText(
+                                  time: scrapModel.litteredTime,
+                                  placeName: scrapModel.placeName)
                             ],
                           ),
                           GestureDetector(

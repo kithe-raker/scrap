@@ -91,7 +91,7 @@ class _PlaceWidgetState extends State<PlaceWidget> {
     return widget.place.recentScraps.length > 0
         ? ListView(
             scrollDirection: Axis.horizontal,
-            children: widget.place.recentScraps
+            children: widget.place.recentScraps.reversed.take(6)
                 .map((scrap) => recentScrapWidget(scrap))
                 .toList())
         : Container(

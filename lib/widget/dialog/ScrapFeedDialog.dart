@@ -255,6 +255,8 @@ class _ScrapFeedDialogState extends State<ScrapFeedDialog> {
                                                                 0xff26A4FF)),
                                                   ),
                                                   PlaceText(
+                                                      time: data['scrap']
+                                                          ['timeStamp'],
                                                       placeName:
                                                           data['placeName'])
                                                 ],
