@@ -1608,7 +1608,7 @@ class _BlockUser_MyProfileState extends State<BlockUser_MyProfile> {
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             mainAxisSpacing: screenWidthDp / 42,
             crossAxisSpacing: screenWidthDp / 42,
-            childAspectRatio: 0.826,
+            childAspectRatio: 0.8968,
             crossAxisCount: 2),
         children: docs.map((doc) => scrap(doc)).toList());
   }

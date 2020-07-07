@@ -225,7 +225,8 @@ class Scraps {
             DateTime.fromMillisecondsSinceEpoch(mutableData.value['recently']);
         if (DateTime.now().difference(recently).inHours > 24) {
           mutableData.value['recently'] = ServerValue.timestamp;
-          mutableData.value['count'] = -1;
+          mutableData.value['count'] =
+              ((mutableData.value['count'] / 2) - 1).toInt();
         } else
           mutableData.value['count'] = mutableData.value['count'] - 1;
 

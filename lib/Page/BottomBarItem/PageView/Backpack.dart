@@ -64,9 +64,9 @@ class _BackpackState extends State<Backpack>
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisSpacing: screenWidthDp / 42,
                   crossAxisSpacing: screenWidthDp / 42,
-                  childAspectRatio: 0.826,
+                  childAspectRatio: 0.8968,
                   crossAxisCount: 2),
-              children: texture.textures
+              children: texture.texturesList
                   .map((fileName) => paperBlock(fileName))
                   .toList()),
         ),

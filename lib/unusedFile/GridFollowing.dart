@@ -42,7 +42,7 @@ class _GridFollowingState extends State<GridFollowing> {
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         mainAxisSpacing: screenWidthDp / 42,
                         crossAxisSpacing: screenWidthDp / 42,
-                        childAspectRatio: 0.826,
+                        childAspectRatio: 0.8968,
                         crossAxisCount: 2),
                     children:
                         widget.scraps.map((scrap) => block(scrap)).toList()),

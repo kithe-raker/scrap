@@ -93,10 +93,10 @@ class _ShowThemeState extends State<ShowTheme> {
                               crossAxisSpacing: screenWidthDp / 42,
                               crossAxisCount: 2,
                               padding: EdgeInsets.all(screenWidthDp / 21),
-                              childAspectRatio: 0.826,
+                              childAspectRatio: 0.8968,
                               //  physics: AlwaysScrollableScrollPhysics(),
                               scrollDirection: Axis.vertical,
-                              children: texture.textures
+                              children: texture.texturesList
                                   .map((fileName) => paperBlock(fileName))
                                   .toList())),
                     ],
@@ -139,23 +139,16 @@ class _ShowThemeState extends State<ShowTheme> {
 
   Widget paperBlock(String fileName) {
     var requiredAtt = texture.point[fileName];
-    var fileIndex = texture.textures.indexOf(fileName);
+    var fileIndex = texture.texturesIndex[fileName];
     final scrapData = Provider.of<WriteScrapProvider>(context, listen: false);
     return userStream.att >= requiredAtt
         ? GestureDetector(
             child: Container(
-              // width: screenWidthDp / 2.3,
-              // height: screenWidthDp,
-              height: screenWidthDp / 2.16 * 1.23,
-              width: screenWidthDp / 2.16,
-
               child: Stack(
                 children: <Widget>[
                   Container(
-                    child: SvgPicture.asset(
-                      'assets/$fileName',
-                      fit: BoxFit.cover,
-                    ),
+                    child:
+                        SvgPicture.asset('assets/$fileName', fit: BoxFit.cover),
                   ),
                   Container(
                       decoration: BoxDecoration(
