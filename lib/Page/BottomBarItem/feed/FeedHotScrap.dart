@@ -108,9 +108,10 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                     physics: AlwaysScrollableScrollPhysics(),
                                     controller: pageController,
                                     onPageChanged: (index) {
-                                      if (current + 1 == index &&
-                                          (index + 1) % 3 == 0) {
-                                        feed.loadMore();
+                                      if (current + 1 == index) {
+                                        index % 2 != 0
+                                            ? feed.loadRecentScrap()
+                                            : feed.loadMore();
                                       }
                                       current = index;
                                     },
@@ -336,7 +337,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                               width: screenWidthDp / 25,
                             ),
                             Text(
-                              'เพิ่มเติม',
+                              'เพิ่มเ���ิม',
                               style: TextStyle(
                                 fontSize: s48,
                                 color: Colors.white,
@@ -525,7 +526,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                           //addscrappaper
                           children: <Widget>[
                             SvgPicture.asset(
-                                'assets/${texture.textures[scrapModel.textureIndex]?? 'paperscrap.svg'}',
+                                'assets/${texture.textures[scrapModel.textureIndex] ?? 'paperscrap.svg'}',
                                 fit: BoxFit.cover),
                             Center(
                               child: Container(
@@ -565,8 +566,8 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                         : Color(0xff26A4FF)),
                               ),
                               PlaceText(
-                                time: scrapModel.litteredTime,
-                                placeName: scrapModel.placeName)
+                                  time: scrapModel.litteredTime,
+                                  placeName: scrapModel.placeName)
                             ],
                           ),
                           GestureDetector(

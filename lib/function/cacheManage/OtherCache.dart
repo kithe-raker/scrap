@@ -54,26 +54,32 @@ class OtherCache {
 
   Future<Map<String, dynamic>> recentlyPoint() async {
     final file = await _localFile;
-    double point;
-    String id;
+    var map;
     var now = DateTime.now();
     if (await exist()) {
       Map data = await json.decode(await file.readAsString());
-      if (data['day'] == now.day) {
-        point = data['point'];
-        id = data['id'];
-      }
+      if (data['day'] == now.day) map = data;
     } else
       await initFile();
-    return {'point': point, 'id': id};
+    return map;
   }
 
-  Future<void> update({@required double point, @required String id}) async {
+  Future<void> updateHot({@required double point, @required String id}) async {
     final file = await _localFile;
     var cache = await readFile();
     var now = DateTime.now();
     cache['point'] = point;
     cache['id'] = id;
+    cache['day'] = now.day;
+    await file.writeAsString(json.encode(cache));
+  }
+
+  Future<void> updateRecent({@required int time, @required String id}) async {
+    final file = await _localFile;
+    var cache = await readFile();
+    var now = DateTime.now();
+    cache['recentTime'] = time;
+    cache['recentScrapId'] = id;
     cache['day'] = now.day;
     await file.writeAsString(json.encode(cache));
   }
