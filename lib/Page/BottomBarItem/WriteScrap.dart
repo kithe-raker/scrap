@@ -17,6 +17,7 @@ import 'package:scrap/provider/WriteScrapProvider.dart';
 import 'package:scrap/stream/UserStream.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
 import 'package:scrap/widget/Toast.dart';
+import 'package:scrap/widget/dialog/WatchVideoDialog.dart';
 import 'package:scrap/widget/showcontract.dart';
 import 'package:scrap/widget/streamWidget/StreamLoading.dart';
 
@@ -132,37 +133,54 @@ class _WriteScrapState extends State<WriteScrap> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           SizedBox(height: screenHeightDp / 24),
-                          widget.isThrowBack
-                              ? SizedBox(height: screenWidthDp / 13)
-                              : Container(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.baseline,
-                                    textBaseline: TextBaseline.alphabetic,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: screenWidthDp / 13,
-                                        width: screenWidthDp / 13,
-                                        child: Checkbox(
-                                            tristate: false,
-                                            activeColor: Color(0xfff707070),
-                                            value: private,
-                                            onChanged: (bool value) {
-                                              private = value;
-                                              setState(() {});
-                                            }),
+                          Container(
+                            height: screenWidthDp / 10.6,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: <Widget>[
+                                widget.isThrowBack
+                                    ? SizedBox()
+                                    : Row(
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: screenWidthDp / 13,
+                                            width: screenWidthDp / 13,
+                                            child: Checkbox(
+                                                tristate: false,
+                                                activeColor: Color(0xfff707070),
+                                                value: private,
+                                                onChanged: (bool value) {
+                                                  private = value;
+                                                  setState(() {});
+                                                }),
+                                          ),
+                                          Text("\t" + "ไม่ระบุตัวตน",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  fontSize: s42))
+                                        ],
                                       ),
-                                      Text(
-                                        "\t" + "ไม่ระบุตัวตน",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: s42),
-                                      )
-                                    ],
-                                  ),
-                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: (screenWidthDp -
+                                              screenWidthDp / 1.04) /
+                                          2),
+                                  child: StreamBuilder<Object>(
+                                      initialData: userStream.papers ?? 5,
+                                      stream: userStream.paperSubject,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          return floatButton(snapshot.data);
+                                        } else
+                                          return SizedBox();
+                                      }),
+                                )
+                              ],
+                            ),
+                          ),
                           SizedBox(height: 5.4),
                           Container(
                             width: screenWidthDp / 1.04,
@@ -343,6 +361,42 @@ class _WriteScrapState extends State<WriteScrap> {
     showDialog(
         context: context,
         builder: (BuildContext context) => SearchPeopleDialog());
+  }
+
+  Widget floatButton(int papers) {
+    final user = Provider.of<UserData>(context, listen: false);
+    return GestureDetector(
+      child: Container(
+          child: papers > 0
+              ? RichText(
+                  text: TextSpan(
+                  style: TextStyle(
+                      fontSize: screenWidthDp / 18,
+                      color: Colors.white,
+                      fontFamily: 'ThaiSans'),
+                  children: <TextSpan>[
+                    TextSpan(text: 'เหลือกระดาษ '),
+                    TextSpan(
+                        text: '$papers',
+                        style: TextStyle(
+                            fontSize: screenWidthDp / 16,
+                            fontWeight: FontWeight.bold)),
+                    TextSpan(text: ' แผ่น')
+                  ],
+                ))
+              : Text(
+                  'กระดาษของคุณหมดแล้ว',
+                  style: TextStyle(
+                      fontSize: screenWidthDp / 18,
+                      color: Colors.white,
+                      fontFamily: 'ThaiSans'),
+                )),
+      onTap: () {
+        papers == 10
+            ? toast.toast('กระดาษของคุณยังเต็มอยู่')
+            : dialogvideo(context, user.uid);
+      },
+    );
   }
 }
 

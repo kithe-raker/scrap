@@ -43,18 +43,13 @@ class _BackpackState extends State<Backpack>
     return Scaffold(
       backgroundColor: Colors.black,
       floatingActionButton: StreamBuilder(
-          initialData: userStream.papers ?? 10,
+          initialData: userStream.papers ?? 5,
           stream: userStream.paperSubject,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return floatButton(snapshot.data);
-            } else {
-              return GestureDetector(
-                  child: Container(color: Colors.white, child: Text('data')),
-                  onTap: () {
-                    userStream.paperSubject.add(10);
-                  });
-            }
+            } else
+              return SizedBox();
           }),
       body: SafeArea(
         child: Container(
@@ -116,7 +111,7 @@ class _BackpackState extends State<Backpack>
                       fontFamily: 'ThaiSans'),
                 )),
       onTap: () {
-        papers == 10
+        papers == 5
             ? toast.toast('กระดาษของคุณยังเต็มอยู่')
             : dialogvideo(context, user.uid);
       },

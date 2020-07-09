@@ -779,7 +779,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              'Sponsored',
+                              'โฆษณา',
                               style: TextStyle(
                                   fontSize: s48,
                                   height: 1.1,

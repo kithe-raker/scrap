@@ -366,7 +366,7 @@ class Scraps {
   }
 
   Future<void> resetScrap({@required String uid}) async {
-    await userDb.child('users/$uid').update({'papers': 10});
+    await userDb.child('users/$uid').update({'papers': 5});
   }
 
   Future<bool> blocked(String uid, String thrownUID) async {
