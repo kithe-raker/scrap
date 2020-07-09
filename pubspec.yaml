@@ -46,7 +46,7 @@ dependencies:
   admob_flutter: ^0.3.4
   firebase_database: ^3.1.5
   firebase_core: ^0.4.4+3
-  pull_to_refresh: ^1.5.8
+  pull_to_refresh: ^1.6.0
   provider: ^4.0.4
   countdown: ^0.1.0
   pin_code_fields: ^3.0.1
@@ -64,6 +64,7 @@ dependencies:
   dio: ^3.0.9
   screenshot: ^0.2.0
   cloud_firestore: ^0.13.7
+  flutter_native_admob: ^2.1.0
 
 dev_dependencies:
   flutter_test:

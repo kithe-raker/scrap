@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter_native_admob/flutter_native_admob.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
@@ -97,8 +98,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                     child: StreamBuilder(
                         initialData: feed.scraps,
                         stream: feed.feedStream,
-                        builder: (context,
-                            AsyncSnapshot<List<ScrapModel>> snapshot) {
+                        builder: (context, AsyncSnapshot<List> snapshot) {
                           if (snapshot.hasData) {
                             return Listener(
                               onPointerUp: (event) => listener(),
@@ -117,7 +117,10 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                     },
                                     scrollDirection: Axis.vertical,
                                     children: snapshot.data
-                                        .map((data) => scrapWidget(data))
+                                        .map((data) =>
+                                            data.runtimeType == ScrapModel
+                                                ? scrapWidget(data)
+                                                : adsScrap(data))
                                         .toList()),
                               ),
                             );
@@ -478,261 +481,324 @@ class _FeedHotScrapState extends State<FeedHotScrap>
 
   Widget scrapWidget(ScrapModel scrapModel) {
     var transac = scrapModel.transaction;
-    return StatefulBuilder(builder: (context, StateSetter setDialog) {
-      return Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: (screenWidthDp - screenWidthDp / 1.04) / 2),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                // counter.count == adsRate
-                //     ? Center(
-                //         child: Text(
-                //         'โฆษณา',
-                //         style: TextStyle(
-                //             fontSize: s42,
-                //             color: Colors.white,
-                //             fontWeight: FontWeight.bold),
-                //       ))
-                //     :
-                SizedBox(height: screenHeightDp / 42),
-                // counter.count == adsRate
-                //     ? Container(
-                //         width: a.width / 1.04,
-                //         height: a.width / 1.04 * 1.115,
-                //         decoration: BoxDecoration(
-                //             image: DecorationImage(
-                //                 image: AssetImage(
-                //                     'assets/paperscrap.jpg'),
-                //                 fit: BoxFit.cover)),
-                //         child: AdmobBanner(
-                //             adUnitId:
-                //                 AdmobService().getBannerAdId(),
-                //             adSize: AdmobBannerSize
-                //                 .MEDIUM_RECTANGLE),
-                //       )
-                //     :
-                Column(
-                  // screenshot here
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    GestureDetector(
-                      child: Container(
-                        width: screenWidthDp / 1.04,
-                        height: screenWidthDp / 1.04 * 1.115,
-                        child: Stack(
-                          //addscrappaper
-                          children: <Widget>[
-                            SvgPicture.asset(
-                                'assets/${texture.textures[scrapModel.textureIndex] ?? 'paperscrap.svg'}',
-                                fit: BoxFit.cover),
-                            Center(
-                              child: Container(
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.only(left: 25, right: 25),
-                                child: Text(scrapModel.text,
-                                    style:
-                                        TextStyle(height: 1.35, fontSize: s60),
-                                    textAlign: TextAlign.center),
-                              ),
+    return Container(
+        padding: EdgeInsets.symmetric(
+            horizontal: (screenWidthDp - screenWidthDp / 1.04) / 2),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // counter.count == adsRate
+              //     ? Center(
+              //         child: Text(
+              //         'โฆษณา',
+              //         style: TextStyle(
+              //             fontSize: s42,
+              //             color: Colors.white,
+              //             fontWeight: FontWeight.bold),
+              //       ))
+              //     :
+              SizedBox(height: screenHeightDp / 42),
+              // counter.count == adsRate
+              //     ? Container(
+              //         width: a.width / 1.04,
+              //         height: a.width / 1.04 * 1.115,
+              //         decoration: BoxDecoration(
+              //             image: DecorationImage(
+              //                 image: AssetImage(
+              //                     'assets/paperscrap.jpg'),
+              //                 fit: BoxFit.cover)),
+              //         child: AdmobBanner(
+              //             adUnitId:
+              //                 AdmobService().getBannerAdId(),
+              //             adSize: AdmobBannerSize
+              //                 .MEDIUM_RECTANGLE),
+              //       )
+              //     :
+              Column(
+                // screenshot here
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  GestureDetector(
+                    child: Container(
+                      width: screenWidthDp / 1.04,
+                      height: screenWidthDp / 1.04 * 1.115,
+                      child: Stack(
+                        //addscrappaper
+                        children: <Widget>[
+                          SvgPicture.asset(
+                              'assets/${texture.textures[scrapModel.textureIndex] ?? 'paperscrap.svg'}',
+                              fit: BoxFit.cover),
+                          Center(
+                            child: Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.only(left: 25, right: 25),
+                              child: Text(scrapModel.text,
+                                  style: TextStyle(height: 1.35, fontSize: s60),
+                                  textAlign: TextAlign.center),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    onTap: () => topbarStream.add(2100),
+                  ),
+                  SizedBox(height: screenWidthDp / 36),
+                  Container(
+                    width: screenWidthDp,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 36),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              scrapModel.writer == 'ไม่ระบุตัวตน'
+                                  ? 'ใครบางคน'
+                                  : '@${scrapModel.writer}',
+                              style: TextStyle(
+                                  fontSize: s48,
+                                  height: 1.1,
+                                  color: scrapModel.writer == 'ไม่ระบุตัวตน'
+                                      ? Colors.white
+                                      : Color(0xff26A4FF)),
+                            ),
+                            PlaceText(
+                                time: scrapModel.litteredTime,
+                                placeName: scrapModel.placeName)
                           ],
                         ),
-                      ),
-                      onTap: () => topbarStream.add(2100),
-                    ),
-                    SizedBox(height: screenWidthDp / 36),
-                    Container(
-                      width: screenWidthDp,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: screenWidthDp / 36),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                scrapModel.writer == 'ไม่ระบุตัวตน'
-                                    ? 'ใครบางคน'
-                                    : '@${scrapModel.writer}',
-                                style: TextStyle(
-                                    fontSize: s48,
-                                    height: 1.1,
-                                    color: scrapModel.writer == 'ไม่ระบุตัวตน'
-                                        ? Colors.white
-                                        : Color(0xff26A4FF)),
+                        GestureDetector(
+                            child: Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.rotationY(math.pi),
+                              child: Icon(
+                                Icons.reply,
+                                color: Colors.white,
+                                size: s65,
                               ),
-                              PlaceText(
-                                  time: scrapModel.litteredTime,
-                                  placeName: scrapModel.placeName)
+                            ),
+                            onTap: () async {
+                              // showShareSheet(context, scrap: scrapModel);
+                              replyButtonSheet(context, scrap: scrapModel);
+                              //showShare(context);
+                            }),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenWidthDp / 42),
+              Divider(color: Color(0xff5D5D5D), thickness: 1.2),
+              SizedBox(height: screenWidthDp / 46),
+              SizedBox(
+                  width: screenWidthDp,
+                  height: screenHeightDp / 9.6,
+                  child:
+                      // counter.count == adsRate
+                      //     ? Center(
+                      //         child: GestureDetector(
+                      //             child: iconWithLabel('ต่อไป',
+                      //                 iconColor:
+                      //                     Color(0xff000000),
+                      //                 icon: Icons.forward),
+                      //             onTap: () {
+                      //               randomAdsRate();
+                      //               counter.count = 0;
+                      //               setDialog(() {});
+                      //             }))
+                      //     :
+                      StatefulBuilder(builder: (context, StateSetter setTrans) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                          width: screenWidthDp / 2,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              GestureDetector(
+                                  child: iconfrommilla(
+                                      inHistory('like', scrapModel.scrapId)
+                                          ? 'assets/heart-fill-icon.svg'
+                                          : 'assets/heart-icon.svg',
+                                      transac.like.abs().toString(),
+                                      iconColor:
+                                          inHistory('like', scrapModel.scrapId)
+                                              ? Colors.white
+                                              : Colors.red,
+                                      backgroundColor:
+                                          inHistory('like', scrapModel.scrapId)
+                                              ? Colors.red
+                                              : Colors.white),
+                                  onTap: () {
+                                    scrap.updateScrapTrans('like',
+                                        scrap: scrapModel);
+                                    if (inHistory('like', scrapModel.scrapId)) {
+                                      ++transac.like;
+                                      history['like']
+                                          .remove(scrapModel.scrapId);
+                                    } else {
+                                      --transac.like;
+                                      history['like'].add(scrapModel.scrapId);
+                                    }
+                                    setTrans(() {});
+                                  }),
+                              GestureDetector(
+                                  child: iconfrommilla(
+                                      inHistory('picked', scrapModel.scrapId)
+                                          ? 'assets/keep-icon.svg'
+                                          : 'assets/keep-icon.svg',
+                                      transac.picked.abs().toString(),
+                                      iconColor: inHistory(
+                                              'picked', scrapModel.scrapId)
+                                          ? Colors.white
+                                          : Colors.blue,
+                                      backgroundColor: inHistory(
+                                              'picked', scrapModel.scrapId)
+                                          ? Colors.blue
+                                          : Colors.white),
+                                  onTap: () {
+                                    scrap.updateScrapTrans('picked',
+                                        scrap: scrapModel,
+                                        comments: transac.comment);
+                                    if (inHistory(
+                                        'picked', scrapModel.scrapId)) {
+                                      ++transac.picked;
+                                      history['picked']
+                                          .remove(scrapModel.scrapId);
+                                    } else {
+                                      --transac.picked;
+                                      history['picked'].add(scrapModel.scrapId);
+                                    }
+                                    setTrans(() {});
+                                  }),
+                              GestureDetector(
+                                child: iconfrommilla('assets/comment-icon.svg',
+                                    transac.comment.abs().toString(),
+                                    iconColor: Colors.black,
+                                    backgroundColor: Colors.white),
+                                onTap: () {
+                                  Scaffold.of(context).showBottomSheet(
+                                    (BuildContext context) =>
+                                        CommentSheet(scrapSnapshot: scrapModel),
+                                    backgroundColor: Colors.transparent,
+                                  );
+                                },
+                              )
                             ],
                           ),
-                          GestureDetector(
-                              child: Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.rotationY(math.pi),
-                                child: Icon(
-                                  Icons.reply,
-                                  color: Colors.white,
-                                  size: s65,
-                                ),
-                              ),
-                              onTap: () async {
-                                // showShareSheet(context, scrap: scrapModel);
-                                replyButtonSheet(context, scrap: scrapModel);
-                                //showShare(context);
-                              }),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: screenWidthDp / 42),
-                Divider(color: Color(0xff5D5D5D), thickness: 1.2),
-                SizedBox(height: screenWidthDp / 46),
-                SizedBox(
-                    width: screenWidthDp,
-                    height: screenHeightDp / 9.6,
-                    child:
-                        // counter.count == adsRate
-                        //     ? Center(
-                        //         child: GestureDetector(
-                        //             child: iconWithLabel('ต่อไป',
-                        //                 iconColor:
-                        //                     Color(0xff000000),
-                        //                 icon: Icons.forward),
-                        //             onTap: () {
-                        //               randomAdsRate();
-                        //               counter.count = 0;
-                        //               setDialog(() {});
-                        //             }))
-                        //     :
-                        StatefulBuilder(
-                            builder: (context, StateSetter setTrans) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Container(
-                            width: screenWidthDp / 2,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                GestureDetector(
-                                    child: iconfrommilla(
-                                        inHistory('like', scrapModel.scrapId)
-                                            ? 'assets/heart-fill-icon.svg'
-                                            : 'assets/heart-icon.svg',
-                                        transac.like.abs().toString(),
-                                        iconColor: inHistory(
-                                                'like', scrapModel.scrapId)
-                                            ? Colors.white
-                                            : Colors.red,
-                                        backgroundColor: inHistory(
-                                                'like', scrapModel.scrapId)
-                                            ? Colors.red
-                                            : Colors.white),
-                                    onTap: () {
-                                      scrap.updateScrapTrans('like',
-                                          scrap: scrapModel);
-                                      if (inHistory(
-                                          'like', scrapModel.scrapId)) {
-                                        ++transac.like;
-                                        history['like']
-                                            .remove(scrapModel.scrapId);
-                                      } else {
-                                        --transac.like;
-                                        history['like'].add(scrapModel.scrapId);
-                                      }
-                                      setTrans(() {});
-                                    }),
-                                GestureDetector(
-                                    child: iconfrommilla(
-                                        inHistory('picked', scrapModel.scrapId)
-                                            ? 'assets/keep-icon.svg'
-                                            : 'assets/keep-icon.svg',
-                                        transac.picked.abs().toString(),
-                                        iconColor: inHistory(
-                                                'picked', scrapModel.scrapId)
-                                            ? Colors.white
-                                            : Colors.blue,
-                                        backgroundColor: inHistory(
-                                                'picked', scrapModel.scrapId)
-                                            ? Colors.blue
-                                            : Colors.white),
-                                    onTap: () {
-                                      scrap.updateScrapTrans('picked',
-                                          scrap: scrapModel,
-                                          comments: transac.comment);
-                                      if (inHistory(
-                                          'picked', scrapModel.scrapId)) {
-                                        ++transac.picked;
-                                        history['picked']
-                                            .remove(scrapModel.scrapId);
-                                      } else {
-                                        --transac.picked;
-                                        history['picked']
-                                            .add(scrapModel.scrapId);
-                                      }
-                                      setTrans(() {});
-                                    }),
-                                GestureDetector(
+                        ),
+                        scrapModel.position != null
+                            ? Container(
+                                padding:
+                                    EdgeInsets.only(right: screenWidthDp / 25),
+                                child: GestureDetector(
                                   child: iconfrommilla(
-                                      'assets/comment-icon.svg',
-                                      transac.comment.abs().toString(),
-                                      iconColor: Colors.black,
+                                      'assets/location-icon.svg', '',
+                                      iconColor: Colors.red,
                                       backgroundColor: Colors.white),
-                                  onTap: () {
-                                    Scaffold.of(context).showBottomSheet(
-                                      (BuildContext context) => CommentSheet(
-                                          scrapSnapshot: scrapModel),
-                                      backgroundColor: Colors.transparent,
-                                    );
-                                  },
-                                )
-                              ],
+                                  onTap: () => showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        MapSheet(position: scrapModel.position),
+                                  )
+                                  // counter.count += 1;
+                                  // allScrap.remove(data);
+                                  // markers.remove(MarkerId(
+                                  //     data.documentID));
+                                  // if (allScrap.isNotEmpty &&
+                                  //     allScrap.length > 0) {
+                                  //   setDialog(() =>
+                                  //       data = allScrap.first);
+                                  //   streamLimit.add(
+                                  //       16 - allScrap.length);
+                                  // } else {
+                                  //   toast.toast(
+                                  //       'คุณตามทันสแครปทั้งหมดแล้ว');
+                                  // }
+                                  ,
+                                ),
+                              )
+                            : SizedBox()
+                      ],
+                    );
+                  })),
+            ]));
+  }
+
+  Widget adsScrap(NativeAdmob ads) {
+    return Container(
+        padding: EdgeInsets.symmetric(
+            horizontal: (screenWidthDp - screenWidthDp / 1.04) / 2),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // counter.count == adsRate
+              //     ? Center(
+              //         child: Text(
+              //         'โฆษณา',
+              //         style: TextStyle(
+              //             fontSize: s42,
+              //             color: Colors.white,
+              //             fontWeight: FontWeight.bold),
+              //       ))
+              //     :
+              SizedBox(height: screenHeightDp / 42),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  GestureDetector(
+                    child: Container(
+                        width: screenWidthDp / 1.04,
+                        height: screenWidthDp / 1.04 * 1.115,
+                        child: Stack(children: <Widget>[
+                          SvgPicture.asset('assets/paperscrap.svg',
+                              fit: BoxFit.cover),
+                          Center(
+                              child: Padding(
+                                  padding: EdgeInsets.all(screenWidthDp / 32),
+                                  child: ads))
+                        ])),
+                    onTap: () => topbarStream.add(2100),
+                  ),
+                  SizedBox(height: screenWidthDp / 36),
+                  Container(
+                    width: screenWidthDp,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidthDp / 36),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Sponsored',
+                              style: TextStyle(
+                                  fontSize: s48,
+                                  height: 1.1,
+                                  color: Colors.white),
                             ),
-                          ),
-                          scrapModel.position != null
-                              ? Container(
-                                  padding: EdgeInsets.only(
-                                      right: screenWidthDp / 25),
-                                  child: GestureDetector(
-                                    child: iconfrommilla(
-                                        'assets/location-icon.svg', '',
-                                        iconColor: Colors.red,
-                                        backgroundColor: Colors.white),
-                                    onTap: () => showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          MapSheet(
-                                              position: scrapModel.position),
-                                    )
-                                    // counter.count += 1;
-                                    // allScrap.remove(data);
-                                    // markers.remove(MarkerId(
-                                    //     data.documentID));
-                                    // if (allScrap.isNotEmpty &&
-                                    //     allScrap.length > 0) {
-                                    //   setDialog(() =>
-                                    //       data = allScrap.first);
-                                    //   streamLimit.add(
-                                    //       16 - allScrap.length);
-                                    // } else {
-                                    //   toast.toast(
-                                    //       'คุณตามทันสแครปทั้งหมดแล้ว');
-                                    // }
-                                    ,
-                                  ),
-                                )
-                              : SizedBox()
-                        ],
-                      );
-                    })),
-              ]));
-    });
+                            // PlaceText(
+                            //     time: scrapModel.litteredTime,
+                            //     placeName: scrapModel.placeName)
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenWidthDp / 42),
+              Divider(color: Color(0xff5D5D5D), thickness: 1.2),
+              SizedBox(height: screenWidthDp / 46),
+            ]));
   }
 
   Widget burntScrap({@required Function onNext}) {

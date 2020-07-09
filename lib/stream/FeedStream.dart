@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
@@ -7,26 +9,33 @@ import 'package:scrap/models/CacheQuery.dart';
 import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/RealtimeDB.dart';
 import 'package:scrap/stream/LoadStatus.dart';
+import 'package:scrap/widget/FeedNativeAds.dart';
 
 class FeedStream {
-  BehaviorSubject<List<ScrapModel>> feedSubject =
-      BehaviorSubject<List<ScrapModel>>();
+  BehaviorSubject<List> feedSubject = BehaviorSubject<List>();
   CacheQuery cache;
   String recentScrapId = '';
+  int adsRate = 0, adsCount = 0;
   final allScrap = dbRef.scrapAll;
   Map<String, ScrapTransaction> transacs = {};
 
-  Stream<List<ScrapModel>> get feedStream => feedSubject.stream;
-  List<ScrapModel> get scraps => feedSubject.value;
+  Stream<List> get feedStream => feedSubject.stream;
+  List get scraps => feedSubject.value;
 
   addScrap(ScrapModel scrap) {
     var newList = scraps ?? [];
     newList.add(scrap);
+    ++adsCount;
+    if (adsCount == adsRate) {
+      newList.add(FeedNativeAds.feedAds);
+      randomAdsRate();
+    }
     feedSubject.add(newList);
   }
 
 //timeStamp
   Future<void> initFeed() async {
+    randomAdsRate();
     cache = CacheQuery.fromJSON(await cacheOther.recentlyPoint() ?? {});
     loadRecentScrap();
     if (cache.lessPoint == null || cache.lessPoint >= -5.6)
@@ -158,6 +167,12 @@ class FeedStream {
         cacheOther.updateHot(point: null, id: cache.lessPointId);
       }
     }
+  }
+
+  void randomAdsRate() {
+    adsCount = 0;
+    adsRate = 3;
+    adsRate += Random().nextInt(2) + 1;
   }
 }
 

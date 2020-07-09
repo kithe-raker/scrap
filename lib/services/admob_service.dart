@@ -27,6 +27,12 @@ class AdmobService {
     }
     return null;
   }
+
+  String getNativeAdId() {
+    return Platform.isIOS
+        ? 'ca-app-pub-3612265554509092/8652228758'
+        : 'ca-app-pub-3612265554509092/6245525449';
+  }
 }
 
 final ads = AdmobService();
@@ -38,5 +44,3 @@ getbanner ios => ca-app-pub-3612265554509092/4043772045
 getVedioAdid  android => ca-app-pub-3612265554509092/6245525449
 getVideoAdid ios => ca-app-pub-3612265554509092/8652228758
 */
-
-
