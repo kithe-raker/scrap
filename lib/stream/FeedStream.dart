@@ -171,8 +171,8 @@ class FeedStream {
 
   void randomAdsRate() {
     adsCount = 0;
-    adsRate = 3;
-    adsRate += Random().nextInt(2) + 1;
+    adsRate = 6;
+    adsRate += Random().nextInt(5);
   }
 }
 

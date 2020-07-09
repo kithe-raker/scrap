@@ -213,15 +213,16 @@ class _TestTState extends State<TestT> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(child: GestureDetector(
-          onTap: (){
-            authService.signOut(context);
-          },
-          child: Text('data'),))
-      ),
+          appBar: AppBar(
+            title: const Text('Plugin example app'),
+          ),
+          body: Center(
+              child: RaisedButton(
+            onPressed: () async {
+              authService.signOut(context);
+            },
+            child: Text('data'),
+          ))),
     );
   }
 }
