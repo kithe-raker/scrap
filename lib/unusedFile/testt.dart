@@ -219,7 +219,22 @@ class _TestTState extends State<TestT> {
           body: Center(
               child: RaisedButton(
             onPressed: () async {
-              authService.signOut(context);
+              Map map = {};
+              var place = await fireStore.collection('Places').getDocuments();
+              place.documents.forEach(
+                  (element) => map[element.documentID] = element['name']);
+              var docs =
+                  await fireStore.collectionGroup('history').getDocuments();
+              await Future.forEach(docs.documents, (element) async {
+                print(element.documentID);
+                if (element['placeName'] == null && element['places'] != null) {
+                  await element.reference
+                      .updateData({'placeName': map[element['places'][0]]});
+                  print('update');
+                }
+              });
+              print('fin');
+              // authService.signOut(context);
             },
             child: Text('data'),
           ))),
