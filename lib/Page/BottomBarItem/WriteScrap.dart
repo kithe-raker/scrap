@@ -392,7 +392,7 @@ class _WriteScrapState extends State<WriteScrap> {
                       fontFamily: 'ThaiSans'),
                 )),
       onTap: () {
-        papers == 10
+        papers == 5
             ? toast.toast('กระดาษของคุณยังเต็มอยู่')
             : dialogvideo(context, user.uid);
       },
