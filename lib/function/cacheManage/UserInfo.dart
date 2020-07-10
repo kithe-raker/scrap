@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 
 class UserInfo {
   Future<String> get _localPath async {
@@ -44,6 +45,21 @@ class UserInfo {
     await file.writeAsString(json.encode(userData));
   }
 
+  Future<String> getCacheImage() async {
+    final directory = (await getApplicationDocumentsDirectory()).path;
+    var cache = await readContents();
+    var uriImage = cache['img'];
+    if (!await File('$directory/$uriImage').exists()) {
+      var user = await fireAuth.currentUser();
+      var doc = await fireStore
+          .document('Users/${cache['region']}/users/${user.uid}')
+          .get();
+      uriImage = await storeImage(doc['img']);
+      await updateInfo({'img': uriImage});
+    }
+    return '$directory/$uriImage';
+  }
+
   Future<void> promiseUser() async {
     final file = await _localFile;
     var data = await readContents();
@@ -71,13 +87,6 @@ class UserInfo {
     return data;
   }
 
-  Future<void> editProImage(String newUrl) async {
-    final file = await _localFile;
-    var data = await readContents();
-    data['img'] = newUrl;
-    await file.writeAsString(json.encode(data));
-  }
-
   Future<String> storeImage(String url) async {
     var response = await get(url);
     var now = DateTime.now().toIso8601String();
@@ -85,13 +94,14 @@ class UserInfo {
     var filePathAndName = documentDirectory + '/$now.jpg';
     File file2 = new File(filePathAndName);
     file2.writeAsBytesSync(response.bodyBytes);
-    return file2.uri.path;
+    return '$now.jpg';
   }
 
   Future<void> deleteFile() async {
     final file = await _localFile;
+    var documentDirectory = await _localPath;
     var data = await readContents();
-    await File(data['img']).delete();
+    await File('$documentDirectory/${data['img']}').delete();
     await file.delete();
   }
 }

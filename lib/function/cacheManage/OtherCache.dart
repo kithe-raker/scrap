@@ -26,8 +26,13 @@ class OtherCache {
     final file = await _localFile;
     var isIntroduce;
     if (await file.exists()) {
-      var cache = await json.decode(await file.readAsString());
-      isIntroduce = cache['introduce'];
+      try {
+        var cache = await json.decode(await file.readAsString());
+        isIntroduce = cache['introduce'];
+      } catch (e) {
+        await file.delete();
+        await initFile();
+      }
     } else
       await initFile();
     return isIntroduce == null || !isIntroduce;

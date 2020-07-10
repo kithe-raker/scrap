@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:ui';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';

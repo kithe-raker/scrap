@@ -9,7 +9,6 @@ import 'package:scrap/Page/bottomBarItem/WriteScrap.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/UserInfo.dart';
-import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/Report.dart';
 import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/stream/UserStream.dart';

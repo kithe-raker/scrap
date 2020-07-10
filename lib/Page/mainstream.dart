@@ -50,7 +50,7 @@ class _MainStreamState extends State<MainStream> {
   initUser() async {
     final user = Provider.of<UserData>(context, listen: false);
     var data = await userinfo.readContents();
-    user.img = data['img'];
+    user.img = await userinfo.getCacheImage();
     user.id = data['id'];
     user.imgUrl = data['imgUrl'];
     user.promise = data['promise'];

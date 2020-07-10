@@ -32,13 +32,14 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   bool initInfoFinish = false, initScrapFinish = false;
   bool pickedScrap = true;
-  Map profile = {};
   List readScrap = [];
   List<DocumentSnapshot> pickScrap = [], scrapCrate = [];
   int page = 0;
+  String status;
   var refreshController = RefreshController();
   var textGroup = AutoSizeGroup();
   var controller = PageController();
+
   @override
   bool get wantKeepAlive => true;
   //Appbar สำหรับหน้าโปรไฟล์ของฉัน
@@ -79,7 +80,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
     var data = await userinfo.readContents();
     var read = await cacheHistory.getReadScrap();
     readScrap.addAll(read);
-    profile = data;
+    status = data['status'];
     if (data['first']) dialogAboutSwitch(context);
     setState(() => initInfoFinish = true);
   }
@@ -181,15 +182,14 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(screenHeightDp),
-                        child: profile['img'] == null
+                        child: user.img == null
                             ? Image.asset('assets/userprofile.png')
-                            : Image.file(File(profile['img']),
-                                fit: BoxFit.cover),
+                            : Image.file(File(user.img), fit: BoxFit.cover),
                       ),
                     ),
                     SizedBox(height: appBarHeight / 5),
                     Text(
-                      '@${profile['id'] ?? 'ชื่อ'}',
+                      '@${user.id ?? 'ชื่อ'}',
                       style: TextStyle(color: Colors.white, fontSize: s60),
                     ),
                     SizedBox(height: appBarHeight / 10),
@@ -200,7 +200,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  dataProfile('เก็บไว้',
+                                  dataProfile('เก็บไว���',
                                       stream: userStream.pickSubject),
                                   dataProfile('แอทเทนชัน',
                                       stream: userStream.attSubject),
@@ -213,7 +213,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                       margin:
                           EdgeInsets.symmetric(horizontal: screenWidthDp / 8.1),
                       child: Text(
-                        '${profile['status'] ?? 'สเตตัสของคุณ'}',
+                        status ?? 'สเตตัสของคุณ',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,
