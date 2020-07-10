@@ -113,15 +113,11 @@ class _CommentSheetState extends State<CommentSheet> {
 
     scrap.pushNotification(
         scrapId, widget.scrapSnapshot?.writerUid ?? widget.doc['uid'],
-        notiRate: data.value['CPN'], currentPoint: data.value['comment'] - 1);
-
-    scrapAll.reference().child(refChild).update({
-      'comment': data.value['comment'] - 1,
-      'point': data.value['point'] - 0.3
-    });
+        notiRate: data.value['CPN'] ?? 1,
+        currentPoint: data.value['comment'] - 1);
     fcm.subscribeToTopic(scrapId);
 
-    userDb
+    await userDb
         .reference()
         .child(
             'users/${widget.scrapSnapshot?.writerUid ?? widget.doc['uid']}/att')

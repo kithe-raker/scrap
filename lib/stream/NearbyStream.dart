@@ -20,12 +20,6 @@ class NearbyStream {
     nearbySubject.add(newList);
   }
 
-  Timestamp yesterDay() {
-    var now = DateTime.now();
-    return Timestamp.fromDate(
-        DateTime(now.year, now.month, now.day - 1, now.hour, now.minute));
-  }
-
   Future<void> initNearby(BuildContext context,
       {@required String placeId}) async {
     loadStatus.nearbyStatus.add(true);

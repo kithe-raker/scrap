@@ -342,7 +342,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                               width: screenWidthDp / 25,
                             ),
                             Text(
-                              'เพิ่มเ���ิม',
+                              'เพิ่มเติม',
                               style: TextStyle(
                                 fontSize: s48,
                                 color: Colors.white,
