@@ -6,7 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
+import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/assets/PaperTexture.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/models/ScrapModel.dart';
@@ -149,10 +151,30 @@ class _FeedFollowngState extends State<FeedFollowng>
         )));
   }
 
+  bool navigating = false;
+
   Widget scrapWidget(ScrapModel scrapModel) {
     var transac = scrapModel.transaction;
-    return StatefulBuilder(builder: (context, StateSetter setDialog) {
-      return Container(
+    return GestureDetector(
+      onHorizontalDragUpdate: (details) async {
+        if (details.delta.dx > 0 &&
+            scrapModel.writer != 'ไม่ระบุตัวตน' &&
+            !navigating) {
+          navigating = true;
+          var doc = await fireStore
+              .document(
+                  'Users/${scrapModel.scrapRegion}/users/${scrapModel.writerUid}')
+              .get();
+          nav.push(
+              context,
+              OtherProfile(
+                  data: doc.data,
+                  uid: doc.documentID,
+                  ref: doc.reference.parent().path));
+          navigating = false;
+        }
+      },
+      child: Container(
           padding: EdgeInsets.symmetric(
               horizontal: (screenWidthDp - screenWidthDp / 1.04) / 2),
           child: Column(
@@ -199,7 +221,7 @@ class _FeedFollowngState extends State<FeedFollowng>
                           //addscrappaper
                           children: <Widget>[
                             SvgPicture.asset(
-                                'assets/${texture.textures[scrapModel.textureIndex]?? 'paperscrap.svg'}',
+                                'assets/${texture.textures[scrapModel.textureIndex] ?? 'paperscrap.svg'}',
                                 fit: BoxFit.cover),
                             Center(
                               child: Container(
@@ -227,17 +249,37 @@ class _FeedFollowngState extends State<FeedFollowng>
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                scrapModel.writer == 'ไม่ระบุตัวตน'
-                                    ? 'ใครบางคน'
-                                    : '@${scrapModel.writer}',
-                                style: TextStyle(
-                                    fontSize: s48,
-                                    height: 1.1,
-                                    color: scrapModel.writer == 'ไม่ระบุตัวตน'
-                                        ? Colors.white
-                                        : Color(0xff26A4FF)),
-                              ),
+                              GestureDetector(
+                                  child: Text(
+                                    scrapModel.writer == 'ไม่ระบุตัวตน'
+                                        ? 'ใครบางคน'
+                                        : '@${scrapModel.writer}',
+                                    style: TextStyle(
+                                        fontSize: s48,
+                                        height: 1.1,
+                                        color:
+                                            scrapModel.writer == 'ไม่ระบุตัวตน'
+                                                ? Colors.white
+                                                : Color(0xff26A4FF)),
+                                  ),
+                                  onTap: () async {
+                                    if (!navigating &&
+                                        scrapModel.writer != 'ไม่ระบุตัวตน') {
+                                      navigating = true;
+                                      var doc = await fireStore
+                                          .document(
+                                              'Users/${scrapModel.scrapRegion}/users/${scrapModel.writerUid}')
+                                          .get();
+                                      nav.push(
+                                          context,
+                                          OtherProfile(
+                                              data: doc.data,
+                                              uid: doc.documentID,
+                                              ref:
+                                                  doc.reference.parent().path));
+                                      navigating = false;
+                                    }
+                                  }),
                               PlaceText(
                                   time: scrapModel.litteredTime,
                                   placeName: scrapModel.placeName)
@@ -404,8 +446,8 @@ class _FeedFollowngState extends State<FeedFollowng>
                         ],
                       );
                     })),
-              ]));
-    });
+              ])),
+    );
   }
 
   Widget iconfrommilla(

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -24,13 +25,18 @@ class _PlaceTextState extends State<PlaceText> {
                 Text('บริเวณ ',
                     style: TextStyle(
                         fontSize: s38, height: 0.8, color: Color(0xff969696))),
-                Text(widget.placeName,
-                    style: TextStyle(
-                        fontSize: s38,
-                        height: 0.8,
-                        letterSpacing: 1.2,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff26A4FF))),
+                SizedBox(
+                  width: screenWidthDp / 1.6,
+                  child: AutoSizeText(widget.placeName,
+                      maxLines: 1,
+                      minFontSize: 18,
+                      style: TextStyle(
+                          fontSize: s38,
+                          height: 0.8,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff26A4FF))),
+                ),
               ],
             )
           : Row(
