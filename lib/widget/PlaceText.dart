@@ -15,7 +15,6 @@ class PlaceText extends StatefulWidget {
 class _PlaceTextState extends State<PlaceText> {
   @override
   Widget build(BuildContext context) {
-    screenutilInit(context);
     return Container(
       child: widget.placeName != null
           ? Row(
@@ -24,7 +23,10 @@ class _PlaceTextState extends State<PlaceText> {
               children: <Widget>[
                 Text('บริเวณ ',
                     style: TextStyle(
-                        fontSize: s38, height: 0.8, color: Color(0xff969696))),
+                        fontSize: s38,
+                        fontFamily: 'ThaiSans',
+                        height: 0.8,
+                        color: Color(0xff969696))),
                 SizedBox(
                   width: screenWidthDp / 1.6,
                   child: AutoSizeText(widget.placeName,
@@ -33,6 +35,7 @@ class _PlaceTextState extends State<PlaceText> {
                       style: TextStyle(
                           fontSize: s38,
                           height: 0.8,
+                          fontFamily: 'ThaiSans',
                           letterSpacing: 1.2,
                           fontWeight: FontWeight.bold,
                           color: Color(0xff26A4FF))),
@@ -45,11 +48,15 @@ class _PlaceTextState extends State<PlaceText> {
               children: <Widget>[
                 Text('เมื่อ ',
                     style: TextStyle(
-                        fontSize: s38, height: 0.8, color: Color(0xff969696))),
+                        fontSize: s38,
+                        height: 0.8,
+                        fontFamily: 'ThaiSans',
+                        color: Color(0xff969696))),
                 Text(readTimestamp(widget.time),
                     style: TextStyle(
                         fontSize: s38,
                         height: 0.8,
+                        fontFamily: 'ThaiSans',
                         letterSpacing: 1.2,
                         fontWeight: FontWeight.bold,
                         color: Colors.white)),

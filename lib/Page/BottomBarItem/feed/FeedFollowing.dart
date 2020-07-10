@@ -1,15 +1,14 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrap/Page/bottomBarItem/feed/FeedPage.dart';
 import 'package:scrap/Page/profile/Other_Profile.dart';
 import 'package:scrap/assets/PaperTexture.dart';
 import 'package:scrap/function/authentication/AuthenService.dart';
 import 'package:scrap/function/cacheManage/HistoryUser.dart';
+import 'package:scrap/function/others/ShareFunction.dart';
 import 'package:scrap/function/toDatabase/scrap.dart';
 import 'package:scrap/models/ScrapModel.dart';
 import 'package:scrap/provider/Report.dart';
@@ -24,8 +23,7 @@ import 'package:scrap/widget/guide.dart';
 import 'package:scrap/widget/sheets/CommentSheet.dart';
 import 'package:scrap/widget/sheets/MapSheet.dart';
 import 'package:scrap/widget/showdialogreport.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:social_share/social_share.dart';
+import 'package:scrap/widget/streamWidget/StreamLoading.dart';
 
 class FeedFollowng extends StatefulWidget {
   @override
@@ -39,7 +37,6 @@ class _FeedFollowngState extends State<FeedFollowng>
   int current = 0;
   var pageController = PageController();
   StreamSubscription loadStream;
-  ScreenshotController screenshotController = ScreenshotController();
   Map<String, List> history = {};
 
   @override
@@ -106,23 +103,20 @@ class _FeedFollowngState extends State<FeedFollowng>
                             if (followFeed.scraps.length > 0) {
                               return Listener(
                                 onPointerUp: (event) => listener(),
-                                child: Screenshot(
-                                  controller: screenshotController,
-                                  child: PageView(
-                                      physics: AlwaysScrollableScrollPhysics(),
-                                      controller: pageController,
-                                      onPageChanged: (index) {
-                                        if (current + 1 == index &&
-                                            (index + 1) % 3 == 0) {
-                                          followFeed.loadMore();
-                                        }
-                                        current = index;
-                                      },
-                                      scrollDirection: Axis.vertical,
-                                      children: snapshot.data
-                                          .map((data) => scrapWidget(data))
-                                          .toList()),
-                                ),
+                                child: PageView(
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    controller: pageController,
+                                    onPageChanged: (index) {
+                                      if (current + 1 == index &&
+                                          (index + 1) % 3 == 0) {
+                                        followFeed.loadMore();
+                                      }
+                                      current = index;
+                                    },
+                                    scrollDirection: Axis.vertical,
+                                    children: snapshot.data
+                                        .map((data) => scrapWidget(data))
+                                        .toList()),
                               );
                             } else
                               return Center(
@@ -490,332 +484,303 @@ class _FeedFollowngState extends State<FeedFollowng>
         context: context,
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
-          return Container(
-            height: screenWidthDp / 1.1,
-            decoration: BoxDecoration(
-              color: Color(0xff202020),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-            ),
-            child: Stack(
-              children: <Widget>[
-                Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 12, bottom: 4),
-                      width: screenWidthDp / 3.2,
-                      height: screenHeightDp / 81,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(screenHeightDp / 42),
-                        color: Color(0xff929292),
-                      ),
-                    )),
-                Container(
-                  margin: EdgeInsets.only(bottom: screenWidthDp / 15),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        //  SizedBox(
-                        //   height: screenWidthDp / 20,
-                        // ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: screenWidthDp / 25,
-                            ),
-                            Text(
-                              'แบ่งปันไปยัง',
-                              style: TextStyle(
-                                fontSize: s48,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        Container(
-                          padding: EdgeInsets.only(top: screenWidthDp / 25),
-                          width: screenWidthDp,
-                          height: screenWidthDp / 3.9,
-                          child: ListView(
-                            //mainAxisAlignment: MainAxisAlignment.start,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            children: <Widget>[
-                              // story ig
-                              Container(
-                                child: Column(
-                                  children: <Widget>[
-                                    GestureDetector(
-                                        onTap: () async {
-                                          SocialShare
-                                                  .checkInstalledAppsForShare()
-                                              .then((data) async {
-                                            data['instagram'] == true
-                                                ? await screenshotController
-                                                    .capture(pixelRatio: 1.5)
-                                                    .then((image) async {
-                                                    SocialShare.shareInstagramStory(
-                                                        image.path,
-                                                        "#212121",
-                                                        "#000000",
-                                                        "https://scrap.bualoitech.com/");
-                                                  })
-                                                : Fluttertoast.showToast(
-                                                    msg: "โหลดไอจีก่อนฮะ",
-                                                    toastLength:
-                                                        Toast.LENGTH_SHORT,
-                                                    gravity:
-                                                        ToastGravity.CENTER,
-                                                  );
-                                          });
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 15,
-                                          ),
-                                          height: screenWidthDp / 7,
-                                          width: screenWidthDp / 7,
-                                          child: SvgPicture.asset(
-                                            'assets/ig-story-icon.svg',
-                                          ),
-                                        )),
-                                    Text(
-                                      'stories',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: s42,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // facebook story
-                              Container(
-                                child: Column(
-                                  children: <Widget>[
-                                    GestureDetector(
-                                        onTap: () async {
-                                          SocialShare
-                                                  .checkInstalledAppsForShare()
-                                              .then((data) async {
-                                            data['facebook'] == true
-                                                ? await screenshotController
-                                                    .capture(pixelRatio: 1.5)
-                                                    .then((image) async {
-                                                    {
-                                                      Platform.isAndroid
-                                                          ? SocialShare.shareFacebookStory(
-                                                                  image.path,
-                                                                  "#212121",
-                                                                  "#000000",
-                                                                  "https://scrap.bualoitech.com/",
-                                                                  appId:
-                                                                      "152617042778122")
-                                                              .then((data) {
-                                                              print(data);
-                                                            })
-                                                          : SocialShare
-                                                                  .shareFacebookStory(
-                                                                      image
-                                                                          .path,
-                                                                      "#212121",
-                                                                      "#000000",
-                                                                      "https://scrap.bualoitech.com/")
-                                                              .then((data) {
-                                                              print(data);
-                                                            });
-                                                    }
-                                                  })
-                                                : Fluttertoast.showToast(
-                                                    msg: "โหลดเฟสบุ๊คก่อนฮะ",
-                                                    toastLength:
-                                                        Toast.LENGTH_SHORT,
-                                                    gravity:
-                                                        ToastGravity.CENTER,
-                                                  );
-                                          });
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 15,
-                                          ),
-                                          height: screenWidthDp / 7,
-                                          width: screenWidthDp / 7,
-                                          child: SvgPicture.asset(
-                                            'assets/facebook-icon.svg',
-                                          ),
-                                        )),
-                                    Text(
-                                      'facebook',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: s42,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Divider(
-                          color: Color(0xfffa5a5a5),
-                          indent: screenWidthDp / 25,
-                          endIndent: screenWidthDp / 25,
-                        ),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: screenWidthDp / 25,
-                            ),
-                            Text(
-                              'เพิ่มเติม',
-                              style: TextStyle(
-                                fontSize: s48,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(top: screenWidthDp / 25),
-                          width: screenWidthDp,
-                          height: screenWidthDp / 4,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            //mainAxisAlignment: MainAxisAlignment.start,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            children: <Widget>[
-                              Container(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    GestureDetector(
-                                      child: Container(
-                                          height: 50,
-                                          width: 50,
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 15,
-                                          ),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      screenHeightDp)),
-                                          child: Icon(Icons.whatshot,
-                                              color: Color(0xffFF8F3A),
-                                              size: appBarHeight / 2.4)),
-                                      onTap: () {
-                                        if (inHistory('burn', scrap.scrapId)) {
-                                          toast.toast(
-                                              'คุณเคยเผาสแครปก้อนนี้แล้ว');
-                                        } else {
-                                          final report = Provider.of<Report>(
-                                              context,
-                                              listen: false);
-                                          report.scrapId = scrap.scrapId;
-                                          report.targetId = scrap.writerUid;
-                                          report.region = scrap.scrapRegion;
-                                          showdialogBurn(context,
-                                              burntScraps: history['burn']);
-                                        }
-                                      },
-                                    ),
-                                    Text(
-                                      'เผา',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: s42,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    GestureDetector(
-                                      child: Container(
-                                          height: 50,
-                                          width: 50,
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 15,
-                                          ),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      screenHeightDp)),
-                                          child: Icon(Icons.report_problem,
-                                              size: appBarHeight / 2.4)),
-                                      onTap: () {
-                                        final report = Provider.of<Report>(
-                                            context,
-                                            listen: false);
-                                        report.targetId = scrap.writerUid;
-                                        showDialogReport(context);
-                                      },
-                                    ),
-                                    Text(
-                                      'รายงาน',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: s42,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+          return Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: screenWidthDp / 1.1,
+                  decoration: BoxDecoration(
+                    color: Color(0xff202020),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
                     ),
                   ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        height: screenWidthDp / 9,
-                        width: screenWidthDp,
-                        color: Colors.grey[800],
-                        // color: Color(0xfffa5a5a5),
+                  child: Stack(
+                    children: <Widget>[
+                      Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            margin: EdgeInsets.only(top: 12, bottom: 4),
+                            width: screenWidthDp / 3.2,
+                            height: screenHeightDp / 81,
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(screenHeightDp / 42),
+                              color: Color(0xff929292),
+                            ),
+                          )),
+                      Container(
+                        margin: EdgeInsets.only(bottom: screenWidthDp / 15),
                         child: Center(
-                          child: Text(
-                            'ยกเลิก',
-                            style: TextStyle(
-                                fontSize: s48,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              //  SizedBox(
+                              //   height: screenWidthDp / 20,
+                              // ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: screenWidthDp / 25,
+                                  ),
+                                  Text(
+                                    'แบ่งปันไปยัง',
+                                    style: TextStyle(
+                                      fontSize: s48,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              Container(
+                                padding:
+                                    EdgeInsets.only(top: screenWidthDp / 25),
+                                width: screenWidthDp,
+                                height: screenWidthDp / 3.9,
+                                child: ListView(
+                                  //mainAxisAlignment: MainAxisAlignment.start,
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  children: <Widget>[
+                                    // story ig
+                                    Container(
+                                      child: Column(
+                                        children: <Widget>[
+                                          GestureDetector(
+                                              onTap: () async {
+                                                share.shareInstagram(
+                                                    text: scrap.text,
+                                                    writer: scrap.writer,
+                                                    placeName: scrap.placeName,
+                                                    paperIndex:
+                                                        scrap.textureIndex,
+                                                    time: scrap.litteredTime);
+                                              },
+                                              child: Container(
+                                                margin: EdgeInsets.symmetric(
+                                                  horizontal: 15,
+                                                ),
+                                                height: screenWidthDp / 7,
+                                                width: screenWidthDp / 7,
+                                                child: SvgPicture.asset(
+                                                  'assets/ig-story-icon.svg',
+                                                ),
+                                              )),
+                                          Text(
+                                            'stories',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: s42,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // facebook story
+                                    Container(
+                                      child: Column(
+                                        children: <Widget>[
+                                          GestureDetector(
+                                              onTap: () async {
+                                                share.shareFacebook(
+                                                    text: scrap.text,
+                                                    writer: scrap.writer,
+                                                    placeName: scrap.placeName,
+                                                    paperIndex:
+                                                        scrap.textureIndex,
+                                                    time: scrap.litteredTime);
+                                              },
+                                              child: Container(
+                                                margin: EdgeInsets.symmetric(
+                                                  horizontal: 15,
+                                                ),
+                                                height: screenWidthDp / 7,
+                                                width: screenWidthDp / 7,
+                                                child: SvgPicture.asset(
+                                                  'assets/facebook-icon.svg',
+                                                ),
+                                              )),
+                                          Text(
+                                            'facebook',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: s42,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              Divider(
+                                color: Color(0xfffa5a5a5),
+                                indent: screenWidthDp / 25,
+                                endIndent: screenWidthDp / 25,
+                              ),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: screenWidthDp / 25,
+                                  ),
+                                  Text(
+                                    'เพิ่มเติม',
+                                    style: TextStyle(
+                                      fontSize: s48,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding:
+                                    EdgeInsets.only(top: screenWidthDp / 25),
+                                width: screenWidthDp,
+                                height: screenWidthDp / 4,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  //mainAxisAlignment: MainAxisAlignment.start,
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  children: <Widget>[
+                                    Container(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          GestureDetector(
+                                            child: Container(
+                                                height: 50,
+                                                width: 50,
+                                                margin: EdgeInsets.symmetric(
+                                                  horizontal: 15,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            screenHeightDp)),
+                                                child: Icon(Icons.whatshot,
+                                                    color: Color(0xffFF8F3A),
+                                                    size: appBarHeight / 2.4)),
+                                            onTap: () {
+                                              if (inHistory(
+                                                  'burn', scrap.scrapId)) {
+                                                toast.toast(
+                                                    'คุณเคยเผาสแครปก้อนนี้แล้ว');
+                                              } else {
+                                                final report =
+                                                    Provider.of<Report>(context,
+                                                        listen: false);
+                                                report.scrapId = scrap.scrapId;
+                                                report.targetId =
+                                                    scrap.writerUid;
+                                                report.region =
+                                                    scrap.scrapRegion;
+                                                showdialogBurn(context,
+                                                    burntScraps:
+                                                        history['burn']);
+                                              }
+                                            },
+                                          ),
+                                          Text(
+                                            'เผา',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: s42,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          GestureDetector(
+                                            child: Container(
+                                                height: 50,
+                                                width: 50,
+                                                margin: EdgeInsets.symmetric(
+                                                  horizontal: 15,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            screenHeightDp)),
+                                                child: Icon(
+                                                    Icons.report_problem,
+                                                    size: appBarHeight / 2.4)),
+                                            onTap: () {
+                                              final report =
+                                                  Provider.of<Report>(context,
+                                                      listen: false);
+                                              report.targetId = scrap.writerUid;
+                                              showDialogReport(context);
+                                            },
+                                          ),
+                                          Text(
+                                            'รายงาน',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: s42,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenWidthDp / 9,
+                              width: screenWidthDp,
+                              color: Colors.grey[800],
+                              // color: Color(0xfffa5a5a5),
+                              child: Center(
+                                child: Text(
+                                  'ยกเลิก',
+                                  style: TextStyle(
+                                      fontSize: s48,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Center(child: StreamLoading(stream: share.loadStatus))
+            ],
           );
         });
   }
