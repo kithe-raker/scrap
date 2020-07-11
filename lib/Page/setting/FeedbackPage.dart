@@ -164,7 +164,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
                         //ทำเป็นชั้นๆ
                         child: Stack(
                           children: <Widget>[
-                            //ช���้นที่ 1 ส่วนของก���ะดาษ
                             Container(
                               child: Image.asset(
                                 'assets/paperscrap.jpg',
@@ -198,13 +197,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                       ],
                                     ),
                                   ),
-                                  // Text("เว��า" + " : " + time,
-                                  //     style:
-                                  //         TextStyle(color: Colors.grey))
                                 ],
                               ),
                             ),
-                            //ชั้��ที่ 3 เอาไว้สำหรับเขียนข้อความ
                             Container(
                               width: a.width,
                               height: a.height,
@@ -233,7 +228,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                         ? 'เขียนบางอย่างสิ'
                                         : null;
                                   },
-                                  //เนื้อหาที่��รอกเข้าไปใน text
                                   onSaved: (val) {
                                     text = val;
                                   },
