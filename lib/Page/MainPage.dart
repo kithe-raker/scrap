@@ -82,7 +82,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   bool olderVersion() {
-    String recent = '2.1.1';
+    String recent = '2.1.2';
     List allowed = [];
     bool isIOS = Platform.isIOS;
     isIOS

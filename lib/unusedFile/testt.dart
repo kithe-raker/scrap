@@ -9,7 +9,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scrap/widget/ScreenUtil.dart';
-import 'package:screenshot/screenshot.dart';
 
 class TestT extends StatefulWidget {
   @override
@@ -17,7 +16,6 @@ class TestT extends StatefulWidget {
 }
 
 class _TestTState extends State<TestT> {
-  ScreenshotController screenshotController = ScreenshotController();
 
   @override
   void initState() {

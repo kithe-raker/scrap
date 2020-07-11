@@ -380,7 +380,7 @@ class _OptionSettingState extends State<OptionSetting> {
                               },
                             ),
                             Text(
-                              'version 2.0.1\n\n',
+                              'version 2.1.2\n\n',
                               style:
                                   TextStyle(color: Colors.white, fontSize: s42),
                             ),
