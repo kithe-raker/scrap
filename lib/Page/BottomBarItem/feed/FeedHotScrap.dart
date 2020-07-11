@@ -319,7 +319,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                                   if (inHistory('burn',
                                                       scrap.scrapId)) {
                                                     toast.toast(
-                                                        'คุณเคยเ���าสแครปก้อนนี้แล้ว');
+                                                        'คุณเคยเผาสแครปก้อนนี้แล้ว');
                                                   } else {
                                                     final report =
                                                         Provider.of<Report>(
