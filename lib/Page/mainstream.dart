@@ -97,11 +97,16 @@ class _MainStreamState extends State<MainStream> {
     return GestureDetector(
       onTap: () => onTap(_index),
       child: Container(
-        height: screenWidthDp / 15,
-        width: screenWidthDp / 15,
+        color: Colors.transparent,
+        padding: EdgeInsets.symmetric(
+            horizontal: screenWidthDp / 21 * 1.35,
+            vertical: screenWidthDp / 21),
         child: SvgPicture.asset(
           currentIndex == _index ? activeicon : unactiveicon,
           color: Color(0xffff5f5f5),
+          fit: BoxFit.cover,
+          height: screenWidthDp / 15,
+          width: screenWidthDp / 15,
         ),
       ),
     );
@@ -123,11 +128,15 @@ class _MainStreamState extends State<MainStream> {
                 1, 'assets/search-fill-icon.svg', 'assets/search-icon.svg'),
             GestureDetector(
               child: Container(
-                height: screenWidthDp / 15,
-                width: screenWidthDp / 15,
+                color: Colors.transparent,
+                padding: EdgeInsets.symmetric(
+                    horizontal: screenWidthDp / 21 * 1.35,
+                    vertical: screenWidthDp / 21),
                 child: SvgPicture.asset(
                   'assets/write-icon.svg',
                   color: Color(0xffff5f5f5),
+                  height: screenWidthDp / 15,
+                  width: screenWidthDp / 15,
                 ),
               ),
               onTap: () {
