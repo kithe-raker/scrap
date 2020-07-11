@@ -200,7 +200,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  dataProfile('เก็บไว���',
+                                  dataProfile('เก็บไว้',
                                       stream: userStream.pickSubject),
                                   dataProfile('แอทเทนชัน',
                                       stream: userStream.attSubject),

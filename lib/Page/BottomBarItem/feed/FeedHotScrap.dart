@@ -167,8 +167,8 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                               width: screenWidthDp / 3.2,
                               height: screenHeightDp / 81,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    screenHeightDp / 42),
+                                borderRadius:
+                                    BorderRadius.circular(screenHeightDp / 42),
                                 color: Color(0xff929292),
                               ),
                             )),
@@ -182,8 +182,7 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                 //   height: screenWidthDp / 20,
                                 // ),
                                 Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         width: screenWidthDp / 25,
@@ -195,8 +194,8 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                               fontWeight: FontWeight.bold))
                                     ]),
                                 Container(
-                                  padding: EdgeInsets.only(
-                                      top: screenWidthDp / 25),
+                                  padding:
+                                      EdgeInsets.only(top: screenWidthDp / 25),
                                   width: screenWidthDp,
                                   height: screenWidthDp / 3.9,
                                   child: ListView(
@@ -281,15 +280,14 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                   ],
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(
-                                      top: screenWidthDp / 25),
+                                  padding:
+                                      EdgeInsets.only(top: screenWidthDp / 25),
                                   width: screenWidthDp,
                                   height: screenWidthDp / 4,
                                   child: ListView(
                                       scrollDirection: Axis.horizontal,
                                       //mainAxisAlignment: MainAxisAlignment.start,
-                                      physics:
-                                          AlwaysScrollableScrollPhysics(),
+                                      physics: AlwaysScrollableScrollPhysics(),
                                       children: <Widget>[
                                         Container(
                                           child: Column(
@@ -309,17 +307,16 @@ class _FeedHotScrapState extends State<FeedHotScrap>
                                                         borderRadius:
                                                             BorderRadius.circular(
                                                                 screenHeightDp)),
-                                                    child: Icon(
-                                                        Icons.whatshot,
+                                                    child: Icon(Icons.whatshot,
                                                         color:
                                                             Color(0xffFF8F3A),
                                                         size: appBarHeight /
                                                             2.4)),
                                                 onTap: () {
-                                                  if (inHistory('burn',
-                                                      scrap.scrapId)) {
+                                                  if (inHistory(
+                                                      'burn', scrap.scrapId)) {
                                                     toast.toast(
-                                                        'คุณเคยเ���าสแครปก้อนนี้แล้ว');
+                                                        'คุณเคยเผาสแครปก้อนนี้แล้ว');
                                                   } else {
                                                     final report =
                                                         Provider.of<Report>(
