@@ -1,17 +1,26 @@
 import 'dart:io';
 
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:scrap/Page/Auth.dart';
+import 'package:provider/provider.dart';
 import 'package:scrap/Page/Sorry.dart';
 import 'package:scrap/Page/Update.dart';
-import 'package:scrap/Page/profile/Profile.dart';
+import 'package:scrap/Page/authentication/LoginPage.dart';
+import 'package:scrap/Page/mainstream.dart';
+import 'package:scrap/function/authentication/AuthenService.dart';
+import 'package:scrap/function/cacheManage/OtherCache.dart';
+import 'package:scrap/function/cacheManage/UserInfo.dart';
+import 'package:scrap/function/realtimeDB/ConfigDatabase.dart';
+import 'package:scrap/provider/UserData.dart';
 import 'package:scrap/services/ImgCacheManger.dart';
-import 'package:scrap/services/jsonConverter.dart';
-import 'package:scrap/services/provider.dart';
+import 'package:scrap/services/admob_service.dart';
+import 'package:scrap/widget/dialog/IntroduceApp.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -21,11 +30,10 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin messaging = FlutterLocalNotificationsPlugin();
-  JsonConverter jsonConverter = JsonConverter();
   ImgCacheManager imgCacheManager = ImgCacheManager();
   DocumentSnapshot appInfo;
   initLocalMessage() {
-    var android = AndroidInitializationSettings('noti_ic');
+    var android = AndroidInitializationSettings('notilogo');
     var ios = IOSInitializationSettings();
     var initMessaging = InitializationSettings(android, ios);
     messaging.initialize(initMessaging, onSelectNotification: onTapMessage);
@@ -56,48 +64,78 @@ class _MainPageState extends State<MainPage> {
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await messaging.show(
-      0,
-      message['notification']['title'],
-      message['notification']['body'],
-      platformChannelSpecifics,
-      payload: '',
-    );
+    await messaging.show(0, message['notification']['title'],
+        message['notification']['body'], platformChannelSpecifics,
+        payload: '');
   }
 
   Future onTapMessage(String payload) async {
-    final uid = await Provider.of(context).auth.currentUser();
-    await Firestore.instance.collection('Users').document(uid).get().then(
-        (data) => Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Profile(doc: data))));
+    if (await isLogin()) nav.push(context, MainStream(initPage: 2));
   }
 
   Future<bool> serverChecker() async {
     bool close;
-    await Firestore.instance
-        .collection('App')
-        .document('info')
-        .get()
-        .then((doc) {
-      close = doc.data['close'];
-      appInfo = doc;
-    });
-    final uid = await Provider.of(context).auth?.currentUser() ?? '';
-    return close && uid != 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
+    var doc = await Firestore.instance.collection('App').document('info').get();
+    close = doc.data['close'];
+    appInfo = doc;
+    return close;
   }
 
-  Future<bool> versionChecker() async {
-    String recent = '1.1.0', incoming;
+  bool olderVersion() {
+    String recent = '2.1.2';
+    List allowed = [];
     bool isIOS = Platform.isIOS;
     isIOS
-        ? incoming = appInfo['versions']['IOS']
-        : incoming = appInfo['versions']['android'];
-    final uid = await Provider.of(context).auth?.currentUser() ?? '';
-    return recent == incoming || uid == 'czKPreN6fqVWJv2RaLSjzhKoAeV2';
+        ? allowed = appInfo['allowed']['ios']
+        : allowed = appInfo['allowed']['android'];
+    return !allowed.contains(recent);
+  }
+
+  Future<bool> isLogin() async {
+    await confgiDB.initRTDB(context);
+    final user = Provider.of<UserData>(context, listen: false);
+    var auth = await FirebaseAuth.instance.currentUser();
+    if (auth != null) user.uid = auth.uid;
+    return auth != null && auth?.phoneNumber != null;
+  }
+
+  Future<void> multiCaseNavigator() async {
+    final user = Provider.of<UserData>(context, listen: false);
+    bool fileExist = await userinfo.fileExist();
+    var img;
+    if (await isLogin()) {
+      if (fileExist) {
+        var map = await userinfo.readContents();
+        user.region = map['region'];
+        user.phone = map['phone'];
+        img = map['img'];
+        if (img == null) {
+          await fireAuth.signOut();
+          nav.pushReplacement(context, LoginPage());
+        } else {
+          nav.pushReplacement(context, MainStream());
+        }
+      } else {
+        await fireAuth.signOut();
+        nav.pushReplacement(context, LoginPage());
+      }
+    } else
+      navigator(LoginPage());
+  }
+
+  Future<void> introduceApp() async {
+    if (await cacheOther.isNotIntroduce())
+      nav.push(context, IntroduceApp(onDoubleTap: () {
+        multiCaseNavigator();
+      }));
+    else
+      multiCaseNavigator();
   }
 
   @override
   void initState() {
+    Admob.initialize(AdmobService().getAdmobAppId());
+    FirebaseAdMob.instance.initialize(appId: AdmobService().getAdmobAppId());
     initFirebaseMessaging();
     initLocalMessage();
     super.initState();
@@ -108,35 +146,45 @@ class _MainPageState extends State<MainPage> {
     Size a = MediaQuery.of(context).size;
     return Material(
         color: Colors.black,
-        child: InkWell(
-          child: Container(
-            width: a.width / 2,
-            height: a.width / 5,
-            child: SplashScreen.callback(
-              name: 'assets/splash.flr',
-              startAnimation: 'Untitled',
-              onSuccess: (data) async {
-                await serverChecker()
-                    ? navigator(Sorry())
-                    : await versionChecker()
-                        ? navigator(Authen())
-                        : navigator(Update());
-              },
-              loopAnimation: '1',
-              until: () => Future.delayed(Duration(seconds: 1)),
-              endAnimation: '0',
-              onError: (e, er) {
-                print(e);
-                print(er);
-              },
+        child: Stack(
+          children: <Widget>[
+            Center(
+              child: Container(
+                child: SplashScreen.callback(
+                  name: 'assets/scraplogo.flr',
+                  startAnimation: 'Untitled',
+                  onSuccess: (data) async {
+                    await serverChecker()
+                        ? navigator(Sorry())
+                        : olderVersion() ? navigator(Update()) : introduceApp();
+                  },
+                  loopAnimation: '1',
+                  until: () => Future.delayed(Duration(seconds: 1)),
+                  endAnimation: '0',
+                  onError: (e, er) {
+                    print(e);
+                    print(er);
+                  },
+                ),
+              ),
             ),
-          ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: EdgeInsets.only(bottom: a.width / 21),
+                child: Image.asset('assets/whiteBualoi.png',
+                    color: Colors.white.withOpacity(0.78),
+                    width: a.width / 8.1,
+                    fit: BoxFit.contain),
+              ),
+            )
+          ],
         ));
   }
 
   navigator(var where) {
-    Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => where));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => where));
   }
 }
 

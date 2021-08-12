@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scrap/Page/profile/Dropdown/ChangePhone.dart';
 
 class Dg {
   warning(BuildContext context, String sub, String text) {
@@ -61,10 +60,10 @@ class Dg {
               style: TextStyle(fontSize: 16),
             ),
             onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pop(context);
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ChangePhone()));
+              // Navigator.of(context).pop();
+              // Navigator.pop(context);
+              // Navigator.push(context,
+              //     MaterialPageRoute(builder: (context) => ChangePhone()));
             },
           ),
         ],
@@ -112,6 +111,4 @@ class Dg {
           );
         });
   }
-
-  
 }

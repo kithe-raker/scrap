@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.bualoitech.scrap">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -16,11 +17,28 @@
         android:name=".Application"
         android:label="scrap"
         android:icon="@mipmap/launcher_icon">
-
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/notilogo" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3612265554509092~5449650222"/>
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="AIzaSyBIurGYOrtdXJdBaWZ9wXPSert9_Hjjs8Y" />
-
+            <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.com.shekarmudaliyar.social_share"
+                android:exported="false"
+                android:grantUriPermissions="true"
+                tools:replace="android:authorities">
+                <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/filepaths" />
+            </provider>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

@@ -42,9 +42,7 @@ class _ArrowBackState extends State<ArrowBack> {
                                     color: Colors.black, size: a.width / 15),
                               ),
                               onTap: () {
-                                Navigator.pop(
-                                  context,
-                                );
+                                Navigator.pop(context);
                               },
                             ),
                           ],

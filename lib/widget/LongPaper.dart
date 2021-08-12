@@ -19,18 +19,12 @@ class _LongPaperState extends State<LongPaper> {
           margin: EdgeInsets.only(right: a.width / 15, top: a.width / 20),
           width: a.width / 1.3,
           height: a.width / 1.3,
-          // decoration: BoxDecoration(
-          //   image: DecorationImage(
-          //     image: AssetImage('assets/paper-readed.png'),
-          //     fit: BoxFit.cover,
-          //   ),
-          // ),
           child: Stack(
             children: <Widget>[
               Container(
                 width: a.width,
                 child: Image.asset(
-                  'assets/paper-readed.png',
+                  'assets/paperscrap.jpg',
                   width: a.width / 1.3,
                   height: a.width,
                   fit: BoxFit.cover,
@@ -113,7 +107,7 @@ class _LongPaperState extends State<LongPaper> {
                       Container(
                         width: a.width,
                         child: Image.asset(
-                          'assets/paper-readed.png',
+                          'assets/paperscrap.jpg',
                           width: a.width,
                           height: a.height / 1.6,
                           fit: BoxFit.cover,
@@ -212,7 +206,7 @@ class _LongPaperState extends State<LongPaper> {
           return AlertDialog(
             backgroundColor: Colors.white,
             content: Container(
-              child: Text('คุณต้องการลบกระดาษแผ่นนี้ใช่หรือไม่'),
+              child: Text('คุณต้องการลบสแครปแผ่นนี้ใช่หรือไม่'),
             ),
             actions: <Widget>[
               FlatButton(

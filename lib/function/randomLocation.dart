@@ -1,11 +1,13 @@
 import 'dart:math';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class RandomLocation {
   final random = Random();
 
   ///declear varieble [r] radius
-  var r = 42 / 111300; // = 64 meters
-  Map getLocation({double lat, double lng}) {
+  var r = 210 / 111300; // = 1000 meters
+  LatLng getLocation({double lat, double lng}) {
     ///random 2 double then init varieble [u] and [v]
     double u = random.nextDouble();
     double v = random.nextDouble();
@@ -17,15 +19,9 @@ class RandomLocation {
     var x = w * cos(t);
     var inLng = w * sin(t);
     var inLat = x / cos(lng);
-    double ranLat() {
-      return lat + inLat;
-    }
 
-    double ranLng() {
-      return lng + inLng;
-    }
-
-    ///return as map
-    return {'lat': ranLat(), 'lng': ranLng()};
+    return LatLng(lat + inLat, lng + inLng);
   }
 }
+
+final random = RandomLocation();
